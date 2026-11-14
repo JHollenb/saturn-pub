@@ -89,9 +89,9 @@ def brief(content):
     return out
 
 
-def take_table(run, item, consumer, hops=None):
+def take_table(run, item, r0, consumer, hops=None):
     t = time.monotonic()
-    n_decl = declare(run, item, item["row"])
+    n_decl = declare(run, item, r0)
     table = symbols.table(run, consumer=consumer, sets=sets_for(item), content_layers=True,
                           hops=hops, limit=n_decl, tokenizer=tok)
     views = {b["symbol"]: b for b in table.report["bindings"]}
@@ -118,11 +118,10 @@ def read_vec(run, sets, basis, vec):
     return brief(c)
 
 
-def edited(item, donor, consumer):
-    """Recipient run with donor's V cell (its own r0) at L20 KV6 written into the recipient's r0."""
+def edited(item, donor, r0, rd):
+    """Recipient run with donor's V cell (row rd) at L20 KV6 written into the recipient's row r0."""
     drun = dbg.run(donor["ids"], name="donor")
     dv = drun.read_cache(LAYER, "v", staged=False).clone()
-    rd, r0 = donor["row"], item["row"]
     er = dbg.run(item["ids"], name="edit")
     er.set_cell(LAYER, "v", dv[:, GROUP:GROUP + 1, rd:rd + 1], rows=[r0], kv=[GROUP])
     er.until(f"t{item['n'] - 1}.logits")
@@ -133,12 +132,14 @@ def edited(item, donor, consumer):
 for entry in panel:
     t_item = time.monotonic()
     item = cand[entry["id"]]
-    ids, j, r0, a = item["ids"], item["n"] - 1, item["row"], item["answer"]
-    assert (gt[item["id"]]["row"], gt[item["id"]]["layer"], gt[item["id"]]["kv"]) == (r0, LAYER, GROUP)
+    ids, j, a = item["ids"], item["n"] - 1, item["answer"]
+    r0 = gt[item["id"]]["row"]          # the ground-truth carrier row (last descriptor row on 55/64)
+    assert (gt[item["id"]]["layer"], gt[item["id"]]["kv"]) == (LAYER, GROUP) and r0 in item["span"]
     d0 = cand[entry["donors"][0]]
     b0 = d0["answer"]
     cons = Margin(j, a, b0)
     rec = {"id": item["id"], "family": item["family"], "bridge": item["bridge"], "r0": r0,
+           "last_desc_row": item["row"],
            "span": item["span"], "donor0": d0["id"], "truth": {
                "country": tok.decode([item["country_token"]]), "capital": tok.decode([a]),
                "entity": tok.decode([ENT_OF[item["id"]]])}}
@@ -151,7 +152,7 @@ for entry in panel:
     reader = readout(run, cons)
     w_nat = bridge_write(run, j, r0)
     # T_diff
-    er, el = edited(item, d0, cons)
+    er, el = edited(item, d0, r0, r0)   # same-length donor, same row (as job2 GT.V.d0)
     w_don = bridge_write(er, j, r0)
     direct = float((w_don - w_nat).double().cpu().reshape(-1) @ reader.vector.double().cpu().reshape(-1))
     native_delta = float(el[a] - el[b0]) - rec["native_M"]
@@ -159,7 +160,7 @@ for entry in panel:
     saved_delta = (saved["GT.V.d0"][0] - saved["GT.V.d0"][1]) - (saved["native"][0] - saved["native"][1])
     rec["hop_check"] = {"native_delta": native_delta, "job2_GT.V.d0_delta": saved_delta,
                         "direct_delta": direct}
-    et = take_table(er, item, cons)
+    et = take_table(er, item, r0, cons)
     eb = et["bridge"]["content"]
     rec["T_diff"] = {"argmax": int(el.argmax()), "argmax_text": tok.decode([int(el.argmax())]),
                      "answer_moves": int(el.argmax()) == b0,
@@ -169,7 +170,7 @@ for entry in panel:
                      "content_all": eb["all"]["text"], "table_seconds": et["_seconds"]}
     rec["T_diff"]["together"] = rec["T_diff"]["content_moves"] == rec["T_diff"]["answer_moves"]
     # native table with the hop
-    tab = take_table(run, item, cons, hops={"bridge": {
+    tab = take_table(run, item, r0, cons, hops={"bridge": {
         "native_delta": native_delta, "direct_delta": direct,
         "replacement": f"V cell L20 KV6 from {d0['id']} (stepped set_cell)"}})
     rec["table"] = tab
@@ -212,8 +213,9 @@ for entry in panel:
             top2 = [int(x) for x in native.topk(2).indices]
             runner = top2[1] if top2[0] == a else top2[0]
             ccons = Margin(j, a, runner)
-            cr, cl = edited(item, dc, ccons)
-            ct = take_table(cr, item, ccons)
+            rd = dc["row"] - (item["row"] - r0)   # same offset from the descriptor's last row
+            cr, cl = edited(item, dc, r0, rd)
+            ct = take_table(cr, item, r0, ccons)
             cb = ct["bridge"]["content"]
             am = int(cl.argmax())
             rec["T_city"] = {"donor": dc["id"], "donor_correct": correct.get(dc["id"]),
