@@ -1,4 +1,4 @@
-"""``python -m mdb.serve --project PATH [--tiny qwen2|qwen3 | --model DIR] [--port N]
+"""``python -m mdb.serve --project PATH [--tiny FAMILY | --model DIR] [--port N]
 [--host 127.0.0.1] [--allow-remote --allow-host HOST[:PORT] ...]``.
 
 Without ``--tiny``/``--model`` the server is a read-only viewer of the recorded project. With
@@ -18,6 +18,10 @@ import argparse
 import ipaddress
 import sys
 from pathlib import Path
+
+# ``mdb.engine.models.TINY_FAMILIES``, spelled out so the read-only viewer imports without torch
+# (a test checks the two agree).
+TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
 
 
 def is_loopback(host: str) -> bool:
@@ -40,7 +44,7 @@ def main(argv=None):
                         help="also accept this Host header (repeatable); HOST alone means "
                         "HOST:<port>. Required with --allow-remote")
     source = parser.add_mutually_exclusive_group()
-    source.add_argument("--tiny", choices=("qwen2", "qwen3"),
+    source.add_argument("--tiny", choices=TINY_FAMILIES,
                         help="live mode on a random tiny model (tests, demos)")
     source.add_argument("--model", metavar="DIR",
                         help="live mode on a local Hugging Face checkpoint (never downloads)")

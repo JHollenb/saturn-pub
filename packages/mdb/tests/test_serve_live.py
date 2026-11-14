@@ -629,6 +629,19 @@ def test_live_cli_flags_warn_twice_with_allow_remote(tmp_path, capsys, monkeypat
     assert "cannot attach the live model" in capsys.readouterr().err
 
 
+def test_serve_tiny_takes_every_engine_tiny_family(tmp_path, monkeypatch):
+    from mdb.engine.models import TINY_FAMILIES
+    from mdb.serve import __main__ as serve_main
+
+    assert serve_main.TINY_FAMILIES == TINY_FAMILIES
+    seen = []
+    monkeypatch.setitem(__import__("sys").modules, "uvicorn", type("U", (), {
+        "run": staticmethod(lambda app, **kwargs: seen.append(app.state.live.sid))}))
+    for family in ("llama", "mistral"):
+        assert serve_main.main(["--project", str(tmp_path / family), "--tiny", family]) == 0
+    assert [sid.split("-")[0] for sid in seen] == ["llama", "mistral"]
+
+
 # --------------------------------------------------------------------------- fix round (audit)
 
 
