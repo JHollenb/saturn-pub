@@ -41,10 +41,43 @@ def bridge(model: Any, tokenizer: Any, *, name: str | None = None,
         tokenizer=tokenizer, device=param.device, dtype=param.dtype)
 
 
+def _bridge_of(bridge_or_cache: Any) -> Any:
+    """The bridge behind a bridge or an ``ActivationCache`` (whose ``.model`` is the bridge).
+
+    Never ``getattr(bridge, "model")``: ``TransformerBridge.__getattr__`` falls through to the
+    wrapped Hugging Face module, so ``bridge.model`` is the HF ``Qwen3Model``, which has no
+    ``_weights_processed`` (the old ``processed()`` read it there and always said False)."""
+    if "_weights_processed" in getattr(bridge_or_cache, "__dict__", {}):
+        return bridge_or_cache
+    inner = getattr(bridge_or_cache, "__dict__", {}).get("model")
+    if inner is not None and "_weights_processed" in getattr(inner, "__dict__", {}):
+        return inner
+    return None
+
+
 def processed(bridge_or_cache: Any) -> bool:
-    """True when TransformerLens weight processing ran (fold_ln / centring / bias folding)."""
-    model = getattr(bridge_or_cache, "model", bridge_or_cache)
-    return bool(getattr(model, "_weights_processed", False))
+    """True when TransformerLens weight processing ran on the bridge (``process_weights``, called
+    by ``enable_compatibility_mode()`` unless ``no_processing=True``). TL sets
+    ``self._weights_processed`` on the bridge itself (``bridge_core.py``, TL 4.4.0)."""
+    found = _bridge_of(bridge_or_cache)
+    return bool(found is not None and found.__dict__["_weights_processed"])
+
+
+def processing(bridge_or_cache: Any) -> dict[str, Any]:
+    """What TL weight processing did to this bridge, as far as TL 4.4.0's own gates decide it
+    (``ProcessWeights.process_weights``, ``weight_processing.py``): ``fold_ln`` folds the norm
+    gains into the next linear layers for LN and RMS; centring of the writing weights (and the
+    centred-output value-bias fold) runs only for ``normalization_type`` LN/LNPre without
+    ``final_rms``, so on RMSNorm models (Qwen2/Qwen3, Llama) the residual stream is NOT centred.
+    Assumes the default flags of ``enable_compatibility_mode``; TL does not record the flags."""
+    found = _bridge_of(bridge_or_cache)
+    cfg = getattr(found, "cfg", None)
+    norm = getattr(cfg, "normalization_type", None)
+    final_rms = bool(getattr(cfg, "final_rms", False))
+    done = processed(bridge_or_cache)
+    return {"processed": done, "normalization_type": norm, "final_rms": final_rms,
+            "residual_centred": bool(done and norm in ("LN", "LNPre") and not final_rms),
+            "norm_gains_folded": bool(done and norm in ("LN", "LNPre", "RMS", "RMSPre"))}
 
 
 def cache_values(cache: Any, rows: Iterable[int], *, layers: Iterable[int] | None = None,
@@ -83,8 +116,12 @@ def import_cache(dbg: Any, name: str, cache: Any, tokens: Sequence[int], *,
     """Register a TL cache as origin ``name`` of ``dbg`` (``Debugger.import_values``)."""
     rows = range(len(tokens)) if rows is None else rows
     values = cache_values(cache, rows, layers=layers, ports=ports, batch=batch)
-    is_processed = processed(bridge_model) if bridge_model is not None else processed(cache)
-    provenance = {"tool": "transformer_lens", "version": version(), "processed": is_processed,
+    state = processing(bridge_model if bridge_model is not None else cache)
+    if _bridge_of(bridge_model if bridge_model is not None else cache) is None:
+        # a plain {hook: tensor} dict carries no bridge: say so instead of claiming "unprocessed"
+        state["processed"] = None
+    provenance = {"tool": "transformer_lens", "version": version(), "processed": state["processed"],
+                  "processing": state,
                   "program": "TransformerBridge full forward", "batch_index": batch}
     return dbg.import_values(name, values, tokens=tokens, provenance=provenance)
 

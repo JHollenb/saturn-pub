@@ -294,3 +294,49 @@ def test_nnsight_source_reads_leave_mdb_model_untouched():
         nm.model.layers[0].self_attn.source.attention_interface_1.inputs.save()
     with pytest.raises(Refused, match="rewritten forward"):
         mdb.attach(other)
+
+
+def test_processed_reads_the_bridge_flag():
+    """TL sets ``_weights_processed`` on the bridge; ``bridge.model`` falls through to the HF
+    module, which never has it (the old helper read it there and always said False)."""
+    _tools()
+    from mdb.interop import tl
+
+    warnings.filterwarnings("ignore")
+    model = _model("qwen3", "fp32")
+    bridge = tl.bridge(model, _tokenizer("qwen3"), in_place=True)
+    _, cache = bridge.run_with_cache(torch.tensor(TOKENS[:1]))
+    assert tl.processed(bridge) is False and tl.processed(cache) is False
+    bridge.enable_compatibility_mode(disable_warnings=True)
+    _, cache = bridge.run_with_cache(torch.tensor(TOKENS[:1]))
+    assert tl.processed(bridge) is True and tl.processed(cache) is True
+    state = tl.processing(cache)
+    assert state["normalization_type"] == "RMS"
+    assert state["norm_gains_folded"] is True and state["residual_centred"] is False
+    assert tl.processed({"blocks.0.hook_resid_pre": torch.zeros(1)}) is False
+
+
+def test_nn_grads_one_batch_matches_autograd():
+    """nn.grads: one batched nnsight forward + backward == plain torch autograd per prompt;
+    weights stay frozen inside (no weight grads) and their flags are restored."""
+    _tools()
+    from mdb.interop import nn
+
+    warnings.filterwarnings("ignore")
+    model = _model("qwen3", "fp32")
+    consumers = [(4, 9), (7, 2)]
+    out = nn.grads(model, TOKENS, ["L0.h", "L0.h_out", "L1.h", "L1.m"], consumers)
+    assert all(p.requires_grad for p in model.parameters())
+    assert all(p.grad is None for p in model.parameters())
+    for i, tokens in enumerate(TOKENS):
+        res = model(torch.tensor([tokens]), output_hidden_states=True)
+        hs = res.hidden_states
+        last = res.logits[0, -1]
+        m = last[consumers[i][0]] - last[consumers[i][1]]
+        g0, g1 = torch.autograd.grad(m, [hs[0], hs[1]])
+        assert abs(out["margin"][i] - float(m)) < 1e-5
+        assert torch.allclose(out["grads"]["L0.h"][i], g0[0], atol=1e-6)
+        assert torch.allclose(out["grads"]["L1.h"][i], g1[0], atol=1e-6)
+        assert torch.equal(out["grads"]["L0.h_out"][i], out["grads"]["L1.h"][i])
+        assert torch.allclose(out["values"]["L1.h"][i], hs[1][0])
+    assert out["grads"]["L1.m"].shape == out["values"]["L1.m"].shape

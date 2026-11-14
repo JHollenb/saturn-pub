@@ -299,8 +299,9 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
             a_ids = torch.tensor([consumers[i][0] for i in chunk], device=device)
             b_ids = torch.tensor([consumers[i][1] for i in chunk], device=device)
 
-            def margin(logits):
-                last = logits[:, -1].to(torch.float64)
+            def margin(last):
+                # ``last``: the last row's logits (batch, vocab); only that row is saved
+                last = last.to(torch.float64)
                 return (last.gather(1, a_ids[:, None]) - last.gather(1, b_ids[:, None]))[:, 0]
 
             clean_A, donor_vals = {}, {}
@@ -314,7 +315,8 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
                         clean_A[layer] = saved
                     if (layer, port) in own:
                         donor_vals[("self", layer, port)] = saved
-                logits = nm.output.logits.save()
+                # a copy: saving a view would pin the whole (batch, pos, vocab) logits
+                logits = nm.output.logits[:, -1].clone().save()
             traces += 1
             for j, i in enumerate(chunk):
                 base[i] = float(margin(logits)[j])
@@ -341,7 +343,7 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
                                 x[:, :-1] = clean_A[layer][:, :-1]
                             for p in [p for p in here if p.port == port]:
                                 _apply(x, p, _value(p, donor_vals, device, chunk), p.rows)
-                    edited = nm.output.logits.save()
+                    edited = nm.output.logits[:, -1].clone().save()
                 traces += 1
                 for j, i in enumerate(chunk):
                     out[name][i] = float(margin(edited)[j])
@@ -353,3 +355,78 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
 
 def _device(nm: Any) -> Any:
     return next(nm._module.parameters()).device
+
+
+# --- gradients ----------------------------------------------------------------------------
+
+GRAD_PORTS = tuple(n.port for n in names.NAMES if n.nn_layout == "seq")
+
+
+class _Frozen:
+    """Parameters set ``requires_grad=False`` for the duration, then restored. An input-only
+    backward then builds no weight gradients (Qwen3-1.7B: +3.4 GB when they were left on,
+    issue T7, job-b3bc03382981)."""
+
+    def __init__(self, model: Any):
+        self.model = model
+        self.flags: list[tuple[Any, bool]] = []
+
+    def __enter__(self) -> None:
+        self.flags = [(p, p.requires_grad) for p in self.model.parameters()]
+        for p, _ in self.flags:
+            p.requires_grad_(False)
+
+    def __exit__(self, *exc: Any) -> None:
+        for p, flag in self.flags:
+            p.requires_grad_(flag)
+
+
+def grads(model: Any, tokens: Sequence[Sequence[int]], addresses_: Sequence[str],
+          consumers: Sequence[tuple[int, int]]) -> dict[str, Any]:
+    """Values and input gradients ``dM_i/dx`` of ``M_i = logit[a_i] - logit[b_i]`` at each
+    prompt's last row, for residual-shaped ports (``L<l>.h``, ``.h_out``, ``.o``, ``.m``, ...),
+    over a batch of equal-length prompts in ONE nnsight forward and ONE backward.
+
+    The prompts are independent rows of one batch, so the backward of ``sum_i M_i`` gives every
+    prompt its own gradient. Weights are frozen for the call (no weight gradients are built) and
+    the embedding output is the leaf that carries ``requires_grad``. Returns ``{"values":
+    {address: (batch, pos, X)}, "grads": {address: (batch, pos, X)}, "margin": [M_i]}``
+    (native dtype; ``measured`` by native kernels in a batched program).
+
+    nnsight 0.8 semantics this follows (``nnsight/tracing/tracer.py``, ``intervention/
+    backward.py``): the outermost trace hands back only names bound to ``.save()``d objects,
+    so the result containers are created inside the trace with ``nnsight.save``; ``.grad`` is
+    served only inside ``with M.backward():`` and must be requested in reverse forward order.
+    """
+    import nnsight
+    import torch
+
+    bad = [a for a in addresses_ if names._split(a)[1] not in GRAD_PORTS]
+    if bad:
+        raise ValueError(f"grads reads ports {', '.join(GRAD_PORTS)}; not {', '.join(bad)}")
+    if len({len(t) for t in tokens}) != 1:
+        raise ValueError("grads takes equal-length prompts (no padding inside one batch)")
+    nm = wrap(model)
+    device = _device(nm)
+    ids = torch.tensor([list(t) for t in tokens], device=device)
+    a_ids = torch.tensor([c[0] for c in consumers], device=device)
+    b_ids = torch.tensor([c[1] for c in consumers], device=device)
+    ordered = sorted(dict.fromkeys(addresses_), key=_read_key)
+    with _Frozen(model), torch.enable_grad(), nm.trace(ids):
+        emb = nm.model.embed_tokens.output
+        emb.requires_grad_(True)
+        acts = [(address, envoy(nm, address)) for address in ordered]
+        values = nnsight.save({address: x.detach() for address, x in acts})
+        last = nm.lm_head.output[:, -1].float()
+        margins = last.gather(1, a_ids[:, None])[:, 0] - last.gather(1, b_ids[:, None])[:, 0]
+        margin = nnsight.save(margins.detach())
+        gradients = nnsight.save({})
+        with margins.sum().backward():
+            # L<l>.h_out and L<l+1>.h are one tensor: ask autograd for it once
+            by_tensor = {}
+            for address, x in reversed(acts):
+                if id(x) not in by_tensor:
+                    by_tensor[id(x)] = x.grad.detach()
+                gradients[address] = by_tensor[id(x)]
+    return {"values": dict(values), "grads": {a: gradients[a] for a in ordered},
+            "margin": [float(m) for m in margin], "nnsight": version()}

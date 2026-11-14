@@ -5,7 +5,8 @@
 - ``tl``: a TransformerBridge around the attached module; TL caches imported as mdb origins;
   ``mdb.trace`` captures exported as TL caches.
 - ``nn``: nnsight reads by mdb address and ``batch_whatif`` (mdb edits measured over many
-  prompts in batched traces; cell edits in mdb's ``reader`` scope or ``sequence`` scope).
+  prompts in batched traces; cell edits in mdb's ``reader`` scope or ``sequence`` scope);
+  ``grads`` (values and input gradients of a margin, one batched forward + backward).
 - ``verify``: a claimed effect from another tool re-measured by mdb natively, with mdb's
   sealed prediction and P20 verdict beside the claim.
 

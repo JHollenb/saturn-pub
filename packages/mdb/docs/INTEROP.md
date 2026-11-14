@@ -75,6 +75,26 @@ out = nn.batch_whatif(model, recipients, consumers, {
 
 A cell edit in `reader` scope is what mdb means by a state-cell edit: only the last row reads the changed cell. nnsight realises it natively by patching the value (or key) row and putting every earlier row's `o_proj` input back to its clean value at that layer. `sequence` scope is ordinary activation patching: later rows read the patched cell too and the change spreads through their residuals. Prompts are grouped by length so no batch is padded.
 
+## Gradients through nnsight (one batched forward and backward)
+
+```python
+out = nn.grads(model, prompts, ["L14.h", "L20.h", "L27.h_out"], consumers)   # equal lengths
+out["grads"]["L14.h"]        # (batch, pos, d): dM_i/dh for every row of every prompt
+```
+
+`nn.grads` is the nnsight 0.8 idiom (read from the installed source, `nnsight/tracing/tracer.py` and `nnsight/intervention/backward.py`):
+
+- The outermost trace hands back only names bound to `.save()`d objects. A name bound inside `with nm.trace(...)` to an unsaved object (a list built in the body, a value read inside `with M.backward():`) is dropped on exit, by design. Bind result containers inside the trace with `nnsight.save({})` or `nnsight.save([])`, or `.save()` each value you bind. Mutating a container created before the trace also works, because the body runs over a copy of the frame's locals that holds the same objects. That is a side effect, not the documented route (issue T7).
+- `.grad` is served only inside `with M.backward():` and must be requested in reverse forward order. `L<l>.h_out` and `L<l+1>.h` are one tensor, so ask for it once.
+- An input-only backward must not build weight gradients. `nn.grads` freezes the parameters for the call (and restores the flags) and makes the embedding output the grad leaf. On Qwen3-1.7B, leaving weights trainable cost about +3.4 GB (job-b3bc03382981).
+- The prompts are independent rows of one batch, so a single backward of `sum_i M_i` gives each prompt its own gradient. Do not loop one trace per prompt.
+
+## TransformerLens weight processing on RMSNorm models
+
+`tl.processed(bridge_or_cache)` reads the flag TL sets on the bridge itself (`bridge._weights_processed`). Never read `bridge.model`: `TransformerBridge.__getattr__` falls through to the Hugging Face module, which has no flag. Before 2026-11-14 the helper read it there. It returned False for every bridge, but it was right for an `ActivationCache`, whose `.model` is the bridge (measured on tiny Qwen3). So `import_cache(..., bridge_model=bridge)` could import processed values without the refusal firing, and TP1 recorded `processed: false` for a bridge that had been processed. `tl.processing(...)` adds what TL's own gates did (TL 4.4.0 `ProcessWeights.process_weights`). `fold_ln` folds the norm gains for LN and RMS. Writing-weight centring runs only for `normalization_type` LN/LNPre without `final_rms`. So on Qwen2/Qwen3/Llama, compatibility mode folds gains and centres the unembedding but leaves the residual stream uncentred (`residual_centred: False`). If you want centred residuals on an RMSNorm model, subtract the mean yourself and label the result derived. TL will not do it.
+
+Cache only what you read: `bridge.run_with_cache(ids, names_filter=lambda n: n.endswith("hook_resid_pre"))`. An unfiltered cache of a 1.7B model holds every hook. Combined with the fp32 CPU copy that processing needs, it peaked at 21–24 GB of RAM in TP1.
+
 ## mdb verifies another tool's claim natively
 
 ```python
