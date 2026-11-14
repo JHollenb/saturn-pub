@@ -164,11 +164,22 @@ def test_hop_edge_cell_consumer_closes_on_the_cells_native_change(debugger):
         symbols.hop_edge(run, edited, reader, cell_layer=top)
 
 
-def test_cell_readout_refuses_a_v_bias():
-    dbg = open_tiny("qwen2", "bf16")
+def test_cell_readout_is_affine_under_a_v_bias():
+    """Qwen2 has a V bias: C = c . h + bias, with bias = d . W_g b_V (and the bias cancels in
+    every difference, so the ladder is unchanged)."""
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    model = tiny_model("qwen2", "fp32", seed=113)
+    bias = model.model.layers[1].self_attn.v_proj.bias
+    if bias is None:
+        pytest.skip("tiny qwen2 has no V bias")
+    with torch.no_grad():                         # zero-initialised: set before attaching
+        bias.copy_(torch.randn(bias.shape, generator=torch.Generator().manual_seed(0)) * 0.5)
+    dbg = attach(model)
     run = dbg.run(PROMPT, prefill=2)
     run.until("t5.logits")
-    if getattr(layer_module(run.adapter, 0).self_attn.v_proj, "bias", None) is None:
-        pytest.skip("tiny qwen2 has no V bias")
-    with pytest.raises(Refusal):
-        symbols.cell_readout(run, symbols.CellTarget(3, 0, 0, 4, 9))
+    reader = symbols.cell_readout(run, symbols.CellTarget(3, 1, 0, 4, 9))
+    assert reader.bias != 0.0
+    h = run.read("t3.L1.h").double().reshape(-1)
+    assert float(reader.vector @ h) + reader.bias == pytest.approx(reader.native, rel=1e-4, abs=1e-6)

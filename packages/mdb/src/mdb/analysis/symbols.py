@@ -289,30 +289,34 @@ def cell_value(run: Any, target: CellTarget, direction: Any = None) -> float:
 
 
 def cell_readout(run: Any, target: CellTarget) -> Any:
-    """A ``Readout`` (kind ``cell``) of ``C`` as a linear functional of the residual entering
-    the cell's layer at its row: Qwen3 has no V bias and no v norm, so
-    ``v_g = W_V^g (rho gamma_l * h)`` with ``h = t<row>.L<layer>.h`` and ``rho`` its input-norm
-    scale; ``c = rho_0 gamma_l * (W_V^g)^T W_g^T d`` at the native rho_0 (derived-exact).
-    ``native`` is ``C`` read from the cache cell."""
+    """A ``Readout`` (kind ``cell``) of ``C`` as an affine functional of the residual entering
+    the cell's layer at its row: with no v norm, ``v_g = W_V^g (rho gamma_l * h) + b_V^g`` with
+    ``h = t<row>.L<layer>.h`` and ``rho`` its input-norm scale, so
+    ``C = c . h + bias`` with ``c = rho_0 gamma_l * (W_V^g)^T W_g^T d`` at the native rho_0 and
+    ``bias = d . W_g b_V^g`` (0 without a V bias, e.g. Qwen3; Qwen2 has one). The bias cancels
+    in every difference, so ``hop_edge`` uses ``c`` alone (derived-exact). ``native`` is ``C``
+    read from the cache cell."""
     from .reads import Readout, layer_module
 
     module = layer_module(run.adapter, target.layer)
-    if getattr(module.self_attn.v_proj, "bias", None) is not None:
-        raise Refusal("cell readout: the V projection has a bias (not a linear functional)")
     if getattr(module.self_attn, "v_norm", None) is not None:
-        raise Refusal("cell readout: the model normalises V (not a linear functional)")
+        raise Refusal("cell readout: the model normalises V (not an affine functional)")
     dh = run.adapter.head_dim
     direction = _cell_direction(run, target)
-    w_v = f64(module.self_attn.v_proj.weight)[target.kv * dh:(target.kv + 1) * dh]   # (dh, d)
+    rows = slice(target.kv * dh, (target.kv + 1) * dh)
+    w_v = f64(module.self_attn.v_proj.weight)[rows]                                   # (dh, d)
+    b_v = getattr(module.self_attn.v_proj, "bias", None)
+    bias = 0.0 if b_v is None else float(direction @ f64(b_v)[rows])
     norm = module.input_layernorm
     gamma, eps = f64(norm.weight).reshape(-1), float(norm.variance_epsilon)
     h = f64(run.read(f"t{target.row}.L{target.layer}.h")).reshape(-1)
     rho = float((h.pow(2).mean() + eps) ** -0.5)
     vector = rho * gamma * (w_v.T @ direction)
     return Readout("cell", target.text, target.row, target, layer=target.layer, port="h",
-                   vector=vector, rho=rho, native=cell_value(run, target, direction),
-                   native_authority=MEASURED,
-                   premises=["v = W_V^g n with n = rho gamma h: no V bias, no v norm (checked)",
+                   vector=vector, rho=rho, bias=bias,
+                   native=cell_value(run, target, direction), native_authority=MEASURED,
+                   premises=["v = W_V^g n + b_V^g with n = rho gamma h: no v norm (checked); "
+                             "the V bias enters only as the constant bias",
                              "rho of the cell layer's input norm at the native state"])
 
 
