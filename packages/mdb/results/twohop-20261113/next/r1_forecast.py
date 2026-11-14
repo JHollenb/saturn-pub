@@ -119,8 +119,8 @@ for group in GROUPS.split(","):
         with torch.enable_grad():
             for x in range(L):
                 if x == 20:
-                    h = h.detach().requires_grad_(True)
-                    h20 = h
+                    h20 = torch.zeros_like(h, requires_grad=True)
+                    h = h + h20
                 h = layer(x, h, K[x], V[x], j, taps_o[x], taps_m[x])
             hn = rms(h, final.weight, final.variance_epsilon)
             M = (W_U[a] - W_U[b]) @ hn
