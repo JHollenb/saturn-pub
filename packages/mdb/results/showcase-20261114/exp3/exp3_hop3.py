@@ -57,7 +57,13 @@ AMAP = {"t<last>.L<l>.n": "blocks.<l>.mlp.hook_in", "t<last>.L<l>.m": "blocks.<l
 rng = random.Random(20261114)
 pool = sorted([i for i in items("depth") if i["family"] in ("d2", "d3-lm", "d3-per", "d4-work")
                and (SCORE[i["id"]]["correct"] or i["family"] != "d2")], key=lambda i: i["id"])
-if PICK:
+SHARD = None
+TAG = "-smoke" if PICK else ""
+if PICK in ("s0", "s1"):
+    SHARD, TAG = int(PICK[1]), "-" + PICK
+elif PICK == "smoke":
+    SHARD = "smoke"
+elif PICK:
     pool = [pool[int(k)] for k in PICK.split(",")]
 
 
@@ -139,13 +145,13 @@ for key, by in qual.items():
 log(f"NOMINATED {len(nominated)}")
 json.dump({"features": [[x, f, lang] for (x, f), lang in sorted(nominated.items())],
            "counts": {f"L{x}.f{f}": {str(k): len(v) for k, v in qual[(x, f)].items()} for (x, f) in nominated}},
-          open(f"{OUT}/exp3-nominated{'-smoke' if PICK else ''}.json", "w"), indent=1)
+          open(f"{OUT}/exp3-nominated{TAG}.json", "w"), indent=1)
 
 # ---------------- pass 2
-fh = open(f"{OUT}/exp3-items{'-smoke' if PICK else ''}.jsonl", "w")
+fh = open(f"{OUT}/exp3-items{TAG}.jsonl", "w")
 cache = {}
 n_neuron = 0
-for item in pool:
+for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[SHARD::2]):
     t0 = time.monotonic()
     iid, ids = item["id"], item["ids"]
     last = len(ids) - 1
