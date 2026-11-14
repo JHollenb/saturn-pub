@@ -1,0 +1,56 @@
+job-d133d104371f  killed_vram  mdb-interop-j1b  host=beast
+detail: tree VRAM 15918MB > ceiling 8019MB
+reservation: ram=12000MB vram=7290MB cpu=4 source=declared-pinned
+needs: {"cuda": true, "host": "beast"}
+result: peak_rss=1769.5MB peak_vram=15918.0MB elapsed=4.91s
+memory enforcement: linux-cgroup-v2 — strict (kernel boundary)
+failure diagnostics:
+{
+  "classification": {
+    "class": "memory_ceiling",
+    "deterministic": false,
+    "retry": "auto-retried-grown"
+  },
+  "command": [
+    "bash",
+    "run.sh"
+  ],
+  "cwd": "/mnt/big/mrun-scratch/job-d133d104371f",
+  "kind": "killed_vram",
+  "log_tail": "<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour\n\rLoading weights:   0%|          | 0/338 [00:00<?, ?it/s]\rLoading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:00<00:00, 18079.59it/s]\n[W1113 21:12:24.799098560 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 20971520 bytes (free: 17563648, total: 16718168064).\n[W1113 21:12:24.799176326 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 20971520 bytes (free: 17563648, total: 16718168064).\nTraceback (most recent call last):\n  File \"/mnt/big/mrun-scratch/job-d133d104371f/packages/mdb/experiments/interop_20261113/j1b_processed.py\", line 42, in <module>\n    bridge.enable_compatibility_mode(disable_warnings=True)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/ssd1tb/cache/beast/mdb-interop/site-tl440-nn082/transformer_lens/model_bridge/transformer_bridge.py\", line 655, in enable_compatibility_mode\n    self.process_weights(\n    ~~~~~~~~~~~~~~~~~~~~^\n        fold_ln=fold_ln,\n        ^^^^^^^^^^^^^^^^\n    ...<3 lines>...\n        refactor_factored_attn_matrices=refactor_factored_attn_matrices,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/mnt/ssd1tb/cache/beast/mdb-interop/site-tl440-nn082/transformer_lens/model_bridge/transformer_bridge.py\", line 820, in process_weights\n    state_dict = ProcessWeights.process_weights(\n        state_dict,\n    ...<6 lines>...\n        adapter=adapter,\n    )\n  File \"/mnt/ssd1tb/cache/beast/mdb-interop/site-tl440-nn082/transformer_lens/weight_processing.py\", line 1813, in process_weights\n    state_dict = ProcessWeights.fold_layer_norm(\n        state_dict, cfg, fold_biases=False, center_weights=False, adapter=adapter\n    )\n  File \"/mnt/ssd1tb/cache/beast/mdb-interop/site-tl440-nn082/transformer_lens/weight_processing.py\", line 1221, in fold_layer_norm\n    k: v.clone() if isinstance(v, torch.Tensor) else v for k, v in state_dict.items()\n       ~~~~~~~^^\ntorch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 15.57 GiB of which 16.75 MiB is free. Including non-PyTorch memory, this process has 15.54 GiB memory in use. Of the allocated memory 14.90 GiB is allocated by PyTorch, and 368.63 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)\n",
+  "message": "tree VRAM 15918MB > ceiling 8019MB",
+  "observed_ts": 1794633144.9832711,
+  "phase": "process.finalize",
+  "resources": {
+    "peak_rss_mb": 1769.5,
+    "peak_vram_mb": 15918.0,
+    "ram_ceiling_mb": 13200.000000000002,
+    "vram_ceiling_mb": 8019.000000000001
+  },
+  "returncode": -9,
+  "signal": 9
+}
+execution phases: payload.prepare -> dispatch.vram_guard -> process.launch -> process.monitor -> process.finalize -> finished
+queue note: mdb interop J1b: TL compatibility-mode numerics vs native, bf16 then fp32
+meta: {"auto_retry_job_id": "job-00355fd16717", "observed_peak_rss_mb": 1769.5, "observed_peak_rss_ts": 1794633145.0895967, "observed_peak_vram_mb": 15918.0, "observed_peak_vram_ts": 1794633145.0895967, "wedge_clamp": [{"field": "vram_mb", "from": 11000.0, "to": 7290.0, "why": "wedged queue: kill ceiling exceeded idle beast admission; clamped to the admissible figure after 120s"}]}
+recent events (newest first, 20):
+  69s ago  job.telemetry host=beast
+  74s ago  job.finished host=beast state=killed_vram reason=killed_vram detail=tree VRAM 15918MB > ceiling 8019MB
+  74s ago  job.telemetry host=beast
+  75s ago  job.agent_phase host=beast state=running reason=process.finalize
+  75s ago  job.logs_append
+  77s ago  job.logs_append
+  79s ago  job.agent_phase host=beast state=running reason=process.monitor
+  79s ago  job.agent_event host=beast state=running reason=running
+  79s ago  job.agent_phase host=beast state=preparing reason=process.launch
+  79s ago  job.agent_phase host=beast state=preparing reason=dispatch.vram_guard
+  79s ago  job.agent_phase host=beast state=preparing reason=payload.prepare
+  79s ago  job.agent_event host=beast state=preparing reason=preparing
+  79s ago  job.claimed host=beast state=assigned
+  79s ago  admission.status state=queued reason=admissible
+  79s ago  job.reservation_clamped state=queued reason=wedged-queue
+  79s ago  job.reservation_clamped state=queued reason=wedged-queue
+  80s ago  admission.status state=queued reason=waiting detail=waiting: beast: vram: need 12100MB (ceiling) > avail 6316MB (total 16376 - baseline 441 - committed 8800 - margin 819) [over-declared active vram: job-5545fd406cb9 9GB committed/7GB live]; fits an idle host; blocked by live external usage
+  269s ago admission.status state=queued reason=waiting detail=waiting: beast: vram: need 12100MB (ceiling) > avail 6316MB (total 16376 - baseline 441 - committed 8800 - margin 819) [over-declared active vram: job-5545fd406cb9 9GB committed/6GB live]; fits an idle host; blocked by live external usage
+  274s ago admission.status state=queued reason=waiting detail=waiting: beast: vram: need 12100MB (ceiling) > avail 3680MB (total 16376 - baseline 3077 - committed 8800 - margin 819) [over-declared active vram: job-5545fd406cb9 9GB committed/4GB live]; fits an idle host; blocked by live external usage
+  279s ago admission.status state=queued reason=waiting detail=waiting: beast: vram: need 12100MB (ceiling) > avail 6324MB (total 16376 - baseline 433 - committed 8800 - margin 819)

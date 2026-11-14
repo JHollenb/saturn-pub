@@ -1,0 +1,29 @@
+job-119e2c03472c  succeeded  mdb-interop-j1  host=beast
+reservation: ram=9800MB vram=5000MB cpu=4 source=declared
+needs: {"cuda": true, "host": "beast"}
+result: peak_rss=2304.0MB peak_vram=3708.0MB elapsed=10.17s
+memory enforcement: linux-cgroup-v2 — strict (kernel boundary)
+execution phases: payload.prepare -> dispatch.vram_guard -> process.launch -> process.monitor -> process.finalize -> finished
+queue note: mdb interop J1: parity HF/mdb/TL/nnsight + Eiffel via TL toolkit
+meta: {"observed_peak_rss_mb": 1947.5, "observed_peak_rss_ts": 1794632108.865966, "observed_peak_vram_mb": 3708.0, "observed_peak_vram_ts": 1794632108.865966}
+recent events (newest first, 20):
+  1106s ago job.telemetry host=beast
+  1111s ago job.finished host=beast state=succeeded reason=succeeded
+  1111s ago job.telemetry host=beast
+  1111s ago job.logs_append
+  1111s ago job.agent_phase host=beast state=running reason=process.finalize
+  1115s ago job.logs_append
+  1116s ago job.telemetry host=beast
+  1117s ago job.logs_append
+  1119s ago job.logs_append
+  1121s ago job.agent_phase host=beast state=running reason=process.monitor
+  1121s ago job.agent_event host=beast state=running reason=running
+  1121s ago job.agent_phase host=beast state=preparing reason=process.launch
+  1121s ago job.agent_phase host=beast state=preparing reason=dispatch.vram_guard
+  1121s ago job.agent_phase host=beast state=preparing reason=payload.prepare
+  1121s ago job.agent_event host=beast state=preparing reason=preparing
+  1121s ago job.claimed host=beast state=assigned
+  1121s ago admission.status state=queued reason=admissible
+  1125s ago admission.status state=queued reason=waiting detail=waiting: beast: ram: need 10780MB (ceiling) > avail 10739MB (total 66513 - baseline 28248 - committed 24200 - margin 3326); fits an idle host; blocked by live external usage
+  1126s ago admission.status state=queued reason=waiting detail=waiting: beast: ram: need 10780MB (ceiling) > avail 270MB (total 66513 - baseline 27168 - committed 35750 - margin 3326) [over-declared active ram: job-3dbe046128dd 11GB committed/1GB live]; fits an idle host; blocked by live external usage
+  1128s ago admission.status state=queued reason=waiting detail=waiting: beast: ram: need 10780MB (ceiling) > avail 49MB (total 66513 - baseline 27389 - committed 35750 - margin 3326)

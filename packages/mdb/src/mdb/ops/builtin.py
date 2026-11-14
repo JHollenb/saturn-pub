@@ -1300,6 +1300,13 @@ def _is_origin_value(value: Any) -> bool:
     return isinstance(value, str) and ":" in value.partition("[")[0]
 
 
+def _is_import(ctx, value: str) -> bool:
+    """``IMPORT:t<r>.L<l>.<port>``: values another tool computed (``Debugger.import_values``),
+    taken as a whole port that the edited target's selector masks."""
+    branch = value.partition(":")[0].strip()
+    return branch in getattr(ctx.debugger, "imports", {})
+
+
 def origin_port_value(ctx, text: str):
     """``(tensor, pointer)`` of ``ORIGIN:ADDR`` for a port edit: the occurrence ADDR names in
     the run ORIGIN stands for, with ADDR's selector applied there. ADDR is read with this
@@ -1363,7 +1370,11 @@ def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
 
     run = ctx.run
     origin = None
-    if _is_origin_value(value):
+    whole = False  # an import's whole port (``Debugger.port_value``): the selector masks it
+    if _is_origin_value(value) and _is_import(ctx, value):
+        source, whole = value.strip(), True
+        value, origin = ctx.debugger.port_value(source, run=run)
+    elif _is_origin_value(value):
         value, origin = origin_port_value(ctx, value)
         source = origin["address"]
     else:
@@ -1379,11 +1390,11 @@ def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
         selection = found.text.partition("[")[2].rstrip("]")
     else:
         index, chosen = None, shape
-    if origin is not None and tuple(value.shape) != tuple(chosen):
+    if origin is not None and not whole and tuple(value.shape) != tuple(chosen):
         raise Refused(f"{source} selects shape {list(value.shape)}; {found.text} selects "
                       f"{list(chosen)}; select the same block on both sides (the same port "
                       "kind, heads and row length)")
-    if index is not None and isinstance(value, torch.Tensor):
+    if index is not None and isinstance(value, torch.Tensor) and not whole:
         if torch.broadcast_shapes(value.shape, chosen) != chosen:
             raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
         # the block is built where the value lives (a donor's value is on the model's device;

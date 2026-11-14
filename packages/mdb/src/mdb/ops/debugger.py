@@ -73,6 +73,59 @@ class Debugger:
         self.runs: dict[str, Run] = {}
         self.run_checkpoints: dict[str, dict[str, Any]] = {}  # in-memory, of runs not shown
         self.carried_circuits: dict[int, Any] = {}   # id -> circuit, built by an earlier run
+        self.imports: dict[str, Imported] = {}  # foreign values (TransformerLens, nnsight, ...)
+
+    # --- foreign values -------------------------------------------------------------------
+
+    def import_values(self, name: str, values: dict[str, Any], *, tokens: Sequence[int],
+                      provenance: dict[str, Any] | None = None,
+                      model_identity: str | None = None) -> Imported:
+        """Register values computed outside mdb (a TransformerLens cache, nnsight saves) as the
+        origin ``name``: ``name:cache.L22.v[kv1,row=11]`` and ``name:t11.L22.v[kv1]`` then
+        resolve from them for state-cell edits, and ``name:t17.L22.A`` for port edits.
+
+        ``values`` maps occurrence addresses ``t<r>.L<l>.<port>`` to tensors in mdb's layout
+        for one row (``mdb.interop`` converts tool layouts). Values are ``supplied``: another
+        program computed them (another kernel order, batch shape or weight basis), so mdb never
+        labels them ``measured``. ``model_identity`` (when the caller knows it) must equal this
+        model's; ``provenance`` (tool, version, hook names, processing) is copied into every
+        pointer made from the import.
+        """
+        name = run_name(name)
+        if name in self.runs:
+            raise Refused(f"{name!r} names a live run; pick another import name")
+        if model_identity is not None and model_identity != self.adapter.model_identity:
+            raise Refused(f"{name}: values of another model (identity {str(model_identity)[:16]},"
+                          f" attached {str(self.adapter.model_identity)[:16]})")
+        imported = Imported(name, self.adapter, self.program, values, list(tokens),
+                            dict(provenance or {}))
+        self.imports[name] = imported
+        return imported
+
+    def port_value(self, text: str, *, run: Run) -> tuple[Any, dict[str, Any]]:
+        """The value ``IMPORT:t<r>.L<l>.<port>`` names, whole port (selectors on the value are
+        refused: the target's selector picks the elements), checked against the port shape of
+        ``run``. Only imports carry port values across runs."""
+        try:
+            address = parse(text, ports=self.program.names, global_ports=DEFAULT_GLOBALS)
+        except AddressError as error:
+            raise Refused(f"bad value address {text!r}: {error}") from None
+        origin = address.origin
+        if origin is None or origin.branch not in self.imports:
+            raise Refused(f"{text}: a port value from another origin must name an import "
+                          f"(have: {', '.join(sorted(self.imports)) or 'none'}); a value from "
+                          "another run goes into a state cell (cache.L<i>.k|v)")
+        if not isinstance(address, Occurrence) or address.layer is None:
+            raise Refused(f"{text}: a port value is an occurrence t<r>.L<l>.<port>")
+        if address.selector.keys or address.selector.tokens:
+            raise Refused(f"{text}: name the whole port; the target's selector picks elements")
+        imported = self.imports[origin.branch]
+        target = f"t{address.token}.L{address.layer}.{address.port}"
+        value = imported.read(target)
+        want = tuple(run.port_shape(address.port))
+        if tuple(value.shape) != want:
+            raise Refused(f"{text} has shape {list(value.shape)}; the port has {list(want)}")
+        return value.to(run.adapter.dtype), imported.pointer(target, value)
 
     @property
     def family(self) -> str:
@@ -189,6 +242,10 @@ class Debugger:
                           "or a checkpoint name)")
         if origin.edits:
             raise Refused("an origin with edits (@cut+edit) is not a run; name a run")
+        if origin.branch in self.imports:
+            imported = self.imports[origin.branch]
+            block = cell_block(imported, address, label=origin.branch)
+            return block, imported.pointer(format_address(address), block)
         return self.origin_value(origin.branch, format_address(address), run=run,
                                  pick=lambda donor: cell_block(donor, address,
                                                                label=origin.branch))
@@ -425,6 +482,89 @@ class NotHeld(Refused):
     replay before refusing."""
 
 
+class _ImportAdapter:
+    """The dimensions ``cell_block`` needs, from the attached model's adapter."""
+
+    def __init__(self, adapter: Any):
+        self.head_dim = adapter.head_dim
+        self.layers = adapter.layers
+        self.num_kv_heads = adapter.num_kv_heads
+        self.model_identity = adapter.model_identity
+
+
+# ports whose values do not depend on TransformerLens weight processing (fold_ln, centring,
+# value-bias folding): only the attention weights. Every other port is in another basis.
+BASIS_FREE_PORTS = ("p",)
+
+
+class Imported:
+    """Values computed by another tool, standing in for a donor run (``cell_block`` reads it
+    like a ``Run``: ``read``, ``read_cache``, ``adapter``, ``where``). Keys are occurrence
+    addresses ``t<r>.L<l>.<port>`` in mdb's single-row layout; ``kr`` of row ``r`` holds the
+    rotated keys of rows ``0..r`` (as mdb's ``kr`` does)."""
+
+    def __init__(self, name: str, adapter: Any, program: Any, values: dict[str, Any],
+                 tokens: list[int], provenance: dict[str, Any]):
+        self.name = name
+        self.adapter = _ImportAdapter(adapter)
+        self.tokens = tokens
+        # records hold no bare numbers: provenance is descriptive text and flags
+        self.provenance = {str(k): v if isinstance(v, (bool, str)) or v is None else str(v)
+                           for k, v in provenance.items()}
+        processed = bool(provenance.get("processed"))
+        self.values: dict[str, Any] = {}
+        for key, value in values.items():
+            try:
+                address = parse(key, ports=program.names, global_ports=DEFAULT_GLOBALS)
+            except AddressError as error:
+                raise Refused(f"import {name}: bad address {key!r}: {error}") from None
+            if not isinstance(address, Occurrence) or address.layer is None or address.origin:
+                raise Refused(f"import {name}: {key!r} is not t<r>.L<l>.<port>")
+            if processed and address.port not in BASIS_FREE_PORTS:
+                raise Refused(
+                    f"import {name}: {key} comes from weight-processed TransformerLens "
+                    "(fold_ln / centring / value-bias folding put it in another basis); import "
+                    "values from an unprocessed bridge (boot_transformers without "
+                    "enable_compatibility_mode, or no_processing=True)")
+            if not 0 <= address.layer < self.adapter.layers:
+                raise Refused(f"import {name}: no layer {address.layer}")
+            self.values[f"t{address.token}.L{address.layer}.{address.port}"] = value.detach()
+        self.where = f"import {name} ({len(self.values)} values)"
+
+    def read(self, target: str) -> Any:
+        try:
+            return self.values[target]
+        except KeyError:
+            raise ValueError(f"import {self.name} holds no {target}") from None
+
+    def read_cache(self, layer: int, kind: str) -> Any:
+        """The cache of ``layer`` as the import's last row would read it: value rows stacked
+        from ``t<r>.L<l>.v``; keys from the last row's ``kr`` (rotated, rows 0..last)."""
+        import torch
+
+        kv, head_dim = self.adapter.num_kv_heads, self.adapter.head_dim
+        if kind == "k":
+            rows = sorted(int(k[1:].split(".")[0]) for k in self.values
+                          if k.endswith(f".L{layer}.kr"))
+            if not rows:
+                raise Refused(f"import {self.name} holds no kr of layer {layer}")
+            return self.values[f"t{rows[-1]}.L{layer}.kr"]
+        rows = sorted(int(k[1:].split(".")[0]) for k in self.values
+                      if k.endswith(f".L{layer}.v"))
+        if not rows or rows != list(range(len(rows))):
+            raise Refused(f"import {self.name} needs v of rows 0..n of layer {layer} for a "
+                          f"cache cell (has rows {rows[:8]})")
+        return torch.cat([self.values[f"t{r}.L{layer}.v"].reshape(1, 1, kv, head_dim)
+                          .transpose(1, 2) for r in rows], dim=2)
+
+    def pointer(self, address: str, value: Any) -> dict[str, Any]:
+        return {"origin": self.name, "via": "import", "address": address,
+                "sha256": tensor_digest(value), "shape": list(value.shape),
+                "dtype": str(value.dtype).removeprefix("torch."), "where": self.where,
+                "cut": None, "recipe": None, "authority": "supplied",
+                "provenance": dict(self.provenance)}
+
+
 def run_name(name: str | None) -> str:
     """A run name (default ``main``): a branch name, so ``NAME:ADDR`` can name a value of it."""
     if name is None:
@@ -532,6 +672,18 @@ def attach(
             f"attention implementation is {implementation!r}; port stepping needs eager "
             "attention: load with from_pretrained(..., attn_implementation='eager')"
         )
+    wrapped = [name for name, _ in model.named_modules() if name.endswith("_original_component")]
+    if wrapped:
+        raise Refused(
+            f"the module tree was rewritten by a TransformerLens bridge ({len(wrapped)} wrapped "
+            f"modules, e.g. {wrapped[0]!r}); port hooks would not see native attention. Attach "
+            "before bridging, or bridge mdb.interop.tl.shared_clone(model) (same weights)")
+    patched = [name for name, module in model.named_modules() if _rewritten_forward(module)]
+    if patched:
+        raise Refused(
+            f"{len(patched)} module(s) run a rewritten forward (e.g. {patched[0]!r}), as "
+            "nnsight's .source leaves behind; mdb's attention interceptor would not run there. "
+            "Hand the tool mdb.interop.clone.shared_clone(model) (same weights)")
     training = [name or "<model>" for name, module in model.named_modules() if module.training]
     if training:
         raise Refused(
@@ -549,6 +701,16 @@ def attach(
             raise Refused("session= names a session of a project; pass project= too")
         return Debugger(model, tokenizer, adapter)
     return _durable(model, tokenizer, adapter, project, session)
+
+
+def _rewritten_forward(module: Any) -> bool:
+    """An instance-level forward whose body is not the class's forward (duck-typed on
+    nnsight's ``Controller``: ``forward.state.body``; plain pass-through wrappers are fine)."""
+    forward = vars(module).get("forward")
+    body = getattr(getattr(forward, "state", None), "body", None)
+    if body is None:
+        return False
+    return getattr(body, "__func__", body) is not type(module).forward
 
 
 def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: str | None):

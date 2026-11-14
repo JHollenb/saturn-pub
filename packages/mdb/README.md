@@ -927,6 +927,10 @@ even with a browser's events socket open (`tests/test_serve_sigterm.py`). `--tin
 four families as `mdb engine`. The `/op` route refuses `promptset load` (it reads a file on the
 server); send a set with `promptset define`.
 
+## TransformerLens and nnsight
+
+`mdb.interop` (extra `interop`) maps every port to its TransformerLens 4 bridge hook and nnsight path, imports a TL cache or nnsight saves as an origin (`tlrome:cache.L22.v[kv1,row=11]`, values labelled `supplied`), runs mdb edits batched over many prompts through nnsight, and re-measures another tool's claim with `whatif`. On Qwen2.5-1.5B every mapped port was bitwise equal across `mdb.trace`, the unprocessed bridge and nnsight (job-e1d53061001a). See [docs/INTEROP.md](docs/INTEROP.md).
+
 ## Lanes
 
 The experiment code is the `mdb-lanes` distribution (`mdb_lanes`); the engine never imports it.
