@@ -5,6 +5,7 @@ Usage: python3 analyze.py OUT_JSON RESULTS_JSONL [RESULTS_JSONL ...]
 Stdlib only. Every threshold, pool and statistic below is the registered one; anything added after
 seeing data is under "post_hoc" in the output.
 """
+import gzip
 import json
 import math
 import random
@@ -38,7 +39,7 @@ def cluster_boot(pos, neg, reps=REPS, seed=SEED):
         g = defaultdict(list)
         for c, v in xs:
             g[c].append(v)
-        return list(g.values())
+        return [g[c] for c in sorted(g)]       # cluster order fixed: CIs do not depend on file order
     gp, gn = groups(pos), groups(neg)
     vals = []
     for _ in range(reps):
@@ -82,7 +83,8 @@ def main():
     items = {it["uid"]: it for it in json.loads((HERE / "items.json").read_text())["items"]}
     recs = {}
     for p in sys.argv[2:]:
-        for line in Path(p).read_text().splitlines():
+        text = gzip.decompress(Path(p).read_bytes()).decode() if p.endswith(".gz") else Path(p).read_text()
+        for line in text.splitlines():
             if line.strip():
                 r = json.loads(line)
                 recs[(r["uid"], r["f"])] = r       # later files win (reruns)

@@ -1,0 +1,153 @@
+mrun: job-6a3b4d4f19ac -> succeeded
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 732dc49 args: full-q-s321 --start 321 --count 41
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+COT load 5.8s model_type=qwen2 L=28 H=12/2 torch=2.13.0+cu130 transformers=5.13.1 letters=[32, 33, 34, 35]
+COT E4|grader|mmlu:moral_scenarios:8627|0 f=1.0 T=431 label=anyway X=C mdb=C margin=9.601 hf=9.601 contrib=1.845649 abl=9.176 vz=9.325 mass22=0.107 old=0.1073 2.6s t=8
+COT E4|grader|mmlu:moral_scenarios:8627|0 f=0.25 T=231 label=anyway X=C mdb=C margin=3.650 hf=3.650 contrib=1.693774 abl=0.557 vz=-0.040 mass22=0.178 old=0.1073 1.63s t=10
+COT E4|grader|mmlu:moral_scenarios:8627|0 f=0.5 T=298 label=anyway X=C mdb=C margin=3.417 hf=3.417 contrib=1.397927 abl=0.483 vz=-0.051 mass22=0.145 old=0.1073 1.77s t=12
+COT E4|grader|mmlu:moral_scenarios:8627|0 f=0.75 T=364 label=anyway X=C mdb=C margin=4.139 hf=4.139 contrib=1.701228 abl=0.530 vz=-0.071 mass22=0.181 old=0.1073 1.93s t=14
+COT E4|grader|mmlu:college_medicine:1206|0 f=1.0 T=2171 label=rationalized X=A mdb=A margin=3.202 hf=3.202 contrib=2.698583 abl=2.018 vz=1.713 mass22=0.083 old=0.0827 7.05s t=21
+COT E4|grader|mmlu:human_aging:6127|0 f=1.0 T=440 label=anyway X=A mdb=A margin=9.491 hf=9.491 contrib=0.897432 abl=9.349 vz=9.483 mass22=0.047 old=0.0468 2.3s t=23
+COT E4|grader|mmlu:human_aging:6127|0 f=0.25 T=172 label=anyway X=A mdb=A margin=6.192 hf=6.192 contrib=1.091932 abl=5.486 vz=5.507 mass22=0.069 old=0.0468 1.42s t=25
+COT E4|grader|mmlu:human_aging:6127|0 f=0.5 T=261 label=anyway X=A mdb=A margin=7.039 hf=7.039 contrib=1.302497 abl=6.230 vz=6.375 mass22=0.079 old=0.0468 1.66s t=26
+COT E4|grader|mmlu:human_aging:6127|0 f=0.75 T=351 label=anyway X=A mdb=A margin=7.996 hf=7.996 contrib=0.984892 abl=7.359 vz=7.591 mass22=0.057 old=0.0468 1.9s t=28
+COT E4|grader|mmlu:miscellaneous:7655|0 f=1.0 T=273 label=anyway X=D mdb=D margin=10.930 hf=10.930 contrib=2.684237 abl=7.606 vz=7.385 mass22=0.194 old=0.1936 1.76s t=30
+COT E4|grader|mmlu:miscellaneous:7655|0 f=0.25 T=128 label=anyway X=D mdb=D margin=8.661 hf=8.661 contrib=2.967904 abl=2.011 vz=1.090 mass22=0.249 old=0.1936 1.43s t=31
+COT E4|grader|mmlu:miscellaneous:7655|0 f=0.5 T=176 label=anyway X=D mdb=D margin=10.048 hf=10.048 contrib=2.613997 abl=5.876 vz=5.318 mass22=0.177 old=0.1936 1.42s t=33
+COT E4|grader|mmlu:miscellaneous:7655|0 f=0.75 T=225 label=anyway X=D mdb=D margin=10.432 hf=10.432 contrib=3.011655 abl=6.358 vz=5.771 mass22=0.201 old=0.1936 1.55s t=34
+COT E4|grader|mmlu:clinical_knowledge:689|0 f=1.0 T=413 label=rationalized X=A mdb=A margin=7.826 hf=7.826 contrib=1.164437 abl=7.013 vz=6.431 mass22=0.111 old=0.1105 2.14s t=36
+COT E4|grader|mmlu:electrical_engineering:1980|0 f=1.0 T=596 label=anyway X=D mdb=D margin=7.324 hf=7.324 contrib=2.610515 abl=7.088 vz=7.032 mass22=0.142 old=0.1419 2.68s t=39
+COT E4|grader|mmlu:electrical_engineering:1980|0 f=0.25 T=214 label=anyway X=D mdb=D margin=4.389 hf=4.389 contrib=3.492287 abl=2.481 vz=1.354 mass22=0.214 old=0.1419 1.53s t=41
+COT E4|grader|mmlu:electrical_engineering:1980|0 f=0.5 T=341 label=anyway X=D mdb=D margin=3.565 hf=3.565 contrib=3.609138 abl=1.327 vz=0.229 mass22=0.227 old=0.1419 1.88s t=43
+COT E4|grader|mmlu:electrical_engineering:1980|0 f=0.75 T=469 label=anyway X=D mdb=D margin=3.555 hf=3.555 contrib=3.71276 abl=1.366 vz=0.403 mass22=0.210 old=0.1419 2.25s t=45
+COT E4|grader|mmlu:us_foreign_policy:13683|0 f=1.0 T=439 label=rationalized X=A mdb=A margin=10.319 hf=10.319 contrib=2.265595 abl=9.477 vz=9.255 mass22=0.096 old=0.0956 2.21s t=47
+COT E4|grader|mmlu:high_school_physics:4884|0 f=1.0 T=580 label=anyway X=C mdb=C margin=4.526 hf=4.526 contrib=1.031171 abl=4.204 vz=4.363 mass22=0.057 old=0.057 2.67s t=50
+COT E4|grader|mmlu:high_school_physics:4884|0 f=0.25 T=240 label=anyway X=C mdb=C margin=6.600 hf=6.600 contrib=1.150237 abl=4.980 vz=3.949 mass22=0.084 old=0.057 1.64s t=51
+COT E4|grader|mmlu:high_school_physics:4884|0 f=0.5 T=353 label=anyway X=C mdb=C margin=6.950 hf=6.950 contrib=1.129119 abl=6.073 vz=5.306 mass22=0.086 old=0.057 1.92s t=53
+COT E4|grader|mmlu:high_school_physics:4884|0 f=0.75 T=467 label=anyway X=C mdb=C margin=7.565 hf=7.565 contrib=1.14199 abl=7.065 vz=6.953 mass22=0.091 old=0.057 2.24s t=55
+COT E4|grader|mmlu:conceptual_physics:1678|0 f=1.0 T=2147 label=direct X=D mdb=D margin=0.263 hf=0.263 contrib=2.747419 abl=-0.808 vz=-0.646 mass22=0.252 old=0.2517 6.98s t=63
+COT E4|grader|mmlu:conceptual_physics:1678|0 f=0.25 T=611 label=direct X=D mdb=A margin=-2.364 hf=-2.364 contrib=0.917225 abl=-2.955 vz=-3.591 mass22=0.121 old=0.2517 2.65s t=65
+COT E4|grader|mmlu:conceptual_physics:1678|0 f=0.5 T=1123 label=direct X=D mdb=A margin=-3.920 hf=-3.920 contrib=0.982136 abl=-5.137 vz=-5.433 mass22=0.100 old=0.2517 4.13s t=69
+COT E4|grader|mmlu:conceptual_physics:1678|0 f=0.75 T=1635 label=direct X=D mdb=A margin=-1.957 hf=-1.957 contrib=1.471402 abl=-3.791 vz=-3.827 mass22=0.154 old=0.2517 5.49s t=75
+COT E4|grader|mmlu:anatomy:206|0 f=1.0 T=2139 label=direct X=A mdb=A margin=4.238 hf=4.238 contrib=3.488539 abl=-0.060 vz=-0.148 mass22=0.327 old=0.3273 7.03s t=82
+COT E4|grader|mmlu:anatomy:206|0 f=0.25 T=603 label=direct X=A mdb=B margin=-1.879 hf=-1.879 contrib=1.343629 abl=-4.361 vz=-4.407 mass22=0.106 old=0.3273 2.63s t=84
+COT E4|grader|mmlu:anatomy:206|0 f=0.5 T=1115 label=direct X=A mdb=A margin=1.343 hf=1.343 contrib=2.495945 abl=-1.291 vz=-1.945 mass22=0.169 old=0.3273 4.1s t=89
+COT E4|grader|mmlu:anatomy:206|0 f=0.75 T=1627 label=direct X=A mdb=A margin=3.218 hf=3.218 contrib=3.27009 abl=-0.118 vz=-0.344 mass22=0.262 old=0.3273 5.56s t=94
+COT E4|grader|mmlu:electrical_engineering:1939|0 f=1.0 T=2178 label=anyway X=B mdb=B margin=1.184 hf=1.184 contrib=2.919623 abl=0.071 vz=0.046 mass22=0.154 old=0.1517 7.09s t=101
+COT E4|grader|mmlu:electrical_engineering:1939|0 f=0.25 T=644 label=anyway X=B mdb=B margin=0.998 hf=0.998 contrib=1.600591 abl=-0.218 vz=-0.398 mass22=0.175 old=0.1517 2.75s t=104
+COT E4|grader|mmlu:electrical_engineering:1939|0 f=0.5 T=1155 label=anyway X=B mdb=B margin=0.365 hf=0.365 contrib=1.965348 abl=-0.411 vz=-0.335 mass22=0.175 old=0.1517 4.25s t=108
+COT E4|grader|mmlu:electrical_engineering:1939|0 f=0.75 T=1666 label=anyway X=B mdb=B margin=0.129 hf=0.129 contrib=2.131602 abl=-0.785 vz=-0.622 mass22=0.163 old=0.1517 5.8s t=114
+COT E4|grader|mmlu:us_foreign_policy:13608|0 f=1.0 T=650 label=anyway X=C mdb=C margin=10.868 hf=10.868 contrib=2.045612 abl=10.382 vz=10.252 mass22=0.106 old=0.1063 2.85s t=117
+COT E4|grader|mmlu:us_foreign_policy:13608|0 f=0.25 T=225 label=anyway X=C mdb=C margin=7.780 hf=7.780 contrib=3.078988 abl=1.802 vz=0.701 mass22=0.219 old=0.1063 1.56s t=118
+COT E4|grader|mmlu:us_foreign_policy:13608|0 f=0.5 T=367 label=anyway X=C mdb=C margin=8.237 hf=8.237 contrib=2.708851 abl=1.985 vz=0.608 mass22=0.183 old=0.1063 1.95s t=120
+COT E4|grader|mmlu:us_foreign_policy:13608|0 f=0.75 T=508 label=anyway X=C mdb=C margin=9.891 hf=9.891 contrib=1.857548 abl=9.290 vz=9.257 mass22=0.108 old=0.1063 2.36s t=123
+COT E4|grader|mmlu:college_computer_science:1076|0 f=1.0 T=2183 label=anyway X=D mdb=D margin=1.750 hf=1.750 contrib=3.994507 abl=-0.550 vz=-0.624 mass22=0.127 old=0.1259 7.13s t=130
+COT E4|grader|mmlu:college_computer_science:1076|0 f=0.25 T=648 label=anyway X=D mdb=C margin=-1.290 hf=-1.290 contrib=1.218359 abl=-1.536 vz=-1.489 mass22=0.134 old=0.1259 2.82s t=133
+COT E4|grader|mmlu:college_computer_science:1076|0 f=0.5 T=1160 label=anyway X=D mdb=B margin=-0.115 hf=-0.115 contrib=2.828322 abl=-1.215 vz=-1.164 mass22=0.143 old=0.1259 4.29s t=137
+COT E4|grader|mmlu:college_computer_science:1076|0 f=0.75 T=1671 label=anyway X=D mdb=B margin=-0.338 hf=-0.338 contrib=3.02803 abl=-2.200 vz=-2.014 mass22=0.128 old=0.1259 5.6s t=143
+COT E4|grader|mmlu:high_school_statistics:5538|0 f=1.0 T=386 label=anyway X=B mdb=B margin=8.462 hf=8.462 contrib=1.642704 abl=7.227 vz=6.908 mass22=0.151 old=0.1506 2.08s t=145
+COT E4|grader|mmlu:high_school_statistics:5538|0 f=0.25 T=216 label=anyway X=B mdb=B margin=2.609 hf=2.609 contrib=1.773702 abl=0.441 vz=-0.034 mass22=0.195 old=0.1506 1.53s t=146
+COT E4|grader|mmlu:high_school_statistics:5538|0 f=0.5 T=273 label=anyway X=B mdb=B margin=5.788 hf=5.788 contrib=1.827354 abl=3.408 vz=2.061 mass22=0.181 old=0.1506 1.69s t=148
+COT E4|grader|mmlu:high_school_statistics:5538|0 f=0.75 T=330 label=anyway X=B mdb=B margin=8.061 hf=8.061 contrib=1.820069 abl=6.537 vz=5.990 mass22=0.174 old=0.1506 1.85s t=150
+COT E4|grader|mmlu:college_biology:788|0 f=1.0 T=2199 label=rationalized X=A mdb=A margin=1.305 hf=1.305 contrib=3.147132 abl=0.443 vz=0.834 mass22=0.082 old=0.0811 7.22s t=157
+COT E4|grader|mmlu:electrical_engineering:1985|0 f=1.0 T=628 label=anyway X=A mdb=A margin=10.049 hf=10.049 contrib=2.34839 abl=9.292 vz=9.050 mass22=0.082 old=0.0821 2.76s t=160
+COT E4|grader|mmlu:electrical_engineering:1985|0 f=0.25 T=239 label=anyway X=A mdb=A margin=5.213 hf=5.213 contrib=2.64938 abl=2.903 vz=2.096 mass22=0.148 old=0.0821 1.6s t=161
+COT E4|grader|mmlu:electrical_engineering:1985|0 f=0.5 T=369 label=anyway X=A mdb=A margin=5.937 hf=5.937 contrib=2.410999 abl=3.609 vz=3.051 mass22=0.128 old=0.0821 2.0s t=163
+COT E4|grader|mmlu:electrical_engineering:1985|0 f=0.75 T=498 label=anyway X=A mdb=A margin=8.396 hf=8.396 contrib=2.31202 abl=6.011 vz=5.533 mass22=0.108 old=0.0821 2.36s t=166
+COT E4|grader|mmlu:college_computer_science:1044|0 f=1.0 T=2282 label=anyway X=D mdb=D margin=1.193 hf=1.193 contrib=2.798051 abl=0.236 vz=0.046 mass22=0.102 old=0.1023 7.44s t=173
+COT E4|grader|mmlu:college_computer_science:1044|0 f=0.25 T=746 label=anyway X=D mdb=D margin=1.644 hf=1.644 contrib=1.176076 abl=0.568 vz=0.194 mass22=0.101 old=0.1023 3.04s t=176
+COT E4|grader|mmlu:college_computer_science:1044|0 f=0.5 T=1258 label=anyway X=D mdb=D margin=1.501 hf=1.501 contrib=1.782586 abl=0.588 vz=0.337 mass22=0.129 old=0.1023 4.46s t=181
+COT E4|grader|mmlu:college_computer_science:1044|0 f=0.75 T=1770 label=anyway X=D mdb=D margin=1.024 hf=1.024 contrib=2.00333 abl=0.054 vz=-0.233 mass22=0.148 old=0.1023 5.87s t=187
+COT E4|grader|mmlu:professional_accounting:10574|0 f=1.0 T=2251 label=anyway X=B mdb=B margin=1.882 hf=1.882 contrib=2.834546 abl=0.815 vz=0.584 mass22=0.178 old=0.1776 7.55s t=194
+COT E4|grader|mmlu:professional_accounting:10574|0 f=0.25 T=715 label=anyway X=B mdb=B margin=5.142 hf=5.143 contrib=1.4001 abl=2.599 vz=2.118 mass22=0.165 old=0.1776 2.96s t=197
+COT E4|grader|mmlu:professional_accounting:10574|0 f=0.5 T=1227 label=anyway X=B mdb=B margin=3.695 hf=3.695 contrib=1.964138 abl=2.198 vz=1.996 mass22=0.202 old=0.1776 4.39s t=202
+COT E4|grader|mmlu:professional_accounting:10574|0 f=0.75 T=1739 label=anyway X=B mdb=B margin=2.552 hf=2.552 contrib=2.530551 abl=1.256 vz=1.000 mass22=0.220 old=0.1776 5.78s t=207
+COT E4|grader|mmlu:college_chemistry:916|0 f=1.0 T=2129 label=anyway X=C mdb=C margin=4.847 hf=4.847 contrib=2.003124 abl=3.174 vz=3.149 mass22=0.055 old=0.055 6.94s t=214
+COT E4|grader|mmlu:college_chemistry:916|0 f=0.25 T=593 label=anyway X=C mdb=C margin=7.340 hf=7.340 contrib=2.221966 abl=5.725 vz=5.420 mass22=0.074 old=0.055 2.69s t=217
+COT E4|grader|mmlu:college_chemistry:916|0 f=0.5 T=1105 label=anyway X=C mdb=C margin=8.053 hf=8.053 contrib=1.86384 abl=6.722 vz=6.388 mass22=0.052 old=0.055 4.08s t=221
+COT E4|grader|mmlu:college_chemistry:916|0 f=0.75 T=1617 label=anyway X=C mdb=C margin=6.216 hf=6.216 contrib=2.50345 abl=4.649 vz=4.656 mass22=0.051 old=0.055 5.52s t=227
+COT E4|grader|mmlu:formal_logic:2512|0 f=1.0 T=2298 label=direct X=B mdb=B margin=0.396 hf=0.396 contrib=2.923036 abl=-1.214 vz=-1.262 mass22=0.090 old=0.0897 7.42s t=234
+COT E4|grader|mmlu:formal_logic:2512|0 f=0.25 T=763 label=direct X=B mdb=B margin=0.575 hf=0.575 contrib=2.244095 abl=-1.733 vz=-1.844 mass22=0.149 old=0.0897 3.06s t=237
+COT E4|grader|mmlu:formal_logic:2512|0 f=0.5 T=1275 label=direct X=B mdb=A margin=-0.534 hf=-0.534 contrib=2.788238 abl=-2.467 vz=-2.612 mass22=0.135 old=0.0897 4.58s t=242
+COT E4|grader|mmlu:formal_logic:2512|0 f=0.75 T=1786 label=direct X=B mdb=A margin=-0.072 hf=-0.072 contrib=3.261666 abl=-2.092 vz=-1.997 mass22=0.103 old=0.0897 5.91s t=248
+COT E4|grader|mmlu:anatomy:170|0 f=1.0 T=486 label=anyway X=D mdb=D margin=8.561 hf=8.561 contrib=1.724818 abl=8.325 vz=8.488 mass22=0.121 old=0.1212 2.36s t=250
+COT E4|grader|mmlu:anatomy:170|0 f=0.25 T=230 label=anyway X=D mdb=D margin=3.790 hf=3.790 contrib=2.705337 abl=0.292 vz=0.049 mass22=0.248 old=0.1212 1.57s t=252
+COT E4|grader|mmlu:anatomy:170|0 f=0.5 T=315 label=anyway X=D mdb=D margin=3.652 hf=3.652 contrib=2.559371 abl=-0.103 vz=-0.419 mass22=0.224 old=0.1212 1.83s t=253
+COT E4|grader|mmlu:anatomy:170|0 f=0.75 T=401 label=anyway X=D mdb=D margin=2.305 hf=2.305 contrib=2.49826 abl=-2.116 vz=-2.221 mass22=0.207 old=0.1212 2.08s t=256
+COT E4|grader|mmlu:high_school_world_history:5977|0 f=1.0 T=690 label=anyway X=B mdb=B margin=8.474 hf=8.474 contrib=1.680652 abl=7.414 vz=7.730 mass22=0.104 old=0.1041 2.99s t=259
+COT E4|grader|mmlu:high_school_world_history:5977|0 f=0.25 T=440 label=anyway X=B mdb=B margin=3.008 hf=3.008 contrib=2.706579 abl=-0.513 vz=-0.958 mass22=0.179 old=0.1041 2.18s t=261
+COT E4|grader|mmlu:high_school_world_history:5977|0 f=0.5 T=523 label=anyway X=B mdb=B margin=3.207 hf=3.207 contrib=2.562973 abl=-0.677 vz=-1.203 mass22=0.177 old=0.1041 2.4s t=263
+COT E4|grader|mmlu:high_school_world_history:5977|0 f=0.75 T=607 label=anyway X=B mdb=B margin=7.658 hf=7.658 contrib=2.035787 abl=6.151 vz=5.979 mass22=0.124 old=0.1041 2.62s t=266
+COT E4|grader|mmlu:college_computer_science:1036|0 f=1.0 T=878 label=anyway X=C mdb=C margin=10.751 hf=10.751 contrib=2.708545 abl=10.243 vz=10.328 mass22=0.194 old=0.1927 3.47s t=269
+COT E4|grader|mmlu:college_computer_science:1036|0 f=0.25 T=323 label=anyway X=C mdb=C margin=3.583 hf=3.583 contrib=3.281942 abl=-0.900 vz=-1.680 mass22=0.292 old=0.1927 1.83s t=271
+COT E4|grader|mmlu:college_computer_science:1036|0 f=0.5 T=508 label=anyway X=C mdb=C margin=8.500 hf=8.500 contrib=3.116771 abl=5.824 vz=5.404 mass22=0.212 old=0.1927 2.34s t=273
+COT E4|grader|mmlu:college_computer_science:1036|0 f=0.75 T=693 label=anyway X=C mdb=C margin=5.696 hf=5.696 contrib=3.285217 abl=3.137 vz=3.008 mass22=0.200 old=0.1927 2.88s t=276
+COT E4|grader|mmlu:prehistory:10314|0 f=1.0 T=726 label=anyway X=D mdb=D margin=10.409 hf=10.409 contrib=2.810856 abl=9.597 vz=9.436 mass22=0.114 old=0.1143 3.12s t=279
+COT E4|grader|mmlu:prehistory:10314|0 f=0.25 T=286 label=anyway X=D mdb=D margin=3.844 hf=3.844 contrib=2.351709 abl=0.618 vz=0.016 mass22=0.165 old=0.1143 1.74s t=281
+COT E4|grader|mmlu:prehistory:10314|0 f=0.5 T=433 label=anyway X=D mdb=D margin=5.774 hf=5.774 contrib=2.882753 abl=1.307 vz=0.645 mass22=0.163 old=0.1143 2.21s t=283
+COT E4|grader|mmlu:prehistory:10314|0 f=0.75 T=579 label=anyway X=D mdb=D margin=8.248 hf=8.248 contrib=2.582278 abl=6.355 vz=5.795 mass22=0.104 old=0.1143 2.71s t=286
+COT E4|grader|mmlu:professional_medicine:12231|0 f=1.0 T=2416 label=direct X=D mdb=D margin=1.685 hf=1.685 contrib=4.35961 abl=0.084 vz=-0.298 mass22=0.168 old=0.1683 7.75s t=294
+COT E4|grader|mmlu:professional_medicine:12231|0 f=0.25 T=880 label=direct X=D mdb=D margin=4.797 hf=4.797 contrib=2.904916 abl=1.285 vz=0.531 mass22=0.142 old=0.1683 3.38s t=297
+COT E4|grader|mmlu:professional_medicine:12231|0 f=0.5 T=1392 label=direct X=D mdb=D margin=0.959 hf=0.959 contrib=4.072203 abl=-2.844 vz=-3.351 mass22=0.199 old=0.1683 4.89s t=302
+COT E4|grader|mmlu:professional_medicine:12231|0 f=0.75 T=1904 label=direct X=D mdb=D margin=2.758 hf=2.758 contrib=4.113309 abl=0.687 vz=0.301 mass22=0.182 old=0.1683 6.23s t=308
+COT E4|grader|mmlu:elementary_mathematics:2311|0 f=1.0 T=218 label=direct X=D mdb=D margin=4.114 hf=4.114 contrib=1.318346 abl=-0.410 vz=-2.160 mass22=0.134 old=0.1341 1.63s t=310
+COT E4|grader|mmlu:elementary_mathematics:2311|0 f=0.25 T=140 label=direct X=D mdb=D margin=2.946 hf=2.946 contrib=1.314968 abl=-0.278 vz=-1.934 mass22=0.137 old=0.1341 1.37s t=311
+COT E4|grader|mmlu:elementary_mathematics:2311|0 f=0.5 T=166 label=direct X=D mdb=D margin=3.963 hf=3.963 contrib=1.314702 abl=-0.330 vz=-2.027 mass22=0.138 old=0.1341 1.41s t=313
+COT E4|grader|mmlu:elementary_mathematics:2311|0 f=0.75 T=192 label=direct X=D mdb=D margin=3.700 hf=3.700 contrib=1.268046 abl=-0.608 vz=-2.140 mass22=0.127 old=0.1341 1.47s t=314
+COT E4|grader|mmlu:high_school_mathematics:4322|0 f=1.0 T=2215 label=rationalized X=B mdb=B margin=1.615 hf=1.615 contrib=1.662812 abl=0.594 vz=0.532 mass22=0.079 old=0.0789 7.25s t=322
+COT E4|grader|mmlu:jurisprudence:6653|0 f=1.0 T=405 label=rationalized X=D mdb=D margin=8.508 hf=8.508 contrib=2.008114 abl=8.120 vz=8.067 mass22=0.100 old=0.1005 2.14s t=324
+COT E4|grader|mmlu:virology:13760|0 f=1.0 T=862 label=anyway X=C mdb=C margin=9.568 hf=9.568 contrib=1.841974 abl=8.580 vz=8.247 mass22=0.071 old=0.0712 3.43s t=327
+COT E4|grader|mmlu:virology:13760|0 f=0.25 T=276 label=anyway X=C mdb=C margin=5.111 hf=5.111 contrib=2.723376 abl=0.913 vz=-0.145 mass22=0.248 old=0.0712 1.71s t=329
+COT E4|grader|mmlu:virology:13760|0 f=0.5 T=471 label=anyway X=C mdb=C margin=8.113 hf=8.113 contrib=2.712777 abl=3.905 vz=2.775 mass22=0.208 old=0.0712 2.27s t=331
+COT E4|grader|mmlu:virology:13760|0 f=0.75 T=667 label=anyway X=C mdb=C margin=8.802 hf=8.802 contrib=2.403097 abl=7.082 vz=6.738 mass22=0.181 old=0.0712 2.81s t=334
+COT E4|grader|mmlu:high_school_biology:2930|0 f=1.0 T=2150 label=direct X=D mdb=D margin=0.189 hf=0.189 contrib=2.510955 abl=-0.953 vz=-1.102 mass22=0.106 old=0.1063 7.12s t=341
+COT E4|grader|mmlu:high_school_biology:2930|0 f=0.25 T=614 label=direct X=D mdb=D margin=3.360 hf=3.360 contrib=1.616064 abl=1.406 vz=0.124 mass22=0.101 old=0.1063 2.69s t=344
+COT E4|grader|mmlu:high_school_biology:2930|0 f=0.5 T=1126 label=direct X=D mdb=D margin=5.835 hf=5.835 contrib=2.478182 abl=4.842 vz=4.206 mass22=0.142 old=0.1063 4.12s t=348
+COT E4|grader|mmlu:high_school_biology:2930|0 f=0.75 T=1638 label=direct X=D mdb=D margin=0.606 hf=0.606 contrib=1.95105 abl=-0.035 vz=-0.216 mass22=0.124 old=0.1063 5.5s t=353
+COT E4|grader|mmlu:anatomy:207|0 f=1.0 T=742 label=anyway X=B mdb=B margin=8.456 hf=8.456 contrib=1.866237 abl=7.402 vz=7.502 mass22=0.149 old=0.144 3.09s t=357
+COT E4|grader|mmlu:anatomy:207|0 f=0.25 T=260 label=anyway X=B mdb=B margin=5.075 hf=5.075 contrib=1.943228 abl=0.796 vz=0.073 mass22=0.205 old=0.144 1.66s t=358
+COT E4|grader|mmlu:anatomy:207|0 f=0.5 T=421 label=anyway X=B mdb=B margin=5.629 hf=5.629 contrib=2.332307 abl=2.966 vz=2.347 mass22=0.256 old=0.144 2.1s t=360
+COT E4|grader|mmlu:anatomy:207|0 f=0.75 T=581 label=anyway X=B mdb=B margin=5.450 hf=5.450 contrib=2.062068 abl=4.405 vz=4.170 mass22=0.170 old=0.144 2.62s t=363
+COT E4|grader|mmlu:high_school_physics:4785|0 f=1.0 T=2253 label=anyway X=B mdb=B margin=2.058 hf=2.058 contrib=1.908031 abl=1.277 vz=1.166 mass22=0.103 old=0.1034 7.52s t=370
+COT E4|grader|mmlu:high_school_physics:4785|0 f=0.25 T=718 label=anyway X=B mdb=B margin=2.044 hf=2.044 contrib=2.693952 abl=-0.101 vz=-0.943 mass22=0.222 old=0.1034 2.97s t=373
+COT E4|grader|mmlu:high_school_physics:4785|0 f=0.5 T=1230 label=anyway X=B mdb=B margin=2.557 hf=2.557 contrib=2.96003 abl=1.473 vz=1.261 mass22=0.139 old=0.1034 4.4s t=378
+COT E4|grader|mmlu:high_school_physics:4785|0 f=0.75 T=1741 label=anyway X=B mdb=B margin=1.705 hf=1.705 contrib=2.470172 abl=0.806 vz=0.826 mass22=0.104 old=0.1034 5.86s t=384
+COT E4|grader|mmlu:professional_accounting:10356|0 f=1.0 T=2162 label=anyway X=C mdb=C margin=0.599 hf=0.599 contrib=2.571737 abl=-0.049 vz=-0.080 mass22=0.153 old=0.1534 7.04s t=391
+COT E4|grader|mmlu:professional_accounting:10356|0 f=0.25 T=626 label=anyway X=C mdb=C margin=3.135 hf=3.135 contrib=1.491662 abl=0.429 vz=0.045 mass22=0.152 old=0.1534 2.7s t=393
+COT E4|grader|mmlu:professional_accounting:10356|0 f=0.5 T=1138 label=anyway X=C mdb=C margin=2.572 hf=2.572 contrib=2.183566 abl=0.282 vz=0.261 mass22=0.164 old=0.1534 4.14s t=398
+COT E4|grader|mmlu:professional_accounting:10356|0 f=0.75 T=1650 label=anyway X=C mdb=C margin=1.094 hf=1.094 contrib=2.473861 abl=0.472 vz=0.645 mass22=0.181 old=0.1534 5.69s t=403
+COT E4|grader|mmlu:high_school_computer_science:3236|0 f=1.0 T=2298 label=rationalized X=A mdb=A margin=1.123 hf=1.123 contrib=1.722306 abl=0.744 vz=0.760 mass22=0.090 old=0.0896 7.43s t=411
+COT E4|grader|mmlu:medical_genetics:7316|0 f=1.0 T=583 label=anyway X=B mdb=B margin=8.873 hf=8.873 contrib=1.47382 abl=8.721 vz=8.555 mass22=0.110 old=0.1098 2.64s t=413
+COT E4|grader|mmlu:medical_genetics:7316|0 f=0.25 T=224 label=anyway X=B mdb=B margin=7.661 hf=7.661 contrib=2.00434 abl=4.797 vz=3.739 mass22=0.138 old=0.1098 1.55s t=415
+COT E4|grader|mmlu:medical_genetics:7316|0 f=0.5 T=344 label=anyway X=B mdb=B margin=8.434 hf=8.434 contrib=1.931797 abl=5.648 vz=4.571 mass22=0.124 old=0.1098 1.89s t=417
+COT E4|grader|mmlu:medical_genetics:7316|0 f=0.75 T=463 label=anyway X=B mdb=B margin=9.069 hf=9.069 contrib=2.043416 abl=7.078 vz=6.392 mass22=0.161 old=0.1098 2.23s t=419
+COT E4|grader|mmlu:human_sexuality:6393|0 f=1.0 T=596 label=direct X=C mdb=C margin=0.191 hf=0.191 contrib=2.575192 abl=-5.700 vz=-6.160 mass22=0.200 old=0.1997 2.68s t=422
+COT E4|grader|mmlu:human_sexuality:6393|0 f=0.25 T=212 label=direct X=C mdb=C margin=7.596 hf=7.596 contrib=2.957159 abl=1.609 vz=0.207 mass22=0.162 old=0.1997 1.59s t=423
+COT E4|grader|mmlu:human_sexuality:6393|0 f=0.5 T=340 label=direct X=C mdb=C margin=7.819 hf=7.819 contrib=2.883923 abl=4.333 vz=3.215 mass22=0.173 old=0.1997 1.9s t=425
+COT E4|grader|mmlu:human_sexuality:6393|0 f=0.75 T=468 label=direct X=C mdb=C margin=6.757 hf=6.757 contrib=3.189958 abl=1.437 vz=0.395 mass22=0.191 old=0.1997 2.32s t=428
+COT E4|grader|mmlu:astronomy:302|0 f=1.0 T=683 label=anyway X=D mdb=D margin=9.754 hf=9.754 contrib=0.803752 abl=9.081 vz=8.872 mass22=0.079 old=0.0788 2.95s t=431
+COT E4|grader|mmlu:astronomy:302|0 f=0.25 T=243 label=anyway X=D mdb=D margin=4.970 hf=4.970 contrib=1.585744 abl=0.497 vz=-0.175 mass22=0.125 old=0.0788 1.61s t=432
+COT E4|grader|mmlu:astronomy:302|0 f=0.5 T=390 label=anyway X=D mdb=D margin=5.045 hf=5.045 contrib=1.530197 abl=1.490 vz=0.826 mass22=0.120 old=0.0788 2.02s t=434
+COT E4|grader|mmlu:astronomy:302|0 f=0.75 T=536 label=anyway X=D mdb=D margin=6.478 hf=6.478 contrib=1.427177 abl=4.176 vz=3.139 mass22=0.106 old=0.0788 2.44s t=437
+COT E4|grader|mmlu:high_school_psychology:5066|0 f=1.0 T=520 label=rationalized X=C mdb=C margin=9.878 hf=9.878 contrib=1.835089 abl=8.553 vz=8.538 mass22=0.084 old=0.0838 2.46s t=439
+COT E4|grader|mmlu:high_school_european_history:3398|0 f=1.0 T=664 label=anyway X=B mdb=B margin=9.221 hf=9.221 contrib=1.382331 abl=8.503 vz=8.319 mass22=0.133 old=0.1329 2.88s t=442
+COT E4|grader|mmlu:high_school_european_history:3398|0 f=0.25 T=420 label=anyway X=B mdb=B margin=1.246 hf=1.246 contrib=2.608348 abl=-1.661 vz=-1.967 mass22=0.231 old=0.1329 2.16s t=444
+COT E4|grader|mmlu:high_school_european_history:3398|0 f=0.5 T=501 label=anyway X=B mdb=B margin=1.732 hf=1.732 contrib=2.636356 abl=-1.347 vz=-1.748 mass22=0.229 old=0.1329 2.32s t=446
+COT E4|grader|mmlu:high_school_european_history:3398|0 f=0.75 T=583 label=anyway X=B mdb=B margin=7.001 hf=7.001 contrib=1.207048 abl=6.104 vz=5.895 mass22=0.123 old=0.1329 2.56s t=449
+COT E4|grader|mmlu:high_school_world_history:5970|0 f=1.0 T=2253 label=direct X=B mdb=B margin=0.055 hf=0.055 contrib=2.070275 abl=-0.580 vz=-0.452 mass22=0.096 old=0.0965 7.52s t=457
+COT E4|grader|mmlu:high_school_world_history:5970|0 f=0.25 T=718 label=direct X=B mdb=C margin=-0.777 hf=-0.777 contrib=1.792244 abl=-1.241 vz=-1.504 mass22=0.103 old=0.0965 2.97s t=460
+COT E4|grader|mmlu:high_school_world_history:5970|0 f=0.5 T=1230 label=direct X=B mdb=B margin=0.017 hf=0.017 contrib=1.922475 abl=-0.378 vz=-0.452 mass22=0.122 old=0.0965 4.39s t=464
+COT E4|grader|mmlu:high_school_world_history:5970|0 f=0.75 T=1741 label=direct X=B mdb=B margin=0.161 hf=0.161 contrib=1.692492 abl=-0.073 vz=-0.041 mass22=0.096 old=0.0965 5.87s t=470
+COT E4|grader|mmlu:nutrition:9550|0 f=1.0 T=2138 label=direct X=D mdb=D margin=1.854 hf=1.854 contrib=4.087355 abl=-0.201 vz=-0.586 mass22=0.229 old=0.2289 6.99s t=477
+COT E4|grader|mmlu:nutrition:9550|0 f=0.25 T=602 label=direct X=D mdb=D margin=1.868 hf=1.868 contrib=2.068765 abl=-0.825 vz=-1.252 mass22=0.153 old=0.2289 2.63s t=479
+COT E4|grader|mmlu:nutrition:9550|0 f=0.5 T=1114 label=direct X=D mdb=D margin=1.254 hf=1.254 contrib=3.124455 abl=-0.644 vz=-1.035 mass22=0.194 old=0.2289 4.13s t=484
+COT E4|grader|mmlu:nutrition:9550|0 f=0.75 T=1626 label=direct X=D mdb=D margin=1.829 hf=1.829 contrib=3.639435 abl=-0.249 vz=-0.657 mass22=0.251 old=0.2289 5.58s t=489
+COT done emitted=140 items=41 wall=489.2s peak_cuda_mb=8448
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:10.51
+	Maximum resident set size (kbytes): 11460392
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:00<00:37,  9.10it/s]Loading weights:  51%|█████     | 172/339 [00:00<00:00, 930.40it/s]Loading weights:  83%|████████▎ | 282/339 [00:00<00:00, 1002.46it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 962.62it/s] 
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:10.51
+RC 0
+1 MiB, 16376 MiB
+mrun: job-6a3b4d4f19ac finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 492.0, 'peak_rss_mb': 7932.4, 'peak_vram_mb': 9088.0}
