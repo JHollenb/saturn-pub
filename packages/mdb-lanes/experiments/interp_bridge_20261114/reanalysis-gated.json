@@ -1,0 +1,1457 @@
+{
+ "conditions": {
+  "ball.mask.anti": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.9315789473684211,
+     "loo_min": 0.8894736842105263,
+     "rho": 0.9052631578947369
+    },
+    "gap_att_minus_gmass": 0.8571428571428572,
+    "gap_att_minus_gmass_loo": [
+     0.6666666666666666,
+     0.9771929824561404
+    ],
+    "gap_att_minus_mass": 0.780451127819549,
+    "gap_att_minus_mass_loo": [
+     0.5771929824561404,
+     0.887719298245614
+    ],
+    "gmass": {
+     "loo_max": 0.22280701754385965,
+     "loo_min": -0.07719298245614035,
+     "rho": 0.0481203007518797
+    },
+    "gwmass": {
+     "loo_max": 0.39824561403508774,
+     "loo_min": 0.10175438596491228,
+     "rho": 0.19849624060150375
+    },
+    "mass": {
+     "loo_max": 0.312280701754386,
+     "loo_min": 0.012280701754385965,
+     "rho": 0.12481203007518797
+    }
+   },
+   "n": 20,
+   "negative_effects": 11,
+   "sign_agreement_r": 15,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.7333333333333333,
+     "loo_min": 0.5228070175438596,
+     "rho": 0.5909774436090226
+    },
+    "gap_att_minus_gmass": 0.049624060150376015,
+    "gap_att_minus_gmass_loo": [
+     -0.06842105263157894,
+     0.23859649122807014
+    ],
+    "gap_att_minus_mass": -0.048120300751879674,
+    "gap_att_minus_mass_loo": [
+     -0.12456140350877187,
+     0.14035087719298245
+    ],
+    "gmass": {
+     "loo_max": 0.6526315789473685,
+     "loo_min": 0.4649122807017544,
+     "rho": 0.5413533834586466
+    },
+    "gwmass": {
+     "loo_max": 0.7789473684210526,
+     "loo_min": 0.6614035087719298,
+     "rho": 0.7097744360902256
+    },
+    "mass": {
+     "loo_max": 0.7087719298245614,
+     "loo_min": 0.5789473684210527,
+     "rho": 0.6390977443609023
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9596491228070175,
+     "loo_min": 0.9315789473684211,
+     "rho": 0.9413533834586466
+    },
+    "gap_att_minus_gmass": 0.8631578947368421,
+    "gap_att_minus_gmass_loo": [
+     0.6736842105263158,
+     0.9771929824561404
+    ],
+    "gap_att_minus_mass": 0.8,
+    "gap_att_minus_mass_loo": [
+     0.6000000000000001,
+     0.9035087719298246
+    ],
+    "gmass": {
+     "loo_max": 0.2578947368421053,
+     "loo_min": -0.04035087719298246,
+     "rho": 0.07819548872180451
+    },
+    "gwmass": {
+     "loo_max": 0.43333333333333335,
+     "loo_min": 0.13333333333333333,
+     "rho": 0.22857142857142856
+    },
+    "mass": {
+     "loo_max": 0.33157894736842103,
+     "loo_min": 0.03333333333333333,
+     "rho": 0.14135338345864662
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.7403508771929824,
+     "loo_min": 0.6087719298245614,
+     "rho": 0.6586466165413534
+    },
+    "gap_att_minus_gmass": -0.02857142857142858,
+    "gap_att_minus_gmass_loo": [
+     -0.0736842105263158,
+     0.03508771929824561
+    ],
+    "gap_att_minus_mass": -0.07819548872180448,
+    "gap_att_minus_mass_loo": [
+     -0.12982456140350873,
+     -0.02280701754385961
+    ],
+    "gmass": {
+     "loo_max": 0.7912280701754386,
+     "loo_min": 0.643859649122807,
+     "rho": 0.687218045112782
+    },
+    "gwmass": {
+     "loo_max": 0.8719298245614036,
+     "loo_min": 0.7333333333333333,
+     "rho": 0.7684210526315789
+    },
+    "mass": {
+     "loo_max": 0.8421052631578947,
+     "loo_min": 0.7017543859649122,
+     "rho": 0.7368421052631579
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.6543859649122807,
+     "loo_min": 0.5385964912280702,
+     "rho": 0.6045112781954888
+    },
+    "gap_att_minus_gmass": -0.049624060150375904,
+    "gap_att_minus_gmass_loo": [
+     -0.1228070175438597,
+     0.019298245614035148
+    ],
+    "gap_att_minus_mass": -0.09924812030075181,
+    "gap_att_minus_mass_loo": [
+     -0.15087719298245617,
+     -0.03508771929824561
+    ],
+    "gmass": {
+     "loo_max": 0.7543859649122807,
+     "loo_min": 0.6035087719298246,
+     "rho": 0.6541353383458647
+    },
+    "gwmass": {
+     "loo_max": 0.7894736842105263,
+     "loo_min": 0.7017543859649122,
+     "rho": 0.7443609022556391
+    },
+    "mass": {
+     "loo_max": 0.7684210526315789,
+     "loo_min": 0.6614035087719298,
+     "rho": 0.7037593984962406
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9639097744360903
+  },
+  "ball.mask.diag": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.9280701754385965,
+     "loo_min": 0.9035087719298246,
+     "rho": 0.9172932330827067
+    },
+    "gap_att_minus_gmass": 0.7714285714285714,
+    "gap_att_minus_gmass_loo": [
+     0.6754385964912281,
+     0.9
+    ],
+    "gap_att_minus_mass": 0.8285714285714285,
+    "gap_att_minus_mass_loo": [
+     0.7456140350877194,
+     0.9666666666666667
+    ],
+    "gmass": {
+     "loo_max": 0.24035087719298245,
+     "loo_min": 0.0035087719298245615,
+     "rho": 0.14586466165413534
+    },
+    "gwmass": {
+     "loo_max": 0.24561403508771928,
+     "loo_min": 0.021052631578947368,
+     "rho": 0.16090225563909774
+    },
+    "mass": {
+     "loo_max": 0.1649122807017544,
+     "loo_min": -0.06315789473684211,
+     "rho": 0.0887218045112782
+    }
+   },
+   "n": 20,
+   "negative_effects": 15,
+   "sign_agreement_r": 17,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.6771929824561403,
+     "loo_min": 0.4789473684210526,
+     "rho": 0.5533834586466165
+    },
+    "gap_att_minus_gmass": 0.2045112781954887,
+    "gap_att_minus_gmass_loo": [
+     0.0736842105263158,
+     0.4
+    ],
+    "gap_att_minus_mass": 0.19097744360902252,
+    "gap_att_minus_mass_loo": [
+     0.0491228070175439,
+     0.387719298245614
+    ],
+    "gmass": {
+     "loo_max": 0.47719298245614034,
+     "loo_min": 0.24035087719298245,
+     "rho": 0.34887218045112783
+    },
+    "gwmass": {
+     "loo_max": 0.519298245614035,
+     "loo_min": 0.3017543859649123,
+     "rho": 0.40150375939849625
+    },
+    "mass": {
+     "loo_max": 0.47719298245614034,
+     "loo_min": 0.256140350877193,
+     "rho": 0.362406015037594
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9736842105263158,
+     "loo_min": 0.9473684210526315,
+     "rho": 0.9548872180451128
+    },
+    "gap_att_minus_gmass": 0.9488721804511279,
+    "gap_att_minus_gmass_loo": [
+     0.843859649122807,
+     1.107017543859649
+    ],
+    "gap_att_minus_mass": 0.9939849624060151,
+    "gap_att_minus_mass_loo": [
+     0.8947368421052632,
+     1.1596491228070174
+    ],
+    "gmass": {
+     "loo_max": 0.10701754385964912,
+     "loo_min": -0.15964912280701754,
+     "rho": 0.006015037593984963
+    },
+    "gwmass": {
+     "loo_max": 0.11929824561403508,
+     "loo_min": -0.14912280701754385,
+     "rho": 0.015037593984962405
+    },
+    "mass": {
+     "loo_max": 0.056140350877192984,
+     "loo_min": -0.21228070175438596,
+     "rho": -0.039097744360902256
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.7736842105263158,
+     "loo_min": 0.6684210526315789,
+     "rho": 0.7157894736842105
+    },
+    "gap_att_minus_gmass": 0.32030075187969925,
+    "gap_att_minus_gmass_loo": [
+     0.23508771929824562,
+     0.3736842105263158
+    ],
+    "gap_att_minus_mass": 0.27518796992481204,
+    "gap_att_minus_mass_loo": [
+     0.18771929824561395,
+     0.34912280701754383
+    ],
+    "gmass": {
+     "loo_max": 0.4789473684210526,
+     "loo_min": 0.29473684210526313,
+     "rho": 0.3954887218045113
+    },
+    "gwmass": {
+     "loo_max": 0.5087719298245614,
+     "loo_min": 0.34210526315789475,
+     "rho": 0.43609022556390975
+    },
+    "mass": {
+     "loo_max": 0.5157894736842106,
+     "loo_min": 0.3473684210526316,
+     "rho": 0.4406015037593985
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.9508771929824561,
+     "loo_min": 0.9157894736842105,
+     "rho": 0.9278195488721804
+    },
+    "gap_att_minus_gmass": 0.3533834586466166,
+    "gap_att_minus_gmass_loo": [
+     0.24035087719298243,
+     0.4175438596491228
+    ],
+    "gap_att_minus_mass": 0.24511278195488717,
+    "gap_att_minus_mass_loo": [
+     0.11403508771929816,
+     0.2912280701754386
+    ],
+    "gmass": {
+     "loo_max": 0.6754385964912281,
+     "loo_min": 0.5035087719298246,
+     "rho": 0.5744360902255639
+    },
+    "gwmass": {
+     "loo_max": 0.756140350877193,
+     "loo_min": 0.5842105263157895,
+     "rho": 0.643609022556391
+    },
+    "mass": {
+     "loo_max": 0.8017543859649123,
+     "loo_min": 0.6298245614035087,
+     "rho": 0.6827067669172933
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9639097744360903
+  },
+  "ball.zero.anti": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.968421052631579,
+     "loo_min": 0.9456140350877194,
+     "rho": 0.9533834586466166
+    },
+    "gap_att_minus_gmass": 0.924812030075188,
+    "gap_att_minus_gmass_loo": [
+     0.7456140350877194,
+     1.0456140350877192
+    ],
+    "gap_att_minus_mass": 0.849624060150376,
+    "gap_att_minus_mass_loo": [
+     0.6578947368421053,
+     0.9578947368421052
+    ],
+    "gmass": {
+     "loo_max": 0.2,
+     "loo_min": -0.09824561403508772,
+     "rho": 0.02857142857142857
+    },
+    "gwmass": {
+     "loo_max": 0.3894736842105263,
+     "loo_min": 0.08947368421052632,
+     "rho": 0.19097744360902255
+    },
+    "mass": {
+     "loo_max": 0.28771929824561404,
+     "loo_min": -0.010526315789473684,
+     "rho": 0.1037593984962406
+    }
+   },
+   "n": 20,
+   "negative_effects": 10,
+   "sign_agreement_r": 15,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.8122807017543859,
+     "loo_min": 0.5771929824561404,
+     "rho": 0.6345864661654136
+    },
+    "gap_att_minus_gmass": 0.12180451127819558,
+    "gap_att_minus_gmass_loo": [
+     -0.014035087719298178,
+     0.3614035087719298
+    ],
+    "gap_att_minus_mass": 0.049624060150376015,
+    "gap_att_minus_mass_loo": [
+     -0.06315789473684208,
+     0.28421052631578947
+    ],
+    "gmass": {
+     "loo_max": 0.6350877192982456,
+     "loo_min": 0.44035087719298244,
+     "rho": 0.512781954887218
+    },
+    "gwmass": {
+     "loo_max": 0.775438596491228,
+     "loo_min": 0.6228070175438597,
+     "rho": 0.6721804511278195
+    },
+    "mass": {
+     "loo_max": 0.6842105263157895,
+     "loo_min": 0.5245614035087719,
+     "rho": 0.5849624060150376
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.968421052631579,
+     "loo_min": 0.9473684210526315,
+     "rho": 0.9548872180451128
+    },
+    "gap_att_minus_gmass": 0.9112781954887218,
+    "gap_att_minus_gmass_loo": [
+     0.7508771929824561,
+     1.0298245614035086
+    ],
+    "gap_att_minus_mass": 0.8390977443609022,
+    "gap_att_minus_mass_loo": [
+     0.6666666666666666,
+     0.9456140350877192
+    ],
+    "gmass": {
+     "loo_max": 0.20175438596491227,
+     "loo_min": -0.0824561403508772,
+     "rho": 0.04360902255639098
+    },
+    "gwmass": {
+     "loo_max": 0.3929824561403509,
+     "loo_min": 0.10701754385964912,
+     "rho": 0.20902255639097744
+    },
+    "mass": {
+     "loo_max": 0.28596491228070176,
+     "loo_min": 0.0017543859649122807,
+     "rho": 0.11578947368421053
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.9017543859649123,
+     "loo_min": 0.8596491228070176,
+     "rho": 0.8736842105263158
+    },
+    "gap_att_minus_gmass": 0.28872180451127827,
+    "gap_att_minus_gmass_loo": [
+     0.16315789473684217,
+     0.3543859649122807
+    ],
+    "gap_att_minus_mass": 0.18045112781954897,
+    "gap_att_minus_mass_loo": [
+     0.10526315789473695,
+     0.22807017543859642
+    ],
+    "gmass": {
+     "loo_max": 0.7105263157894737,
+     "loo_min": 0.5245614035087719,
+     "rho": 0.5849624060150376
+    },
+    "gwmass": {
+     "loo_max": 0.8333333333333334,
+     "loo_min": 0.7192982456140351,
+     "rho": 0.7548872180451128
+    },
+    "mass": {
+     "loo_max": 0.7684210526315789,
+     "loo_min": 0.6508771929824562,
+     "rho": 0.6932330827067669
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.8666666666666667,
+     "loo_min": 0.7912280701754386,
+     "rho": 0.8180451127819549
+    },
+    "gap_att_minus_gmass": 0.11578947368421055,
+    "gap_att_minus_gmass_loo": [
+     0.015789473684210575,
+     0.1964912280701755
+    ],
+    "gap_att_minus_mass": 0.05714285714285716,
+    "gap_att_minus_mass_loo": [
+     0.012280701754386003,
+     0.12807017543859656
+    ],
+    "gmass": {
+     "loo_max": 0.8052631578947368,
+     "loo_min": 0.6666666666666666,
+     "rho": 0.7022556390977444
+    },
+    "gwmass": {
+     "loo_max": 0.8649122807017544,
+     "loo_min": 0.8052631578947368,
+     "rho": 0.8240601503759398
+    },
+    "mass": {
+     "loo_max": 0.8105263157894737,
+     "loo_min": 0.7350877192982456,
+     "rho": 0.7609022556390977
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9639097744360903
+  },
+  "ball.zero.diag": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.956140350877193,
+     "loo_min": 0.9070175438596492,
+     "rho": 0.9203007518796993
+    },
+    "gap_att_minus_gmass": 0.8165413533834587,
+    "gap_att_minus_gmass_loo": [
+     0.680701754385965,
+     0.9526315789473685
+    ],
+    "gap_att_minus_mass": 0.899248120300752,
+    "gap_att_minus_mass_loo": [
+     0.7701754385964913,
+     1.049122807017544
+    ],
+    "gmass": {
+     "loo_max": 0.22982456140350876,
+     "loo_min": -0.0456140350877193,
+     "rho": 0.1037593984962406
+    },
+    "gwmass": {
+     "loo_max": 0.20350877192982456,
+     "loo_min": -0.07543859649122807,
+     "rho": 0.07819548872180451
+    },
+    "mass": {
+     "loo_max": 0.14035087719298245,
+     "loo_min": -0.14210526315789473,
+     "rho": 0.021052631578947368
+    }
+   },
+   "n": 20,
+   "negative_effects": 15,
+   "sign_agreement_r": 18,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.743859649122807,
+     "loo_min": 0.5807017543859649,
+     "rho": 0.6406015037593985
+    },
+    "gap_att_minus_gmass": 0.41654135338345866,
+    "gap_att_minus_gmass_loo": [
+     0.3035087719298246,
+     0.48771929824561405
+    ],
+    "gap_att_minus_mass": 0.4180451127819549,
+    "gap_att_minus_mass_loo": [
+     0.31754385964912285,
+     0.48947368421052634
+    ],
+    "gmass": {
+     "loo_max": 0.3333333333333333,
+     "loo_min": 0.09473684210526316,
+     "rho": 0.22406015037593985
+    },
+    "gwmass": {
+     "loo_max": 0.3631578947368421,
+     "loo_min": 0.12982456140350876,
+     "rho": 0.25413533834586466
+    },
+    "mass": {
+     "loo_max": 0.3280701754385965,
+     "loo_min": 0.09298245614035087,
+     "rho": 0.22255639097744362
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9859649122807017,
+     "loo_min": 0.968421052631579,
+     "rho": 0.9729323308270676
+    },
+    "gap_att_minus_gmass": 0.9218045112781955,
+    "gap_att_minus_gmass_loo": [
+     0.7771929824561403,
+     1.075438596491228
+    ],
+    "gap_att_minus_mass": 1.0045112781954888,
+    "gap_att_minus_mass_loo": [
+     0.8736842105263158,
+     1.1719298245614036
+    ],
+    "gmass": {
+     "loo_max": 0.19298245614035087,
+     "loo_min": -0.10701754385964912,
+     "rho": 0.05112781954887218
+    },
+    "gwmass": {
+     "loo_max": 0.17017543859649123,
+     "loo_min": -0.12982456140350876,
+     "rho": 0.031578947368421054
+    },
+    "mass": {
+     "loo_max": 0.09649122807017543,
+     "loo_min": -0.20350877192982456,
+     "rho": -0.031578947368421054
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.6964912280701754,
+     "loo_min": 0.39649122807017545,
+     "rho": 0.48270676691729325
+    },
+    "gap_att_minus_gmass": 0.43157894736842106,
+    "gap_att_minus_gmass_loo": [
+     0.312280701754386,
+     0.5035087719298246
+    ],
+    "gap_att_minus_mass": 0.36541353383458647,
+    "gap_att_minus_mass_loo": [
+     0.28596491228070176,
+     0.45964912280701753
+    ],
+    "gmass": {
+     "loo_max": 0.19298245614035087,
+     "loo_min": -0.10701754385964912,
+     "rho": 0.05112781954887218
+    },
+    "gwmass": {
+     "loo_max": 0.2789473684210526,
+     "loo_min": -0.021052631578947368,
+     "rho": 0.12481203007518797
+    },
+    "mass": {
+     "loo_max": 0.27017543859649124,
+     "loo_min": -0.02982456140350877,
+     "rho": 0.11729323308270677
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.9526315789473684,
+     "loo_min": 0.9192982456140351,
+     "rho": 0.9308270676691729
+    },
+    "gap_att_minus_gmass": 0.3639097744360902,
+    "gap_att_minus_gmass_loo": [
+     0.280701754385965,
+     0.4245614035087719
+    ],
+    "gap_att_minus_mass": 0.2165413533834586,
+    "gap_att_minus_mass_loo": [
+     0.16666666666666663,
+     0.256140350877193
+    ],
+    "gmass": {
+     "loo_max": 0.6649122807017543,
+     "loo_min": 0.49473684210526314,
+     "rho": 0.5669172932330827
+    },
+    "gwmass": {
+     "loo_max": 0.7473684210526316,
+     "loo_min": 0.6210526315789474,
+     "rho": 0.675187969924812
+    },
+    "mass": {
+     "loo_max": 0.7684210526315789,
+     "loo_min": 0.6666666666666666,
+     "rho": 0.7142857142857143
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9639097744360903
+  },
+  "red.mask.anti": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.40350877192982454,
+     "loo_min": 0.18070175438596492,
+     "rho": 0.29774436090225564
+    },
+    "gap_att_minus_gmass": 0.19097744360902258,
+    "gap_att_minus_gmass_loo": [
+     -0.1105263157894737,
+     0.4
+    ],
+    "gap_att_minus_mass": 0.23759398496240602,
+    "gap_att_minus_mass_loo": [
+     -0.05614035087719296,
+     0.4631578947368421
+    ],
+    "gmass": {
+     "loo_max": 0.2912280701754386,
+     "loo_min": -0.008771929824561403,
+     "rho": 0.10676691729323308
+    },
+    "gwmass": {
+     "loo_max": 0.2807017543859649,
+     "loo_min": -0.01929824561403509,
+     "rho": 0.09774436090225563
+    },
+    "mass": {
+     "loo_max": 0.23684210526315788,
+     "loo_min": -0.06315789473684211,
+     "rho": 0.06015037593984962
+    }
+   },
+   "n": 20,
+   "negative_effects": 8,
+   "sign_agreement_r": 19,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.7578947368421053,
+     "loo_min": 0.6070175438596491,
+     "rho": 0.6631578947368421
+    },
+    "gap_att_minus_gmass": 0.21804511278195482,
+    "gap_att_minus_gmass_loo": [
+     0.07719298245614037,
+     0.35964912280701755
+    ],
+    "gap_att_minus_mass": 0.24812030075187963,
+    "gap_att_minus_mass_loo": [
+     0.11228070175438598,
+     0.39473684210526316
+    ],
+    "gmass": {
+     "loo_max": 0.5473684210526316,
+     "loo_min": 0.3543859649122807,
+     "rho": 0.44511278195488724
+    },
+    "gwmass": {
+     "loo_max": 0.5,
+     "loo_min": 0.30701754385964913,
+     "rho": 0.4045112781954887
+    },
+    "mass": {
+     "loo_max": 0.5245614035087719,
+     "loo_min": 0.3192982456140351,
+     "rho": 0.4150375939849624
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9947368421052631,
+     "loo_min": 0.9894736842105263,
+     "rho": 0.9909774436090225
+    },
+    "gap_att_minus_gmass": 1.4330827067669172,
+    "gap_att_minus_gmass_loo": [
+     1.3385964912280701,
+     1.6385964912280702
+    ],
+    "gap_att_minus_mass": 1.3353383458646615,
+    "gap_att_minus_mass_loo": [
+     1.224561403508772,
+     1.524561403508772
+    ],
+    "gmass": {
+     "loo_max": -0.34912280701754383,
+     "loo_min": -0.6491228070175439,
+     "rho": -0.4421052631578947
+    },
+    "gwmass": {
+     "loo_max": -0.3192982456140351,
+     "loo_min": -0.6192982456140351,
+     "rho": -0.41654135338345866
+    },
+    "mass": {
+     "loo_max": -0.23508771929824562,
+     "loo_min": -0.5350877192982456,
+     "rho": -0.3443609022556391
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.8105263157894737,
+     "loo_min": 0.6684210526315789,
+     "rho": 0.7157894736842105
+    },
+    "gap_att_minus_gmass": 0.18345864661654132,
+    "gap_att_minus_gmass_loo": [
+     0.047368421052631615,
+     0.3543859649122807
+    ],
+    "gap_att_minus_mass": 0.21954887218045116,
+    "gap_att_minus_mass_loo": [
+     0.08947368421052637,
+     0.3964912280701754
+    ],
+    "gmass": {
+     "loo_max": 0.6421052631578947,
+     "loo_min": 0.45614035087719296,
+     "rho": 0.5323308270676692
+    },
+    "gwmass": {
+     "loo_max": 0.624561403508772,
+     "loo_min": 0.43859649122807015,
+     "rho": 0.5172932330827068
+    },
+    "mass": {
+     "loo_max": 0.6,
+     "loo_min": 0.41403508771929826,
+     "rho": 0.49624060150375937
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.7824561403508772,
+     "loo_min": 0.6842105263157895,
+     "rho": 0.7293233082706767
+    },
+    "gap_att_minus_gmass": 0.03609022556390984,
+    "gap_att_minus_gmass_loo": [
+     -0.10350877192982455,
+     0.08771929824561397
+    ],
+    "gap_att_minus_mass": 0.08721804511278197,
+    "gap_att_minus_mass_loo": [
+     -0.04912280701754379,
+     0.1350877192982456
+    ],
+    "gmass": {
+     "loo_max": 0.7947368421052632,
+     "loo_min": 0.6421052631578947,
+     "rho": 0.6932330827067669
+    },
+    "gwmass": {
+     "loo_max": 0.7684210526315789,
+     "loo_min": 0.612280701754386,
+     "rho": 0.6676691729323309
+    },
+    "mass": {
+     "loo_max": 0.7403508771929824,
+     "loo_min": 0.5824561403508772,
+     "rho": 0.6421052631578947
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9669172932330827
+  },
+  "red.mask.diag": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.26666666666666666,
+     "loo_min": -0.0017543859649122807,
+     "rho": 0.14135338345864662
+    },
+    "gap_att_minus_gmass": -0.34135338345864663,
+    "gap_att_minus_gmass_loo": [
+     -0.5508771929824562,
+     -0.14385964912280702
+    ],
+    "gap_att_minus_mass": -0.3714285714285714,
+    "gap_att_minus_mass_loo": [
+     -0.5859649122807018,
+     -0.17543859649122806
+    ],
+    "gmass": {
+     "loo_max": 0.5824561403508772,
+     "loo_min": 0.39649122807017545,
+     "rho": 0.48270676691729325
+    },
+    "gwmass": {
+     "loo_max": 0.612280701754386,
+     "loo_min": 0.4298245614035088,
+     "rho": 0.5112781954887218
+    },
+    "mass": {
+     "loo_max": 0.6140350877192983,
+     "loo_min": 0.43157894736842106,
+     "rho": 0.512781954887218
+    }
+   },
+   "n": 20,
+   "negative_effects": 13,
+   "sign_agreement_r": 20,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.7666666666666667,
+     "loo_min": 0.5578947368421052,
+     "rho": 0.6210526315789474
+    },
+    "gap_att_minus_gmass": -0.02857142857142858,
+    "gap_att_minus_gmass_loo": [
+     -0.0859649122807018,
+     0.16666666666666674
+    ],
+    "gap_att_minus_mass": -0.03157894736842104,
+    "gap_att_minus_mass_loo": [
+     -0.08947368421052637,
+     0.16666666666666674
+    ],
+    "gmass": {
+     "loo_max": 0.7491228070175439,
+     "loo_min": 0.5912280701754385,
+     "rho": 0.649624060150376
+    },
+    "gwmass": {
+     "loo_max": 0.7350877192982456,
+     "loo_min": 0.5596491228070175,
+     "rho": 0.6225563909774436
+    },
+    "mass": {
+     "loo_max": 0.7526315789473684,
+     "loo_min": 0.5947368421052631,
+     "rho": 0.6526315789473685
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.980701754385965,
+     "loo_min": 0.9614035087719298,
+     "rho": 0.9669172932330827
+    },
+    "gap_att_minus_gmass": 0.6240601503759399,
+    "gap_att_minus_gmass_loo": [
+     0.45789473684210524,
+     0.7280701754385965
+    ],
+    "gap_att_minus_mass": 0.6345864661654135,
+    "gap_att_minus_mass_loo": [
+     0.47017543859649125,
+     0.7403508771929824
+    ],
+    "gmass": {
+     "loo_max": 0.5035087719298246,
+     "loo_min": 0.23333333333333334,
+     "rho": 0.34285714285714286
+    },
+    "gwmass": {
+     "loo_max": 0.5456140350877193,
+     "loo_min": 0.24561403508771928,
+     "rho": 0.3533834586466165
+    },
+    "mass": {
+     "loo_max": 0.49122807017543857,
+     "loo_min": 0.22105263157894736,
+     "rho": 0.3323308270676692
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.5701754385964912,
+     "loo_min": 0.35964912280701755,
+     "rho": 0.45112781954887216
+    },
+    "gap_att_minus_gmass": -0.24812030075187974,
+    "gap_att_minus_gmass_loo": [
+     -0.375438596491228,
+     -0.09473684210526312
+    ],
+    "gap_att_minus_mass": -0.24962406015037597,
+    "gap_att_minus_mass_loo": [
+     -0.39649122807017545,
+     -0.0964912280701754
+    ],
+    "gmass": {
+     "loo_max": 0.8017543859649123,
+     "loo_min": 0.6491228070175439,
+     "rho": 0.6992481203007519
+    },
+    "gwmass": {
+     "loo_max": 0.7789473684210526,
+     "loo_min": 0.624561403508772,
+     "rho": 0.6781954887218045
+    },
+    "mass": {
+     "loo_max": 0.8,
+     "loo_min": 0.6508771929824562,
+     "rho": 0.7007518796992481
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.8701754385964913,
+     "loo_min": 0.7719298245614035,
+     "rho": 0.8045112781954887
+    },
+    "gap_att_minus_gmass": 0.5022556390977444,
+    "gap_att_minus_gmass_loo": [
+     0.41754385964912283,
+     0.5859649122807017
+    ],
+    "gap_att_minus_mass": 0.4195488721804511,
+    "gap_att_minus_mass_loo": [
+     0.33333333333333337,
+     0.4929824561403509
+    ],
+    "gmass": {
+     "loo_max": 0.37543859649122807,
+     "loo_min": 0.18947368421052632,
+     "rho": 0.3022556390977444
+    },
+    "gwmass": {
+     "loo_max": 0.34912280701754383,
+     "loo_min": 0.1631578947368421,
+     "rho": 0.281203007518797
+    },
+    "mass": {
+     "loo_max": 0.45964912280701753,
+     "loo_min": 0.28596491228070176,
+     "rho": 0.3849624060150376
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9864661654135338
+  },
+  "red.zero.anti": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.5368421052631579,
+     "loo_min": 0.3105263157894737,
+     "rho": 0.40601503759398494
+    },
+    "gap_att_minus_gmass": 0.2601503759398496,
+    "gap_att_minus_gmass_loo": [
+     -0.0052631578947368585,
+     0.49298245614035086
+    ],
+    "gap_att_minus_mass": 0.29624060150375936,
+    "gap_att_minus_mass_loo": [
+     0.029824561403508754,
+     0.5157894736842106
+    ],
+    "gmass": {
+     "loo_max": 0.32280701754385965,
+     "loo_min": 0.043859649122807015,
+     "rho": 0.14586466165413534
+    },
+    "gwmass": {
+     "loo_max": 0.356140350877193,
+     "loo_min": 0.06666666666666667,
+     "rho": 0.17293233082706766
+    },
+    "mass": {
+     "loo_max": 0.28771929824561404,
+     "loo_min": -0.0035087719298245615,
+     "rho": 0.10977443609022557
+    }
+   },
+   "n": 20,
+   "negative_effects": 8,
+   "sign_agreement_r": 19,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.8596491228070176,
+     "loo_min": 0.7228070175438597,
+     "rho": 0.762406015037594
+    },
+    "gap_att_minus_gmass": 0.34736842105263155,
+    "gap_att_minus_gmass_loo": [
+     0.23508771929824562,
+     0.5368421052631579
+    ],
+    "gap_att_minus_mass": 0.34887218045112783,
+    "gap_att_minus_mass_loo": [
+     0.1964912280701755,
+     0.5175438596491229
+    ],
+    "gmass": {
+     "loo_max": 0.49122807017543857,
+     "loo_min": 0.3175438596491228,
+     "rho": 0.4150375939849624
+    },
+    "gwmass": {
+     "loo_max": 0.5070175438596491,
+     "loo_min": 0.3350877192982456,
+     "rho": 0.43007518796992483
+    },
+    "mass": {
+     "loo_max": 0.5263157894736842,
+     "loo_min": 0.3157894736842105,
+     "rho": 0.41353383458646614
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9789473684210527,
+     "loo_min": 0.9403508771929825,
+     "rho": 0.9488721804511279
+    },
+    "gap_att_minus_gmass": 1.255639097744361,
+    "gap_att_minus_gmass_loo": [
+     1.131578947368421,
+     1.431578947368421
+    ],
+    "gap_att_minus_mass": 1.1413533834586467,
+    "gap_att_minus_mass_loo": [
+     0.9982456140350877,
+     1.2982456140350878
+    ],
+    "gmass": {
+     "loo_max": -0.1912280701754386,
+     "loo_min": -0.49122807017543857,
+     "rho": -0.3067669172932331
+    },
+    "gwmass": {
+     "loo_max": -0.1368421052631579,
+     "loo_min": -0.4368421052631579,
+     "rho": -0.26015037593984963
+    },
+    "mass": {
+     "loo_max": -0.05789473684210526,
+     "loo_min": -0.35789473684210527,
+     "rho": -0.1924812030075188
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.6912280701754386,
+     "loo_min": 0.5385964912280702,
+     "rho": 0.5969924812030075
+    },
+    "gap_att_minus_gmass": 0.022556390977443663,
+    "gap_att_minus_gmass_loo": [
+     -0.08070175438596494,
+     0.1824561403508772
+    ],
+    "gap_att_minus_mass": -0.03157894736842104,
+    "gap_att_minus_mass_loo": [
+     -0.12631578947368427,
+     0.12105263157894741
+    ],
+    "gmass": {
+     "loo_max": 0.6508771929824562,
+     "loo_min": 0.5035087719298246,
+     "rho": 0.5744360902255639
+    },
+    "gwmass": {
+     "loo_max": 0.6473684210526316,
+     "loo_min": 0.5,
+     "rho": 0.5714285714285714
+    },
+    "mass": {
+     "loo_max": 0.6964912280701754,
+     "loo_min": 0.5666666666666667,
+     "rho": 0.6285714285714286
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.7543859649122807,
+     "loo_min": 0.5912280701754385,
+     "rho": 0.649624060150376
+    },
+    "gap_att_minus_gmass": -0.009022556390977376,
+    "gap_att_minus_gmass_loo": [
+     -0.1824561403508772,
+     0.12631578947368427
+    ],
+    "gap_att_minus_mass": 0.006015037593985029,
+    "gap_att_minus_mass_loo": [
+     -0.16666666666666663,
+     0.1228070175438597
+    ],
+    "gmass": {
+     "loo_max": 0.7982456140350878,
+     "loo_min": 0.6017543859649123,
+     "rho": 0.6586466165413534
+    },
+    "gwmass": {
+     "loo_max": 0.7736842105263158,
+     "loo_min": 0.5526315789473685,
+     "rho": 0.6165413533834586
+    },
+    "mass": {
+     "loo_max": 0.7824561403508772,
+     "loo_min": 0.5842105263157895,
+     "rho": 0.643609022556391
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9669172932330827
+  },
+  "red.zero.diag": {
+   "gone_px": {
+    "attribution": {
+     "loo_max": 0.08596491228070176,
+     "loo_min": -0.14210526315789473,
+     "rho": 0.021052631578947368
+    },
+    "gap_att_minus_gmass": -0.25112781954887214,
+    "gap_att_minus_gmass_loo": [
+     -0.4280701754385965,
+     -0.13684210526315788
+    ],
+    "gap_att_minus_mass": -0.2962406015037594,
+    "gap_att_minus_mass_loo": [
+     -0.48070175438596496,
+     -0.18771929824561404
+    ],
+    "gmass": {
+     "loo_max": 0.41228070175438597,
+     "loo_min": 0.15087719298245614,
+     "rho": 0.2721804511278195
+    },
+    "gwmass": {
+     "loo_max": 0.43859649122807015,
+     "loo_min": 0.20350877192982456,
+     "rho": 0.3172932330827068
+    },
+    "mass": {
+     "loo_max": 0.4631578947368421,
+     "loo_min": 0.20350877192982456,
+     "rho": 0.3172932330827068
+    }
+   },
+   "n": 20,
+   "negative_effects": 13,
+   "sign_agreement_r": 19,
+   "signed_id": {
+    "attribution": {
+     "loo_max": 0.5087719298245614,
+     "loo_min": 0.25087719298245614,
+     "rho": 0.35789473684210527
+    },
+    "gap_att_minus_gmass": -0.09774436090225563,
+    "gap_att_minus_gmass_loo": [
+     -0.14385964912280702,
+     0.1298245614035088
+    ],
+    "gap_att_minus_mass": -0.16090225563909777,
+    "gap_att_minus_mass_loo": [
+     -0.21754385964912276,
+     0.05614035087719299
+    ],
+    "gmass": {
+     "loo_max": 0.5526315789473685,
+     "loo_min": 0.3649122807017544,
+     "rho": 0.4556390977443609
+    },
+    "gwmass": {
+     "loo_max": 0.5578947368421052,
+     "loo_min": 0.3912280701754386,
+     "rho": 0.4781954887218045
+    },
+    "mass": {
+     "loo_max": 0.6017543859649123,
+     "loo_min": 0.43859649122807015,
+     "rho": 0.518796992481203
+    }
+   },
+   "signed_nd": {
+    "attribution": {
+     "loo_max": 0.9824561403508771,
+     "loo_min": 0.9719298245614035,
+     "rho": 0.9759398496240601
+    },
+    "gap_att_minus_gmass": 0.506766917293233,
+    "gap_att_minus_gmass_loo": [
+     0.32105263157894737,
+     0.5912280701754387
+    ],
+    "gap_att_minus_mass": 0.5338345864661653,
+    "gap_att_minus_mass_loo": [
+     0.3526315789473684,
+     0.6228070175438597
+    ],
+    "gmass": {
+     "loo_max": 0.6508771929824562,
+     "loo_min": 0.38070175438596493,
+     "rho": 0.4691729323308271
+    },
+    "gwmass": {
+     "loo_max": 0.6701754385964912,
+     "loo_min": 0.3701754385964912,
+     "rho": 0.46015037593984964
+    },
+    "mass": {
+     "loo_max": 0.6192982456140351,
+     "loo_min": 0.34912280701754383,
+     "rho": 0.4421052631578947
+    }
+   },
+   "size_id": {
+    "attribution": {
+     "loo_max": 0.6631578947368421,
+     "loo_min": 0.5456140350877193,
+     "rho": 0.6105263157894737
+    },
+    "gap_att_minus_gmass": 0.39398496240601505,
+    "gap_att_minus_gmass_loo": [
+     0.2789473684210526,
+     0.5052631578947369
+    ],
+    "gap_att_minus_mass": 0.3609022556390977,
+    "gap_att_minus_mass_loo": [
+     0.2421052631578947,
+     0.4666666666666667
+    ],
+    "gmass": {
+     "loo_max": 0.28771929824561404,
+     "loo_min": 0.08596491228070176,
+     "rho": 0.21654135338345865
+    },
+    "gwmass": {
+     "loo_max": 0.30701754385964913,
+     "loo_min": 0.10877192982456141,
+     "rho": 0.23609022556390977
+    },
+    "mass": {
+     "loo_max": 0.32456140350877194,
+     "loo_min": 0.12456140350877193,
+     "rho": 0.24962406015037594
+    }
+   },
+   "size_nd": {
+    "attribution": {
+     "loo_max": 0.8614035087719298,
+     "loo_min": 0.7929824561403509,
+     "rho": 0.8225563909774436
+    },
+    "gap_att_minus_gmass": 0.6120300751879699,
+    "gap_att_minus_gmass_loo": [
+     0.4614035087719298,
+     0.7140350877192982
+    ],
+    "gap_att_minus_mass": 0.5097744360902255,
+    "gap_att_minus_mass_loo": [
+     0.3596491228070175,
+     0.5947368421052632
+    ],
+    "gmass": {
+     "loo_max": 0.34912280701754383,
+     "loo_min": 0.07894736842105263,
+     "rho": 0.21052631578947367
+    },
+    "gwmass": {
+     "loo_max": 0.3350877192982456,
+     "loo_min": 0.08421052631578947,
+     "rho": 0.21503759398496242
+    },
+    "mass": {
+     "loo_max": 0.45087719298245615,
+     "loo_min": 0.19824561403508772,
+     "rho": 0.31278195488721805
+    }
+   },
+   "spearman_mass_vs_gmass_over_groups": 0.9864661654135338
+  }
+ },
+ "gate_rms_joint_img_over_single": 0.018408927552153873,
+ "gate_rms_joint_txt_over_single": 0.058577935205765916,
+ "note": "Post-hoc re-analysis (2026-11-14, after the audit): attribution vs raw mass vs gated mass, sign-free.\n\n  python reanalysis_gated.py   -> reanalysis-gated.json   (numpy + PIL; saved data only; no model)\n\nData: smoke job-8fd7bb3b1604 (attribution terms), cuts job-1d4b6df1ba24 (designed groups), and the\nouter attention gate RMS per (step, block) logged in job-6d9fea396262 (predicted-write addendum 2,\nnative root run of the cat prompt; the gates depend on the timestep only, and the log is identical\nfor both scenes there).\n\nPredictors per head group (sums over the group's heads):\n* r       first-order attribution (PREREG; nd direction), r_id the same on the iso-minus-deleted direction;\n* mass    read mass M = sum p over the word's row (PREREG; image + text receivers, no gate);\n* gmass   gated read mass: sum over steps of M_img[s,b,h] * rms(g_img[s,b]) + M_txt[s,b,h] * rms(g_txt[s,b]);\n* gwmass  gated write mass: the same gate weighting of wmass = sum p |W_O,h v| (alternative).\nOutcomes per group: signed effect on the nd direction (as PREREG), its size |effect| (scored with\n|r| for attribution; masses are unsigned), pixel gone (lane way, z:none endpoint as PREREG), and the\neffect on the iso-minus-deleted direction (scored with r_id, and its size with |r_id|).\nStatistics: Spearman over the 20 groups of a partition, leave-one-out min/max, and the leave-one-out\nrange of the gap rho(attribution) - rho(gated mass). All 8 conditions (2 words x 2 cut types x 2 partitions).\nThis is not preregistered; it answers the audit's question \"is the gap sign or size\".\n",
+ "summary": {
+  "anti.gone_px": {
+   "att_beats_gmass_conditions": 4,
+   "loo_gap_vs_gmass_min_above_0": 2,
+   "mean_gap_att_minus_gmass": 0.5582706766917294,
+   "mean_gap_att_minus_mass": 0.5409774436090226,
+   "mean_rho": {
+    "attribution": 0.6406015037593985,
+    "gmass": 0.08233082706766917,
+    "gwmass": 0.1650375939849624,
+    "mass": 0.09962406015037595
+   }
+  },
+  "anti.signed_id": {
+   "att_beats_gmass_conditions": 4,
+   "loo_gap_vs_gmass_min_above_0": 2,
+   "mean_gap_att_minus_gmass": 0.1842105263157895,
+   "mean_gap_att_minus_mass": 0.14962406015037594,
+   "mean_rho": {
+    "attribution": 0.662781954887218,
+    "gmass": 0.47857142857142854,
+    "gwmass": 0.5541353383458647,
+    "mass": 0.513157894736842
+   }
+  },
+  "anti.signed_nd": {
+   "att_beats_gmass_conditions": 4,
+   "loo_gap_vs_gmass_min_above_0": 4,
+   "mean_gap_att_minus_gmass": 1.1157894736842104,
+   "mean_gap_att_minus_mass": 1.0289473684210526,
+   "mean_rho": {
+    "attribution": 0.9590225563909774,
+    "gmass": -0.15676691729323308,
+    "gwmass": -0.059774436090225584,
+    "mass": -0.06992481203007518
+   }
+  },
+  "anti.size_id": {
+   "att_beats_gmass_conditions": 3,
+   "loo_gap_vs_gmass_min_above_0": 2,
+   "mean_gap_att_minus_gmass": 0.11654135338345867,
+   "mean_gap_att_minus_mass": 0.07255639097744365,
+   "mean_rho": {
+    "attribution": 0.7112781954887217,
+    "gmass": 0.5947368421052631,
+    "gwmass": 0.6530075187969924,
+    "mass": 0.6387218045112782
+   }
+  },
+  "anti.size_nd": {
+   "att_beats_gmass_conditions": 2,
+   "loo_gap_vs_gmass_min_above_0": 1,
+   "mean_gap_att_minus_gmass": 0.023308270676691778,
+   "mean_gap_att_minus_mass": 0.012781954887218089,
+   "mean_rho": {
+    "attribution": 0.7003759398496241,
+    "gmass": 0.6770676691729324,
+    "gwmass": 0.7131578947368421,
+    "mass": 0.687593984962406
+   }
+  },
+  "diag.gone_px": {
+   "att_beats_gmass_conditions": 2,
+   "loo_gap_vs_gmass_min_above_0": 2,
+   "mean_gap_att_minus_gmass": 0.2488721804511278,
+   "mean_gap_att_minus_mass": 0.2650375939849624,
+   "mean_rho": {
+    "attribution": 0.5,
+    "gmass": 0.25112781954887214,
+    "gwmass": 0.26691729323308266,
+    "mass": 0.2349624060150376
+   }
+  },
+  "diag.signed_id": {
+   "att_beats_gmass_conditions": 2,
+   "loo_gap_vs_gmass_min_above_0": 2,
+   "mean_gap_att_minus_gmass": 0.12368421052631579,
+   "mean_gap_att_minus_mass": 0.10413533834586465,
+   "mean_rho": {
+    "attribution": 0.543233082706767,
+    "gmass": 0.41954887218045117,
+    "gwmass": 0.43909774436090226,
+    "mass": 0.43909774436090226
+   }
+  },
+  "diag.signed_nd": {
+   "att_beats_gmass_conditions": 4,
+   "loo_gap_vs_gmass_min_above_0": 4,
+   "mean_gap_att_minus_gmass": 0.7503759398496241,
+   "mean_gap_att_minus_mass": 0.7917293233082706,
+   "mean_rho": {
+    "attribution": 0.9676691729323308,
+    "gmass": 0.21729323308270673,
+    "gwmass": 0.21503759398496242,
+    "mass": 0.17593984962406015
+   }
+  },
+  "diag.size_id": {
+   "att_beats_gmass_conditions": 3,
+   "loo_gap_vs_gmass_min_above_0": 3,
+   "mean_gap_att_minus_gmass": 0.22443609022556388,
+   "mean_gap_att_minus_mass": 0.18796992481203006,
+   "mean_rho": {
+    "attribution": 0.5650375939849623,
+    "gmass": 0.34060150375939846,
+    "gwmass": 0.368796992481203,
+    "mass": 0.37706766917293233
+   }
+  },
+  "diag.size_nd": {
+   "att_beats_gmass_conditions": 4,
+   "loo_gap_vs_gmass_min_above_0": 4,
+   "mean_gap_att_minus_gmass": 0.45789473684210524,
+   "mean_gap_att_minus_mass": 0.3477443609022556,
+   "mean_rho": {
+    "attribution": 0.8714285714285714,
+    "gmass": 0.4135338345864662,
+    "gwmass": 0.4537593984962406,
+    "mass": 0.5236842105263158
+   }
+  }
+ }
+}
