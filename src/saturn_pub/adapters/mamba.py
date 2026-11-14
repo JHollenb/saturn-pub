@@ -23,6 +23,7 @@ from transformers import DynamicCache, MambaConfig, MambaForCausalLM
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
+from ..numerics import check_numeric_environment, live_numeric_environment
 from ..values import clone, digest, identity
 from ._residency import BlockResidency
 from .decoder import _stable_configuration, _tensor_guards
@@ -104,10 +105,7 @@ class MambaAdapter(Adapter):
             "numeric_scope": {
                 "inference_mode": True,
                 "autocast": False,
-                "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-                "torch_num_threads": torch.get_num_threads(),
-                "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-                "float32_matmul_precision": torch.get_float32_matmul_precision(),
+                **live_numeric_environment(),
                 "tensor_layout": "state-slot-bound-stride",
             },
             "sampler": "greedy",
@@ -184,15 +182,7 @@ class MambaAdapter(Adapter):
             raise ValueError(
                 "model configuration changed after adapter identity was frozen; rewrap"
             )
-        expected = self.execution["numeric_scope"]
-        current = {
-            "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-            "torch_num_threads": torch.get_num_threads(),
-            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-            "float32_matmul_precision": torch.get_float32_matmul_precision(),
-        }
-        if any(expected[name] != value for name, value in current.items()):
-            raise ValueError("live numerical environment drifted from the execution ABI; rewrap")
+        check_numeric_environment(self.execution["numeric_scope"])
 
     # --- external recurrent state -------------------------------------------------------
 

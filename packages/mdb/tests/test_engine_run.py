@@ -11,13 +11,12 @@ pytest.importorskip("transformers")
 
 import saturn_pub  # noqa: E402
 from saturn_pub.adapters.decoder import DecoderAdapter  # noqa: E402
+from test_engine_ports import PROMPT, build_model, head_dim  # noqa: E402,F401
 
 import mdb  # noqa: E402
 from mdb.engine import Run  # noqa: E402
 from mdb.engine.ports import tensor_digest  # noqa: E402
 from mdb.engine.selfcheck import tiny_model  # noqa: E402
-
-from test_engine_ports import PROMPT, build_model, head_dim  # noqa: E402,F401
 
 CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
 ROW = len(PROMPT) - 1  # the first generated row's index; addresses read t{ROW}.<stop>
@@ -515,6 +514,33 @@ def test_restore_names_the_numeric_scope_that_differs():
         torch.set_num_threads(before)
     legacy = {key: value for key, value in checkpoint.items() if key != "numeric_scope"}
     assert Run_(_adapter("qwen2", "fp32"), "none").restore(legacy) == run.where
+
+
+@pytest.mark.parametrize("flag", ["bf16", "fp16"])
+def test_reduced_precision_flag_is_bound_and_refused(flag):
+    """M1: the CUDA reduced-precision reduction flags are in the numeric scope; a checkpoint
+    taken under one value refuses to restore under the other and names the field."""
+    attribute = f"allow_{flag}_reduced_precision_reduction"
+    field = f"{flag}_reduced_precision_reduction"
+    matmul = torch.backends.cuda.matmul
+    before = getattr(matmul, attribute)
+    try:
+        setattr(matmul, attribute, True)
+        run = Run_(_adapter("qwen2", "bf16"), "none")
+        run.until("L0.p")
+        assert run.numeric_scope[field] is True
+        checkpoint = json.loads(json.dumps(run.checkpoint("flagged")))
+        setattr(matmul, attribute, False)
+        with pytest.raises(ValueError, match=f"{field}: recorded True, current False"):
+            run.step()  # the live adapter refuses to execute under the drifted flag
+        fresh = Run_(_adapter("qwen2", "bf16"), "none")  # rewrapped under the other flag
+        assert fresh.numeric_scope[field] is False
+        with pytest.raises(ValueError, match=f"{field}: checkpoint True, this process False"):
+            fresh.restore(checkpoint)
+        with pytest.raises(ValueError, match=f"numeric_scope.{field}: cut True, adapter False"):
+            Session.from_cut(fresh.adapter, run._trail[-1].cut)
+    finally:
+        setattr(matmul, attribute, before)
 
 
 # --- round 2 ---------------------------------------------------------------------------------

@@ -321,7 +321,8 @@ def _stream_rounding_bound(caps: RowCapture, originals: Sequence[Mapping[str, An
     return float(c.abs() @ total)
 
 
-def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tuple[float, list]:
+def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int,
+                acc: Any = None) -> tuple[float | None, list]:
     """Bound on ``|native margin - (W_a - W_b).fn - (b_a - b_b)|`` and its premises.
 
     Each native logit is ``fl(W_j . fn + b_j)``. A length-``d`` dot product in accumulation
@@ -329,15 +330,26 @@ def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tup
     (any summation order, FMA allowed); a 16-bit output is then rounded once more
     (``1/2 ulp`` of the logit), and a bias add rounds once more. The margin is the float64
     difference of the two native logits, so the bound is the sum over ``j in {a, b}``.
+
+    ``acc`` (``accumulation.Accumulation`` of the run) gives ``u`` for a 16-bit head: float32
+    unless CUDA reduced-precision reductions are allowed; when ``gamma_d`` does not exist there
+    the bound is None and the premises' last entry is the refusal.
     """
     import torch
 
     dtype = caps.logits.dtype
     sixteen = dtype in (torch.bfloat16, torch.float16)
-    u = 2.0 ** -24 if sixteen else float(torch.finfo(dtype).eps) / 2.0
     x = f64(caps.normed).reshape(-1)
     d = x.numel()
-    gamma = d * u / (1.0 - d * u)
+    if sixteen and acc is not None:
+        premise = acc.premise
+        gamma = acc.gamma(d)
+        if gamma is None:
+            return None, ["round-to-nearest", f"logit dtype {dtype}", acc.refusal(d)]
+    else:
+        u = 2.0 ** -24 if sixteen else float(torch.finfo(dtype).eps) / 2.0
+        premise = "matmul accumulated in " + ("float32 (16-bit inputs)" if sixteen else str(dtype))
+        gamma = d * u / (1.0 - d * u)
     logits = caps.logits.reshape(-1)
     rounds = (1 if sixteen else 0) + (1 if bias is not None else 0)
     spacing = float(torch.finfo(dtype).eps)
@@ -346,7 +358,7 @@ def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tup
         total += gamma * float((f64_at(weight, j) * x).abs().sum())   # one row, not the head
         total += rounds * 0.5 * _ulp(float(logits[j]), spacing)
     premises = ["round-to-nearest", f"logit dtype {dtype}",
-                "matmul accumulated in " + ("float32 (16-bit inputs)" if sixteen else str(dtype)),
+                premise,
                 "head output rounded once" if sixteen else "no extra output rounding"]
     if bias is not None:
         premises.append("bias added with one rounding")
@@ -605,7 +617,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     diff = f64_at(weight, a) - f64_at(weight, b)
     stream_dtype = caps.ports[0]["h"].dtype
     bound_rr = float(rho) * _stream_rounding_bound(caps, originals, c)
-    head_bound, head_premises = _head_bound(caps, weight, head_bias, a, b)
+    from .accumulation import accumulation
+
+    head_bound, head_premises = _head_bound(caps, weight, head_bias, a, b,
+                                            accumulation(caps.adapter, caps.logits.dtype))
     scale_fn = float(diff.abs().sum()) * _ulp(
         float(_vec(caps.normed).abs().max()), float(torch.finfo(caps.normed.dtype).eps))
     stream_premises = ["round-to-nearest", "one rounding per residual add",
@@ -641,7 +656,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         bounded({"name": "head", "value": claim(result.extras["eta_head"], MEASURED, "P19"),
                  "meaning": "native margin - (W_a - W_b).(native fn output) - head bias, float64"},
                 head_bound, 1, "gamma_d (sum_i |W_ai x_i| + sum_i |W_bi x_i|) + output roundings; "
-                "k = 1", BOUND, head_premises),
+                "k = 1", BOUND, head_premises) if head_bound is not None else
+        {"name": "head", "value": claim(result.extras["eta_head"], MEASURED, "P19"),
+         "meaning": "native margin - (W_a - W_b).(native fn output) - head bias, float64",
+         "bound": {"state": "refused", "reason": head_premises[-1]}},
     ]
     unresolved = bool(missing)
     if unresolved:
@@ -677,7 +695,8 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         "rho_F_note": "final-norm scale evaluated once at the full measured h_L; not attributed",
         "terms": terms,
         "remainders": remainders,
-        "all_within_rounding": None if unresolved or refused else all(
+        "all_within_rounding": None if unresolved or refused or any(
+            "bound" in r for r in remainders) else all(
             r["within_rounding"] for r in remainders if "k" in r),
         "listed_sum": listed_sum,
         "closure": {"state": "unresolved", "reason": reason_missing} if unresolved else claim(

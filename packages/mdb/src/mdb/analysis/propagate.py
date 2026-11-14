@@ -19,7 +19,12 @@ measured natively, with the session left exactly where it was.
    rounding`` with ``nonlinear = exact - linear``, ``realisation`` the change of the exact value
    when the edit operand is the value the edit actually wrote (read back natively) instead of the
    requested one (both ``derived-exact``) and ``rounding = native - exact(realised)``
-   (``measured``, with its ``bound``). The linear number is never reported as the effect.
+   (``measured``; the worst-case interval ``bound`` is kept beside it only when finite). The
+   linear number is never reported as the effect.
+4. **Verdict** (``report["effect"]``, ``verdict.decide``) from that P20 accounting: native
+   change, exact change with the written operand and the measured rounding residual against
+   the floor ``max(|residual|, 2 x dtype spacing at the consumer)``. The result's ``state`` is
+   the verdict's; the interval bound never sets it.
 
 A state-cell edit (``Edit.cell``: ``cache.L<l>.k|v[kv,row,d]``, ops ``replace | add | scale |
 mix``) is staged where the cursor is when the consumer is still ahead (``pending``), else at
@@ -46,8 +51,10 @@ from mdb.core.kinds import WHATIF
 from mdb.core.pointers import seal_digest
 from mdb.core.records import num, seal_record
 
+from .accumulation import bound_state
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
 from .forecast import Logit, Margin, Refusal, RowModel, _split, producers, run_session_id
+from .verdict import decide, magnitude
 
 SCHEMA = "mdb-whatif-v1"
 OPS = ("replace", "add", "scale")
@@ -729,7 +736,7 @@ def _realised_reason(p: Plan, model: RowModel, found: dict[str, Any]) -> str:
 
 def _within(gap: Any, bound: Any, reason: str) -> dict[str, Any]:
     if bound is None:
-        return {"bound": {"state": "unresolved", "reason": reason}, "within_bound": None}
+        return {"bound_note": f"no worst-case interval bound ({bound_state(reason)}: {reason})"}
     return {"bound": num(float(bound.reshape(-1).max()), BOUND),
             "within_bound": bool((gap.abs() <= bound).all())}
 
@@ -790,7 +797,8 @@ class WhatIf:
 
 def _within_view(found: dict[str, Any]) -> dict[str, Any]:
     if found["exact_bound"] is None:
-        return {"bound": {"state": "unresolved", "reason": found["unbounded"]}}
+        return {"bound_note": f"no worst-case interval bound ({bound_state(found['unbounded'])}: "
+                              f"{found['unbounded']})"}
     return {"bound": num(float(found["exact_bound"].reshape(-1).max()), BOUND),
             "premises": sorted(found["premises"] | {"round to nearest, no overflow or underflow",
                                                     "replace/add/scale: the operand is cast to "
@@ -859,6 +867,8 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
     edited_label = native["edited_info"]["authority"] or MEASURED
     base, edited = _scalar(p, native["base"]), _scalar(p, native["edited"])
     change = edited - base
+    size = magnitude(p.margin or p.logit, native["base"], native["edited"])
+    dtype = native["base"].dtype
     measured = {"base": _claim(base, base_label), "edited": _claim(edited, edited_label),
                 "delta": _claim(change, MEASURED), "moves": native["moves"]}
     report: dict[str, Any] = {
@@ -912,8 +922,14 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
                            "rule": "native delta = sum of the terms (float64)"}
         tensors.update(exact=exact, exact_bound=found["exact_bound"],
                        linear=found.get("linear"), at_realised=at_realised, rounding_bound=spread)
+        effect = decide(native_change, at_realised, rounding, size, dtype)
     else:
         report["split"] = {"state": "refused", "reason": reason}
+        effect = decide(change, None, None, size, dtype,
+                        f"the prediction is refused ({reason})")
+    # the verdict follows the P20 accounting (measured), never the worst-case interval bound
+    report["effect"] = effect
+    report["state"] = effect["state"]
     return WhatIf(report, record, tensors)
 
 

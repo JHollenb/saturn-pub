@@ -1014,6 +1014,7 @@ class PortController:
         finally:
             _LOCAL.active = previous
             self._local.depth = 0
+            self._live = {}  # call-scoped references (h, r operands, the native mix): not kept
             _release(patch, attention)
             for handle in handles:
                 handle.remove()

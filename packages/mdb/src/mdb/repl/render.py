@@ -542,6 +542,8 @@ def _explain_lines(result: dict[str, Any]) -> list[str]:
             if "scale" in rem:
                 line += (f"  scale {_claimed(rem['scale'])} k {rem['k']} "
                          f"{'within' if rem['within_rounding'] else 'OUTSIDE'}")
+            elif rem.get("bound", {}).get("state") == "refused":
+                line += f"  bound refused ({rem['bound']['reason']})"
             lines.append(line)
         lines.append(f"  listed_sum {_claimed(data['listed_sum'])}  closure "
                      f"{_claimed(data['closure'])}")
@@ -639,10 +641,10 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
     else:
         linear = prediction["linear"]
         exact = prediction["exact"]
+        bound = f"  bound {_claimed(exact['bound'])}" if "bound" in exact else ""
         lines.append(f"  sealed  linear {delta} = "
                      f"{_claimed(linear['value']) if 'value' in linear else num(linear)}   "
-                     f"exact {delta} = {_claimed(exact['value'])}  bound "
-                     f"{_claimed(exact['bound'])}")
+                     f"exact {delta} = {_claimed(exact['value'])}{bound}")
     measured = result["measured"]
     lines.append(f"  native  {delta} = {_claimed(measured['delta'])}   (base "
                  f"{_claimed(measured['base'])} -> edited {_claimed(measured['edited'])})")
@@ -653,16 +655,35 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         parts = []
         for term in split["terms"]:
             text = f"{term['name']} {_claimed(term['value'])}"
-            if "within_bound" in term:
+            if term.get("within_bound") is not None:
                 state = term["within_bound"]
-                text += (f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
-                         if state is not None else f" (bound {num(term['bound'])})")
+                text += f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
             parts.append(text)
         lines.append(f"  error split ({split['proof']}): " + " + ".join(parts))
+    if "effect" in result:
+        lines.append("  " + effect_line(result["effect"], delta))
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")
     return lines
+
+
+def effect_line(effect: dict[str, Any], delta: str = "\u0394") -> str:
+    """The P20 verdict: native, exact and residual against the floor (all measured /
+    derived-exact, never a bound)."""
+    floor = (f"floor {_claimed(effect['floor'])} = max(|residual|, 2 x spacing "
+             f"{_claimed(effect['spacing'])})" if "residual" in effect else
+             f"floor {_claimed(effect['floor'])} = 2 x spacing {_claimed(effect['spacing'])}")
+    numbers = f"native {delta} {_claimed(effect['native'])}"
+    if "exact" in effect:
+        numbers += (f", exact {delta} {_claimed(effect['exact'])}, residual "
+                    f"{_claimed(effect['residual'])}")
+    else:
+        numbers += f" ({effect['basis']})"
+    text = f"verdict (P20): {effect['verdict']}  {numbers}; {floor}"
+    if effect.get("reason"):
+        text += f"  [{effect['reason']}]"
+    return text
 
 
 _PREDICT = {"explain": _explain_lines, "forecast": _forecast_lines, "verify": _verify_lines,
@@ -688,11 +709,11 @@ def _verdict(causal: dict[str, Any]) -> str:
     predicted = causal.get("predicted")
     if isinstance(predicted, dict) and predicted.get("state") is None:
         text += f", predicted {_short(predicted)}"
-    if causal.get("beyond_rounding_bound") is not None:
-        text += (" (beyond" if causal["beyond_rounding_bound"] else " (within") + \
-            f" rounding bound {_claimed(causal['rounding_bound'])})"
-    if causal.get("bound_exceeds_consumer"):
-        text += "  bound exceeds the consumer"
+    effect = causal.get("effect")
+    if effect is not None:
+        if "residual" in effect:
+            text += f", residual {_claimed(effect['residual'])}"
+        text += f"; floor {_claimed(effect['floor'])}"
     return text
 
 
@@ -759,9 +780,12 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
                 f"listed {_claimed(parts['attention_not_listed'])}")
         if "residual_edits" in parts:
             text += f" + residual edits {_claimed(parts['residual_edits'])}"
-        lines.append(text + f" + remainder {_claimed(remainder['value'])} "
-                     f"{'within' if remainder['within'] else 'OUTSIDE'} "
-                     f"{_claimed(remainder['bound'])}")
+        if remainder["within"] is None:
+            tail = "bound refused (accumulation premise fails)"
+        else:
+            tail = (f"{'within' if remainder['within'] else 'OUTSIDE'} "
+                    f"{_claimed(remainder['bound'])}")
+        lines.append(text + f" + remainder {_claimed(remainder['value'])} {tail}")
     accounting = result["accounting"]
     partition = accounting["partition"]
     split = (f"partition gap {_claimed(partition['max_gap'])}" if "max_gap" in partition
@@ -829,7 +853,10 @@ def _circuit_lines(result: dict[str, Any]) -> list[str]:
     lines.append(f"  closure {_short(closure['value'])} "
                  f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])} "
                  f"(zero by construction: float64 summation only)")
-    lines.append(f"  remainders {'all within' if body['remainders_within'] else 'NOT all within'}"
+    within = body["remainders_within"]
+    state = ("all within" if within else "NOT all within" if within is not None
+             else "not all bounded (a bound was refused)")
+    lines.append(f"  remainders {state}"
                  f" their rounding bounds; {body['edits']['count']} edit node(s)")
     for test in result.get("tests", ()):
         lines += ["  " + line for line in _circuit_test_lines(test)]
@@ -846,6 +873,11 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
                                   for name, item in measured.items()))
     lines.append("  effects " + "  ".join(f"{name} {_short(value)}"
                                           for name, value in effects.items()))
+    verdicts = result.get("verdicts") or {}
+    if verdicts:
+        lines.append("  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): "
+                     + "  ".join(f"{name} {v['verdict']} (floor {_claimed(v['floor'])})"
+                                 for name, v in verdicts.items()))
     interaction = result["interaction"]
     if interaction.get("state"):
         lines.append(f"  interaction {num(interaction)}")

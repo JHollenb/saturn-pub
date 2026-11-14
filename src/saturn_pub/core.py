@@ -261,15 +261,221 @@ def _slot_descriptors(described: Any) -> dict[str, Any] | None:
     return out
 
 
+class _Appended:
+    """A sealed tensor held as blocks: ``torch.cat(chunks, dim)`` is it bit for bit, with the
+    standard contiguous layout it was sealed with. A cut holds a grown cache tensor this way, so
+    consecutive cuts share every block and each adds only the rows its transition appended."""
+
+    __slots__ = ("chunks", "dim")
+
+    def __init__(self, chunks: tuple[Any, ...], dim: int):
+        self.chunks, self.dim = chunks, dim
+
+    def materialize(self, *, register: bool) -> Any:
+        """The tensor (a fresh one). ``register``: the caller (a Session hydrating its own state)
+        will treat it as immutable, so a later cut sharing it is sealed as these same blocks."""
+        import torch
+
+        with torch.inference_mode(False):
+            full = torch.cat(self.chunks, dim=self.dim)
+        if register:
+            _register_appended(full, self)
+        return full
+
+
+_APPENDED: dict[int, tuple[Any, int, _Appended]] = {}
+
+
+def _register_appended(full: Any, compact: _Appended) -> None:
+    import weakref
+
+    key = id(full)
+
+    def forget(_: Any, key: int = key) -> None:
+        entry = _APPENDED.get(key)
+        if entry is not None and entry[0]() is None:
+            _APPENDED.pop(key, None)
+
+    _APPENDED[key] = (weakref.ref(full, forget), full._version, compact)
+
+
+def _appended_of(value: Any) -> _Appended | None:
+    """The block form registered for ``value`` (None when none is, or when ``value`` was
+    written in place since it was registered)."""
+    entry = _APPENDED.get(id(value))
+    if entry is None or entry[0]() is not value or value._version != entry[1]:
+        return None
+    return entry[2]
+
+
+def _standard_strides(shape: tuple[int, ...]) -> tuple[int, ...]:
+    strides, step = [], 1
+    for size in reversed(shape):
+        strides.append(step)
+        step *= max(int(size), 1)
+    return tuple(reversed(strides))
+
+
+def seal_append(full: Any, base: Any, dim: int) -> bool:
+    """Declare that ``full`` is ``base`` with rows appended along ``dim`` (bitwise: the caller
+    checked it), so a cut that holds ``full`` holds ``base``'s blocks plus the appended rows only.
+    ``full`` must have the standard contiguous layout (``torch.cat`` gives it) and keep a version
+    counter; otherwise nothing is declared. Returns whether it was."""
+    dim = dim % full.dim()
+    if (
+        not _versioned(full)
+        or full.requires_grad
+        or tuple(full.stride()) != _standard_strides(tuple(full.shape))
+        or base.dim() != full.dim()
+        or base.shape[dim] >= full.shape[dim]
+    ):
+        return False
+    count = base.shape[dim]
+    rest = full.narrow(dim, count, full.shape[dim] - count).clone(
+        memory_format=__import__("torch").contiguous_format
+    )
+    known = _appended_of(base) if _versioned(base) else None
+    if known is not None and known.dim == dim:
+        chunks = (*known.chunks, rest)
+    elif count == 0:
+        chunks = (rest,)
+    else:
+        chunks = (_share(base), rest)
+    _register_appended(full, _Appended(chunks, dim))
+    return True
+
+
+def _compact(value: Any) -> Any:
+    """``_share`` for sealing: a tensor declared with ``seal_append`` is held as its blocks."""
+    if tensor(value):
+        if _versioned(value):
+            known = _appended_of(value)
+            if known is not None:
+                return known
+        return _share(value)
+    if isinstance(value, Mapping):
+        return {key: _compact(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_compact(item) for item in value)
+    if isinstance(value, list):
+        return [_compact(item) for item in value]
+    return copy.deepcopy(value)
+
+
+def _expand(value: Any, *, register: bool) -> Any:
+    """``value`` with every block form materialized (tensors and other leaves as they are;
+    containers copied)."""
+    if isinstance(value, _Appended):
+        return value.materialize(register=register)
+    if tensor(value):
+        return value
+    if isinstance(value, Mapping):
+        return {key: _expand(item, register=register) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_expand(item, register=register) for item in value)
+    if isinstance(value, list):
+        return [_expand(item, register=register) for item in value]
+    return copy.deepcopy(value)
+
+
+def _tensor_leaves(value: Any, path: str = "") -> list[tuple[str, Any]]:
+    """``(path, tensor)`` for every tensor in a payload (mappings, lists and tuples walked, and
+    the blocks of a block form)."""
+    if tensor(value):
+        return [(path, value)]
+    out: list[tuple[str, Any]] = []
+    if isinstance(value, _Appended):
+        for index, item in enumerate(value.chunks):
+            out += _tensor_leaves(item, f"{path}<{index}>")
+    elif isinstance(value, Mapping):
+        for key, item in value.items():
+            out += _tensor_leaves(item, f"{path}.{key}" if path else str(key))
+    elif isinstance(value, (list, tuple)):
+        for index, item in enumerate(value):
+            out += _tensor_leaves(item, f"{path}[{index}]")
+    return out
+
+
+def held_bytes(*objects: Any) -> int:
+    """Bytes of the distinct tensor storages that ``objects`` reference (StateCuts, Sessions,
+    states, mappings and sequences of them); a storage two of them share counts once."""
+    storages: dict[Any, int] = {}
+
+    def walk(value: Any) -> None:
+        if isinstance(value, StateCut):
+            walk(value._payload)
+        elif isinstance(value, Session):
+            walk(value._state)
+        else:
+            for _, item in _tensor_leaves(value):
+                storage = item.untyped_storage()
+                storages[(str(item.device), storage.data_ptr())] = storage.nbytes()
+
+    for item in objects:
+        walk(item)
+    return sum(storages.values())
+
+
+def _versioned(value: Any) -> bool:
+    """Whether a tensor tracks in-place writes (an inference tensor has no version counter)."""
+    is_inference = getattr(value, "is_inference", None)
+    return not (callable(is_inference) and is_inference())
+
+
+def _share(value: Any) -> Any:
+    """``value`` with its containers copied and its tensors shared, for a sealed (immutable)
+    state: a tensor that tracks in-place writes is kept by reference, an inference tensor (no
+    version counter, so a write to it could not be detected) is copied into a normal one."""
+    if tensor(value):
+        if value.requires_grad:
+            return clone(value)
+        if _versioned(value):
+            return value
+        import torch
+
+        with torch.inference_mode(False):
+            return value.clone(memory_format=torch.preserve_format)
+    if isinstance(value, Mapping):
+        return {key: _share(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_share(item) for item in value)
+    if isinstance(value, list):
+        return [_share(item) for item in value]
+    return copy.deepcopy(value)
+
+
+class InPlaceWrite(ValueError):
+    """A tensor that a sealed cut or a transition's input state shares was written in place."""
+
+
+def _versions(value: Any) -> tuple[tuple[str, Any, int], ...]:
+    """``(path, tensor, version)`` of every tensor of ``value`` that tracks in-place writes."""
+    return tuple(
+        (path, item, item._version) for path, item in _tensor_leaves(value) if _versioned(item)
+    )
+
+
+def _check_versions(recorded: tuple[tuple[str, Any, int], ...], what: str) -> None:
+    written = [path for path, item, version in recorded if item._version != version]
+    if written:
+        raise InPlaceWrite(f"{what} was written in place: {', '.join(written)}")
+
+
 @dataclass(frozen=True)
 class StateCut:
     """A sealed snapshot of an adapter's declared mutable execution closure.
 
-    The payload is copied once at construction. ``_described`` (private, Session only) is the
-    ``describe`` of that payload when the caller already holds it for the very tensors it hands
-    in, so the fingerprint is sealed without hashing them again; with it, ``_sealed`` is the
-    fingerprint Session already digested from exactly these fields (``Session._seal``), so the
-    manifest is not described twice. ``verify`` always re-hashes.
+    The payload is copied once at construction, unless the caller passes ``_shared=True``
+    (Session only, for an adapter whose ``shares_state`` contract holds): then the cut keeps the
+    state's tensors by reference (its containers are copied), so consecutive cuts of one session
+    share every tensor a transition did not replace. A sealed tensor is immutable: the cut
+    records each tensor's version counter, and every read of the payload (``payload``,
+    ``slot``, ``verify``, a restore) refuses (``InPlaceWrite``, naming the slot) when one was
+    written in place since. ``_described`` (private, Session only) is the ``describe`` of that
+    payload when the caller already holds it for the very tensors it hands in, so the
+    fingerprint is sealed without hashing them again; with it, ``_sealed`` is the fingerprint
+    Session already digested from exactly these fields (``Session._seal``), so the manifest is
+    not described twice. ``verify`` always re-hashes.
     """
 
     model_identity: str
@@ -282,10 +488,15 @@ class StateCut:
     fingerprint: str = field(init=False)
     _described: InitVar[Any] = None
     _sealed: InitVar[str | None] = None
+    _shared: InitVar[bool] = False
 
-    def __post_init__(self, _described: Any = None, _sealed: str | None = None) -> None:
+    def __post_init__(
+        self, _described: Any = None, _sealed: str | None = None, _shared: bool = False
+    ) -> None:
         object.__setattr__(self, "execution", MappingProxyType(clone(dict(self.execution))))
-        object.__setattr__(self, "_payload", clone(dict(self._payload)))
+        payload = dict(self._payload)
+        object.__setattr__(self, "_payload", _compact(payload) if _shared else clone(payload))
+        object.__setattr__(self, "_guard", _versions(self._payload))
         if self.execution_point is not None:
             object.__setattr__(
                 self,
@@ -302,11 +513,56 @@ class StateCut:
 
     @property
     def payload(self) -> dict[str, Any]:
-        return clone(self._payload)
+        self._check_sealed()
+        return self._private(self._payload)
 
     def slot(self, name: str) -> Any:
         """One payload slot as a private copy (``payload[name]`` without copying the others)."""
-        return clone(self._payload[name])
+        self._check_sealed()
+        return self._private(self._payload[name])
+
+    @staticmethod
+    def _private(value: Any) -> Any:
+        """A private copy: block forms are concatenated (already a fresh tensor), the rest
+        cloned."""
+        if isinstance(value, _Appended):
+            return value.materialize(register=False)
+        if isinstance(value, Mapping):
+            return {key: StateCut._private(item) for key, item in value.items()}
+        if isinstance(value, tuple):
+            return tuple(StateCut._private(item) for item in value)
+        if isinstance(value, list):
+            return [StateCut._private(item) for item in value]
+        return clone(value)
+
+    def _check_sealed(self) -> None:
+        """Refuse when a payload tensor was written in place since the cut was sealed."""
+        _check_versions(self._guard, "a sealed StateCut tensor")
+
+    def _shared_payload(self) -> dict[str, Any]:
+        """The payload with its containers copied and its (immutable) tensors shared, block
+        forms materialized (and registered, so cuts of the hydrated state share the blocks): the
+        state a Session hydrates from this cut when its adapter's ``shares_state`` holds."""
+        self._check_sealed()
+        return _share(_expand(self._payload, register=True))
+
+    def _hydrate(self, shared: bool) -> tuple[Any, dict[str, Any]]:
+        """``(describe of the payload, state)`` for a Session taking this cut: the payload is
+        verified against the fingerprint (as ``verify``) and handed over as ``_shared_payload``
+        (``shared``) or as a private copy, materializing block forms once."""
+        self._check_sealed()
+        if shared:
+            state = _share(_expand(self._payload, register=True))
+        else:
+            state = self._private(self._payload)
+        described = describe(state)
+        if digest(self._manifest(described)) != self.fingerprint:
+            raise ValueError("StateCut payload or metadata changed")
+        return described, state
+
+    def nbytes(self) -> int:
+        """Bytes of the distinct tensor storages this cut references (shared ones included)."""
+        return held_bytes(self)
 
     def _manifest(self, payload: Any) -> dict[str, Any]:
         return _statecut_manifest(
@@ -320,12 +576,14 @@ class StateCut:
         )
 
     def manifest(self) -> dict[str, Any]:
-        return self._manifest(describe(self._payload))
+        self._check_sealed()
+        return self._manifest(describe(_expand(self._payload, register=False)))
 
     def _verified(self) -> Any:
         """Hash the payload once, refuse a cut whose content or metadata no longer matches its
         fingerprint, and return the payload's ``describe``."""
-        described = describe(self._payload)
+        self._check_sealed()
+        described = describe(_expand(self._payload, register=False))
         if digest(self._manifest(described)) != self.fingerprint:
             raise ValueError("StateCut payload or metadata changed")
         return described
@@ -600,6 +858,14 @@ class Adapter(ABC):
 
     model_identity: str
     execution: Mapping[str, Any]
+    # The immutable-state contract. True: ``advance`` (hooks and port controllers included)
+    # never writes a tensor of its input state in place and may return the input's unchanged
+    # tensors in its result. A Session then hands ``advance`` its state without copying it and
+    # seals cuts that share tensors by reference (consecutive cuts share what a transition did
+    # not replace); every transition's input tensors are checked by version counter afterwards
+    # and a write is refused (``InPlaceWrite``). False (the default): every state handed to
+    # ``advance`` is a private copy and every cut owns a copy of its payload.
+    shares_state: bool = False
 
     @abstractmethod
     def boundary(self, state: Mapping[str, Any]) -> str: ...
@@ -691,6 +957,36 @@ class Adapter(ABC):
         return result
 
 
+def _flatten_execution(execution: Mapping[str, Any], prefix: str = "") -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for key, value in execution.items():
+        name = f"{prefix}{key}"
+        if isinstance(value, Mapping):
+            out.update(_flatten_execution(value, prefix=f"{name}."))
+        else:
+            out[name] = value
+    return out
+
+
+def _refuse_incompatible(cut: StateCut, adapter: Adapter) -> None:
+    """Refuse a cut of another model identity or execution contract, naming every differing
+    execution field (``numeric_scope.bf16_reduced_precision_reduction``, say)."""
+    if cut.model_identity != adapter.model_identity:
+        raise ValueError("incompatible model identity or execution contract (model_identity)")
+    recorded, current = dict(cut.execution), dict(adapter.execution)
+    if recorded == current:
+        return
+    left, right = _flatten_execution(recorded), _flatten_execution(current)
+    differing = [
+        f"{name}: cut {left.get(name, 'missing')!r}, adapter {right.get(name, 'missing')!r}"
+        for name in sorted(set(left) | set(right))
+        if left.get(name, "missing") != right.get(name, "missing")
+    ]
+    raise ValueError(
+        "incompatible model identity or execution contract (" + "; ".join(differing) + ")"
+    )
+
+
 def _validate_state(adapter: Any, state: Mapping[str, Any]) -> None:
     """``adapter.validate_state(state)``, or ``validate`` for an adapter without it."""
     getattr(adapter, "validate_state", adapter.validate)(state)
@@ -752,11 +1048,20 @@ class Session:
         self._parent = parent
         self._fork_parent = parent
         self._aborted = False
+        self._poisoned: str | None = None  # an in-place write reached the state: see _advance_guarded
         self.receipts: list[Receipt] = []
         self.history: list[StateCut] = []
         self.attempts: list[Receipt] = []
 
+    def _check_poison(self) -> None:
+        if self._poisoned is not None:
+            raise InPlaceWrite(
+                f"{self._poisoned}; this session's state is unusable until restore(cut) of a "
+                "cut that does not share the written tensor"
+            )
+
     def inspect(self) -> Frame:
+        self._check_poison()
         self._activate()
         self.adapter.validate_execution()
         return Frame(
@@ -772,6 +1077,7 @@ class Session:
     def read(self, address: str, index: Any = None) -> Any:
         """A private copy of ``address``; with ``index``, of ``address[index]`` only (one layer
         of a per-layer cache slot, say), through the adapter's ``read_part``."""
+        self._check_poison()
         self._activate()
         self.adapter.validate_execution()
         if address == "__saturn_external__" and self._external_state is not None:
@@ -789,9 +1095,45 @@ class Session:
             self.adapter.restore_external(clone(self._external_state))
 
     @staticmethod
-    def _cut_state(cut: StateCut) -> tuple[dict[str, Any], Any]:
-        payload = cut.payload
-        return payload, payload.pop("__saturn_external__", None)
+    def _cut_state(cut: StateCut, shared: bool = False) -> tuple[Any, dict[str, Any], Any]:
+        """``(describe of the payload, state, external)`` of a cut, verified against its
+        fingerprint: a private copy of its payload, or (``shared``, the adapter's
+        ``shares_state`` contract) its immutable tensors shared."""
+        described, payload = cut._hydrate(shared)
+        return described, payload, payload.pop("__saturn_external__", None)
+
+    def _shares(self) -> bool:
+        return bool(getattr(self.adapter, "shares_state", False))
+
+    def _input(self) -> dict[str, Any]:
+        """The state handed to ``advance``: shared (containers copied, tensors by reference)
+        under the adapter's ``shares_state`` contract, else a private copy."""
+        return _share(self._state) if self._shares() else clone(self._state)
+
+    def _advance_guarded(self, candidate: dict[str, Any], **options: Any) -> Any:
+        """``adapter.advance(candidate, **options)``, refusing (``InPlaceWrite``, naming the
+        slot) when the call wrote one of the input's tensors in place: under ``shares_state``
+        those tensors are shared with sealed cuts and the session state. Checked on every exit,
+        a port controller's ``PortStop`` included."""
+        if not self._shares():
+            return self.adapter.advance(candidate, **options)
+        recorded = _versions(candidate)
+        try:
+            result = self.adapter.advance(candidate, **options)
+        except BaseException:
+            self._guard_input(recorded)
+            raise
+        self._guard_input(recorded)
+        return result
+
+    def _guard_input(self, recorded: tuple[tuple[str, Any, int], ...]) -> None:
+        """Refuse a transition that wrote its input in place, and poison the session: its state
+        shares the written tensor, so it refuses every use until a restore replaces it."""
+        try:
+            _check_versions(recorded, "the transition's input state")
+        except InPlaceWrite as error:
+            self._poisoned = str(error)
+            raise
 
     def read_port(self, address: StateAddress) -> Any:
         surface = self.adapter.surface(self._state)
@@ -891,9 +1233,12 @@ class Session:
             _sealed=seal.fingerprint,
         )
 
-    def _head(self, *, execution_checked: bool = False) -> str:
+    def _head(self, *, execution_checked: bool = False, poisoned: bool = False) -> str:
         """The fingerprint ``capture()`` would give now, with its checks, copying nothing (and
-        hashing nothing once the state's slot descriptors are known)."""
+        hashing nothing once the state's slot descriptors are known). ``poisoned``: allowed on a
+        session whose state an in-place write reached (the restore that replaces it)."""
+        if not poisoned:
+            self._check_poison()
         self._activate()
         seal = self._seal(
             self._state,
@@ -906,6 +1251,7 @@ class Session:
         return seal.fingerprint
 
     def capture(self, *, retain: bool = True) -> StateCut:
+        self._check_poison()
         self._activate()
         seal = self._seal(
             self._state, self._parent, self._slots, state_checked=self._slots is not None
@@ -921,6 +1267,7 @@ class Session:
             surface=seal.surface,
             _described=seal.described,
             _sealed=seal.fingerprint,
+            _shared=self._shares(),
         )
         if retain:
             self.history.append(cut)
@@ -934,12 +1281,10 @@ class Session:
         that copy, its slot descriptors are the verified ones, and the restore receipt the
         session starts with is the one ``restore(cut)`` writes there.
         """
-        described = cut._verified()
-        if cut.model_identity != adapter.model_identity or dict(cut.execution) != dict(
-            adapter.execution
-        ):
-            raise ValueError("incompatible model identity or execution contract")
-        state, external = cls._cut_state(cut)
+        _refuse_incompatible(cut, adapter)
+        described, state, external = cls._cut_state(
+            cut, bool(getattr(adapter, "shares_state", False))
+        )
         slots = cls._state_slots(described)
         current = clone(adapter.capture_external())
         try:
@@ -1004,19 +1349,15 @@ class Session:
         copy of its payload, its external closure and the state's verified slot descriptors."""
         self._activate()
         self.adapter.validate_execution()
-        described = cut._verified()
-        if cut.model_identity != self.adapter.model_identity or dict(cut.execution) != dict(
-            self.adapter.execution
-        ):
-            raise ValueError("incompatible model identity or execution contract")
-        state, external = self._cut_state(cut)
+        _refuse_incompatible(cut, self.adapter)
+        described, state, external = self._cut_state(cut, self._shares())
         self._matches(cut, state, external, validate=True)
         return state, external, self._state_slots(described)
 
     def fork(self, cut: StateCut | None = None) -> Session:
         if cut is None:
             parent = self._head()
-            state, external, slots = clone(self._state), self._external_state, self._slots
+            state, external, slots = self._input(), self._external_state, self._slots
         else:
             state, external, slots = self._compatible(cut)
             parent = cut.fingerprint
@@ -1139,12 +1480,13 @@ class Session:
         and external closure as they were. ``PortStop`` ends the probe normally; any other
         exception propagates unchanged.
         """
+        self._check_poison()
         self._activate()
         self.adapter.validate_execution()
         if not self._accepts_ports() or not self.adapter.ports(self._state):
             raise ValueError(f"no ports at {self.adapter.boundary(self._state)}")
         external = clone(self.adapter.capture_external())
-        candidate = clone(self._state)
+        candidate = self._input()
         stopped = False
         begin = getattr(controller, "begin", None)
         if begin is not None:
@@ -1153,7 +1495,7 @@ class Session:
         if options:  # the state is validated; re-check the executor after the controller's begin
             self.adapter.validate_execution()
         try:
-            self.adapter.advance(candidate, ports=controller, **options)
+            self._advance_guarded(candidate, ports=controller, **options)
         except PortStop:
             stopped = True
         finally:
@@ -1176,7 +1518,7 @@ class Session:
         before = self._head()
         external = clone(self.adapter.capture_external())
         try:
-            candidate = clone(self._state)
+            candidate = self._input()
             known = dict(self._slots or {})  # descriptors of candidate's values (clone keeps them)
             options = self._advance_options()
             transitions = []
@@ -1203,9 +1545,9 @@ class Session:
                 if begin is not None:
                     begin()
                 candidate = dict(
-                    self.adapter.advance(candidate, **options)
+                    self._advance_guarded(candidate, **options)
                     if ports is None
-                    else self.adapter.advance(candidate, ports=ports, **options)
+                    else self._advance_guarded(candidate, ports=ports, **options)
                 )
                 known = {}
                 for name, expected in preserved.items():
@@ -1299,7 +1641,9 @@ class Session:
 
     def restore(self, cut: StateCut) -> Receipt:
         state, external, slots = self._compatible(cut)
-        return self._settle(cut, state, external, slots, self._head(execution_checked=True))
+        return self._settle(
+            cut, state, external, slots, self._head(execution_checked=True, poisoned=True)
+        )
 
     def _settle(
         self,
@@ -1336,6 +1680,7 @@ class Session:
             self._failed("restore", before, exc)
             raise
         self._state = state
+        self._poisoned = None
         self._slots = restored.slots
         self._external_state = external
         self._parent = cut.parent

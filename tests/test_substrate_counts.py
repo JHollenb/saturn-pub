@@ -1,5 +1,7 @@
-"""The session substrate copies, hashes and validates a state once per call, and still refuses
-what it refused before: a mutated cut, a changed model parameter, a non-finite state.
+"""The session substrate hashes and validates a state once per call and, under the decoder's
+``shares_state`` contract, copies none (cuts and transitions share the immutable tensors), and
+still refuses what it refused before: a mutated cut, a changed model parameter, a non-finite
+state.
 
 Counts are taken on a tiny native decoder with the copy, hash and check functions wrapped."""
 
@@ -76,7 +78,7 @@ def test_from_cut_hashes_copies_and_validates_once(adapter, counts):
     counts.clear()
     hydrated = Session.from_cut(adapter, cut)
     assert counts["tensor hashes"] == _tensors(cut._payload)  # verify, once
-    assert counts["state copies"] == 1
+    assert counts["state copies"] == 0  # the sealed tensors are shared, not copied
     assert counts["state validations"] == 1 and counts["frozen-model walks"] == 1
     assert counts["host syncs"] <= 2  # tokens in range, all finite (one fused check)
     [receipt] = [r.to_dict() for r in hydrated.receipts]
@@ -92,7 +94,7 @@ def test_restore_hashes_copies_and_validates_once(adapter, counts):
     counts.clear()
     receipt = session.restore(cut).to_dict()
     assert counts["tensor hashes"] == _tensors(cut._payload)
-    assert counts["state copies"] == 1
+    assert counts["state copies"] == 0
     assert counts["state validations"] == 1 and counts["frozen-model walks"] == 1
     assert receipt["result"] == cut.fingerprint == session.capture().fingerprint
 
@@ -103,13 +105,13 @@ def test_a_transition_hashes_each_slot_once_and_capture_after_it_hashes_nothing(
     receipt = session.continue_().to_dict()
     after = _tensors(session._state)
     assert counts["tensor hashes"] == after  # the new state's slots, each once
-    assert counts["state copies"] == 1  # the candidate the native transition runs on
+    assert counts["state copies"] == 0  # the transition reads the shared state, never writes it
     assert counts["state validations"] == 1
     assert counts["frozen-model walks"] == 2  # before (as capture did) and after the native call
     counts.clear()
     cut = session.capture()
     assert counts["tensor hashes"] == 0 and counts["state validations"] == 0
-    assert counts["state copies"] == 1  # the cut's own payload
+    assert counts["state copies"] == 0  # the cut shares the state's tensors
     assert receipt["result"] == cut.fingerprint
     # the fingerprint sealed from known descriptors is the one a full re-hash gives
     assert digest(cut.manifest()) == cut.fingerprint
@@ -132,13 +134,21 @@ def test_known_descriptors_seal_the_same_fingerprints_as_hashing(adapter):
 def test_a_mutated_cut_is_refused(adapter):
     session = _at_layer(adapter)
     cut = session.capture()
-    cut._payload["hidden"].add_(1)
-    with pytest.raises(ValueError, match="StateCut payload or metadata changed"):
+    cut._payload["hidden"].add_(1)  # private access: the sealed tensor is written in place
+    refused = "sealed StateCut tensor was written in place: hidden"
+    with pytest.raises(ValueError, match=refused):
         Session.from_cut(adapter, cut)
-    with pytest.raises(ValueError, match="StateCut payload or metadata changed"):
+    with pytest.raises(ValueError, match=refused):
         session.restore(cut)
-    with pytest.raises(ValueError, match="StateCut payload or metadata changed"):
+    with pytest.raises(ValueError, match=refused):
         session.fork(cut)
+    private = session.capture()  # a cut that owns its payload: a content change is still caught
+    forged = StateCut(private.model_identity, private.execution, private.boundary,
+                      private.parent, private.payload, private.execution_point, private.surface)
+    object.__setattr__(forged, "_guard", ())
+    forged._payload["hidden"].add_(1)
+    with pytest.raises(ValueError, match="StateCut payload or metadata changed"):
+        Session.from_cut(adapter, forged)
 
 
 @pytest.mark.parametrize("call", ["from_cut", "restore", "continue_", "capture", "fork"])

@@ -29,7 +29,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import torch
-from saturn_pub.core import Session, StateCut
+from saturn_pub.core import InPlaceWrite, Session, StateCut, held_bytes
 from saturn_pub.values import clone, digest
 
 from .edits import CELL_BOUNDARY, CellEdit, is_cell
@@ -42,6 +42,9 @@ LOOKAHEADS = ("none", "layer")
 # of one layer (about 85 KB + 48 bytes per token row at d=1536, d_ff=8960, bf16), so a whole
 # 28-layer row costs a few MB; analysis verbs walk every layer of a row more than once.
 _READ_CACHE = 64
+# Receipts of the run's own Session kept (about 2 KB of host memory each, one per transition).
+# Nothing reads older ones: each trail mark keeps its transition's fired edit records.
+_RECEIPTS = 64
 _ADDRESS = re.compile(r"(?:t(?P<row>\d+)\.)?(?P<rest>.+)")
 _LAYER_PORT = re.compile(r"L(?P<layer>\d+)\.(?P<port>\w+)")
 _SLOTS = {"start": "tokens", "logits": "logits", "sample": "sampled_token"}
@@ -129,7 +132,11 @@ class _Snapshot:
         run._drop_reads()
         for attempt in range(3):  # a second interrupt during the rollback is retried
             try:
-                if run.session.capture(retain=False).fingerprint != self.fingerprint:
+                try:
+                    here = run.session.capture(retain=False).fingerprint
+                except InPlaceWrite:
+                    here = None  # the state was written in place: only a restore recovers it
+                if here != self.fingerprint:
                     run.session.restore(self.cut)
                 return
             except BaseException:
@@ -140,9 +147,16 @@ class _Snapshot:
 class Run:
     """Port-level debugger cursor over ``DecoderAdapter(granularity="operation")``.
 
-    ``retain_rows`` bounds memory: boundary cuts of rows older than that many rows behind the
-    cursor are dropped (each row's ``start`` cut is kept) and rebuilt on demand by replaying
-    the native transitions, with their committed edits, from the nearest retained cut.
+    Memory: a trail mark's cut shares every tensor its transition did not replace with the
+    previous mark (``saturn_pub`` ``shares_state``) and holds a grown K/V layer as its appended
+    rows, so a mark costs about what its transition wrote (one layer's new K/V row, the hidden
+    carrier, the logits). ``held_bytes()`` measures it. Edit tensors no edit, checkpoint or
+    ``hold`` names any more are dropped; the session keeps its last ``_RECEIPTS`` receipts.
+
+    ``retain_rows`` bounds memory further: boundary cuts of rows older than that many rows
+    behind the cursor are dropped (each row's ``start`` cut is kept) and rebuilt on demand by
+    replaying the native transitions, with their committed edits, from the nearest retained
+    cut.
 
     ``root`` (persistence): start the run at a stored boundary cut of a run over the same
     ``tokens`` instead of prefilling them; ``root_transitions`` is the transition count that
@@ -213,6 +227,9 @@ class Run:
         self._cache: PortController | None = None
         self._values: dict[str, torch.Tensor] = {}
         self._masks: dict[str, torch.Tensor] = {}
+        # edit tensors a plain-data checkpoint or pointer handed out may name, or that hold()
+        # supplied: kept for restore; any other edit tensor is dropped once no edit uses it
+        self._pinned: set[str] = set()
         self._trail: list[_Mark] = [self._mark(root_transitions)]
         self._reads: OrderedDict[tuple[str, int], PortController] = OrderedDict()
         self._hydrated: tuple[str, Session] | None = None
@@ -521,6 +538,7 @@ class Run:
         except BaseException:
             self._edits, self._cells, self._cache = saved  # a refused abort changes nothing
             raise
+        self._sweep_tensors()
         return self.where
 
     # --- reads and edits ----------------------------------------------------------------
@@ -724,6 +742,27 @@ class Run:
     def close(self) -> None:
         """Release the read cache and the hydrated Session; the run stays usable."""
         self._drop_reads()
+
+    def held_bytes(self) -> dict[str, int]:
+        """Bytes of tensor storage this run holds, each storage counted once (measured):
+        ``trail`` (the marks' cuts: consecutive cuts share what a transition did not replace,
+        and a grown K/V layer is held as its appended rows), ``state`` (the live session),
+        ``reads`` (the committed-read cache and the hydrated Session), ``edits`` (held edit
+        values and masks) and ``total`` (their union)."""
+        cuts = [mark.cut for mark in self._trail if mark.cut is not None]
+        reads = [captures for controller in self._reads.values()
+                 for captures in (controller.captures, controller.originals)]
+        if self._hydrated is not None:
+            reads.append(self._hydrated[1])
+        edits = [self._values, self._masks]
+        return {
+            "trail": held_bytes(*cuts),
+            "state": held_bytes(self.session),
+            "reads": held_bytes(*reads),
+            "edits": held_bytes(*edits),
+            "total": held_bytes(*cuts, self.session, *reads, *edits),
+            "marks": len(self._trail),
+        }
 
     def _layer_mark(self, key: tuple[int, int]) -> tuple[int, str] | None:
         """(trail index, port) of a ``L<i>.<port>`` stop whose layer transition was committed."""
@@ -1125,8 +1164,20 @@ class Run:
 
     # --- checkpoints and rewind ---------------------------------------------------------
 
-    def checkpoint(self, name: str | None = None) -> dict[str, Any]:
+    @property
+    def edited(self) -> bool:
+        """True when an edit (port or state cell) is staged, or was committed on the path to
+        the cursor: values read here are addressed ``@cut+edit`` (``origin_of``)."""
+        return bool(self._edits or self._cells) or any(
+            mark.edits or mark.cells for mark in self._trail[:-1])
+
+    def checkpoint(self, name: str | None = None, *, pin: bool = True) -> dict[str, Any]:
+        """The cursor as plain data (``restore`` input). ``pin``: keep the edit tensors it names
+        held for its restore; False when they are stored elsewhere (a project recipe), so the
+        run keeps nothing for it."""
         mark = self._trail[-1]
+        if pin:
+            self._pinned.update(self.edit_tensors())  # the checkpoint names them
         return {
             "schema": CHECKPOINT_SCHEMA,
             "name": name,
@@ -1180,6 +1231,16 @@ class Run:
                 raise ValueError(f"tensor held as {sha[:12]} has another payload digest")
         for sha, value in tensors.items():
             (self._masks if value.dtype == torch.bool else self._values)[sha] = value
+            self._pinned.add(sha)
+
+    def _sweep_tensors(self) -> None:
+        """Drop the held edit tensors no edit of the trail or the staged set uses and no
+        checkpoint (``checkpoint(pin=True)``) or ``hold`` named: an aborted,
+        rewound or replaced edit leaves nothing behind."""
+        used = set(self.edit_tensors()) | self._pinned
+        for table in (self._values, self._masks):
+            for sha in [sha for sha in table if sha not in used]:
+                del table[sha]
 
     def origin_of(self, target: str) -> dict[str, Any]:
         """Where the value at a computed address comes from (what an occurrence pointer records).
@@ -1209,8 +1270,20 @@ class Run:
                 "edits": [*(edit.manifest() for edit in past.edits),
                           *(cell.manifest() for cell in past.cells)]}
 
+    @property
+    def numeric_scope(self) -> dict[str, Any]:
+        """A copy of the numeric scope this run executes under (``adapter.execution
+        ["numeric_scope"]``): thread count, determinism, matmul precision, TF32 and the CUDA
+        reduced-precision reduction flags ``bf16_reduced_precision_reduction`` /
+        ``fp16_reduced_precision_reduction`` (True: cuBLAS may accumulate bf16/fp16 matmuls in
+        reduced precision; ``"absent"`` on a torch without the flag). Bound when the adapter
+        was built and checked on every native call, so it is the scope of every value read;
+        reading it touches no torch global."""
+        return self._numeric_scope()
+
     def _numeric_scope(self) -> dict[str, Any]:
-        """The adapter's bound numeric scope (thread count, determinism, matmul precision).
+        """The adapter's bound numeric scope (thread count, determinism, matmul precision,
+        reduced-precision reduction flags).
 
         A cut's fingerprint binds this scope, so a checkpoint replays only under the same one.
         """
@@ -1287,10 +1360,12 @@ class Run:
     def _restore_atomic(self, checkpoint: dict[str, Any]) -> str:
         snapshot = _Snapshot(self)
         try:
-            return self._restore(checkpoint)
+            where = self._restore(checkpoint)
         except BaseException:
             snapshot.rollback()  # all or nothing, replay and interrupts included
             raise
+        self._sweep_tensors()
+        return where
 
     def _restore(self, checkpoint: dict[str, Any]) -> str:
         if checkpoint.get("schema") != CHECKPOINT_SCHEMA:
@@ -1344,6 +1419,7 @@ class Run:
             if key < root:
                 raise ValueError(f"cannot reverse before the run root {self.address(root)}")
             self._goto(key)
+        self._sweep_tensors()
         return self.where
 
     def _goto(self, key: tuple[int, int]) -> None:
@@ -1423,6 +1499,9 @@ class Run:
         return session
 
     def _prune(self) -> None:
+        receipts = self.session.receipts
+        if len(receipts) > _RECEIPTS:
+            del receipts[: len(receipts) - _RECEIPTS]
         if self.retain_rows is None:
             return
         horizon = self._trail[-1].row - self.retain_rows

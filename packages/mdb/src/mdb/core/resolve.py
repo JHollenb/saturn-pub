@@ -22,7 +22,11 @@ attached session. Any other branch ``b`` is resolved only through a recipe for `
 the project (a session ``b`` that indexed the pointer's recipe or has a cursor, or a checkpoint
 named ``b``); otherwise the pointer is refused, never answered from the attached session. (The
 core address mapping ``to_state_address`` does not look at origins; this module is the guard.)
-An ``@cut`` origin must name the pointer's own cut and carry no edit references.
+An ``@cut`` origin must name the pointer's own cut. An edited origin ``@cut+ref+ref`` (a value
+read under edits: ``mdb.core.recipe.edit_ref`` of each edit applied in the transition that
+computes it) also needs the pointer's recipe and event, and every tier first checks that the
+recipe applies exactly those edits at that event (``RecipeError("origin-edits")`` otherwise):
+an edited value resolves bitwise or is refused, never to the value without its edits.
 
 Without a live model tiers 3 and 4 cannot run: when 1 and 2 cannot answer either, the result is
 ``unresolved`` and ``needs`` says what would resolve it. This module needs no framework; the
@@ -114,8 +118,14 @@ def _target(pointer, occurrence, project, session):
     origin = occurrence.origin
     wanted = pointer["recipe"]
     if origin is not None and origin.cut is not None:
-        if origin.edits or origin.cut != pointer["cut"]:
-            raise _Refusal(f"origin @{origin.cut[:12]} is not this pointer's cut with no edits")
+        if origin.cut != pointer["cut"]:
+            raise _Refusal(f"origin @{origin.cut[:12]} is not this pointer's cut")
+        if origin.edits and wanted is None:
+            raise _Refusal(f"origin @{origin.cut[:12]}+{len(origin.edits)} edit(s): the pointer "
+                           "names no recipe, so its edits cannot be reproduced (a value read "
+                           "under edits is resolvable when it was read with a writable project)")
+        if origin.edits and pointer["event"] is None:
+            raise _Refusal("an edited origin needs the pointer's recipe event")
         origin = None
     if origin is None or origin.branch == current:
         if wanted is None and current is not None:
@@ -169,8 +179,10 @@ def resolve(pointer, *, project=None, session=None, tiers=TIERS):
     text = addresses.format_address(replace(occurrence, origin=None, program=None))
     port = (occurrence.port if occurrence.layer is not None and occurrence.port != "h_out"
             else None)
+    origin = occurrence.origin
+    edits = list(origin.edits) if origin is not None and origin.cut is not None else None
     context = {"pointer": pointer, "recipe": recipe, "address": text, "port": port,
-               "selected": bool(occurrence.selector),
+               "selected": bool(occurrence.selector), "edits": edits,
                "sid": sid, "own": own, "project": project, "session": session}
     for tier in tiers:
         try:
@@ -223,7 +235,7 @@ def _checkpoint(context):
     try:
         return recipes.occurrence_checkpoint(context["recipe"], where=context["address"],
                                              cut=pointer["cut"], event=pointer["event"],
-                                             port=context["port"])
+                                             port=context["port"], edits=context["edits"])
     except recipes.RecipeError as error:
         raise _Refusal(str(error)) from error
 
@@ -237,6 +249,8 @@ def _live(context):
 
 def _blob(context):
     project, pointer, recipe = context["project"], context["pointer"], context["recipe"]
+    if context["edits"]:
+        _checkpoint(context)  # the recipe must apply the origin's edits (else refused)
     layers = _layers(context["session"], recipe)
     if context["sid"] is None or layers is None:
         raise Unresolved("no session or layer count to look the occurrence up under")

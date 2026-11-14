@@ -14,7 +14,7 @@ producer, consumer and circuit-discovery work.
 This directory is the `mdb-runtime` distribution (import name `mdb`). It depends on `saturn-pub`,
 whose `Session` runs the model. The older experiment code lives in `../mdb-lanes` and plugs in
 through entry points (see [Lanes](#lanes)). Open issues are in [`issues.jsonl`](issues.jsonl)
-(ids M1-M17); [Known limits](#known-limits) cites them.
+(ids M1 onward); [Known limits](#known-limits) cites them.
 
 Except for the section on a real model, every command and code block below was run on a random
 tiny model on a CPU, offline, and the output shown is the real output. `...` marks a cut.
@@ -34,13 +34,13 @@ t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 
 t3.L1.p  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
   norm 0.70607 min 0.24902 max 0.25 mean 0.24963 abs_max 0.25 [measured]
   top |v|: [0,0,0,0] 0.25, [0,0,0,3] 0.25 [measured]
-  pointer occurrence ~stepped sha256 a3a32de6269f57e6 cut 564246094956
+  pointer occurrence ~stepped sha256 a3a32de6269f57e6 cut c1cd8fbec358
 (mdb) backtrace
 p <- s <- qr,kr <- q,k <- a <- h
 #0  t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}  <- s
 ...  (#1 to #5 cut: s, qr, kr, q, k, a, h)
 (mdb) checkpoint pre
-checkpoint pre at t3.L1.p (628 bytes)
+checkpoint pre at t3.L1.p (736 bytes)
 (mdb) set L1.m = 0 scale
 staged at t3.L1.m: m scale 0 [supplied] (not fired yet)  (1 staged)
 (mdb) until logits
@@ -49,7 +49,7 @@ t3.logits  logits = lm_head(fn)
 t3.logits  bfloat16 [1, 32]  (batch, vocab)
   norm 0.39659 min -0.16699 max 0.13477 mean -0.0077629 abs_max 0.16699 [measured, under edit t3.L1.m]
   top |v|: [0,6] -0.16699, [0,7] -0.15234, [0,20] 0.13477 [measured, under edit t3.L1.m]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 88df038247cb2036 cut ba8ebd146ec3
 (mdb) restart pre
 t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
 (mdb) info edits
@@ -193,7 +193,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID \| circuit show ID` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native ablation, show as a walk |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit show ID` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), show as a walk; `circuit test ID` is disabled (issue M4) |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
 | `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |
@@ -245,7 +245,7 @@ Every number shown or stored carries exactly one label, and a state.
 | `measured` | read from native execution | `print top=2` at `t3.L1.p` |
 | `derived-exact` | an exact identity on captured operands | the replica `s`; a value written by an `add` or `scale` edit |
 | `derived-local` | a linearisation or quadrature only | the linear term of `whatif` |
-| `bound` | a theorem with stated premises | the rounding bound of a `forecast` |
+| `bound` | a theorem with stated premises | the rounding bound of a `forecast`; never decides a verdict |
 | `supplied` | a value handed in by a user or a stored record | the edit request `m scale 0` |
 
 State is `resolved`, `unresolved` (could not be computed: never shown as zero) or `refused`
@@ -292,7 +292,7 @@ compares it with what native code then produced (`tests/repl_golden/predict_fore
 
 ```
 (mdb) forecast L0.p
-forecast 1  t3.L0.p  sealed at t3.L0.h  record 6516b92607da1410
+forecast 1  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
   predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 cb1cc1226f21049d  bound 0.0026798 [bound] per element
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
@@ -305,12 +305,25 @@ private branch, and restores the session (`tests/repl_golden/predict_whatif.out`
 
 ```
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 0fbe980fb365399f)
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 5d511215876ce57d)
   sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
   error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM 0.16508 [derived-exact P20], residual -0.00059161 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)
 ```
+
+### Verdicts (P20)
+
+`whatif`, `reads` and `compare` judge an effect from the P20 accounting
+(`mdb.analysis.verdict`): native change = exact change (float64 chain, `derived-exact`) +
+residual (`measured`). The floor is `max(|residual|, 2 x spacing)`, spacing being the gap between
+adjacent values of the consumer's dtype at its magnitude. A change is an `effect` when the
+native change is above the floor and the exact change has its sign and exceeds the residual;
+`no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
+the numbers. With no exact chain (as in `compare`) the native change is held against `2 x
+spacing` alone and the line says so. Worst-case rounding bounds are still shown where they are
+finite (`bound` label) and never decide a verdict.
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 
@@ -324,7 +337,7 @@ who reads it), always with an `Unbound` row so the table sums to the whole. Curs
 (mdb) reads t1 --consumer M[4,9] top=3
 reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (4 reads)
   t3.L1.h0   mass 0.24902 [measured]  effect 0.011455 [derived-exact P19]
-    unresolved (changed, within rounding bound): Δ -0.015137 [measured], predicted -0.01456 [derived-exact] (within rounding bound 0.029953 [bound])
+    causal: Δ -0.015137 [measured], predicted -0.01456 [derived-exact], residual -0.00057636 [measured P20]; floor 0.00097656 [measured P20]
 ...
 (mdb) symbol ctx = t1, cache.L1.v[row=2]
 symbol ctx = t1, cache.L1.v[row=2]  (declared: ctx)
@@ -338,9 +351,8 @@ symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [su
   Unbound     mass 0 [derived-exact]  readout -0.14463 [measured]
 ```
 
-Mass is summed over the heads and layers that read the binding, so it can exceed 1. A causal
-verdict ends `unresolved` when its propagated rounding bound is not usable, as above and, more
-often, on a real model (see `issues.jsonl`).
+Mass is summed over the heads and layers that read the binding, so it can exceed 1. Causal
+verdicts follow the rule in [Verdicts](#verdicts-p20).
 
 `circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
 whatever is not listed stays in the record as `+N more` and `remainder` nodes. `circuit test` is
@@ -348,7 +360,7 @@ disabled for now (issue M4). `compare` measures two edits separately and togethe
 
 ```
 (mdb) circuit M[4,9] top=2 depth=3
-circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record 20ce4ff10a27c7cd)
+circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record 0b1ad30b3f694bac)
   t3.M[4,9]  -0.11401 [measured]
     embedding  t3.L0.h  -0.14578 [derived-exact P19]
     L1.attn  t3.L1.o  0.03064 [derived-exact P19]
@@ -360,6 +372,7 @@ circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record 20ce4ff10a27c7cd)
 compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
   base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
   effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.00097656 [measured P20])  B effect (floor 0.00097656 [measured P20])  A+B effect (floor 0.00097656 [measured P20])
   interaction (A+B) - A - B + base = -0.044128 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.logits
@@ -411,14 +424,14 @@ an environment with the `serve` extra):
 
 ```
 $ python -m mdb serve --project runs/t --tiny qwen2 --port 8799
-mdb serve: http://127.0.0.1:8799/  (project runs/t; live session qwen2-11b348654cff)
+mdb serve: http://127.0.0.1:8799/  (project runs/t; live session qwen2-872f0e348e89)
 $ python -m mdb engine http://127.0.0.1:8799 --tokens "1 5 9 3" --script walk.mdb
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) until L1.p
 t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
 (mdb) checkpoint pre
-checkpoint pre at t3.L1.p (628 bytes)
+checkpoint pre at t3.L1.p (736 bytes)
 $ echo "info checkpoints" | python -m mdb engine http://127.0.0.1:8799      # a second client
 (mdb) info checkpoints
 pre       t3.L1.p  staged 0, committed 0
@@ -476,16 +489,16 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2 and
   Qwen3 only, and Qwen3 at real size is not run (M14).
 - A checkpoint is bound to its numeric scope (thread count, determinism flag, matmul
-  precision); restoring under another scope is refused.
+  precision, CUDA reduced-precision reduction flags); restoring under another scope is refused.
+- Memory: trail marks share the state a step did not change, so a mark costs about what its step wrote (one layer's new K/V row, the hidden carrier, the logits); `Run.held_bytes()` measures it, and `retain_rows` bounds it further.
 - Port stepping re-runs the layer from its input for every port. On the tiny qwen2, one layer
   stepped from `h` to `h_out` made 145 calls against 13 for a plain call; `lookahead="layer"`
   makes 26, but native code then has computed ports past the cursor
   (`run.status()["computed_past_cursor"]`).
 - A stepped run equals Hugging Face's incremental program, not one full forward (M10).
 - `circuit test` is disabled for now (issue M4).
-- Numeric scope, memory use of retained marks, rounding bounds on real models and pointers of
-  edited runs are under work; their state is in `issues.jsonl` (M1, M2, M3, M8). Other open
-  items there: M5, M6, M9, M11-M13, M15-M17.
+- Open items are in `issues.jsonl`: M6, M9, M11-M17 (and any later ids), M7 deferred, M10 a
+  known limit.
 - Running on mrun's native kernels is not supported; Hugging Face models are the supported
   path (issue M7).
 

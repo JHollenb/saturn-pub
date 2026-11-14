@@ -491,7 +491,7 @@ register(Op("circuit", "Circuit records: build from the exact decomposition (nod
                  help="sufficient when the complement ablation moves the consumer by at most "
                       "this fraction of its size")),
             "mutate", True, _circuit,
-            usage="circuit CONSUMER [top=K] [depth=D] | circuit test ID | circuit show ID"),
+            usage="circuit CONSUMER [top=K] [depth=D] | circuit show ID  (circuit test ID: disabled, issue M4)"),
          replace=True)
 register(Op("compare", "Compare branches: base, A, B and A+B measured natively, effects and "
             "the interaction",

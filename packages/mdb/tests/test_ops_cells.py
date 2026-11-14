@@ -223,7 +223,8 @@ def test_whatif_of_a_cell_edit_predicts_measures_and_restores(debugger):
     assert result["prediction"]["state"] == "resolved"
     terms = sum(t["value"]["value"] for t in result["split"]["terms"])
     assert abs(terms - measured) <= 1e-12 * max(1.0, abs(measured))
-    assert result["difference"]["native_minus_exact"]["within_bound"] in (True, None)
+    assert result["difference"]["native_minus_exact"].get("within_bound") in (True, None)
+    assert result["state"] == result["effect"]["state"]
 
 
 def test_whatif_of_a_cell_rewinds_when_the_consumer_is_computed(debugger):

@@ -64,10 +64,19 @@ def _fresh_margin(debugger, edits, margin):
 
 
 def _rule(delta, entry):
-    """S1: causal only beyond max(min_effect, rounding bound); exactly 0 is not causal."""
-    if delta == 0:
-        return "not causal at this dose"
-    return "causal" if entry["causal"]["beyond_rounding_bound"] else "unresolved"
+    """The P20 rule: floor = max(|residual|, 2 x spacing); causal when |native| > floor and
+    exact has its sign with |exact| > |residual|; not causal when native and exact are both
+    within the floor; else unresolved. ``delta`` is the fresh run's change."""
+    effect = entry["causal"]["effect"]
+    assert effect["native"]["value"] == delta and effect["native"]["authority"] == "measured"
+    floor, exact = effect["floor"]["value"], effect["exact"]["value"]
+    residual = effect["residual"]["value"]
+    assert floor == max(abs(residual), 2 * effect["spacing"]["value"])
+    assert "bound" not in str(effect["floor"]["authority"])
+    if abs(delta) > floor:
+        same = exact != 0 and (exact > 0) == (delta > 0)
+        return "causal" if same and abs(exact) > abs(residual) else "unresolved"
+    return "not causal at this dose" if abs(exact) <= floor else "unresolved"
 
 
 def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
@@ -85,9 +94,6 @@ def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
         assert entry["causal"]["verdict"] == _rule(float(edited - base), entry)
         if entry["causal"]["verdict"] == "unresolved":
             assert entry["causal"]["reason"].startswith("changed, ")
-        if "rounding_bound" in entry["causal"]:
-            bound = entry["causal"]["rounding_bound"]["value"]
-            assert entry["causal"]["bound_exceeds_consumer"] == (bound > abs(float(base)))
 
 
 def test_reads_at_other_rows_with_causal_verdicts_equal_fresh_runs(debugger):
@@ -146,7 +152,7 @@ def test_small_mass_large_effect_and_large_mass_no_effect_are_labelled(debugger)
                  if e["name"] == "t3.L1.h0")
     assert entry["mass"]["authority"] in AUTHORITIES
     assert entry["causal"]["verdict"] == "causal"
-    assert entry["causal"]["beyond_rounding_bound"] is True
+    assert entry["causal"]["effect"]["verdict"] == "effect"
     # a read of another row by the same head: more than twice the mass, a smaller effect
     normal = next(e for e in reads(run, "t2.L1.v", top=8).report["reads"]
                   if e["name"] == "t3.L1.h0")

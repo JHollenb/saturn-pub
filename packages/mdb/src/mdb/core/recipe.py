@@ -26,8 +26,16 @@ recipe is stored with ``mdb.core.index.put_recipe`` and its id is its fingerprin
 
 Replaying (``mdb.ops.debugger.Debugger.restart``) refuses with a ``RecipeError`` (a
 ``Refused``) whose ``code`` is one of ``CODES``, each with its own message: another model identity, another
-numeric scope, a missing blob, a corrupt blob, a malformed recipe, or a replay that reached
-another cut fingerprint.
+numeric scope, a missing blob, a corrupt blob, a malformed recipe, a replay that reached
+another cut fingerprint, or (``origin-edits``) a recipe whose edits at an occurrence are not
+the ones an ``@cut+edit`` origin names.
+
+Edited origins. A value read under edits is addressed ``@<cut>+<ref>+<ref>:<target>``: the
+boundary cut it is computed from (whose fingerprint binds everything before it, path edits
+included) and, in order, the reference (``edit_ref``: sha256 of the canonical manifest) of each
+edit applied in the transition that computes it. ``occurrence_checkpoint(..., edits=refs)``
+refuses a recipe whose edits there have other references, so a pointer never resolves through
+edits it was not read under.
 """
 from __future__ import annotations
 
@@ -56,7 +64,7 @@ CHECKPOINT_SCHEMA = "mdb-engine-checkpoint-v1"   # mdb.engine.run.CHECKPOINT_SCH
 FIELDS = ("schema", "name", "model_identity", "layers", "tokens", "prompt_sha256",
           "numeric_scope", "lookahead", "transitions", "staged", "target", "cut", "fingerprint")
 CODES = ("model-identity", "numeric-scope", "missing-blob", "corrupt-blob", "malformed",
-           "fingerprint")
+           "fingerprint", "origin-edits")
 _EDIT_KEYS = {"port", "op", "value", "mask", "mask_count", "selection", "cell", "dose", "origin"}
 _CELL_KEYS = {"layer", "tensor", "rows", "kv", "d", "timing", "staged_at"}
 
@@ -325,7 +333,17 @@ def fingerprint_mismatch(recipe, expected, reached):
                        f"not the recorded {expected[:12]} (fingerprint mismatch)")
 
 
-def occurrence_checkpoint(recipe, *, where, cut, event, port):
+def edit_ref(manifest):
+    """The reference of one edit in an ``@cut+edit`` origin: the sha256 of its checkpoint
+    manifest (``Run.origin_of``'s ``edits`` items; port, op, the value or its payload digest,
+    mask, selection, cell, dose, origin) as canonical JSON. Any differing field gives another
+    reference. 64 hex characters, so it is a valid origin edit id."""
+    if not isinstance(manifest, Mapping) or not {"port", "op", "value"} <= set(manifest):
+        raise _malformed("an edit manifest is {port, op, value, ...}")
+    return digest(dict(manifest))
+
+
+def occurrence_checkpoint(recipe, *, where, cut, event, port, edits=None):
     """The ``Run.checkpoint()`` whose cursor sits on one occurrence of the recipe's history.
 
     ``cut``/``event`` are the boundary cut and transition count the occurrence is read at or
@@ -333,6 +351,10 @@ def occurrence_checkpoint(recipe, *, where, cut, event, port):
     value). The edits staged there are the recipe's edits of transition ``event`` (its staged
     edits when ``event`` is the target's transition); the path is every recorded transition
     before ``event``. Restoring it and reading at the cursor reproduces the occurrence.
+
+    ``edits``: the ordered edit references of an ``@cut+edit`` origin (``edit_ref``). When given,
+    the staged edits must have exactly those references, else ``RecipeError("origin-edits")``:
+    the recipe would compute the value under other edits than it was read under.
     """
     recipe = verify(recipe)
     target = recipe["target"]["transitions"]
@@ -344,6 +366,15 @@ def occurrence_checkpoint(recipe, *, where, cut, event, port):
     out.update(name=None, where=where, cut=cut, transitions=event, port=port,
                edits=[_manifest(e) for e in layer] if port is not None else [],
                path_edits=[p for p in out["path_edits"] if p["transition"] < event])
+    if edits is not None:
+        mine = [edit_ref(m) for m in out["edits"]]
+        if mine != list(edits):
+            raise RecipeError(
+                "origin-edits",
+                f"recipe {recipe['fingerprint'][:12]} applies {len(mine)} edit(s) at transition "
+                f"{event} ({', '.join(r[:12] for r in mine) or 'none'}); the address origin "
+                f"names {len(edits)} ({', '.join(str(r)[:12] for r in edits) or 'none'}) (the "
+                "edits differ: tampered, or another recipe)")
     return out
 
 

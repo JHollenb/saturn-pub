@@ -15,8 +15,10 @@ remainder explicit, and a native test of what was retained.
 At every node the ``top`` largest children (by ``|value|``, the norm for a vector consumer) are
 retained; the others are one ``+N more`` node holding their exact sum. Every node whose
 children are not exact identities of native values has a ``remainder`` child (``measured``:
-the native value minus the exact sum) with a rounding ``bound`` (round to nearest; matmuls
-accumulate in float32, one rounding to the model dtype; residual adds round once; the final
+the native value minus the exact sum) with a rounding ``bound`` (round to nearest; matmul
+partial sums at the run's accumulation precision, ``accumulation.accumulation``: float32 unless
+CUDA reduced-precision reductions are allowed, when a sum with ``n u >= 1`` has no bound and the
+remainder's bound is refused; one rounding to the model dtype; residual adds round once; the final
 norm term is explain's a-priori ``k = 2`` multiple, flagged) and a ``within`` flag. A committed
 or staged edit that wrote the native value there (``Run.read_info``) is its own ``edit`` node
 (the native value minus the pre-edit value, labelled as ``read_info`` labels the port), never
@@ -43,12 +45,11 @@ from mdb.core.kinds import CIRCUIT
 from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
 
+from .accumulation import accumulation
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
 from .forecast import Margin, Refusal, run_session_id
 from .propagate import Edit
 from .reads import (
-    _U32,
-    _gamma,
     claim,
     computed,
     head_mask,
@@ -207,16 +208,22 @@ def _remainder(name: str, address: str, value: Any, why: str, bound: Any = None)
 
 
 def _through(reader: Any, bound: Any) -> Any:
-    """A per-coordinate bound (residual frame) mapped through the consumer's linear map."""
+    """A per-coordinate bound (residual frame) mapped through the consumer's linear map (None
+    stays None: a refused bound)."""
+    if bound is None:
+        return None
     bound = f64(bound).reshape(-1)
     return reader.vector.abs() @ bound if reader.scalar else bound
 
 
-def _matmul_bound(exact: Any, spread: Any, n: int, dtype: Any) -> Any:
+def _matmul_bound(exact: Any, spread: Any, n: int, dtype: Any, acc: Any) -> Any:
     """``|fl(W x) - W x|`` per output from ``exact = W x`` and ``spread = |W| |x|`` (``n``
-    terms): float32 accumulation in any order, one rounding to ``dtype``."""
-    return (_gamma(n, _U32) * spread * (1 + unit_roundoff(dtype))
-            + unit_roundoff(dtype) * exact.abs())
+    terms): partial sums at the precision of ``acc`` (``accumulation.Accumulation``) in any
+    order, one rounding to ``dtype``; None when ``acc`` has no ``gamma_n``."""
+    gamma = acc.gamma(n)
+    if gamma is None:
+        return None
+    return gamma * spread * (1 + unit_roundoff(dtype)) + unit_roundoff(dtype) * exact.abs()
 
 
 def _edited(run: Any, address: str, select: Any = None) -> dict[str, Any] | None:
@@ -225,7 +232,8 @@ def _edited(run: Any, address: str, select: Any = None) -> dict[str, Any] | None
 
 
 def _gap(run: Any, reader: Any, *, name: str, address: str, native: Any, exact: Any,
-         bound: Any, why: str, info: dict[str, Any] | None, original: Any = None) -> list[Node]:
+         bound: Any, why: str, info: dict[str, Any] | None, original: Any = None,
+         refusal: str | None = None) -> list[Node]:
     """``native - exact`` at a site (residual-frame vectors): an ``edit`` node for what an edit
     wrote there (``native - original``) and a bounded ``remainder`` for the rest. With an edit
     whose pre-edit value is not available the whole gap is the edit node."""
@@ -241,6 +249,8 @@ def _gap(run: Any, reader: Any, *, name: str, address: str, native: Any, exact: 
                           label, note=f"displacement written by an edit ({ops}): native minus "
                                       "the pre-edit value"))
         native = original
+    if bound is None and refusal is not None:
+        why = f"{why}; bound refused ({refusal})"
     nodes.append(_remainder(f"{name} remainder", address, reader.apply(native - exact), why,
                             _through(reader, bound)))
     return nodes
@@ -286,16 +296,18 @@ def _attn_children(run: Any, reader: Any, row: int, layer: int, depth: int, top:
     children += _gap(run, reader, name=f"L{layer}.attn", address=address, native=mix.o,
                      exact=writes, bound=checks["head_write"]["bound"],
                      why="native o minus sum_h W_o,h A_h (o_proj rounding)", info=info,
-                     original=original)
-    bounds = checks["value_mix"]["bound"]
+                     original=original, refusal=checks["head_write"].get("refused"))
+    bounds, refusal = checks["value_mix"]["bound"], checks["value_mix"].get("refused")
     sources = None if depth <= 2 else (
-        lambda m: _source_children(run, reader, mix, m.index[0], bounds[m.index[0]], top))
+        lambda m: _source_children(run, reader, mix, m.index[0],
+                                   None if bounds is None else bounds[m.index[0]], top, refusal))
     return _group(children, top, address, _promoter("P07", sources))
 
 
-def _source_children(run: Any, reader: Any, mix: Any, head: int, bound: Any, top: int) -> list:
-    """Source rows of one head (``bound``: its value-mix rounding bound), the edit at ``A`` if
-    any and the bounded value-mix remainder."""
+def _source_children(run: Any, reader: Any, mix: Any, head: int, bound: Any, top: int,
+                     refusal: str | None = None) -> list:
+    """Source rows of one head (``bound``: its value-mix rounding bound, None and ``refusal``
+    when its premise fails), the edit at ``A`` if any and the bounded value-mix remainder."""
     row, layer = mix.row, mix.layer
     parts = mix.p[head][:, None] * mix.unit[head]      # (T, d): o_parts() of this head only
     port = f"t{row}.L{layer}.p"
@@ -314,8 +326,9 @@ def _source_children(run: Any, reader: Any, mix: Any, head: int, bound: Any, top
             original = block @ whole.reshape(-1, dh)[head]
     children += _gap(run, reader, name=f"L{layer}.h{head}", address=f"{address}[h{head}]",
                      native=block @ mix.A[head], exact=block @ mix.head_out()[head],
-                     bound=block.abs() @ bound, why="native A_h minus sum_s p v (value-mix "
-                                                     "rounding)", info=info, original=original)
+                     bound=None if bound is None else block.abs() @ bound,
+                     why="native A_h minus sum_s p v (value-mix rounding)", info=info,
+                     original=original, refusal=refusal)
     return _group(children, top, f"{address}[h{head}]", _promoter("P06"))
 
 
@@ -334,10 +347,12 @@ def _mlp_children(run: Any, reader: Any, row: int, layer: int, top: int) -> list
     exact = down @ f
     spread = down.abs_() @ f.abs()      # down is |W_down| from here on: no second copy
     del down
+    acc = accumulation(run, native.dtype)
     children += _gap(run, reader, name=f"L{layer}.mlp", address=address, native=m,
-                     exact=exact, bound=_matmul_bound(exact, spread, f.numel(), native.dtype),
+                     exact=exact, bound=_matmul_bound(exact, spread, f.numel(), native.dtype, acc),
                      why="native m minus W_down f (down_proj rounding)", info=info,
-                     original=None if info is None else _original(run, address))
+                     original=None if info is None else _original(run, address),
+                     refusal=acc.refusal(f.numel()))
     return _group(children, top, address, _promoter("P15"))
 
 
@@ -444,12 +459,17 @@ def top_gap(run: Any, reader: Any, gap: Any) -> list[Node]:
             a = b = reader.target.i
             half = 0.5          # explain's head bound sums over j in (a, b): counted once
         caps = type("Caps", (), {"normed": fn, "logits": logits})()
-        head, _ = _head_bound(caps, weight, bias, a, b)
+        acc = accumulation(run, logits.dtype)
+        head, _ = _head_bound(caps, weight, bias, a, b, acc)
         w = f64(weight[a]) - (f64(weight[b]) if a != b else 0)
         final = 2 * float(w.abs().sum()) * _ulp(float(f64(fn).abs().max()),
                                                 float(torch.finfo(fn.dtype).eps))
-        total = total + half * head + final
         why += ", final norm (explain's a-priori k = 2 multiple, not a derived bound) and head"
+        if head is None:
+            total = None
+            why += f"; bound refused ({acc.refusal(int(fn.numel()))})"
+        else:
+            total = total + half * head + final
     nodes.append(_remainder("remainder", reader.text, gap, why, total))
     return nodes
 
@@ -493,7 +513,8 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
                                    "by construction (the remainders are defined as native "
                                    "minus the listed terms), so this checks float64 summation "
                                    "only; remainders_within is the rounding check"},
-            "remainders_within": all(n.within for n in remainders),
+            "remainders_within": (None if any(n.within is None for n in remainders)
+                                  else all(n.within for n in remainders)),
             "edits": {"count": sum(1 for n in _walk(root) if n.kind == "edit"),
                       "meaning": "edit nodes: displacements edits wrote, never in a remainder"},
             "premises": reader.premises}

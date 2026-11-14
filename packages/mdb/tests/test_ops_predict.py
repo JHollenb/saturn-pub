@@ -117,7 +117,7 @@ def test_whatif_measures_a_fresh_committed_run_bitwise_and_leaves_the_session(de
     assert prediction["exact"]["value"]  # the exact term exists on every site here
     rounding = report["split"]["terms"][-1]
     assert rounding["name"] == "rounding" and rounding["value"]
-    if rounding["within_bound"] is not None:
+    if rounding.get("within_bound") is not None:
         assert rounding["within_bound"] is True
     # the split adds up to the native change, element by element
     tensors = result.tensors

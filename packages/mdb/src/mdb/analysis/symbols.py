@@ -295,6 +295,14 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     return Table(report, records, tensors)
 
 
+def _remainder_bound(rest: Any) -> dict[str, Any]:
+    """The remainder's rounding bound, or a refused bound when its premise fails (no number)."""
+    if rest.bound is None:
+        return {"bound": {"state": "refused", "reason": "the rounding bound's accumulation "
+                          "premise fails on this run (see `explain`)"}, "within": None}
+    return {"bound": num(float(rest.bound), BOUND), "within": bool(rest.within)}
+
+
 def _unbound_parts(run: Any, reader: Any, listed_effect: float) -> dict[str, Any]:
     """The consumer minus the listed bindings' reads, by part (see the module docstring)."""
     from .circuits import terms, top_gap
@@ -309,9 +317,7 @@ def _unbound_parts(run: Any, reader: Any, listed_effect: float) -> dict[str, Any
     parts: dict[str, Any] = {
         "embedding_mlp": num(other, EXACT, "P19"),
         "attention_not_listed": num(attention - listed_effect, EXACT, "P19"),
-        "remainder": {"value": num(float(rest.value), MEASURED), "bound": num(float(rest.bound),
-                                                                              BOUND),
-                      "within": bool(rest.within)},
+        "remainder": {"value": num(float(rest.value), MEASURED), **_remainder_bound(rest)},
         "meaning": "embedding, MLP and head-bias terms; the layers' attention output (native o, "
                    "read exactly) minus the listed reads (reads of bindings off this page, "
                    "heads an edit wrote, o_proj rounding); residual-stream edits; the measured "

@@ -31,6 +31,7 @@ from .finite import MEASURED, f64
 from .forecast import Logit, Margin, Refusal
 from .propagate import Edit, plan, stage, state_digest
 from .reads import claim
+from .verdict import decide, magnitude
 
 
 def _guard(run: Any, checkpoints: list[dict[str, Any]]) -> None:
@@ -88,12 +89,16 @@ def consumer_value(consumer: Any, value: Any) -> Any:
     return f64(flat)
 
 
-def _read(run: Any, consumer: Any) -> tuple[Any, str]:
+def _read(run: Any, consumer: Any) -> tuple[Any, str, tuple[float, Any]]:
+    """The consumer's float64 value, its label, and ``(magnitude, dtype)`` of the native tensor
+    it came from (the noise floor of ``verdict.decide``)."""
     stop = consumer_stop(run, consumer)
     if run.parse(stop) > run.parse(run.where):
         run.until(stop)
     info = run.read_info(stop)
-    return consumer_value(consumer, run.read(stop)), info["authority"] or MEASURED
+    native = run.read(stop)
+    return (consumer_value(consumer, native), info["authority"] or MEASURED,
+            (magnitude(consumer, native), native.dtype))
 
 
 def _layer_key(run: Any, edit: Edit) -> tuple[int, int]:
@@ -153,7 +158,7 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
             run.set(edit.address, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
             moves.append(f"set {edit.address}" + (f"[{edit.selection}]" if edit.selection
                                                   else ""))
-        value, authority = _read(run, consumer)
+        value, authority, scale = _read(run, consumer)
         moves.append(f"read {consumer_stop(run, consumer)}")
     finally:
         restore_exactly(run, checkpoint)
@@ -162,7 +167,8 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
     if after != before:
         raise RuntimeError(f"measure did not leave the session where it was ({before[:12]} -> "
                            f"{after[:12]})")
-    return {"value": value, "authority": authority, "moves": moves}
+    return {"value": value, "authority": authority, "moves": moves,
+            "scale": scale}
 
 
 def measure_at(run: Any, checkpoint: dict[str, Any], consumer: Any) -> dict[str, Any]:
@@ -173,20 +179,20 @@ def measure_at(run: Any, checkpoint: dict[str, Any], consumer: Any) -> dict[str,
     _guard(run, [here, checkpoint])
     try:
         run.restore(checkpoint)
-        value, authority = _read(run, consumer)
+        value, authority, scale = _read(run, consumer)
     finally:
         restore_exactly(run, here)
     if state_digest(run) != before:
         raise RuntimeError("measure_at did not leave the session where it was")
-    return {"value": value, "authority": authority,
+    return {"value": value, "authority": authority, "scale": scale,
             "moves": [f"restore {checkpoint['where']}", f"read {consumer_stop(run, consumer)}",
                       f"restore {here['where']}"]}
 
 
 def measure_other(other: Any, consumer: Any) -> dict[str, Any]:
     """The consumer measured natively on another run (a durable checkpoint replayed)."""
-    value, authority = _read(other, consumer)
-    return {"value": value, "authority": authority,
+    value, authority, scale = _read(other, consumer)
+    return {"value": value, "authority": authority, "scale": scale,
             "moves": [f"replay to {other.where}", f"read {consumer_stop(other, consumer)}"]}
 
 
@@ -295,6 +301,13 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
             found_joint = {"state": "refused", "reason": joint}
             report["measured"]["A+B"] = found_joint
             report["effects"]["A+B"] = found_joint
+    # each effect against the dtype-spacing floor (native only: compare has no exact chain)
+    report["verdicts"] = {}
+    for name in [n for n in ("A", "B", "A+B") if n in values]:
+        size = max(found[name]["scale"][0], found["base"]["scale"][0])
+        report["verdicts"][name] = decide(values[name] - values["base"], None, None, size,
+                                          found["base"]["scale"][1],
+                                          "compare measures natively, with no exact chain")
     report["kind"] = "vector" if vector else "scalar"
     return {"report": report, "values": values}
 

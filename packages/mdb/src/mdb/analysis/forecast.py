@@ -7,8 +7,9 @@ ports at or before the cursor (``Run.read``), the key/value cache rows of earlie
 P10 SwiGLU, P19 readout) in float64 from those values, one stop of the token row at a time;
 nothing native runs for the target. The prediction is ``derived-exact`` (exact real arithmetic
 on captured operands) and carries a per-element rounding ``bound``: how far the native value can
-sit from it under stated premises (round to nearest, float32 accumulation for 16-bit models,
-float32 library functions within ``LIBRARY_ULPS`` ulp, no overflow or underflow). The bound of a
+sit from it under stated premises (round to nearest, the matmul accumulation precision of
+``accumulation.accumulation`` (float32 unless the run's numeric scope allows CUDA reduced-precision
+reductions, when a matmul bound is refused past ``n u >= 1``), float32 library functions within ``LIBRARY_ULPS`` ulp, no overflow or underflow). The bound of a
 stop whose operands are themselves predictions propagates the operands' bounds through the
 identity (linear maps exactly, SiLU by its Lipschitz constant, RMS and softmax by their exact
 range over the operand box), so a forecast several stops ahead keeps a bound.
@@ -31,6 +32,7 @@ from typing import Any
 from mdb.core.pointers import occurrence_pointer, seal_digest
 from mdb.core.records import declare_kind, num, seal_record
 
+from .accumulation import accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
 from .finite import BOUND, EXACT, f64
 
@@ -171,6 +173,8 @@ class RowModel:
         dtype = adapter.dtype
         self.out16 = dtype in (torch.bfloat16, torch.float16)
         self.u = float(torch.finfo(dtype).eps) / 2.0
+        self.acc = accumulation(run)   # matmul accumulation premise, from the numeric scope
+        self._failed: str | None = None
         self.bounds = bounds
         self.overrides = dict(overrides or {})
         self.past, self.token = past, token
@@ -241,6 +245,9 @@ class RowModel:
                 raise Refusal(NO_IDENTITY["start"])
             value, bound = yield from self._step(label)
             self.computed.append(label)
+            if bound is None and self._failed is not None:
+                self.unbounded[label] = self._failed     # a premise of this step's bound fails
+            self._failed = None
             if bound is not None and not bool((torch.isfinite(bound) & (bound >= 0)).all()):
                 bound = None
                 self.unbounded[label] = ("the propagated bound is not finite: the operands' "
@@ -400,6 +407,16 @@ class RowModel:
         """Relative error of one rounding to the model dtype after a float32 computation."""
         return self.u if self.out16 else 0.0
 
+    def _gamma(self, n: int) -> float | None:
+        """``gamma_n`` of an ``n``-term native matmul sum under ``self.acc``; None (the reason
+        kept for ``_compute``) when its premise fails."""
+        gamma = self.acc.gamma(n)
+        if gamma is None:
+            self._failed = self.acc.refusal(n)
+        else:
+            self.premises.add(self.acc.premise)
+        return gamma
+
     def _affine(self, x: Any, bx: Any, module: Any) -> tuple[Any, Any]:
         torch = _torch()
         native, bias = module.weight, self._weight(module, "bias")
@@ -421,10 +438,11 @@ class RowModel:
         size = ((sizes[0] if one else torch.cat(sizes, -1))
                 + (0 if bias is None else bias.abs()))
         spread = spreads[0] if one else torch.cat(spreads, -1)
-        gamma = _gamma(x.shape[-1] + (bias is not None), U32)
+        gamma = self._gamma(x.shape[-1] + (bias is not None))
+        if gamma is None:
+            return value, None
         rounds = (1 if self.out16 else 0) + (1 if bias is not None else 0)
         output = (1 + (self.u if self.out16 else U32)) ** rounds - 1
-        self.premises.add("matmul accumulates in float32 in any order (gamma_n bound)")
         rounding = gamma * size + output * (1 + gamma) * size
         return value, spread + rounding + torch.zeros_like(value)
 
@@ -509,7 +527,9 @@ class RowModel:
         bkeys = self._kappa(bk)
         size = torch.einsum("hd,htd->ht", q.abs() + bq, keys.abs() + bkeys)
         prop = scaling * (size - torch.einsum("hd,htd->ht", q.abs(), keys.abs()))
-        gamma = _gamma(q.shape[-1], U32)
+        gamma = self._gamma(q.shape[-1])
+        if gamma is None:
+            return value, None
         dot = gamma * size + self._out_round() * (1 + gamma) * size
         product = (1 + U32) ** 2 * (1 + (self.u if self.out16 else U32))
         return value, prop + scaling * dot * product + (product - 1) * scaling * size * (
@@ -540,7 +560,9 @@ class RowModel:
         bmix = self._kappa(bv)
         size = torch.einsum("ht,htd->hd", p.abs() + bp, mix.abs() + bmix).reshape(-1)
         prop = size - torch.einsum("ht,htd->hd", p.abs(), mix.abs()).reshape(-1)
-        gamma = _gamma(p.shape[-1], U32)
+        gamma = self._gamma(p.shape[-1])
+        if gamma is None:
+            return value, None
         return value, prop + gamma * size + self._out_round() * (1 + gamma) * size
 
     def _silu(self, g: Any, bg: Any) -> tuple[Any, Any]:
@@ -790,7 +812,7 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
                      "sha256": tensor_digest(value.contiguous()), **_summary(value, EXACT)}
     if bound is None:
         reason = model.unbounded.get(label, "no rounding bound for this step")
-        bound_view: dict[str, Any] = {"state": "unresolved", "reason": reason}
+        bound_view: dict[str, Any] = {"state": bound_state(reason), "reason": reason}
     else:
         bound_view = {"max": num(float(bound.reshape(-1).max()), BOUND), "elementwise": True,
                       "premises": sorted(model.premises | {

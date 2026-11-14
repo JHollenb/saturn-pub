@@ -3,7 +3,7 @@ t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) until L0.q
 t3.L0.q  q = W_q a + b_q (pre-RoPE, flat)  {P04}
 (mdb) checkpoint pre
-checkpoint pre at t3.L0.q (628 bytes)
+checkpoint pre at t3.L0.q (736 bytes)
 (mdb) set L0.q[h1] = 2.0
 staged at t3.L0.q[h1]: q replace 2 [supplied] (realised exactly as bfloat16) on [h1] (8 elements) changed 0.5 [measured]  (1 staged)
   realised as one masked replace on the selected elements
@@ -12,12 +12,12 @@ t3.L0.q  bfloat16 [1, 1, 16]  (batch, row, head*head_dim)
   edited by q: derived-exact
   norm 5.6655 min -0.21875 max 2 mean 1.0003 abs_max 2 [derived-exact, mixed 8 written/8 untouched]
   top |v|: [0,0,8] 2, [0,0,9] 2, [0,0,10] 2, [0,0,11] 2, [0,0,12] 2 [derived-exact, mixed 8 written/8 untouched]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 0aaa98bac5be229c cut e6d022022db7
 (mdb) print L0.q[h0]
 t3.L0.q[h0]  bfloat16 [1, 1, 16] -> [1, 1, 8]  (batch, row, head*head_dim)
   norm 0.31344 min -0.21875 max 0.11914 mean 0.00059509 abs_max 0.21875 [measured, untouched; port edited: replace]
   top |v|: [0,0,1] -0.21875, [0,0,4] 0.11914, [0,0,3] 0.10498, [0,0,2] 0.094727, [0,0,0] -0.08252 [measured, untouched; port edited: replace]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 0aaa98bac5be229c cut e6d022022db7
 (mdb) info edits
 staged at t3.L0.q: q replace 2 [supplied] (realised exactly as bfloat16) on [h1] (8 elements) changed 0.5 [measured]
 (mdb) until L0.p
@@ -26,7 +26,7 @@ t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 
 t3.L0.p  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
   norm 0.71041 min 0.20898 max 0.30664 mean 0.24988 abs_max 0.30664 [measured, under edit t3.L0.q]
   top |v|: [0,1,0,0] 0.30664, [0,0,0,0] 0.25195, [0,0,0,1] 0.25, [0,1,0,2] 0.25, [0,0,0,2] 0.24902 [measured, under edit t3.L0.q]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 b227a9668edbaa03 cut e6d022022db7
 (mdb) commit
 committed 1 edit(s)
 t3.L0.h_out  h_out = r + m (layer output)  {P14}
@@ -34,14 +34,14 @@ t3.L0.h_out  h_out = r + m (layer output)  {P14}
 t3.L0.h_out  bfloat16 [1, 1, 16]  (batch, row, d_model)
   norm 0.088819 min -0.046631 max 0.040527 mean 0.00053406 abs_max 0.046631 [measured, under edit t3.L0.q]
   top |v|: [0,0,14] -0.046631, [0,0,4] 0.040527, [0,0,5] 0.037842, [0,0,6] -0.033936, [0,0,12] -0.018433 [measured, under edit t3.L0.q]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 458419793392f7de cut 98e860bc3962
 (mdb) until L1.p
 t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
 (mdb) print L1.p
 t3.L1.p  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
   norm 0.70642 min 0.24902 max 0.25 mean 0.24976 abs_max 0.25 [measured, under edit t3.L0.q]
   top |v|: [0,0,0,0] 0.25, [0,0,0,2] 0.25, [0,0,0,3] 0.25, [0,1,0,0] 0.25, [0,1,0,2] 0.25 [measured, under edit t3.L0.q]
-  pointer omitted: edited run: occurrence origins (@cut+edit) are not wired yet
+  pointer occurrence ~stepped sha256 c95b992ab1da6647 cut 98e860bc3962
 (mdb) info edits
 staged at t3.L1.p: none
 committed L0 (transition 1): q replace 2 [supplied] (realised exactly as bfloat16) on [h1] (8 elements) changed 0.5 [measured]
@@ -53,4 +53,4 @@ staged at t3.L0.q: none
 t3.L0.q  bfloat16 [1, 1, 16]  (batch, row, head*head_dim)
   norm 0.43995 min -0.21875 max 0.13672 mean -0.0056686 abs_max 0.21875 [measured]
   top |v|: [0,0,1] -0.21875, [0,0,13] -0.20605, [0,0,10] 0.13672, [0,0,15] 0.12793, [0,0,4] 0.11914 [measured]
-  pointer occurrence ~stepped sha256 525585b406cae194 cut 0b72981ea843
+  pointer occurrence ~stepped sha256 525585b406cae194 cut e6d022022db7

@@ -162,8 +162,10 @@ def test_set_commit_changes_downstream_and_abort_restores(debugger):
     assert edits["staged"] == []
     assert edits["committed"][0]["layer"] == 0
     assert edits["committed"][0]["edits"][0]["port"] == "n"
-    assert dispatch(ctx, "print", {"address": "L1.a"}).get("pointer_omitted", "").startswith(
-        "edited run")
+    # M8: a value of an edited run is addressed by the cut it is computed from (which binds the
+    # committed L0 edit) and the edits of its own transition (none in L1)
+    pointer = dispatch(ctx, "print", {"address": "L1.a"})["pointer"]
+    assert pointer["address"]["origin"] == {"cut": pointer["cut"], "edits": []}
 
 
 def test_set_with_selector_and_address_value(debugger):

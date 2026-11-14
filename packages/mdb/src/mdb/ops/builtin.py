@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from mdb.core import address as addresses
@@ -350,7 +350,33 @@ def _tokens(ctx, ids: list[int], keep: int = 16) -> dict[str, Any]:
 
 
 def _edited(ctx) -> bool:
-    return bool(ctx.run.edits) or bool(ctx.run.checkpoint()["path_edits"])
+    return ctx.run.edited
+
+
+def _edited_origin(ctx, target: Target) -> tuple[Any, str | None, int, str]:
+    """``(origin, recipe id, event, cut)`` of a value read under edits: ``@cut+ref...`` (the
+    boundary cut it is computed from and the reference of each edit applied in that transition,
+    ``mdb.core.recipe.edit_ref``) and, with a writable project, the stored recipe of the cursor
+    (edit values and masks as blobs) that reproduces it. Raises ``Refused`` when the recipe
+    cannot be stored (an edit tensor not held, an over-large recipe)."""
+    from mdb.core import recipe as recipes
+    from mdb.core.pointers import RecordError
+
+    run = ctx.run
+    origin = run.origin_of(target.run_target)
+    edits = tuple(recipes.edit_ref(m) for m in origin["edits"])
+    project = project_of(ctx)
+    recipe = None
+    if project is not None and not project.read_only:
+        try:
+            sealed = recipes.from_checkpoint(run.checkpoint(pin=False), tokens=run.tokens,
+                                             layers=run.adapter.layers,
+                                             tensors=run.edit_tensors(), store=project.store)
+            recipe = recipes.save(project, ctx.debugger.session_id, sealed)
+        except RecordError as error:
+            raise Refused(f"the edits do not fit one replay recipe: {error}") from error
+    return (addresses.Origin(cut=origin["cut"], edits=edits), recipe, origin["transitions"],
+            origin["cut"])
 
 
 def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
@@ -361,20 +387,28 @@ def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
         return None, "cache cells are read at the current clock; no occurrence pointer"
     if target.label == "start":
         return None, "start is the token list, not a port occurrence"
-    if _edited(ctx):
-        return None, "edited run: occurrence origins (@cut+edit) are not wired yet"
     run = ctx.run
-    cut = None
-    layer_port = target.layer_port
-    if layer_port is not None and run.pending_layer == layer_port[0] and (
-        _split(run.where)[0] == target.row
-    ):
-        cut = run.checkpoint()["cut"]
+    cut = recipe = event = None
     address = addresses.parse(target.run_target, ports=run.program.names,
                               global_ports=GLOBALS)
     authority, reason = _claim(_read_info(ctx, target))
     if authority is None:
         return None, f"no occurrence pointer: the value's label was refused ({reason})"
+    if _edited(ctx):
+        # M8: an edited value is addressed by its cut and the edits applied after it; with a
+        # writable project the recipe (and every edit tensor, as a blob) is stored so
+        # mdb.resolve and seek can reproduce it bitwise; without one it resolves to a refusal.
+        try:
+            origin, recipe, event, cut = _edited_origin(ctx, target)
+        except (Refused, ValueError) as error:
+            return None, f"no occurrence pointer: {error}"
+        address = replace(address, origin=origin)
+    else:
+        layer_port = target.layer_port
+        if layer_port is not None and run.pending_layer == layer_port[0] and (
+            _split(run.where)[0] == target.row
+        ):
+            cut = run.checkpoint(pin=False)["cut"]
     try:
         pointer = occurrence_pointer(
             address,
@@ -382,6 +416,8 @@ def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
             shape=list(value.shape),
             dtype=str(value.dtype).removeprefix("torch."),
             sha256=tensor_digest(value.contiguous()),
+            recipe=recipe,
+            event=event,
             cut=cut,
             authority=authority,
             ports=run.program.names,
