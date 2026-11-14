@@ -1,0 +1,34 @@
+{
+  "name": "hop-budget B1/B2 on the existing Qwen3-1.7B-Base 1c depth captures (no GPU)",
+  "source_memo": "obsidian/model-math/ADVISOR-2026-11-14-scaling-hops-limits.md §1(b)",
+  "sealed_at": "2026-11-14, before any L_first statistic is computed on these captures",
+  "data": "beast:/mnt/ssd1tb/cache/beast/twohop-run1/cap/depth/*.pt (154 items, V at every row and layer, L20.p at the last row); correctness and carrier_row per item from next/b1-score.json (already read in B1: d1 22/22, d2 22/22, d3-lm 39/43, d3-per 32/38, d4-work 12/29)",
+  "definitions": {
+    "L_c": 20,
+    "carrier_row": "b1-score.json per_item.carrier_row (frozen map R_argmax binding, L20 h12+h13, t0 excluded)",
+    "cell_name(x,g)": "argmax over the 57 countries of b1_sets.json of (gamma_F * W_U[country]) . (W_O group g at layer x) v_x[g, carrier_row]",
+    "L_first(country)": "first layer x in 0..L_c at which any of the 8 KV cells at the carrier row has cell_name == true country; absent if none, coded L_c+1 = 21 for medians",
+    "slack": "L_c - L_first; absent -> -1",
+    "chance_null": "same statistic with the true country replaced by a random other country (random.Random(0), one draw per item); the fake L_first median per family is printed beside the real one",
+    "d3": "d3-lm and d3-per pooled; each also reported"
+  },
+  "predictions_verbatim": {
+    "B1": "L_first is monotone in upstream hop count, median L_first(d2) < L_first(d3) < L_first(d4 correct), each step by >= 2 layers.",
+    "B2": "On wrong d3/d4 items L_first is either absent by L_c or later than correct items by >= 3 layers at the median; the slack L_c - L_first separates correct from wrong items within d3+d4 at AUC >= 0.75."
+  },
+  "operationalisation": {
+    "B1_medians": "d2 over correct d2 items, d3 over correct d3 items (pooled), d4 over correct d4-work items; absent coded 21. PASS if med(d3) - med(d2) >= 2 and med(d4) - med(d3) >= 2.",
+    "B2_locus": "PASS if the median L_first (absent = 21) of wrong d3+d4 items exceeds that of correct d3+d4 items by >= 3",
+    "B2_auc": "Mann-Whitney AUC of slack, correct (positive) vs wrong, over d3-lm + d3-per + d4-work; PASS if >= 0.75",
+    "chance_guard": "if the chance-null median L_first of a family is within 1 layer of the real median, that family's L_first is reported as chance-dominated (not measured), and B1 is not judged on it"
+  },
+  "falsifiers_verbatim": {
+    "B1": "L_first flat across d2-d4 (differences < 1 layer at the median) falsifies B1, and the collapse is then recall, not budget.",
+    "B2": "AUC < 0.6 of the slack falsifies B2."
+  },
+  "secondary_reported_not_judged": [
+    "L_first_stable: first layer from which the true country is named by some carrier-row cell at every layer through L_c",
+    "per-family medians over all items (correct and wrong)",
+    "d1 for reference"
+  ]
+}
