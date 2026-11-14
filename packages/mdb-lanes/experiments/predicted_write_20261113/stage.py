@@ -208,6 +208,20 @@ def submit(run, priority, attempt):
     experiment = "mdb-predicted-write-" + run.name
     if attempt > 1:
         experiment += f"-attempt{attempt}"
+    # Pin the declared reservation (measured peak x 1.3). Without the pin mrun's history clamp
+    # lowered it to the sampled peak of an identical earlier run x 1.3 (7043 / 6503 MB), under
+    # the model-load transient (tree VRAM 8022 MB): job-2eb545f0f377 and job-6c9b7875d02d
+    # were killed_vram at load. The installed client's launch() does not forward a pin, so the
+    # final submit call gets reservation["pin"] = True (server: reservation._is_pinned).
+    import importlib
+    mrun_submit = importlib.import_module("mrun.client.submit")      # the module (the package exports a function)
+    original_submit = mrun_submit.submit
+
+    def pinned_submit(*args, **kwargs):
+        if kwargs.get("reservation"):
+            kwargs["reservation"] = {**kwargs["reservation"], "pin": True}
+        return original_submit(*args, **kwargs)
+    mrun_submit.submit = pinned_submit
     job = guarded_mrun_launch(staged["command"], request=request, experiment=experiment, task="forward",
                               model=request["model"], payload=run / "payload", prefer_host="beast", gpu=True,
                               needs=request["needs"], ram_mb=resource["ram_mb"], vram_mb=resource["vram_mb"],
