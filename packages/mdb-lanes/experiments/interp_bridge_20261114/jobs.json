@@ -1,0 +1,7 @@
+[
+ {"job_id": "job-8fd7bb3b1604", "job": "smoke (Q1 a-e, Q2 attributions + spot checks)", "mrun_state": "succeeded", "worker_s": 37.8, "peak_vram_allocated_mb": 9495, "mrun_observed_peak_vram_mb": 10138, "reservation_vram_mb": 13000, "results": "artifacts/mdb-interp-bridge-20261114/results/job-8fd7bb3b1604"},
+ {"job_id": "job-44e5b12158bc", "job": "cuts attempt 1", "mrun_state": "killed_vram", "note": "reservation clamped 10100->6645 MB by mrun (wedged queue behind another session's job); killed at load, 8314 MB", "worker_s": 8.9},
+ {"job_id": "job-b0756a14c49f", "job": "cuts attempt 2 (unchanged payload)", "mrun_state": "killed_vram", "note": "clamped 10100->6714 MB the same way; killed at load"},
+ {"job_id": "job-07170cdfaccb", "job": "cuts attempt 3 (unchanged payload)", "mrun_state": "cancelled", "note": "my own job, cancelled while queued before any clamp; it had lost the idle-gap race to another session's next shard"},
+ {"job_id": "job-1d4b6df1ba24", "job": "cuts attempt 4 (unchanged payload): 160 designed groups + 4 all-head cuts + 5 roots", "mrun_state": "succeeded", "worker_s": 81.3, "mrun_elapsed_s": 83.7, "peak_vram_allocated_mb": 7991, "mrun_observed_peak_vram_mb": 8410, "reservation_vram_mb": 10100, "results": "artifacts/mdb-interp-bridge-20261114/results/job-1d4b6df1ba24"}
+]

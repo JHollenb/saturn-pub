@@ -1,0 +1,15 @@
+# sha256 log (append only). Columns: local time | sha256 | file | note
+2026-11-14 00:51 PST | 3588b15e2ab60b20e26ff1d72d3f2bc335a3543979acc91572c151bd4695ce7e | PREREG.md | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | dd9de615f8e6ac225db2826b4cd77f1479d97a7f42410f660b8efa6423842c63 | bridge.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 9ed812164b6fae73546be6d12b760d3e83ab4bb35bcb9177f26030e0a67142e9 | interp_bridge_worker.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 0fc5da1882275359b03ec5bdf315b344e4945eee2347456a29b3ca3f34c608d5 | stage.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 110b1e4d3133bbb49fc9f1ad72ce01d41534eee6e824fc75bb127f565bf2364f | toy_check.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | caaf32e811b3e23f16dc7c37360067e185130398d14e2b74d5a814d2684bb5bf | runs/smoke/request.json (request_sha256) | staged smoke, not yet submitted
+2026-11-14 00:55 PST | 19baddfc0966549faa5e5202a1efde3efd0e7b2c0c1648c57b18c126002b507f | groups.json | after smoke job-8fd7bb3b1604, before scored cuts job; groups by PREREG section 4 rule
+2026-11-14 00:55 PST | 662ada2297199f21d7050c51f39637705b78fd39f6c1136e6d628501cadb89f6 | analyze.py | after smoke job-8fd7bb3b1604, before scored cuts job; groups by PREREG section 4 rule
+2026-11-14 00:55 PST | 3588b15e2ab60b20e26ff1d72d3f2bc335a3543979acc91572c151bd4695ce7e | PREREG.md | unchanged since 00:51 entry (check)
+2026-11-14 00:55 PST | 123ed134ed6ca771fe1b135b30104611484e654c0d59740122101aee6f26516f | runs/cuts/request.json (request_sha256) | staged scored cuts job, not yet submitted; no saved-set or designed-effect analysis run yet
+2026-11-14 01:06 PST | 123ed134ed6ca771fe1b135b30104611484e654c0d59740122101aee6f26516f | runs/cuts (unchanged payload) | job-44e5b12158bc killed_vram: mrun clamped reservation 10100->6645 MB while another job held the GPU (wedged queue); peak 8314 MB at load; resubmitting unchanged as --attempt 2 on an idle GPU
+2026-11-14 01:15 PST | 123ed134ed6ca771fe1b135b30104611484e654c0d59740122101aee6f26516f | runs/cuts (unchanged payload) | job-b0756a14c49f killed_vram the same way (clamped 10100->6714 MB, wedged queue behind another session's job); attempt 3 submitted only when no job runs or queues
+2026-11-14 01:25 PST | 123ed134ed6ca771fe1b135b30104611484e654c0d59740122101aee6f26516f | runs/cuts (unchanged payload) | attempt 3 job-07170cdfaccb lost the idle-gap race (queued behind another session's next shard) and was cancelled by me while queued, before any clamp or run; attempt 4 timed to queue ~60-80 s before the running shard's expected end
+2026-11-14 01:34 PST | 36150b9b35f401be00dad8e403570133dffb23aa09b0614171811d92ac2eee20 | designed.json | analysis of scored job-1d4b6df1ba24 (attempt 4) by PREREG section 5; PREREG.md unchanged (3588b15e2ab6)
