@@ -393,3 +393,18 @@ None of these blocked the run. The shared modules were not edited; each workarou
 6. Already documented in `ATTENTION-PORT.md`: `port.log` recompute counters are empty under `precision="legacy"`, so legacy rows have `recomputed=None`.
 
 Scheduler limit: one mrun job may run at most 256 local work items (`scheduling_contract.MAX_LOCAL_WORK_ITEMS`). One lease plus its reference roots is therefore one job, and `leases_within` sizes the lease cap so that every lease fits.
+
+## Gated read mass: the corrected trivial baseline (2026-11-14)
+
+`flux_read_panels.unit_mass` (the lane's per-unit "write mass", `p_tj · |O_h v_j|` summed over the word's rows and steps, averaged over image receivers) leaves out the block's outer attention gate `g`. FLUX.2 Klein shares one modulation, so one gate vector per step, over all 5 joint blocks and another over all 20 single blocks (diffusers `transformer_flux2.py`, `Flux2Modulation`). The joint gate is about 50 times smaller per unit of mass than the single gate.
+
+- Measured on the predicted-write capture (job-86df2dd47809, audit `artifacts/audit-predicted-write-interp-bridge-20261114.md`): block position explains 99.7–99.8% of the variance of log(image-receiver predicted write / mass); joint/single ratio 0.018–0.024 per word.
+- Consequence: a set ranked or matched by raw mass is mostly joint-block heads (62–86% of each word's mass sits there), whose writes are small. Raw mass is therefore a weak baseline, and "beats mass" claims must be re-checked against gated mass.
+
+**Use gated mass as the trivial baseline.** `flux_read_panels.gated_unit_mass(mass, heads, joint, scales)` multiplies `unit_mass` by one scale per stratum (joint, single) and renormalises. `flux_read_panels.stratum_gate_scale(numerator, mass, heads, joint)` gives the two scales as sum(numerator)/sum(mass) per stratum, where the numerator is a gated per-unit quantity from the same capture (the experiment used the image-receiver zero-cut predicted write, so the two scales are fitted on that capture; only their ratio changes rankings). Measured: gated mass has Spearman 0.997–0.999 with image-receiver predicted write over the 600 units. `unit_mass` is unchanged, so sealed plans that used it stay valid.
+
+What gated mass does not include: the text-receiver part of a head's write (`others:<w>` receivers, 70–86% of the predicted write in that experiment) and per-unit detail of `g ⊙ O_h v` beyond one scale per stratum. Whether those add anything to selecting heads whose cut removes a word is the question of `experiments/predicted_write_20261113/PREREG-ADDENDUM-2.md`.
+
+## Lease check fix (2026-11-14)
+
+`check_lease` rebuilt the lease hash body without `seal_sha256` and `replicated`, while `Panel.leases` includes them when set. The worker therefore refused every lease with replicated shared references (job-c1b2bf48ff0d of the predicted-write experiment) and would have refused every lease built with `seal=`. Fixed by adding those two fields to the body when present; `tests/test_flux_read_panel.py::test_check_lease_accepts_replicated_and_sealed_leases` covers both, including the real lease that failed.

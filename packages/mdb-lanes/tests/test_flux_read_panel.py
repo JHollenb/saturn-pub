@@ -68,6 +68,75 @@ def test_plan_hash_refusal_and_lease_checks():
         F.check_lease(other, lease)
 
 
+def test_check_lease_accepts_replicated_and_sealed_leases():
+    """Panel.leases hashes ``replicated`` and ``seal_sha256``; check_lease must rebuild the same body."""
+    panel = tiny_panel()
+    leases = panel.leases(24)
+    replicated = [x for x in leases if x["replicated"]]
+    assert replicated, "the tiny panel at cap 24 should replicate a shared all-cut reference"
+    for lease in leases:
+        assert F.check_lease(panel, lease) is lease
+    with pytest.raises(P.PanelError, match="seal differs"):
+        F.check_lease(panel, dict(replicated[0], replicated=replicated[0]["replicated"][1:] or [["1", "x"]]))
+    sealed = panel.leases(24, seal=panel.seal())
+    assert all(x["seal_sha256"] for x in sealed)
+    for lease in sealed:
+        assert F.check_lease(panel, lease) is lease
+    with pytest.raises(P.PanelError, match="seal differs"):
+        F.check_lease(panel, dict(sealed[0], seal_sha256="2" * 64))
+    # The real lease the predicted-write experiment lost (job-c1b2bf48ff0d): lease 1 has 5 replicated branches.
+    exp = Path(__file__).resolve().parents[1] / "experiments/predicted_write_20261113/plans"
+    if (exp / "main.plan.json").exists():
+        main = P.Panel.from_json(json.loads((exp / "main.plan.json").read_text()))
+        lease1 = json.loads((exp / "main.leases.json").read_text())["leases"][1]
+        assert len(lease1["replicated"]) == 5
+        assert F.check_lease(main, lease1) is lease1
+
+
+def test_gated_unit_mass_recovers_stratum_gate():
+    heads, joint, blocks = 2, 2, 5
+    tok_w = [[[[0.1 * (1 + b + h + s) * (r + 1) for r in range(3)] for h in range(heads)] for b in range(blocks)]
+             for s in range(2)]
+    mass = F.unit_mass(tok_w, [0, 2], heads)
+    gate = [0.02 if i // heads < joint else 1.0 for i in range(len(mass))]
+    pw_img = [m * g * 7.0 for m, g in zip(mass, gate)]          # exact "mass x gate" write
+    js, ss = F.stratum_gate_scale(pw_img, mass, heads, joint)
+    assert abs(js / ss - 0.02) < 1e-12
+    gm = F.gated_unit_mass(mass, heads, joint, (js, ss))
+    assert abs(sum(gm) - 1) < 1e-12
+    z = sum(pw_img)
+    assert all(abs(a - b / z) < 1e-12 for a, b in zip(gm, pw_img))
+    assert F.unit_mass(tok_w, [0, 2], heads) == mass           # unit_mass unchanged
+    # only the ratio matters
+    assert F.gated_unit_mass(mass, heads, joint, (3 * js, 3 * ss)) == pytest.approx(gm)
+    with pytest.raises(P.PanelError):
+        F.gated_unit_mass(mass, heads, joint, (0.0, 1.0))
+    with pytest.raises(P.PanelError):
+        F.stratum_gate_scale(pw_img[:-1], mass, heads, joint)
+
+
+CAPTURE = Path("/Users/jakeholl/domains/artifacts/mdb-predicted-write-20261113/results/job-86df2dd47809/predicted-write")
+
+
+@pytest.mark.skipif(not (CAPTURE / "score.red.iso.npz").exists(), reason="capture job output not on this machine")
+def test_gated_mass_tracks_image_pw_on_capture():
+    """Saved capture (job-86df2dd47809): gated mass ranks units like image-receiver PW (audit: 0.997-0.999)."""
+    import numpy as np
+    z = np.load(CAPTURE / "score.red.iso.npz")
+    tokens = json.loads((CAPTURE / "tokens.json").read_text())
+    prompt = next(k for k, v in tokens.items() if "red ball in fresh snow" in k)
+    rows = [r for x in tokens[prompt]["words"] if x["word"] == "red" for r in x["rows"]]
+    mass = F.unit_mass(z["tok_w"], rows, 24)
+    pw_img = z["zero_img"].sum(0).ravel()
+    gm = F.gated_unit_mass(mass, 24, 5, F.stratum_gate_scale(pw_img, mass, 24, 5))
+
+    def rank(x):
+        return np.argsort(np.argsort(np.asarray(x)))
+    raw = np.corrcoef(rank(mass), rank(pw_img))[0, 1]
+    gated = np.corrcoef(rank(gm), rank(pw_img))[0, 1]
+    assert gated > 0.99 and gated > raw
+
+
 def test_roots_work_items_and_lease_cap():
     panel = tiny_panel()
     lease = panel.leases(1000)[0]
