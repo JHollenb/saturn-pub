@@ -1,89 +1,129 @@
-"""TP1: token x position x sensitivity map (next/prereg_tp1.json).
+"""TP1: token x position x sensitivity map (next/prereg_tp1.json + prereg_tp1_addendum.json).
 
-python tp1.py MODEL OUTDIR
+python tp1.py MODEL SAEDIR OUTDIR
 
-96 prompts (32 two-hop items + 64 varied texts, tp1_prompts.json). Per prompt one forward and ONE
-backward of M = top1 - top2 logit at the last row (HF eager model, hidden states as graph
-leaves' descendants with retain_grad). Saved per prompt to OUTDIR (torch.save): h (layers+1, n,
-d) bf16, dM/dh (layers+1, n, d) bf16, attention p from the last row (layers, H, n) and the
-column-summed mass received over all query rows (layers, n), ||v|| per row (layers, n), the
-last-row reader-weighted ||v - a|| (layers, n). Then: top-energy rows at L14 get three native
-ablations of h at the L14 input (global mean, per-position mean, per-token mean).
+Which library does what:
+- nnsight (0.8.2, via mdb_interop.nn.wrap on a weight-sharing clone): the one forward + ONE
+  backward per prompt; saves h (each layer's input and the final-norm input), v_proj output,
+  attention p, and dM/dh for every row and layer (M = top1 - top2 logit at the last row).
+- mdb (exact parts): the gradient check against mdb's own forward-mode Jacobian
+  (propagate.whatif linear term, P14) on 2 items; the per-position / per-token / global mean
+  ablations as native stepped runs (Run.set at t<r>.L14.h, prefill=r); authority labels.
+- SAELens (6.55.5, TopKSAE built from the Qwen-Scope weights): reconstruction error per row at
+  layers 0, 4, 8, 14, 20, 24, 27 (hook resid_post = h_out); checked against mdb's
+  analysis.sae FeatureBasis.select (active-set equality) on a few rows.
+- TransformerLens (4.4.0 TransformerBridge, separate float32 CPU copy, compatibility mode:
+  fold_ln, center_writing_weights, center_unembed): the centred residual norms of 8 prompts
+  against the native ones and against the identity h - mean_d(h).
+Per-row arrays go to OUTDIR (torch.save per prompt) for offline re-slicing.
 """
 import json
+import random
 import sys
 import time
 from collections import defaultdict
 from pathlib import Path
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-MODEL, OUTDIR = sys.argv[1:3]
+sys.path.insert(0, "interop_pkg")
+from mdb_interop import nn as inn  # noqa: E402
+from mdb_interop.clone import shared_clone  # noqa: E402
+
+from mdb.analysis import sae as msae  # noqa: E402
+from mdb.analysis.forecast import Margin  # noqa: E402
+from mdb.analysis.propagate import Edit, whatif  # noqa: E402
+from mdb.repl.__main__ import _load  # noqa: E402
+
+MODEL, SAEDIR, OUTDIR = sys.argv[1:4]
 MID = 14
+SAE_LAYERS = (0, 4, 8, 14, 20, 24, 27)
 T0 = time.monotonic()
 OUT = Path(OUTDIR)
 OUT.mkdir(parents=True, exist_ok=True)
-tok = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForCausalLM.from_pretrained(MODEL, torch_dtype=torch.bfloat16,
-                                             attn_implementation="eager").cuda().eval()
-for p in model.parameters():
-    p.requires_grad_(False)
+timing = {}
+
+
+def mark(name):
+    timing[name] = round(time.monotonic() - T0, 1)
+    print(f"[{timing[name]:7.1f}s] {name}", flush=True)
+
+
+dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
+tok, model = dbg.tokenizer, dbg.adapter.model
 cfg = model.config
 L, H, KV, DH = cfg.num_hidden_layers, cfg.num_attention_heads, cfg.num_key_value_heads, cfg.head_dim
-layers = model.model.layers
+nm = inn.wrap(shared_clone(model))
 prompts = json.load(open("tp1_prompts.json"))["prompts"]
-print(f"load {time.monotonic() - T0:.1f}s; {len(prompts)} prompts", flush=True)
+mark("load")
 
-vcap = {}
-
-
-def vhook(i):
-    def f(mod, inp, out):
-        vcap[i] = out.detach()
-    return f
-
-
-hooks = [layers[i].self_attn.v_proj.register_forward_hook(vhook(i)) for i in range(L)]
-summary = []
-h_mid = {}
+# ------------------------------------------------------------------ nnsight forward + backward
+summary, h_mid, gnorm_mid = [], {}, {}
 for k, pr in enumerate(prompts):
     ids = tok(pr["text"], add_special_tokens=False)["input_ids"]
     n = len(ids)
-    x = torch.tensor([ids]).cuda()
-    emb = model.model.embed_tokens(x).detach().requires_grad_(True)
-    with torch.enable_grad():
-        out = model(inputs_embeds=emb, output_hidden_states=True, output_attentions=True)
-        hs = out.hidden_states                       # L+1 tensors (1, n, d)
-        for h in hs:
-            h.retain_grad()
-        lg = out.logits[0, -1].float()
-        t1, t2 = lg.topk(2).indices.tolist()
-        M = lg[t1] - lg[t2]
-        M.backward()
-    hstack = torch.stack([h[0].detach() for h in hs]).to(torch.bfloat16).cpu()
-    gstack = torch.stack([h.grad[0] for h in hs]).to(torch.bfloat16).cpu()
-    att = torch.stack([a[0].float() for a in out.attentions])          # (L, H, n, n)
-    p_last = att[:, :, -1, :].cpu()                                    # (L, H, n)
-    received = att.sum(1).sum(1).cpu()                                 # (L, n): over heads and queries
+    x = torch.tensor([ids], device="cuda")
+    with nm.trace(x):
+        emb = nm.model.embed_tokens.output
+        emb.requires_grad_(True)
+        hs, vs, ps = [], [], []
+        for i in range(L):
+            hs.append(nm.model.layers[i].input)
+            vs.append(nm.model.layers[i].self_attn.v_proj.output.save())
+            ps.append(nm.model.layers[i].self_attn.output[1].save())
+        hs.append(nm.model.norm.input)
+        hs_s = [h.save() for h in hs]
+        lg = nm.lm_head.output[0, -1].float()
+        top = lg.topk(2)
+        tv, ti = top.values.save(), top.indices.save()
+        M = top.values[0] - top.values[1]
+        with M.backward():
+            grads = [h.grad.save() for h in reversed(hs)]
+    grads = list(reversed(grads))
+    hstack = torch.stack([h[0].detach().float() for h in hs_s])            # (L+1, n, d)
+    gstack = torch.stack([g[0].detach().float() for g in grads])
+    att = torch.stack([p[0].detach().float() for p in ps])                 # (L, H, n, n)
+    g_of = torch.arange(H, device=att.device) // (H // KV)
     vnorm, vsa = [], []
     for i in range(L):
-        v = vcap[i][0].float().view(n, KV, DH)                         # (n, KV, DH)
+        v = vs[i][0].detach().float().view(n, KV, DH)
         vnorm.append(v.norm(dim=-1).sum(-1).cpu())
-        g = torch.arange(H, device=v.device) // (H // KV)
-        A = torch.einsum("hs,shd->hd", att[i, :, -1, :].cuda(), v[:, g, :])  # (H, DH)
-        diff = (v[:, g, :] - A[None]).norm(dim=-1)                     # (n, H)
-        vsa.append((att[i, :, -1, :].cuda().T * diff).sum(-1).cpu())   # reader-weighted ||v - a||
-    rec = {"ids": ids, "t1": t1, "t2": t2, "M": float(M), "kind": pr["kind"], "name": pr["name"]}
-    torch.save({**rec, "h": hstack, "grad": gstack, "p_last": p_last, "received": received,
+        pl = att[i, :, -1, :]                                              # (H, n)
+        A = torch.einsum("hs,shd->hd", pl, v[:, g_of, :])
+        vsa.append((pl.T * (v[:, g_of, :] - A[None]).norm(dim=-1)).sum(-1).cpu())
+    t1, t2 = [int(t) for t in ti]
+    rec = {"k": k, "name": pr["name"], "kind": pr["kind"], "ids": ids, "t1": t1, "t2": t2,
+           "M": float(tv[0] - tv[1])}
+    torch.save({**rec, "h": hstack.to(torch.bfloat16).cpu(), "grad": gstack.to(torch.bfloat16).cpu(),
+                "p_last": att[:, :, -1, :].cpu(), "received": att.sum(1).sum(1).cpu(),
                 "vnorm": torch.stack(vnorm), "v_minus_a": torch.stack(vsa)}, OUT / f"p{k:03d}.pt")
-    h_mid[k] = hstack[MID].float()
+    h_mid[k] = hstack[MID].cpu()
+    gnorm_mid[k] = gstack[MID].norm(dim=-1).cpu()
     summary.append(rec)
-    del out, hs, att
-print(f"forward/backward {time.monotonic() - T0:.1f}s", flush=True)
-for hk in hooks:
-    hk.remove()
-# means at the L14 input (hidden_states[MID] is the input of layer MID)
+    del hstack, gstack, att, grads, hs_s, vs, ps
+mark("nnsight forward/backward")
+
+# ------------------------------------------------------------------ mdb Jacobian check (2 items)
+checks = []
+for k in (0, 1):
+    s = summary[k]
+    ids, j = s["ids"], len(s["ids"]) - 1
+    g20 = torch.load(OUT / f"p{k:03d}.pt", weights_only=False)["grad"][20, j].float()
+    rng = torch.Generator().manual_seed(k)
+    for name, u in (("random", torch.randn(g20.numel(), generator=rng)), ("grad_dir", g20.clone())):
+        u = u / u.norm()
+        run = dbg.run(ids, name="chk")
+        run.until(f"t{j}.L20.h")
+        res = whatif(run, Edit(f"t{j}.L20.h", u.reshape(1, 1, -1).to(torch.bfloat16).cuda(), "add"),
+                     Margin(j, s["t1"], s["t2"]))
+        lin = res.report["prediction"].get("linear", {}).get("value", {})
+        lin = lin.get("value") if isinstance(lin, dict) else lin
+        written = u.to(torch.bfloat16).float()
+        checks.append({"prompt": k, "direction": name, "nnsight_grad_dot_u": float(g20 @ written),
+                       "mdb_linear": lin, "mdb_native_change": res.report.get("effect", {}).get("native")})
+mark("mdb Jacobian check")
+
+# ------------------------------------------------------------------ mdb mean ablations at L14 input
 allrows = [(k, r) for k in h_mid for r in range(h_mid[k].shape[0])]
 gmean = torch.stack([h_mid[k][r] for k, r in allrows]).mean(0)
 by_pos, by_tok = defaultdict(list), defaultdict(list)
@@ -92,43 +132,107 @@ for k, r in allrows:
     by_tok[summary[k]["ids"][r]].append(h_mid[k][r])
 pos_mean = {r: torch.stack(v).mean(0) for r, v in by_pos.items() if len(v) >= 3}
 tok_mean = {t: torch.stack(v).mean(0) for t, v in by_tok.items() if len(v) >= 3}
-# top-energy rows at MID (excluding the last row): top 1% of all rows by ||h||
 norms = sorted(((float(h_mid[k][r].norm()), k, r) for k, r in allrows
                 if r < h_mid[k].shape[0] - 1), reverse=True)
 top = norms[:max(1, len(norms) // 100)]
-# plus a matched sample of median-energy rows as the comparison
-mid = norms[len(norms) // 2 - len(top) // 2: len(norms) // 2 + len(top) - len(top) // 2]
+half = len(norms) // 2
+med = norms[half - len(top) // 2: half - len(top) // 2 + len(top)]
 
 
-def run_replaced(ids, row, vec):
-    def pre(mod, args, kwargs):
-        hidden = args[0] if args else kwargs["hidden_states"]
-        hidden = hidden.clone()
-        hidden[0, row] = vec.to(hidden.dtype).to(hidden.device)
-        if args:
-            return (hidden,) + args[1:], kwargs
-        kwargs["hidden_states"] = hidden
-        return args, kwargs
-    hk = layers[MID].register_forward_pre_hook(pre, with_kwargs=True)
-    with torch.no_grad():
-        lg = model(torch.tensor([ids]).cuda()).logits[0, -1].float()
-    hk.remove()
-    return lg
+def ablate(ids, row, vec, t1, t2):
+    j = len(ids) - 1
+    run = dbg.run(ids, name="abl", prefill=row) if row > 0 else dbg.run(ids, name="abl", prefill=0)
+    run.until(f"t{row}.L{MID}.h")
+    run.set(f"t{row}.L{MID}.h", vec.reshape(1, 1, -1).to(torch.bfloat16).cuda(), "replace")
+    run.until(f"t{j}.logits")
+    lg = run.read().reshape(-1).float()
+    return float(lg[t1] - lg[t2]), int(lg.argmax()) == t1
 
 
 abl = []
-for tag, rows in (("top1pct", top), ("median", mid)):
+for tag, rows in (("top1pct", top), ("median", med)):
     for nrm, k, r in rows:
         s = summary[k]
-        rec = {"set": tag, "prompt": k, "row": r, "token": s["ids"][r], "norm": nrm, "M0": s["M"]}
+        rec = {"set": tag, "prompt": k, "row": r, "token": s["ids"][r], "token_text": tok.decode([s["ids"][r]]),
+               "norm": nrm, "M0": s["M"], "grad_norm": float(gnorm_mid[k][r])}
         for name, vec in (("global", gmean), ("position", pos_mean.get(r)),
                           ("token", tok_mean.get(s["ids"][r]))):
             if vec is None:
                 rec[name] = None
                 continue
-            lg = run_replaced(s["ids"], r, vec)
-            rec[name] = {"dM": float(lg[s["t1"]] - lg[s["t2"]]) - s["M"],
-                         "argmax_kept": int(lg.argmax()) == s["t1"]}
+            m1, kept = ablate(s["ids"], r, vec, s["t1"], s["t2"])
+            rec[name] = {"dM": m1 - s["M"], "argmax_kept": kept}
         abl.append(rec)
-json.dump({"summary": summary, "ablations": abl}, open("tp1-results.json", "w"))
-print(f"ablations {len(abl)}; TOTAL {time.monotonic() - T0:.1f}s", flush=True)
+mark("mdb ablations")
+
+# ------------------------------------------------------------------ SAELens reconstruction error
+sae_out = {"layers": list(SAE_LAYERS), "per_prompt": {}, "check": []}
+try:
+    from sae_lens.saes.topk_sae import TopKSAE, TopKSAEConfig
+    mset = msae.open_set("qwen-scope", SAEDIR)
+    for layer in SAE_LAYERS:
+        state = torch.load(Path(SAEDIR) / f"layer{layer}.sae.pt", map_location="cpu", weights_only=True)
+        scfg = TopKSAEConfig(d_in=state["W_dec"].shape[0], d_sae=state["W_enc"].shape[0], k=50,
+                             dtype="float32", device="cuda", apply_b_dec_to_input=False)
+        sl = TopKSAE(scfg)
+        sl.load_state_dict({"W_enc": state["W_enc"].T.contiguous(), "W_dec": state["W_dec"].T.contiguous(),
+                            "b_enc": state["b_enc"], "b_dec": state["b_dec"]}, strict=False)
+        sl = sl.to("cuda").eval()
+        basis = mset.get(layer)
+        for k, s in enumerate(summary):
+            hh = torch.load(OUT / f"p{k:03d}.pt", weights_only=False)["h"][layer + 1].float().cuda()
+            with torch.no_grad():
+                acts = sl.encode(hh)
+                rec_ = sl.decode(acts)
+            err = (hh - rec_).norm(dim=-1) / hh.norm(dim=-1).clamp_min(1e-9)
+            sae_out["per_prompt"].setdefault(k, {})[layer] = err.cpu().tolist()
+            if k < 2:
+                for r in (0, len(s["ids"]) - 1):
+                    ids_m, _ = basis.select(hh[r].cpu())
+                    ids_s = sorted(int(i) for i in acts[r].nonzero().reshape(-1).tolist())
+                    sae_out["check"].append({"prompt": k, "layer": layer, "row": r,
+                                             "same_active_set": sorted(ids_m) == ids_s,
+                                             "n_mdb": len(ids_m), "n_saelens": len(ids_s)})
+        del sl
+        torch.cuda.empty_cache()
+    sae_out["state"] = "done"
+except Exception as error:  # noqa: BLE001 - reported
+    sae_out["state"] = f"failed: {type(error).__name__}: {error}"[:400]
+mark("SAELens")
+
+# ------------------------------------------------------------------ TransformerLens centring arm
+tl_out = {}
+try:
+    from transformers import AutoModelForCausalLM
+
+    from mdb_interop import tl as itl
+    cpu_model = AutoModelForCausalLM.from_pretrained(MODEL, torch_dtype=torch.float32).eval()
+    br = itl.bridge(cpu_model, tok, in_place=True)
+    br.enable_compatibility_mode(disable_warnings=True)
+    tl_out["processed"] = itl.processed(br)
+    rows = []
+    for k in random.Random(0).sample(range(len(summary)), 8):
+        s = summary[k]
+        with torch.no_grad():
+            _, cache = br.run_with_cache(torch.tensor([s["ids"]]))
+        saved = torch.load(OUT / f"p{k:03d}.pt", weights_only=False)["h"].float()
+        for layer in (1, 7, 14, 21, 27):
+            key = f"blocks.{layer}.hook_resid_pre"
+            c = cache[key][0].float() if key in cache else None
+            if c is None:
+                continue
+            nat = saved[layer]
+            ident = nat - nat.mean(-1, keepdim=True)
+            rows.append({"prompt": k, "layer": layer,
+                         "tl_norm": c.norm(dim=-1).tolist(), "native_norm": nat.norm(dim=-1).tolist(),
+                         "identity_rel_err": float((c - ident).norm() / ident.norm())})
+    tl_out["rows"] = rows
+    tl_out["state"] = "done"
+except Exception as error:  # noqa: BLE001 - reported
+    tl_out["state"] = f"failed: {type(error).__name__}: {error}"[:400]
+mark("TransformerLens")
+
+json.dump({"summary": summary, "checks": checks, "ablations": abl, "sae": sae_out, "tl": tl_out,
+           "timing": timing, "versions": {"nnsight": inn.version()}},
+          open("tp1-results.json", "w"))
+print(f"TOTAL {time.monotonic() - T0:.1f}s", flush=True)
