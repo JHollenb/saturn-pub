@@ -79,9 +79,9 @@ def frozen_grad(ids, layer, a, b, scales):
         mout = nm.model.layers[layer].mlp.output
         for x in range(layer + 1, NL):
             L_ = nm.model.layers[x]
+            L_.input_layernorm.output = (L_.input_layernorm.input * scales["a"][x]).to(torch.bfloat16)
             L_.self_attn.q_proj.output = L_.self_attn.q_proj.output.detach()
             L_.self_attn.k_proj.output = L_.self_attn.k_proj.output.detach()
-            L_.input_layernorm.output = (L_.input_layernorm.input * scales["a"][x]).to(torch.bfloat16)
             L_.post_attention_layernorm.output = (L_.post_attention_layernorm.input * scales["n"][x]).to(torch.bfloat16)
         nm.model.norm.output = (nm.model.norm.input * scales["F"]).to(torch.bfloat16)
         lg = nm.lm_head.output[0, -1].float()
