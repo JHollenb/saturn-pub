@@ -18,7 +18,7 @@ export PYTHONPATH=<worktree>/packages/mdb/src
 cd packages/mdb/qualification
 $PY flux_read_panel_stage.py plans flux_read_panels_20261112/plans          # 1 build + 2 seal + leases
 $PY flux_read_panel_stage.py stage RUN --plans .../plans --job smoke         # 3 stage (also: legacy, full:N)
-$PY flux_read_panel_stage.py submit RUN                                      # 4 submit (mrun, priority 70)
+$PY flux_read_panel_stage.py submit RUN [--attempt N]                        # 4 submit (mrun, priority 70)
 rtk proxy rsync -a beast:/mnt/hdd8tb/mdb/research/<job>/ <results>/<job>/    # 5 collect
 $PY flux_read_panel_stage.py report --plans .../plans --results <results>/job-* --out OUT   # 6 verdicts
 $PY flux_read_panel_stage.py stage RUN --plans .../plans --job regenerate \
@@ -150,11 +150,18 @@ Klein 4B on Beast (RTX 4080). Priority 70, 10,400 MB VRAM request (7,991 MB peak
 | job-17f61da18312 | full lease 4 | 400 | 382 | 7,991 | 242/242 |
 | job-baa6927a1a6c | full lease 5 | 333 | 296 | 7,991 | 239/239 |
 | job-de42c09696dd | full lease 6 | 253 | 239 | 7,991 | 242/242 |
-| job-d8790bc10fbb | full lease 7 | (see below) | 955 | 7,991 | 0/249 (budget stop) |
-| job-a41e454eefe1, job-2c64f0609f8f, job-0ef55a497c49 | full leases 8-10 | did not run | | | |
-| job-af5bfaf0fde2 | regenerate 3 arms | did not run | | | |
+| job-eb99a2f1d947 | full lease 7 (attempt 2) | 259 | 246 | 7,991 | 249/249 |
+| job-03723dc2595b | full lease 8 (attempt 3) | 196 | 194 | 7,991 | 247/247 |
+| job-2c64f0609f8f | full lease 9 | 278 | 252 | 7,991 | 247/247 |
+| job-0ef55a497c49 | full lease 10 | 147 | 141 | 7,991 | 147/147 |
+| job-af5bfaf0fde2 | regenerate 3 arms (separate job) | 25 | 21 | 7,991 | 3/3 match |
 
-**Leases 7-10 and the regeneration job did not complete.** The Beast mrun host agent was stopped by systemd at 16:40:11 PST, in the same second it leased job-d8790bc10fbb (`journalctl --user -u mrun-agent`: `Stopping mrun-agent.service`). It was still inactive when this was written. That job's worker spent 866 s importing from the HDD-backed uv cache, against 28.6 s in job-2b516ba78da6, so its 540 s budget stopped it before the first branch. It ran past the 900 s mrun timeout because no agent was supervising it. The remaining three leases and the regeneration job are staged and queued. They need the agent back and full lease 7 resubmitted.
+All 2,568 branches of the `full` plan ran (sum over the 11 leases). Failed attempts, kept in `jobs.json` and not used:
+
+- job-d8790bc10fbb (lease 7) and job-a41e454eefe1 (lease 8): `lost`, "lease expired (agent silent)". The Beast mrun host agent was stopped by systemd at 16:40:11 PST on 2026-11-12. Lease 7's worker spent 866 s importing from the HDD-backed uv cache and its 540 s budget stopped it before the first branch; lease 8 likewise budget-stopped after roots only. Partial outputs stay on Beast and are excluded from the report.
+- job-871e9014eda6 (lease 8, attempt 2): `killed_vram`. mrun's wedged-queue clamp lowered its reservation from 10,400 to 5,776 MB while another user's job held the GPU, and the job was killed at that ceiling during model load. Attempt 3 ran on an idle GPU.
+
+mrun's guarded admission is idempotent on (experiment, command, payload, reservation, priority, ...), so resubmitting a lost job returns the lost job id. `submit --attempt N` appends `-attemptN` to the experiment name to admit a fresh job on byte-identical payloads (checked with `diff -r` against the original staged payload).
 
 Timing:
 
@@ -185,58 +192,64 @@ The gone score is `gone = (d(arm) - d(iso)) / (d(none) - d(iso))`, with `d = 1 -
 
 The "floor bound" row is the arm's floor in gone units: `floor_px / (MAD(native, del) × span)`. The floor in px is the larger of two distances: the recompute sham's distance from iso, and the direct delta-to-recompute twin gap. By the triangle inequality, a gone difference smaller than this bound cannot be separated from arithmetic noise.
 
-`-` / "not run" marks arms in leases 7-10. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
+All 6 words × 2 seeds are complete. Over the 180 cells of the report's 15 columns, the largest |new − old| is 0.08 (red 9001 own240, floor bound 0.198), and one cell exceeds its floor bound at two-decimal rounding: black 4242 `m:own60`, 0.42 vs 0.45 against a bound of 0.025. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
 
 | word | seed | source | own60 | own240 | rand240 | modI | nounI | keep-own60 | keep-nounI | m:own60 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | red | 4242 | old (= legacy, exact) | 0.48 | 0.66 | 0.12 | 0.25 | 0.03 | 0.16 | 0.66 | 0.31 |
-| | | new precision | 0.47 | 0.64 | 0.13 | 0.27 | 0.02 | 0.14 | 0.66 | 0.29 |
-| | | floor bound | 0.092 | 0.094 | 0.075 | 0.083 | 0.075 | 0.072 | 0.109 | 0.082 |
+|  |  | new precision | 0.47 | 0.64 | 0.13 | 0.27 | 0.02 | 0.14 | 0.66 | 0.29 |
+|  |  | floor bound | 0.092 | 0.094 | 0.075 | 0.083 | 0.075 | 0.072 | 0.109 | 0.082 |
 | red | 9001 | old (= legacy, exact) | 0.61 | 0.73 | 0.23 | 0.46 | -0.01 | 0.11 | 0.93 | 0.36 |
-| | | new precision | 0.61 | 0.81 | 0.23 | 0.46 | 0.00 | 0.14 | 1.00 | 0.37 |
-| | | floor bound | 0.140 | 0.198 | 0.099 | 0.097 | 0.115 | 0.118 | 0.119 | 0.111 |
+|  |  | new precision | 0.61 | 0.81 | 0.23 | 0.46 | 0.00 | 0.14 | 1.00 | 0.37 |
+|  |  | floor bound | 0.140 | 0.198 | 0.099 | 0.097 | 0.115 | 0.118 | 0.119 | 0.111 |
 | black | 4242 | old (= legacy, exact) | 0.31 | 0.72 | -0.03 | 0.14 | 0.11 | 0.03 | 0.58 | 0.45 |
-| | | new precision | 0.31 | 0.71 | -0.05 | 0.13 | 0.12 | 0.04 | 0.58 | 0.42 |
-| | | floor bound | 0.047 | 0.054 | 0.067 | 0.052 | 0.042 | 0.033 | 0.035 | 0.025 |
+|  |  | new precision | 0.31 | 0.71 | -0.05 | 0.13 | 0.12 | 0.04 | 0.58 | 0.42 |
+|  |  | floor bound | 0.047 | 0.054 | 0.067 | 0.052 | 0.042 | 0.033 | 0.035 | 0.025 |
 | black | 9001 | old (= legacy, exact) | 0.39 | 0.77 | 0.10 | 0.21 | 0.08 | 0.03 | 0.67 | 0.34 |
-| | | new precision | 0.39 | 0.77 | 0.11 | 0.21 | 0.07 | 0.03 | - | 0.33 |
-| | | floor bound | 0.035 | 0.034 | 0.031 | 0.034 | 0.032 | 0.033 | - | 0.024 |
+|  |  | new precision | 0.39 | 0.77 | 0.11 | 0.21 | 0.07 | 0.03 | 0.67 | 0.33 |
+|  |  | floor bound | 0.035 | 0.034 | 0.031 | 0.034 | 0.032 | 0.033 | 0.030 | 0.024 |
 | ball | 4242 | old (= legacy, exact) | 0.51 | 0.66 | 0.25 | -0.09 | 0.28 | -0.20 | 0.30 | 0.30 |
-| | | new precision | 0.51 | 0.68 | 0.24 | -0.08 | 0.30 | -0.19 | 0.29 | 0.29 |
-| | | floor bound | 0.071 | 0.060 | 0.083 | 0.057 | 0.089 | 0.064 | 0.086 | 0.071 |
+|  |  | new precision | 0.51 | 0.68 | 0.24 | -0.08 | 0.30 | -0.19 | 0.29 | 0.29 |
+|  |  | floor bound | 0.071 | 0.060 | 0.083 | 0.057 | 0.089 | 0.064 | 0.086 | 0.071 |
 | ball | 9001 | old (= legacy, exact) | 0.47 | 0.49 | 0.42 | -0.02 | 0.23 | -0.04 | 0.80 | 0.38 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.46 | 0.48 | 0.41 | -0.03 | 0.22 | -0.04 | 0.80 | 0.37 |
+|  |  | floor bound | 0.041 | 0.053 | 0.045 | 0.042 | 0.063 | 0.049 | 0.056 | 0.041 |
 | snow | 4242 | old (= legacy, exact) | 0.27 | 0.46 | 0.49 | 0.27 | 0.04 | 0.65 | 0.81 | 0.32 |
-| | | new precision | 0.26 | 0.45 | 0.46 | 0.27 | 0.03 | 0.66 | 0.81 | 0.32 |
-| | | floor bound | 0.020 | 0.016 | 0.047 | 0.017 | 0.014 | 0.024 | 0.020 | 0.020 |
+|  |  | new precision | 0.26 | 0.45 | 0.46 | 0.27 | 0.03 | 0.66 | 0.81 | 0.32 |
+|  |  | floor bound | 0.020 | 0.016 | 0.047 | 0.017 | 0.014 | 0.024 | 0.020 | 0.020 |
 | snow | 9001 | old (= legacy, exact) | 0.13 | 0.17 | 0.16 | 0.11 | 0.09 | 0.56 | 0.74 | 0.17 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.12 | 0.17 | 0.15 | 0.11 | 0.09 | 0.56 | 0.73 | 0.17 |
+|  |  | floor bound | 0.020 | 0.011 | 0.022 | 0.017 | 0.037 | 0.016 | 0.014 | 0.013 |
 | night | 4242 | old (= legacy, exact) | 0.56 | 0.85 | 0.45 | 0.20 | 0.09 | 0.69 | 1.05 | 0.54 |
-| | | new precision | 0.56 | 0.85 | 0.46 | 0.19 | 0.07 | 0.69 | 1.06 | 0.55 |
-| | | floor bound | 0.053 | 0.073 | 0.064 | 0.036 | 0.040 | 0.058 | 0.028 | 0.053 |
+|  |  | new precision | 0.56 | 0.85 | 0.46 | 0.19 | 0.07 | 0.69 | 1.06 | 0.55 |
+|  |  | floor bound | 0.053 | 0.073 | 0.064 | 0.036 | 0.040 | 0.058 | 0.028 | 0.053 |
 | night | 9001 | old (= legacy, exact) | 0.28 | 0.57 | 0.20 | 0.12 | -0.01 | 0.48 | 0.99 | 0.22 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.28 | 0.58 | 0.20 | 0.12 | -0.01 | 0.48 | 0.99 | 0.22 |
+|  |  | floor bound | 0.033 | 0.045 | 0.020 | 0.020 | 0.025 | 0.024 | 0.016 | 0.017 |
 | rain | 4242 | old (= legacy, exact) | -0.10 | 0.22 | -0.06 | 0.15 | -0.24 | 0.38 | 0.89 | -0.12 |
-| | | new precision | -0.10 | 0.22 | -0.06 | 0.16 | -0.25 | 0.40 | 0.90 | -0.12 |
-| | | floor bound | 0.137 | 0.128 | 0.110 | 0.159 | 0.129 | 0.135 | 0.095 | 0.137 |
+|  |  | new precision | -0.10 | 0.22 | -0.06 | 0.16 | -0.25 | 0.40 | 0.90 | -0.12 |
+|  |  | floor bound | 0.137 | 0.128 | 0.110 | 0.159 | 0.129 | 0.135 | 0.095 | 0.137 |
 | rain | 9001 | old (= legacy, exact) | 0.09 | 0.66 | 0.27 | 0.23 | -0.15 | 1.41 | 1.49 | 0.03 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.10 | 0.70 | 0.26 | 0.24 | -0.14 | 1.41 | 1.49 | 0.03 |
+|  |  | floor bound | 0.127 | 0.122 | 0.108 | 0.124 | 0.187 | 0.226 | 0.109 | 0.118 |
 
 ### (c) Regeneration from recipes
 
-**Not run.** The separate job job-af5bfaf0fde2 is staged and queued. It regenerates three arms:
+The separate job job-af5bfaf0fde2 rebuilt three arms from their recipes alone (checkpoint, prompt text, seed), on the same host and software lane. All three matched every recorded hash: conditioning, initial noise, final latent, decoded RGB and PNG. `lane_drift` was empty, `port.calls == 100` and `forward_count == 4` for each, and the rebuilt cut specs equal the recipe's (`report/c-regenerate.json`).
 
-- `smoke-legacy@4242:z:own60:ball` (legacy precision);
-- `full-00@4242:m:own60:red` (renormalising cut);
-- `full-00@4242:z:keep-own60:red` (delta zero cut, 540 heads).
+| arm | precision | cut | conditioning | init noise | latent | RGB | PNG |
+|---|---|---|---|---|---|---|---|
+| `smoke-legacy@4242:z:own60:ball` | legacy | zero | = | = | = | = | = |
+| `full-00@4242:m:own60:red` | native | renormalising | = | = | = | = | = |
+| `full-00@4242:z:keep-own60:red` | native | delta zero, 540 heads | = | = | = | = | = |
 
-It could not start because the mrun host agent is down. The regenerate path was exercised only locally, against a fake model lane (`compare_regeneration` and the recipe and port round trip). Hash equality on the GPU lane is therefore **not yet measured**. The cross-job determinism in (a), 183 keys with identical hashes, comes from re-executing the panel, not from recipes.
+The job confirmed the staged shared-module bytes (`attention_port` e315da2a, `attention_panels` 31a8595b, `flux_read_panels` f50dfcfe) and worker 1cfb7550. Its 21 s worker time includes the load.
 
 ### (d) Verdicts: `attach_results` → `arm_effects` → `verdicts`
 
 The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. These rows are copied from `report/d-verdicts-selected.json` without editing. The picture-judgement slot is empty (`picture=None`): no picture judgement was made.
 
-Seed 9001 is missing for `ball` and partly for `black` (leases 7-10), so those records are `control_missing` across contexts. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) are reported in the JSON but never counted, and are left out of the column below.
+These verdicts were computed with the shared modules that executed (`attention_panels` 31a8595b, as sealed in the plans). Both seeds are present for every record, so no record is `control_missing`. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) are reported in the JSON but never counted, and are left out of the column below.
 
 | item | unit set | claim | status | both types agree | zero cut 4242: effect / floor | renorm 4242: effect / floor | separating controls 4242 (zero): effect, margin, beyond floor | 9001 |
 |---|---|---|---|---|---|---|---|---|
@@ -250,15 +263,25 @@ Seed 9001 is missing for `ball` and partly for `black` (leases 7-10), so those r
 | black | modI | necessary | not_supported | False | supported: 0.0373 / 0.0034 | not_supported: 0.0163 / 0.0019 | rand0-modI (random) 0.0143, +0.0230, True; modI@rows-ball (other_item) 0.0072, +0.0301, True | zero supported, renorm not_supported |
 | black | nounI | necessary | not_supported | True | not_supported: 0.0170 / 0.0028 | not_supported: 0.0212 / 0.0028 | rand0-nounI (random) 0.0196, -0.0026, False; nounI@rows-ball (other_item) 0.0320, -0.0149, False | zero not_supported, renorm not_supported |
 | black | keep-own60 | sufficient | supported | True | supported: 0.0101 / 0.0022 | supported: 0.0137 / 0.0018 | keep-own60@rows-ball (other_item) 0.0724, +0.0623, True | zero supported, renorm supported |
-| black | keep-modI | sufficient | control_missing | True | supported: 0.0252 / 0.0064 | supported: 0.0262 / 0.0019 | keep-rand0-modI (random) 0.0766, +0.0514, True; keep-modI@rows-ball (other_item) 0.1009, +0.0757, True | not run |
-| black | keep-nounI | sufficient | control_missing | True | not_supported: 0.1099 / 0.0023 | not_supported: 0.0855 / 0.0021 | keep-rand0-nounI (random) 0.0328, -0.0771, False; keep-nounI@rows-ball (other_item) 0.0686, -0.0413, False | not run |
-| ball | own60 | necessary | control_missing | True | not_supported: 0.0537 / 0.0038 | not_supported: 0.0351 / 0.0038 | own60@rows-snow (other_item) 0.0536, +0.0001, False | not run |
-| ball | modI | necessary | control_missing | True | not_supported: 0.0135 / 0.0031 | not_supported: 0.0138 / 0.0029 | rand0-modI (random) 0.0291, -0.0156, False; modI@rows-snow (other_item) 0.0667, -0.0532, False | not run |
-| ball | nounI | necessary | control_missing | True | not_supported: 0.0338 / 0.0048 | not_supported: 0.0222 / 0.0048 | nounI@rows-snow (other_item) 0.0358, -0.0020, False | not run |
-| ball | keep-own60 | sufficient | control_missing | True | supported: 0.0297 / 0.0035 | supported: 0.0372 / 0.0035 | keep-own60@rows-snow (other_item) 0.1990, +0.1694, True | not run |
-| ball | keep-modI | sufficient | control_missing | True | not_supported: 0.0913 / 0.0026 | not_supported: 0.0681 / 0.0026 | keep-rand0-modI (random) 0.0554, -0.0359, False; keep-modI@rows-snow (other_item) 0.2117, +0.1204, True | not run |
-| ball | keep-nounI | sufficient | control_missing | True | supported: 0.0447 / 0.0046 | supported: 0.0367 / 0.0030 | keep-nounI@rows-snow (other_item) 0.2291, +0.1843, True | not run |
+| black | keep-modI | sufficient | supported | True | supported: 0.0252 / 0.0064 | supported: 0.0262 / 0.0019 | keep-rand0-modI (random) 0.0766, +0.0514, True; keep-modI@rows-ball (other_item) 0.1009, +0.0757, True | zero supported, renorm supported |
+| black | keep-nounI | sufficient | not_supported | True | not_supported: 0.1099 / 0.0023 | not_supported: 0.0855 / 0.0021 | keep-rand0-nounI (random) 0.0328, -0.0771, False; keep-nounI@rows-ball (other_item) 0.0686, -0.0413, False | zero not_supported, renorm not_supported |
+| ball | own60 | necessary | not_supported | True | not_supported: 0.0537 / 0.0038 | not_supported: 0.0351 / 0.0038 | own60@rows-snow (other_item) 0.0536, +0.0001, False | zero supported, renorm supported |
+| ball | modI | necessary | not_supported | True | not_supported: 0.0135 / 0.0031 | not_supported: 0.0138 / 0.0029 | rand0-modI (random) 0.0291, -0.0156, False; modI@rows-snow (other_item) 0.0667, -0.0532, False | zero not_supported, renorm not_supported |
+| ball | nounI | necessary | not_supported | True | not_supported: 0.0338 / 0.0048 | not_supported: 0.0222 / 0.0048 | nounI@rows-snow (other_item) 0.0358, -0.0020, False | zero supported, renorm supported |
+| ball | keep-own60 | sufficient | supported | True | supported: 0.0297 / 0.0035 | supported: 0.0372 / 0.0035 | keep-own60@rows-snow (other_item) 0.1990, +0.1694, True | zero supported, renorm supported |
+| ball | keep-modI | sufficient | not_supported | True | not_supported: 0.0913 / 0.0026 | not_supported: 0.0681 / 0.0026 | keep-rand0-modI (random) 0.0554, -0.0359, False; keep-modI@rows-snow (other_item) 0.2117, +0.1204, True | zero not_supported, renorm not_supported |
+| ball | keep-nounI | sufficient | supported | True | supported: 0.0447 / 0.0046 | supported: 0.0367 / 0.0030 | keep-nounI@rows-snow (other_item) 0.2291, +0.1843, True | zero supported, renorm supported |
 
+**Under the branch's current verdict logic.** The branch later merged a revised `attention_panels.py` (sha 4a39dbaa: one verdict vocabulary with `set_only`, mass and set-size alternatives, `low_recovery`). Running the same results through it (`report-head-logic/`) changes 4 of the 18 records; the effects, floors and controls are the same numbers:
+
+| item | unit set | sealed logic | current logic | why (current record) |
+|---|---|---|---|---|
+| black | own60 | supported | set_only | generic damage and set size ruled out; mass remains |
+| black | keep-own60 | supported | set_only | set size ruled out; mass remains |
+| ball | keep-own60 | supported | not_supported | finding `low_recovery`; mass remains |
+| ball | keep-nounI | supported | not_supported | finding `low_recovery`; mass remains |
+
+The `report` command needed one change to run under the current logic: control entries no longer always carry `separates_identity`, so the text report reads it with `.get`.
 
 ## Workarounds and gaps in the shared modules
 

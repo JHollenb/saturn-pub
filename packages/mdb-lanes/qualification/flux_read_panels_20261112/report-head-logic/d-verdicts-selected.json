@@ -1,0 +1,5311 @@
+[
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:own60:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:red",
+        "control_effect": 0.010652309283614159,
+        "control_floor_missing": false,
+        "floor": 0.0029011047445237637,
+        "kind": "random",
+        "margin": 0.016306240111589432,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-black:red",
+        "control_effect": 0.024953344836831093,
+        "control_floor_missing": false,
+        "floor": 0.0029011047445237637,
+        "kind": "other_item",
+        "margin": 0.0020052045583724976,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.02695854939520359,
+      "floor": 0.0029011047445237637,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0029011047445237637
+      },
+      "refuted_by": [
+       "m:own60@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:own60@rows-black:red 0.02495 vs test 0.02696)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:red",
+        "control_effect": 0.005038970150053501,
+        "control_floor_missing": false,
+        "floor": 0.002475434448570013,
+        "kind": "random",
+        "margin": 0.012550224550068378,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-black:red",
+        "control_effect": 0.021844521164894104,
+        "control_floor_missing": false,
+        "floor": 0.002475434448570013,
+        "kind": "other_item",
+        "margin": -0.004255326464772224,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.01758919470012188,
+      "floor": 0.002475434448570013,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002475434448570013
+      },
+      "refuted_by": [
+       "m:own60@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:own60@rows-black:red 0.02184 vs test 0.01759)"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:rand0-own60:red"
+    ],
+    "refuting_controls": [
+     "m:own60@rows-black:red"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:own60:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:red",
+        "control_effect": 0.007038510404527187,
+        "control_floor_missing": false,
+        "floor": 0.003631811123341322,
+        "kind": "random",
+        "margin": 0.024106633849442005,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-black:red",
+        "control_effect": 0.039978787302970886,
+        "control_floor_missing": false,
+        "floor": 0.005578573327511549,
+        "kind": "other_item",
+        "margin": -0.008833643049001694,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.031145144253969193,
+      "floor": 0.0032724218908697367,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0029011047445237637,
+       "twin_gap": 0.0032724218908697367,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:own60@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:own60@rows-black:red 0.03998 vs test 0.03115)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:red",
+        "control_effect": 0.00601874478161335,
+        "control_floor_missing": false,
+        "floor": 0.003115545492619276,
+        "kind": "random",
+        "margin": 0.022220266982913017,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-black:red",
+        "control_effect": 0.030240407213568687,
+        "control_floor_missing": false,
+        "floor": 0.003115545492619276,
+        "kind": "other_item",
+        "margin": -0.0020013954490423203,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.028239011764526367,
+      "floor": 0.003115545492619276,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002475434448570013,
+       "twin_gap": 0.003115545492619276,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:own60@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:own60@rows-black:red 0.03024 vs test 0.02824)"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:rand0-own60:red"
+    ],
+    "refuting_controls": [
+     "z:own60@rows-black:red"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.20622275884346994
+    ],
+    "max_reachable_mass_bound": 0.2062650968989007,
+    "separable": false,
+    "target_mass": 0.6455015104968685,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2063 < 0.6255); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.20622275884346994
+    ],
+    "max_reachable_mass_bound": 0.2062650968989007,
+    "separable": false,
+    "target_mass": 0.6455015104968685,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2063 < 0.6255); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:own60@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:own60@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:own60@rows-black:red",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:own60@rows-black:red",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:modI:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-modI:red",
+        "control_effect": 0.012560117989778519,
+        "control_floor_missing": false,
+        "floor": 0.0029919391963630915,
+        "kind": "random",
+        "margin": 0.0078395064920187,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-black:red",
+        "control_effect": 0.01352187991142273,
+        "control_floor_missing": false,
+        "floor": 0.002466757781803608,
+        "kind": "other_item",
+        "margin": 0.006877744570374489,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.02039962448179722,
+      "floor": 0.002466757781803608,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002466757781803608
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": true,
+        "control": "m:rand0-modI:red",
+        "control_effect": 0.010360997170209885,
+        "control_floor_missing": false,
+        "floor": 0.0021744072437286377,
+        "kind": "random",
+        "margin": 0.0007448671385645866,
+        "mass_relation": "less",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-black:red",
+        "control_effect": 0.014566957950592041,
+        "control_floor_missing": false,
+        "floor": 0.0021744072437286377,
+        "kind": "other_item",
+        "margin": -0.0034610936418175697,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.011105864308774471,
+      "floor": 0.0021744072437286377,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0021744072437286377
+      },
+      "refuted_by": [
+       "m:rand0-modI:red",
+       "m:modI@rows-black:red"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-modI:red 0.01036 vs test 0.01111, m:modI@rows-black:red 0.01457 vs test 0.01111)"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:rand0-modI:red"
+    ],
+    "refuting_controls": [
+     "m:modI@rows-black:red",
+     "m:rand0-modI:red"
+    ],
+    "ruled_out": [],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:modI:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-modI:red",
+        "control_effect": 0.012212835252285004,
+        "control_floor_missing": false,
+        "floor": 0.0029919391963630915,
+        "kind": "random",
+        "margin": 0.011336803436279297,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-black:red",
+        "control_effect": 0.02552882954478264,
+        "control_floor_missing": false,
+        "floor": 0.002963276579976082,
+        "kind": "other_item",
+        "margin": -0.001979190856218338,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.0235496386885643,
+      "floor": 0.002963276579976082,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002466757781803608,
+       "twin_gap": 0.002963276579976082,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:modI@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:modI@rows-black:red 0.02553 vs test 0.02355)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-modI:red",
+        "control_effect": 0.010770411230623722,
+        "control_floor_missing": false,
+        "floor": 0.0024175108410418034,
+        "kind": "random",
+        "margin": 0.011803760193288326,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-black:red",
+        "control_effect": 0.02298538014292717,
+        "control_floor_missing": false,
+        "floor": 0.0021744072437286377,
+        "kind": "other_item",
+        "margin": -0.00041120871901512146,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.02257417142391205,
+      "floor": 0.0021744072437286377,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0021744072437286377,
+       "twin_gap": 0.0018264669924974442,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:modI@rows-black:red"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:modI@rows-black:red 0.02299 vs test 0.02257)"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:rand0-modI:red"
+    ],
+    "refuting_controls": [
+     "z:modI@rows-black:red"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.24360687783396132
+    ],
+    "max_reachable_mass_bound": 0.2454341287465171,
+    "separable": false,
+    "target_mass": 0.503274033502749,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2454 < 0.4833); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.24360687783396132
+    ],
+    "max_reachable_mass_bound": 0.2454341287465171,
+    "separable": false,
+    "target_mass": 0.503274033502749,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2454 < 0.4833); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:modI@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:modI@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "m:rand0-modI:red",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:modI@rows-black:red",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "modI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:nounI:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-nounI:red",
+        "control_effect": 0.015681147575378418,
+        "control_floor_missing": false,
+        "floor": 0.0026609133929014206,
+        "kind": "random",
+        "margin": -0.00444329809397459,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-black:red",
+        "control_effect": 0.027146004140377045,
+        "control_floor_missing": false,
+        "floor": 0.0026609133929014206,
+        "kind": "other_item",
+        "margin": -0.015908154658973217,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.011237849481403828,
+      "floor": 0.0026609133929014206,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0026609133929014206
+      },
+      "refuted_by": [
+       "m:rand0-nounI:red",
+       "m:nounI@rows-black:red"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-nounI:red 0.01568 vs test 0.01124, m:nounI@rows-black:red 0.02715 vs test 0.01124)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-nounI:red",
+        "control_effect": 0.0070616877637803555,
+        "control_floor_missing": false,
+        "floor": 0.0025736489333212376,
+        "kind": "random",
+        "margin": 0.0018727225251495838,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-black:red",
+        "control_effect": 0.010739056393504143,
+        "control_floor_missing": false,
+        "floor": 0.0025736489333212376,
+        "kind": "other_item",
+        "margin": -0.0018046461045742035,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.00893441028892994,
+      "floor": 0.0025736489333212376,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0025736489333212376
+      },
+      "refuted_by": [
+       "m:rand0-nounI:red",
+       "m:nounI@rows-black:red"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-nounI:red 0.007062 vs test 0.008934, m:nounI@rows-black:red 0.01074 vs test 0.008934)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "m:nounI@rows-black:red",
+     "m:rand0-nounI:red"
+    ],
+    "ruled_out": [],
+    "separating_controls": [
+     "m:rand0-nounI:red"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:nounI:red",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:rand0-nounI:red",
+        "control_effect": 0.01217232458293438,
+        "control_floor_missing": false,
+        "floor": 0.004070965573191643,
+        "kind": "random",
+        "margin": 3.309175372123718e-05,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-black:red",
+        "control_effect": 0.027275733649730682,
+        "control_floor_missing": false,
+        "floor": 0.0027188966050744057,
+        "kind": "other_item",
+        "margin": -0.015070317313075066,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.012205416336655617,
+      "floor": 0.0026609133929014206,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0026609133929014206,
+       "twin_gap": 0.001956854946911335,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:rand0-nounI:red",
+       "z:nounI@rows-black:red"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:rand0-nounI:red 0.01217 vs test 0.01221, z:nounI@rows-black:red 0.02728 vs test 0.01221)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:rand0-nounI:red",
+        "control_effect": 0.011662103235721588,
+        "control_floor_missing": false,
+        "floor": 0.0030298172496259212,
+        "kind": "random",
+        "margin": -0.002493845298886299,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-black:red",
+        "control_effect": 0.011789100244641304,
+        "control_floor_missing": false,
+        "floor": 0.0025736489333212376,
+        "kind": "other_item",
+        "margin": -0.002620842307806015,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.009168257936835289,
+      "floor": 0.0025736489333212376,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0025736489333212376,
+       "twin_gap": 0.0016110887518152595,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:rand0-nounI:red",
+       "z:nounI@rows-black:red"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:rand0-nounI:red 0.01166 vs test 0.009168, z:nounI@rows-black:red 0.01179 vs test 0.009168)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "z:nounI@rows-black:red",
+     "z:rand0-nounI:red"
+    ],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:rand0-nounI:red"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.2814924127080351
+    ],
+    "separable": true,
+    "target_mass": 0.30043003479773067,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.2814924127080351
+    ],
+    "separable": true,
+    "target_mass": 0.30043003479773067,
+    "tolerance": 0.02
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:rand0-nounI:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "z:nounI@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:rand0-nounI:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:nounI@rows-black:red",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:rand0-nounI:red",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "4242",
+    "control": "m:nounI@rows-black:red",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:rand0-nounI:red",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:nounI@rows-black:red",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-own60:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.051068615168333054,
+      "all_cut_floor": 0.002676231786608696,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:red",
+        "control_effect": 0.041501693427562714,
+        "control_floor_missing": false,
+        "floor": 0.00265008257701993,
+        "kind": "random",
+        "margin": 0.025353625416755676,
+        "mass_relation": "less",
+        "recovery": 0.1873346615966719,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.016148068010807037,
+      "finding": "low_recovery",
+      "floor": 0.0025066500529646873,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0025066500529646873
+      },
+      "keep_effect": 0.016148068010807037,
+      "recovery": 0.6837966340465752,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-black:red",
+        "control_effect": 0.011282487772405148,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.7790719851083555
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.684 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.04068775102496147,
+      "all_cut_floor": 0.0017527861054986715,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:red",
+        "control_effect": 0.02960408478975296,
+        "control_floor_missing": false,
+        "floor": 0.0026255687698721886,
+        "kind": "random",
+        "margin": 0.016198251396417618,
+        "mass_relation": "less",
+        "recovery": 0.27240793496816296,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.013405833393335342,
+      "finding": "low_recovery",
+      "floor": 0.0026255687698721886,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0026255687698721886
+      },
+      "keep_effect": 0.013405833393335342,
+      "recovery": 0.6705191843827638,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-black:red",
+        "control_effect": 0.007854885421693325,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.8069471714749129
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.671 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:keep-rand0-own60:red"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-own60:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.05035196989774704,
+      "all_cut_floor": 0.003410209668800235,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:red",
+        "control_effect": 0.042986463755369186,
+        "control_floor_missing": false,
+        "floor": 0.002831652294844389,
+        "kind": "random",
+        "margin": 0.02989356406033039,
+        "mass_relation": "less",
+        "recovery": 0.1462803969206261,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.013092899695038795,
+      "floor": 0.0025684828869998455,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0025066500529646873,
+       "twin_gap": 0.0025684828869998455,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.013092899695038795,
+      "recovery": 0.7399724435483381,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-black:red",
+        "control_effect": 0.012584570795297623,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.7500679552189534
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "all_cut_effect": 0.040938571095466614,
+      "all_cut_floor": 0.0027852775529026985,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:red",
+        "control_effect": 0.03517938405275345,
+        "control_floor_missing": false,
+        "floor": 0.0028545702807605267,
+        "kind": "random",
+        "margin": 0.021070250310003757,
+        "mass_relation": "less",
+        "recovery": 0.14067875083580816,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.014109133742749691,
+      "finding": "low_recovery",
+      "floor": 0.0026255687698721886,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0026255687698721886,
+       "twin_gap": 0.0022385939955711365,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.014109133742749691,
+      "recovery": 0.6553584220160511,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-black:red",
+        "control_effect": 0.009122002869844437,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.7771782789249678
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.655 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:keep-rand0-own60:red"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.20622275884346994
+    ],
+    "max_reachable_mass_bound": 0.2062650968989007,
+    "separable": false,
+    "target_mass": 0.6455015104968685,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2063 < 0.6255); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.20622275884346994
+    ],
+    "max_reachable_mass_bound": 0.2062650968989007,
+    "separable": false,
+    "target_mass": 0.6455015104968685,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2063 < 0.6255); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-modI:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.051068615168333054,
+      "all_cut_floor": 0.002676231786608696,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-modI:red",
+        "control_effect": 0.028421778231859207,
+        "control_floor_missing": false,
+        "floor": 0.002940658014267683,
+        "kind": "random",
+        "margin": 0.0057911984622478485,
+        "mass_relation": "less",
+        "recovery": 0.4434589984832179,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.02263057976961136,
+      "finding": "low_recovery",
+      "floor": 0.0026486264541745186,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0026486264541745186
+      },
+      "keep_effect": 0.02263057976961136,
+      "recovery": 0.5568593412017119,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-black:red",
+        "control_effect": 0.023905476555228233,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.5318949519889921
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.557 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.04068775102496147,
+      "all_cut_floor": 0.0017527861054986715,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-modI:red",
+        "control_effect": 0.022724924609065056,
+        "control_floor_missing": false,
+        "floor": 0.0023021025117486715,
+        "kind": "random",
+        "margin": 0.006773205474019051,
+        "mass_relation": "less",
+        "recovery": 0.4414799531406006,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.015951719135046005,
+      "finding": "low_recovery",
+      "floor": 0.002177139976993203,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002177139976993203
+      },
+      "keep_effect": 0.015951719135046005,
+      "recovery": 0.6079478778451085,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-black:red",
+        "control_effect": 0.010202066972851753,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.749259501548933
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.608 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:keep-rand0-modI:red"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-modI:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.05035196989774704,
+      "all_cut_floor": 0.003410209668800235,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-modI:red",
+        "control_effect": 0.04015616700053215,
+        "control_floor_missing": false,
+        "floor": 0.002940658014267683,
+        "kind": "random",
+        "margin": 0.018224740400910378,
+        "mass_relation": "less",
+        "recovery": 0.20249064570701325,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.021931426599621773,
+      "finding": "low_recovery",
+      "floor": 0.0026486264541745186,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0026486264541745186,
+       "twin_gap": 0.0025881498586386442,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.021931426599621773,
+      "recovery": 0.5644375653195035,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-black:red",
+        "control_effect": 0.02615051157772541,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.48064570997260037
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.564 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.040938571095466614,
+      "all_cut_floor": 0.0027852775529026985,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-modI:red",
+        "control_effect": 0.03256778419017792,
+        "control_floor_missing": false,
+        "floor": 0.0031251993495970964,
+        "kind": "random",
+        "margin": 0.01682278886437416,
+        "mass_relation": "less",
+        "recovery": 0.2044718875450845,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.015744995325803757,
+      "finding": "low_recovery",
+      "floor": 0.0031251993495970964,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002177139976993203,
+       "twin_gap": 0.0031251993495970964,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.015744995325803757,
+      "recovery": 0.6153994899067863,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-black:red",
+        "control_effect": 0.014994422905147076,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.6337336036917149
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.615 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:keep-rand0-modI:red"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.24360687783396132
+    ],
+    "max_reachable_mass_bound": 0.2454341287465171,
+    "separable": false,
+    "target_mass": 0.503274033502749,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2454 < 0.4833); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.24360687783396132
+    ],
+    "max_reachable_mass_bound": 0.2454341287465171,
+    "separable": false,
+    "target_mass": 0.503274033502749,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2454 < 0.4833); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-modI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-nounI:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.051068615168333054,
+      "all_cut_floor": 0.002676231786608696,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-nounI:red",
+        "control_effect": 0.04137381911277771,
+        "control_floor_missing": false,
+        "floor": 0.0037772185169160366,
+        "kind": "random",
+        "margin": 0.00867796316742897,
+        "mass_relation": "matched",
+        "recovery": 0.18983863227148856,
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.03269585594534874,
+      "finding": "low_recovery",
+      "floor": 0.0027339961379766464,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0027339961379766464
+      },
+      "keep_effect": 0.03269585594534874,
+      "recovery": 0.35976615309468996,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-black:red",
+        "control_effect": 0.037956904619932175,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.25674693753065136
+       }
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.36 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.04068775102496147,
+      "all_cut_floor": 0.0017527861054986715,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-nounI:red",
+        "control_effect": 0.02431369386613369,
+        "control_floor_missing": false,
+        "floor": 0.0018870234489440918,
+        "kind": "random",
+        "margin": -0.0009006485342979431,
+        "mass_relation": "matched",
+        "recovery": 0.40243210170998356,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.025214342400431633,
+      "finding": "low_recovery",
+      "floor": 0.0018122056499123573,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0018122056499123573
+      },
+      "keep_effect": 0.025214342400431633,
+      "recovery": 0.3802964832103175,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-black:red",
+        "control_effect": 0.026697276160120964,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.34384979539069416
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.38 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "m:keep-rand0-nounI:red"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-nounI:red",
+    "contexts": [
+     {
+      "all_cut_effect": 0.05035196989774704,
+      "all_cut_floor": 0.003410209668800235,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-nounI:red",
+        "control_effect": 0.04145321995019913,
+        "control_floor_missing": false,
+        "floor": 0.0038784448988735676,
+        "kind": "random",
+        "margin": 0.0004718191921710968,
+        "mass_relation": "matched",
+        "recovery": 0.1767309196764133,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.04098140075802803,
+      "finding": "low_recovery",
+      "floor": 0.0038784448988735676,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0027339961379766464,
+       "twin_gap": 0.0038784448988735676,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.04098140075802803,
+      "recovery": 0.186101341392371,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-black:red",
+        "control_effect": 0.07597805559635162,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -0.5089390891884689
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.186 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.040938571095466614,
+      "all_cut_floor": 0.0027852775529026985,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-nounI:red",
+        "control_effect": 0.030698629096150398,
+        "control_floor_missing": false,
+        "floor": 0.0026476692873984575,
+        "kind": "random",
+        "margin": -0.005385292693972588,
+        "mass_relation": "matched",
+        "recovery": 0.2501294433417621,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.036083921790122986,
+      "finding": "low_recovery",
+      "floor": 0.0026476692873984575,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0018122056499123573,
+       "twin_gap": 0.0026476692873984575,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.036083921790122986,
+      "recovery": 0.11858375061559523,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-black:red",
+        "control_effect": 0.06270131468772888,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -0.531595095039167
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.119 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:keep-rand0-nounI:red"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "black",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.2814924127080351
+    ],
+    "separable": true,
+    "target_mass": 0.30043003479773067,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.2814924127080351
+    ],
+    "separable": true,
+    "target_mass": 0.30043003479773067,
+    "tolerance": 0.02
+   }
+  },
+  "item": "red",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": "needed_set",
+  "claim_statement": "WEAKER CLAIM (needed_set): cutting own60 damages black more than the controls that were beaten; NOT shown: mass (these alternatives remain open)",
+  "cut_types": {
+   "renorm": {
+    "arm": "m:own60:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:black",
+        "control_effect": 0.006285085342824459,
+        "control_floor_missing": false,
+        "floor": 0.0025497935712337494,
+        "kind": "random",
+        "margin": 0.03244692552834749,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-ball:black",
+        "control_effect": 0.013005794025957584,
+        "control_floor_missing": false,
+        "floor": 0.0018383748829364777,
+        "kind": "other_item",
+        "margin": 0.025726216845214367,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.03873201087117195,
+      "floor": 0.0016561869997531176,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0016561869997531176
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:black",
+        "control_effect": 0.00705566443502903,
+        "control_floor_missing": false,
+        "floor": 0.002054132055491209,
+        "kind": "random",
+        "margin": 0.034020720049738884,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-ball:black",
+        "control_effect": 0.015510888770222664,
+        "control_floor_missing": false,
+        "floor": 0.0027386234141886234,
+        "kind": "other_item",
+        "margin": 0.02556549571454525,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.041076384484767914,
+      "floor": 0.002054132055491209,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002054132055491209
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:rand0-own60:black"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "generic_damage",
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "set_only"
+   },
+   "zero": {
+    "arm": "z:own60:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:black",
+        "control_effect": 0.005083629861474037,
+        "control_floor_missing": false,
+        "floor": 0.0030790241435170174,
+        "kind": "random",
+        "margin": 0.056448766961693764,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-ball:black",
+        "control_effect": 0.014443989843130112,
+        "control_floor_missing": false,
+        "floor": 0.0030790241435170174,
+        "kind": "other_item",
+        "margin": 0.04708840698003769,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.0615323968231678,
+      "floor": 0.0030790241435170174,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0016561869997531176,
+       "twin_gap": 0.0030790241435170174,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:black",
+        "control_effect": 0.006139797158539295,
+        "control_floor_missing": false,
+        "floor": 0.002989844884723425,
+        "kind": "random",
+        "margin": 0.03799015562981367,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-ball:black",
+        "control_effect": 0.017222147434949875,
+        "control_floor_missing": false,
+        "floor": 0.002989844884723425,
+        "kind": "other_item",
+        "margin": 0.02690780535340309,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.044129952788352966,
+      "floor": 0.002989844884723425,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002054132055491209,
+       "twin_gap": 0.002989844884723425,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:rand0-own60:black"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "generic_damage",
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "set_only"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.20612659984182707
+    ],
+    "max_reachable_mass_bound": 0.20936850922072164,
+    "separable": false,
+    "target_mass": 0.6710764854008444,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2094 < 0.6511); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.20612659984182707
+    ],
+    "max_reachable_mass_bound": 0.20936850922072164,
+    "separable": false,
+    "target_mass": 0.6710764854008444,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2094 < 0.6511); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "generic_damage",
+   "set_size"
+  ],
+  "scalar_status": "set_only",
+  "status": "set_only",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:modI:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-modI:black",
+        "control_effect": 0.015351558104157448,
+        "control_floor_missing": false,
+        "floor": 0.002010091207921505,
+        "kind": "random",
+        "margin": 0.0009124353528022766,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-ball:black",
+        "control_effect": 0.0077963038347661495,
+        "control_floor_missing": false,
+        "floor": 0.0024915109388530254,
+        "kind": "other_item",
+        "margin": 0.008467689622193575,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.016263993456959724,
+      "floor": 0.0019320619758218527,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019320619758218527
+      },
+      "refuted_by": [
+       "m:rand0-modI:black"
+      ],
+      "ruled_out": [
+       "generic_damage"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-modI:black 0.01535 vs test 0.01626)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-modI:black",
+        "control_effect": 0.014340808615088463,
+        "control_floor_missing": false,
+        "floor": 0.0028205423150211573,
+        "kind": "random",
+        "margin": 0.0024037864059209824,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-ball:black",
+        "control_effect": 0.00749701214954257,
+        "control_floor_missing": false,
+        "floor": 0.002358450088649988,
+        "kind": "other_item",
+        "margin": 0.009247582871466875,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.016744595021009445,
+      "floor": 0.0019240236142650247,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019240236142650247
+      },
+      "refuted_by": [
+       "m:rand0-modI:black"
+      ],
+      "ruled_out": [
+       "generic_damage"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-modI:black 0.01434 vs test 0.01674)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "m:rand0-modI:black"
+    ],
+    "ruled_out": [
+     "generic_damage"
+    ],
+    "separating_controls": [
+     "m:rand0-modI:black"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:modI:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:rand0-modI:black",
+        "control_effect": 0.014323634095489979,
+        "control_floor_missing": false,
+        "floor": 0.003406200557947159,
+        "kind": "random",
+        "margin": 0.022990803234279156,
+        "mass_relation": "matched",
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-ball:black",
+        "control_effect": 0.007239806465804577,
+        "control_floor_missing": false,
+        "floor": 0.003406200557947159,
+        "kind": "other_item",
+        "margin": 0.030074630863964558,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.037314437329769135,
+      "floor": 0.003406200557947159,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019320619758218527,
+       "twin_gap": 0.003406200557947159,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:rand0-modI:black",
+        "control_effect": 0.01615387201309204,
+        "control_floor_missing": false,
+        "floor": 0.0029215894173830748,
+        "kind": "random",
+        "margin": 0.010418742895126343,
+        "mass_relation": "matched",
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-ball:black",
+        "control_effect": 0.005656203255057335,
+        "control_floor_missing": false,
+        "floor": 0.0029215894173830748,
+        "kind": "other_item",
+        "margin": 0.02091641165316105,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.026572614908218384,
+      "floor": 0.0029215894173830748,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019240236142650247,
+       "twin_gap": 0.0029215894173830748,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [
+     "generic_damage",
+     "mass",
+     "set_size"
+    ],
+    "separating_controls": [
+     "z:rand0-modI:black"
+    ],
+    "status": "supported"
+   }
+  },
+  "cut_types_agree": false,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.3768802376948495
+    ],
+    "separable": true,
+    "target_mass": 0.39198258937705655,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.3768802376948495
+    ],
+    "separable": true,
+    "target_mass": 0.39198258937705655,
+    "tolerance": 0.02
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "m:rand0-modI:black",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:rand0-modI:black",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [
+   "generic_damage"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "modI",
+  "waivers": {},
+  "why": "cut types disagree; the result does not count"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:nounI:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:rand0-nounI:black",
+        "control_effect": 0.007565746083855629,
+        "control_floor_missing": false,
+        "floor": 0.0027507906779646873,
+        "kind": "random",
+        "margin": 0.013620752841234207,
+        "mass_relation": "matched",
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-ball:black",
+        "control_effect": 0.02234249748289585,
+        "control_floor_missing": false,
+        "floor": 0.0027507906779646873,
+        "kind": "other_item",
+        "margin": -0.001155998557806015,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.021186498925089836,
+      "floor": 0.0027507906779646873,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0027507906779646873
+      },
+      "refuted_by": [
+       "m:nounI@rows-ball:black"
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:nounI@rows-ball:black 0.02234 vs test 0.02119)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:rand0-nounI:black",
+        "control_effect": 0.009738538414239883,
+        "control_floor_missing": false,
+        "floor": 0.002796547021716833,
+        "kind": "random",
+        "margin": 0.006332516670227051,
+        "mass_relation": "matched",
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-ball:black",
+        "control_effect": 0.02375023439526558,
+        "control_floor_missing": false,
+        "floor": 0.0019155065529048443,
+        "kind": "other_item",
+        "margin": -0.007679179310798645,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.016071055084466934,
+      "floor": 0.0019155065529048443,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019155065529048443
+      },
+      "refuted_by": [
+       "m:nounI@rows-ball:black"
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:nounI@rows-ball:black 0.02375 vs test 0.01607)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "m:nounI@rows-ball:black"
+    ],
+    "ruled_out": [
+     "mass",
+     "set_size"
+    ],
+    "separating_controls": [
+     "m:rand0-nounI:black"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:nounI:black",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:rand0-nounI:black",
+        "control_effect": 0.01963985525071621,
+        "control_floor_missing": false,
+        "floor": 0.0027507906779646873,
+        "kind": "random",
+        "margin": -0.002617510035634041,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-ball:black",
+        "control_effect": 0.03196887671947479,
+        "control_floor_missing": false,
+        "floor": 0.003874395973980427,
+        "kind": "other_item",
+        "margin": -0.014946531504392624,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.01702234521508217,
+      "floor": 0.0027507906779646873,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0027507906779646873,
+       "twin_gap": 0.0017454258631914854,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:rand0-nounI:black",
+       "z:nounI@rows-ball:black"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:rand0-nounI:black 0.01964 vs test 0.01702, z:nounI@rows-ball:black 0.03197 vs test 0.01702)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:rand0-nounI:black",
+        "control_effect": 0.01066012866795063,
+        "control_floor_missing": false,
+        "floor": 0.002796547021716833,
+        "kind": "random",
+        "margin": 0.0038248300552368164,
+        "mass_relation": "matched",
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-ball:black",
+        "control_effect": 0.025022180750966072,
+        "control_floor_missing": false,
+        "floor": 0.002754620276391506,
+        "kind": "other_item",
+        "margin": -0.010537222027778625,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.014484958723187447,
+      "floor": 0.002754620276391506,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019155065529048443,
+       "twin_gap": 0.002754620276391506,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:nounI@rows-ball:black"
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:nounI@rows-ball:black 0.02502 vs test 0.01448)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "z:nounI@rows-ball:black",
+     "z:rand0-nounI:black"
+    ],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:rand0-nounI:black"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.30982585593639433
+    ],
+    "separable": true,
+    "target_mass": 0.3295797222104334,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.30982585593639433
+    ],
+    "separable": true,
+    "target_mass": 0.3295797222104334,
+    "tolerance": 0.02
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:rand0-nounI:black",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "z:nounI@rows-ball:black",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:nounI@rows-ball:black",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:nounI@rows-ball:black",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:nounI@rows-ball:black",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": "sufficient_set",
+  "claim_statement": "WEAKER CLAIM (sufficient_set): keeping only keep-own60 recovers black better than the controls that were beaten; NOT shown: mass (these alternatives remain open)",
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-own60:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.11221766471862793,
+      "all_cut_floor": 0.003045614343136549,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:black",
+        "control_effect": 0.09684502333402634,
+        "control_floor_missing": false,
+        "floor": 0.00240057660266757,
+        "kind": "random",
+        "margin": 0.0831083245575428,
+        "mass_relation": "less",
+        "recovery": 0.13698949646783876,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.013736698776483536,
+      "floor": 0.0018370982725173235,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0018370982725173235
+      },
+      "keep_effect": 0.013736698776483536,
+      "recovery": 0.8775888019865088,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-ball:black",
+        "control_effect": 0.056523121893405914,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.49630816115153764
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "all_cut_effect": 0.1185762882232666,
+      "all_cut_floor": 0.0020258286967873573,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:black",
+        "control_effect": 0.0906333178281784,
+        "control_floor_missing": false,
+        "floor": 0.002560604363679886,
+        "kind": "random",
+        "margin": 0.07860659994184971,
+        "mass_relation": "less",
+        "recovery": 0.23565394746101798,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.012026717886328697,
+      "floor": 0.002360804006457329,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002360804006457329
+      },
+      "keep_effect": 0.012026717886328697,
+      "recovery": 0.898574006097377,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-ball:black",
+        "control_effect": 0.04938659444451332,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.5835036229880666
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:keep-rand0-own60:black"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "set_only"
+   },
+   "zero": {
+    "arm": "z:keep-own60:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.12610700726509094,
+      "all_cut_floor": 0.003286643186584115,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:black",
+        "control_effect": 0.10307669639587402,
+        "control_floor_missing": false,
+        "floor": 0.003503717016428709,
+        "kind": "random",
+        "margin": 0.09297924768179655,
+        "mass_relation": "less",
+        "recovery": 0.18262514802848862,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.010097448714077473,
+      "floor": 0.0021978840231895447,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0018370982725173235,
+       "twin_gap": 0.0021978840231895447,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.010097448714077473,
+      "recovery": 0.9199295191198098,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-ball:black",
+        "control_effect": 0.07240251451730728,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.42586446155914914
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     },
+     {
+      "all_cut_effect": 0.11688604205846786,
+      "all_cut_floor": 0.002471804153174162,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:black",
+        "control_effect": 0.08548833429813385,
+        "control_floor_missing": false,
+        "floor": 0.0028031491674482822,
+        "kind": "random",
+        "margin": 0.07562736794352531,
+        "mass_relation": "less",
+        "recovery": 0.26861811048943285,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.009860966354608536,
+      "floor": 0.0028031491674482822,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002360804006457329,
+       "twin_gap": 0.0028031491674482822,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.009860966354608536,
+      "recovery": 0.9156360658556993,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-ball:black",
+        "control_effect": 0.057277847081422806,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.5099684609666935
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:keep-rand0-own60:black"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "set_only"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.20612659984182707
+    ],
+    "max_reachable_mass_bound": 0.20936850922072164,
+    "separable": false,
+    "target_mass": 0.6710764854008444,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2094 < 0.6511); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.20612659984182707
+    ],
+    "max_reachable_mass_bound": 0.20936850922072164,
+    "separable": false,
+    "target_mass": 0.6710764854008444,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2094 < 0.6511); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "set_only",
+  "status": "set_only",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": "identity",
+  "claim_statement": "keeping only keep-modI recovers black better than a same-size random set of matched mass: these units carry the item",
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-modI:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.11221766471862793,
+      "all_cut_floor": 0.003045614343136549,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-modI:black",
+        "control_effect": 0.05127216503024101,
+        "control_floor_missing": false,
+        "floor": 0.003390861675143242,
+        "kind": "random",
+        "margin": 0.025037679821252823,
+        "mass_relation": "matched",
+        "recovery": 0.5431007661868593,
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.02623448520898819,
+      "floor": 0.0019255593651905656,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019255593651905656
+      },
+      "keep_effect": 0.02623448520898819,
+      "recovery": 0.7662178652998354,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-ball:black",
+        "control_effect": 0.08338110893964767,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.25696984384129173
+       }
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     },
+     {
+      "all_cut_effect": 0.1185762882232666,
+      "all_cut_floor": 0.0020258286967873573,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-modI:black",
+        "control_effect": 0.0453266017138958,
+        "control_floor_missing": false,
+        "floor": 0.0020683337934315205,
+        "kind": "random",
+        "margin": 0.025385478511452675,
+        "mass_relation": "matched",
+        "recovery": 0.6177431222290362,
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.019941123202443123,
+      "floor": 0.001601015916094184,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.001601015916094184
+      },
+      "keep_effect": 0.019941123202443123,
+      "recovery": 0.8318287450110085,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-ball:black",
+        "control_effect": 0.06219540163874626,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.4754819654867346
+       }
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [
+     "mass",
+     "set_size"
+    ],
+    "separating_controls": [
+     "m:keep-rand0-modI:black"
+    ],
+    "status": "supported"
+   },
+   "zero": {
+    "arm": "z:keep-modI:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.12610700726509094,
+      "all_cut_floor": 0.003286643186584115,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-modI:black",
+        "control_effect": 0.07657861709594727,
+        "control_floor_missing": false,
+        "floor": 0.006384994834661484,
+        "kind": "random",
+        "margin": 0.05140598490834236,
+        "mass_relation": "matched",
+        "recovery": 0.39274891414264945,
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.025172632187604904,
+      "floor": 0.006384994834661484,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019255593651905656,
+       "twin_gap": 0.006384994834661484,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.025172632187604904,
+      "recovery": 0.8003867292267968,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-ball:black",
+        "control_effect": 0.10085529088973999,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.20024039046671716
+       }
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     },
+     {
+      "all_cut_effect": 0.11688604205846786,
+      "all_cut_floor": 0.002471804153174162,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-modI:black",
+        "control_effect": 0.051507968455553055,
+        "control_floor_missing": false,
+        "floor": 0.004523562733083963,
+        "kind": "random",
+        "margin": 0.030589044094085693,
+        "mass_relation": "matched",
+        "recovery": 0.559331742708953,
+        "refutes": false,
+        "rules_out": [
+         "mass",
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.02091892436146736,
+      "floor": 0.0022409274242818356,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.001601015916094184,
+       "twin_gap": 0.0022409274242818356,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.02091892436146736,
+      "recovery": 0.8210314594192226,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-ball:black",
+        "control_effect": 0.058874987065792084,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.49630438306447167
+       }
+      ],
+      "ruled_out": [
+       "mass",
+       "set_size"
+      ],
+      "status": "supported"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [
+     "mass",
+     "set_size"
+    ],
+    "separating_controls": [
+     "z:keep-rand0-modI:black"
+    ],
+    "status": "supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.3768802376948495
+    ],
+    "separable": true,
+    "target_mass": 0.39198258937705655,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.3768802376948495
+    ],
+    "separable": true,
+    "target_mass": 0.39198258937705655,
+    "tolerance": 0.02
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [],
+  "ruled_out": [
+   "mass",
+   "set_size"
+  ],
+  "scalar_status": "supported",
+  "status": "supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-modI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-nounI:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.11221766471862793,
+      "all_cut_floor": 0.003045614343136549,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-nounI:black",
+        "control_effect": 0.02522437274456024,
+        "control_floor_missing": false,
+        "floor": 0.0029855365864932537,
+        "kind": "random",
+        "margin": -0.06026589870452881,
+        "mass_relation": "matched",
+        "recovery": 0.7752192330164126,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.08549027144908905,
+      "finding": "low_recovery",
+      "floor": 0.0021489760838449,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0021489760838449
+      },
+      "keep_effect": 0.08549027144908905,
+      "recovery": 0.23817456312742336,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-ball:black",
+        "control_effect": 0.055185094475746155,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.5082316619748234
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.238 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.1185762882232666,
+      "all_cut_floor": 0.0020258286967873573,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-nounI:black",
+        "control_effect": 0.026766767725348473,
+        "control_floor_missing": false,
+        "floor": 0.00273064523935318,
+        "kind": "random",
+        "margin": -0.034166986122727394,
+        "mass_relation": "matched",
+        "recovery": 0.7742654275452654,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.06093375384807587,
+      "finding": "low_recovery",
+      "floor": 0.002373030874878168,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002373030874878168
+      },
+      "keep_effect": 0.06093375384807587,
+      "recovery": 0.4861219324613699,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-ball:black",
+        "control_effect": 0.0372665673494339,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.6857165297730952
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.486 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "m:keep-rand0-nounI:black"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-nounI:black",
+    "contexts": [
+     {
+      "all_cut_effect": 0.12610700726509094,
+      "all_cut_floor": 0.003286643186584115,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-nounI:black",
+        "control_effect": 0.032798513770103455,
+        "control_floor_missing": false,
+        "floor": 0.00348185608163476,
+        "kind": "random",
+        "margin": -0.07707364857196808,
+        "mass_relation": "matched",
+        "recovery": 0.7399152158043261,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.10987216234207153,
+      "finding": "low_recovery",
+      "floor": 0.0023388233967125416,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0021489760838449,
+       "twin_gap": 0.0023388233967125416,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.10987216234207153,
+      "recovery": 0.12873864248393396,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-ball:black",
+        "control_effect": 0.06858007609844208,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.45617553230583663
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.129 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.11688604205846786,
+      "all_cut_floor": 0.002471804153174162,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-nounI:black",
+        "control_effect": 0.02972605638206005,
+        "control_floor_missing": false,
+        "floor": 0.00273064523935318,
+        "kind": "random",
+        "margin": -0.05383262224495411,
+        "mass_relation": "matched",
+        "recovery": 0.7456834378292089,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.08355867862701416,
+      "finding": "low_recovery",
+      "floor": 0.0026161742862313986,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002373030874878168,
+       "twin_gap": 0.0026161742862313986,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.08355867862701416,
+      "recovery": 0.2851269736277231,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-ball:black",
+        "control_effect": 0.05419323593378067,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": 0.5363583625607535
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.285 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:keep-rand0-nounI:black"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "ball",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.30982585593639433
+    ],
+    "separable": true,
+    "target_mass": 0.3295797222104334,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.30982585593639433
+    ],
+    "separable": true,
+    "target_mass": 0.3295797222104334,
+    "tolerance": 0.02
+   }
+  },
+  "item": "black",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:own60:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:ball",
+        "control_effect": 0.02832123264670372,
+        "control_floor_missing": false,
+        "floor": 0.0038306342903524637,
+        "kind": "random",
+        "margin": 0.0067876651883125305,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-snow:ball",
+        "control_effect": 0.08856839686632156,
+        "control_floor_missing": false,
+        "floor": 0.0038306342903524637,
+        "kind": "other_item",
+        "margin": -0.05345949903130531,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.03510889783501625,
+      "floor": 0.0038306342903524637,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0038306342903524637
+      },
+      "refuted_by": [
+       "m:own60@rows-snow:ball"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:own60@rows-snow:ball 0.08857 vs test 0.03511)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-own60:ball",
+        "control_effect": 0.011594106443226337,
+        "control_floor_missing": false,
+        "floor": 0.0019741281867027283,
+        "kind": "random",
+        "margin": 0.024813703261315823,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:own60@rows-snow:ball",
+        "control_effect": 0.025673620402812958,
+        "control_floor_missing": false,
+        "floor": 0.002051160205155611,
+        "kind": "other_item",
+        "margin": 0.010734189301729202,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.03640780970454216,
+      "floor": 0.0019741281867027283,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019741281867027283
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:rand0-own60:ball"
+    ],
+    "refuting_controls": [
+     "m:own60@rows-snow:ball"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:own60:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:ball",
+        "control_effect": 0.02771041914820671,
+        "control_floor_missing": false,
+        "floor": 0.0038306342903524637,
+        "kind": "random",
+        "margin": 0.026037361472845078,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-snow:ball",
+        "control_effect": 0.053602494299411774,
+        "control_floor_missing": false,
+        "floor": 0.0038306342903524637,
+        "kind": "other_item",
+        "margin": 0.00014528632164001465,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.05374778062105179,
+      "floor": 0.0038306342903524637,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0038306342903524637,
+       "twin_gap": 0.0035915998741984367,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:own60@rows-snow:ball"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:own60@rows-snow:ball 0.0536 vs test 0.05375)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-own60:ball",
+        "control_effect": 0.009892462752759457,
+        "control_floor_missing": false,
+        "floor": 0.0019741281867027283,
+        "kind": "random",
+        "margin": 0.031131000258028507,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:own60@rows-snow:ball",
+        "control_effect": 0.02203303389251232,
+        "control_floor_missing": false,
+        "floor": 0.0023097617086023092,
+        "kind": "other_item",
+        "margin": 0.018990429118275642,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.041023463010787964,
+      "floor": 0.0019741281867027283,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019741281867027283,
+       "twin_gap": 0.0019237843807786703,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:rand0-own60:ball"
+    ],
+    "refuting_controls": [
+     "z:own60@rows-snow:ball"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.12856773095646418
+    ],
+    "max_reachable_mass_bound": 0.12909708752253057,
+    "separable": false,
+    "target_mass": 0.8335290092240215,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.1291 < 0.8135); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.12856773095646418
+    ],
+    "max_reachable_mass_bound": 0.12909708752253057,
+    "separable": false,
+    "target_mass": 0.8335290092240215,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.1291 < 0.8135); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:own60@rows-snow:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:own60@rows-snow:ball",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:modI:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-modI:ball",
+        "control_effect": 0.026435144245624542,
+        "control_floor_missing": false,
+        "floor": 0.0035619998816400766,
+        "kind": "random",
+        "margin": -0.01263936422765255,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-snow:ball",
+        "control_effect": 0.0259618628770113,
+        "control_floor_missing": false,
+        "floor": 0.002924980130046606,
+        "kind": "other_item",
+        "margin": -0.012166082859039307,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.013795780017971992,
+      "floor": 0.002924980130046606,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002924980130046606
+      },
+      "refuted_by": [
+       "m:rand0-modI:ball",
+       "m:modI@rows-snow:ball"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-modI:ball 0.02644 vs test 0.0138, m:modI@rows-snow:ball 0.02596 vs test 0.0138)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:rand0-modI:ball",
+        "control_effect": 0.015660785138607025,
+        "control_floor_missing": false,
+        "floor": 0.0017490959726274014,
+        "kind": "random",
+        "margin": -0.008600334171205759,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:modI@rows-snow:ball",
+        "control_effect": 0.02437877655029297,
+        "control_floor_missing": false,
+        "floor": 0.002178177237510681,
+        "kind": "other_item",
+        "margin": -0.017318325582891703,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.007060450967401266,
+      "floor": 0.0017490959726274014,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0017490959726274014
+      },
+      "refuted_by": [
+       "m:rand0-modI:ball",
+       "m:modI@rows-snow:ball"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:rand0-modI:ball 0.01566 vs test 0.00706, m:modI@rows-snow:ball 0.02438 vs test 0.00706)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "m:modI@rows-snow:ball",
+     "m:rand0-modI:ball"
+    ],
+    "ruled_out": [],
+    "separating_controls": [
+     "m:rand0-modI:ball"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:modI:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:rand0-modI:ball",
+        "control_effect": 0.02909737452864647,
+        "control_floor_missing": false,
+        "floor": 0.0035619998816400766,
+        "kind": "random",
+        "margin": -0.01557968370616436,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-snow:ball",
+        "control_effect": 0.06668892502784729,
+        "control_floor_missing": false,
+        "floor": 0.013063098303973675,
+        "kind": "other_item",
+        "margin": -0.05317123420536518,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.013517690822482109,
+      "floor": 0.0030991300009191036,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002924980130046606,
+       "twin_gap": 0.0030991300009191036,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:rand0-modI:ball",
+       "z:modI@rows-snow:ball"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:rand0-modI:ball 0.0291 vs test 0.01352, z:modI@rows-snow:ball 0.06669 vs test 0.01352)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:rand0-modI:ball",
+        "control_effect": 0.015653423964977264,
+        "control_floor_missing": false,
+        "floor": 0.0024380553513765335,
+        "kind": "random",
+        "margin": -0.009098746813833714,
+        "mass_relation": "matched",
+        "refutes": true,
+        "rules_out": []
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:modI@rows-snow:ball",
+        "control_effect": 0.03193417191505432,
+        "control_floor_missing": false,
+        "floor": 0.0027913411613553762,
+        "kind": "other_item",
+        "margin": -0.02537949476391077,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.006554677151143551,
+      "floor": 0.0020140204578638077,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0017490959726274014,
+       "twin_gap": 0.0020140204578638077,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:rand0-modI:ball",
+       "z:modI@rows-snow:ball"
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:rand0-modI:ball 0.01565 vs test 0.006555, z:modI@rows-snow:ball 0.03193 vs test 0.006555)"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [
+     "z:modI@rows-snow:ball",
+     "z:rand0-modI:ball"
+    ],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:rand0-modI:ball"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.1397572774180672
+    ],
+    "separable": true,
+    "target_mass": 0.1475276631458578,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.1397572774180672
+    ],
+    "separable": true,
+    "target_mass": 0.1475276631458578,
+    "tolerance": 0.02
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:rand0-modI:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "z:modI@rows-snow:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:rand0-modI:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "9001",
+    "control": "z:modI@rows-snow:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:rand0-modI:ball",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "4242",
+    "control": "m:modI@rows-snow:ball",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:rand0-modI:ball",
+    "cut_type": "renorm"
+   },
+   {
+    "context": "9001",
+    "control": "m:modI@rows-snow:ball",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "modI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "necessary",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:nounI:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-nounI:ball",
+        "control_effect": 0.01727384701371193,
+        "control_floor_missing": false,
+        "floor": 0.004816371947526932,
+        "kind": "random",
+        "margin": 0.004955574870109558,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-snow:ball",
+        "control_effect": 0.07784527540206909,
+        "control_floor_missing": false,
+        "floor": 0.004816371947526932,
+        "kind": "other_item",
+        "margin": -0.055615853518247604,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.022229421883821487,
+      "floor": 0.004816371947526932,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.004816371947526932
+      },
+      "refuted_by": [
+       "m:nounI@rows-snow:ball"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (m:nounI@rows-snow:ball 0.07785 vs test 0.02223)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:rand0-nounI:ball",
+        "control_effect": 0.01571701094508171,
+        "control_floor_missing": false,
+        "floor": 0.0025268355384469032,
+        "kind": "random",
+        "margin": 0.013856416568160057,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "m:nounI@rows-snow:ball",
+        "control_effect": 0.025981727987527847,
+        "control_floor_missing": false,
+        "floor": 0.0022497838363051414,
+        "kind": "other_item",
+        "margin": 0.0035916995257139206,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.029573427513241768,
+      "floor": 0.0019685234874486923,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0019685234874486923
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:rand0-nounI:ball"
+    ],
+    "refuting_controls": [
+     "m:nounI@rows-snow:ball"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:nounI:ball",
+    "contexts": [
+     {
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-nounI:ball",
+        "control_effect": 0.01717192307114601,
+        "control_floor_missing": false,
+        "floor": 0.004816371947526932,
+        "kind": "random",
+        "margin": 0.016587119549512863,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-snow:ball",
+        "control_effect": 0.035760678350925446,
+        "control_floor_missing": false,
+        "floor": 0.004816371947526932,
+        "kind": "other_item",
+        "margin": -0.002001635730266571,
+        "mass_relation": null,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.033759042620658875,
+      "floor": 0.004816371947526932,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.004816371947526932,
+       "twin_gap": 0.0035066092386841774,
+       "twin_gap_source": "pair distance"
+      },
+      "refuted_by": [
+       "z:nounI@rows-snow:ball"
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "a control with no more mass than the target did as much damage (z:nounI@rows-snow:ball 0.03576 vs test 0.03376)"
+     },
+     {
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:rand0-nounI:ball",
+        "control_effect": 0.018768729642033577,
+        "control_floor_missing": false,
+        "floor": 0.0030662985518574715,
+        "kind": "random",
+        "margin": 0.0054378751665353775,
+        "mass_relation": "less",
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       },
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": false,
+        "control": "z:nounI@rows-snow:ball",
+        "control_effect": 0.020209698006510735,
+        "control_floor_missing": false,
+        "floor": 0.0030662985518574715,
+        "kind": "other_item",
+        "margin": 0.00399690680205822,
+        "mass_relation": null,
+        "refutes": false,
+        "rules_out": [
+         "generic_damage"
+        ]
+       }
+      ],
+      "effect": 0.024206604808568954,
+      "floor": 0.0030662985518574715,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0019685234874486923,
+       "twin_gap": 0.0030662985518574715,
+       "twin_gap_source": "pair distance"
+      },
+      "ruled_out": [
+       "generic_damage",
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:rand0-nounI:ball"
+    ],
+    "refuting_controls": [
+     "z:nounI@rows-snow:ball"
+    ],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.2671861154410167
+    ],
+    "max_reachable_mass_bound": 0.29808122076865734,
+    "separable": false,
+    "target_mass": 0.5898258755737055,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2981 < 0.5698); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.2671861154410167
+    ],
+    "max_reachable_mass_bound": 0.29808122076865734,
+    "separable": false,
+    "target_mass": 0.5898258755737055,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2981 < 0.5698); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [
+   {
+    "context": "4242",
+    "control": "z:nounI@rows-snow:ball",
+    "cut_type": "zero"
+   },
+   {
+    "context": "4242",
+    "control": "m:nounI@rows-snow:ball",
+    "cut_type": "renorm"
+   }
+  ],
+  "remaining_alternatives": [
+   "generic_damage",
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-own60:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.08579568564891815,
+      "all_cut_floor": 0.003041565418243408,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:ball",
+        "control_effect": 0.06294567883014679,
+        "control_floor_missing": false,
+        "floor": 0.0040290383622050285,
+        "kind": "random",
+        "margin": 0.02577175945043564,
+        "mass_relation": "less",
+        "recovery": 0.26633048790209757,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.03717391937971115,
+      "finding": "low_recovery",
+      "floor": 0.0034508598037064075,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0034508598037064075
+      },
+      "keep_effect": 0.03717391937971115,
+      "recovery": 0.5667157491831304,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-snow:ball",
+        "control_effect": 0.1616271436214447,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -0.8838609703853186
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.567 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06489931792020798,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-own60:ball",
+        "control_effect": 0.05957663804292679,
+        "control_floor_missing": false,
+        "floor": 0.002558669541031122,
+        "kind": "random",
+        "margin": 0.04244654253125191,
+        "mass_relation": "less",
+        "recovery": 0.08201441937841758,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.01713009551167488,
+      "floor": 0.0022190469317138195,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0022190469317138195
+      },
+      "keep_effect": 0.01713009551167488,
+      "recovery": 0.7360512242557635,
+      "references": [
+       {
+        "control": "m:keep-own60@rows-snow:ball",
+        "control_effect": 0.09750653803348541,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -0.5024277782605846
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:keep-rand0-own60:ball"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-own60:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.09809520840644836,
+      "all_cut_floor": 0.003662966890260577,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:ball",
+        "control_effect": 0.07377706468105316,
+        "control_floor_missing": false,
+        "floor": 0.0040290383622050285,
+        "kind": "random",
+        "margin": 0.04411421716213226,
+        "mass_relation": "less",
+        "recovery": 0.24790348193802936,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.0296628475189209,
+      "finding": "low_recovery",
+      "floor": 0.0034508598037064075,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0034508598037064075,
+       "twin_gap": 0.00290327868424356,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.0296628475189209,
+      "recovery": 0.6976116570748732,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-snow:ball",
+        "control_effect": 0.19901493191719055,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.0287936092922165
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.698 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06818823516368866,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-own60:ball",
+        "control_effect": 0.06801476329565048,
+        "control_floor_missing": false,
+        "floor": 0.002558669541031122,
+        "kind": "random",
+        "margin": 0.05408297013491392,
+        "mass_relation": "less",
+        "recovery": 0.0025440146327552204,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.01393179316073656,
+      "floor": 0.002364294370636344,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0022190469317138195,
+       "twin_gap": 0.002364294370636344,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.01393179316073656,
+      "recovery": 0.7956862627798957,
+      "references": [
+       {
+        "control": "z:keep-own60@rows-snow:ball",
+        "control_effect": 0.13986311852931976,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.0511326945707364
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "set_only"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:keep-rand0-own60:ball"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.12856773095646418
+    ],
+    "max_reachable_mass_bound": 0.12909708752253057,
+    "separable": false,
+    "target_mass": 0.8335290092240215,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.1291 < 0.8135); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.12856773095646418
+    ],
+    "max_reachable_mass_bound": 0.12909708752253057,
+    "separable": false,
+    "target_mass": 0.8335290092240215,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.1291 < 0.8135); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-own60",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-modI:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.08579568564891815,
+      "all_cut_floor": 0.003041565418243408,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-modI:ball",
+        "control_effect": 0.04614618793129921,
+        "control_floor_missing": false,
+        "floor": 0.002974187256768346,
+        "kind": "random",
+        "margin": -0.021999549120664597,
+        "mass_relation": "matched",
+        "recovery": 0.4621385961045572,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.0681457370519638,
+      "finding": "low_recovery",
+      "floor": 0.0025886883959174156,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0025886883959174156
+      },
+      "keep_effect": 0.0681457370519638,
+      "recovery": 0.2057207010289439,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-snow:ball",
+        "control_effect": 0.21113193035125732,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.4608688508560177
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.206 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06489931792020798,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "m:keep-rand0-modI:ball",
+        "control_effect": 0.04691922292113304,
+        "control_floor_missing": false,
+        "floor": 0.0021015640813857317,
+        "kind": "random",
+        "margin": -0.015712205320596695,
+        "mass_relation": "matched",
+        "recovery": 0.277045977912757,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.06263142824172974,
+      "finding": "low_recovery",
+      "floor": 0.0021015640813857317,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.0021015640813857317
+      },
+      "keep_effect": 0.06263142824172974,
+      "recovery": 0.03494473826776656,
+      "references": [
+       {
+        "control": "m:keep-modI@rows-snow:ball",
+        "control_effect": 0.1065274327993393,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -0.6414260767780642
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.0349 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "m:keep-rand0-modI:ball"
+    ],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-modI:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.09809520840644836,
+      "all_cut_floor": 0.003662966890260577,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-modI:ball",
+        "control_effect": 0.05541333928704262,
+        "control_floor_missing": false,
+        "floor": 0.002974187256768346,
+        "kind": "random",
+        "margin": -0.03587624058127403,
+        "mass_relation": "matched",
+        "recovery": 0.4351065644568224,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.09128957986831665,
+      "finding": "low_recovery",
+      "floor": 0.0025886883959174156,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0025886883959174156,
+       "twin_gap": 0.0025547801051288843,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.09128957986831665,
+      "recovery": 0.06937778764823277,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-snow:ball",
+        "control_effect": 0.21168267726898193,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.1579308582728576
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.0694 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06818823516368866,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": false,
+        "confounded_with_mass": false,
+        "control": "z:keep-rand0-modI:ball",
+        "control_effect": 0.058055147528648376,
+        "control_floor_missing": false,
+        "floor": 0.002532500308007002,
+        "kind": "random",
+        "margin": -0.010423146188259125,
+        "mass_relation": "matched",
+        "recovery": 0.14860463261316836,
+        "refutes": true,
+        "rules_out": []
+       }
+      ],
+      "effect": 0.0684782937169075,
+      "finding": "low_recovery",
+      "floor": 0.002532500308007002,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.0021015640813857317,
+       "twin_gap": 0.002532500308007002,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.0684782937169075,
+      "recovery": -0.0042537917651417345,
+      "references": [
+       {
+        "control": "z:keep-modI@rows-snow:ball",
+        "control_effect": 0.1871231347322464,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.7442143689897476
+       }
+      ],
+      "ruled_out": [],
+      "status": "not_supported",
+      "why": "keeping the set recovers -0.00425 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [],
+    "refuting_controls": [],
+    "ruled_out": [],
+    "separating_controls": [
+     "z:keep-rand0-modI:ball"
+    ],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.1397572774180672
+    ],
+    "separable": true,
+    "target_mass": 0.1475276631458578,
+    "tolerance": 0.02
+   },
+   "random_keep": {
+    "control_mass": [
+     0.1397572774180672
+    ],
+    "separable": true,
+    "target_mass": 0.1475276631458578,
+    "tolerance": 0.02
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass",
+   "set_size"
+  ],
+  "ruled_out": [],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-modI",
+  "waivers": {},
+  "why": "both cut types agree"
+ },
+ {
+  "claim": "sufficient",
+  "claim_scope": null,
+  "claim_statement": null,
+  "cut_types": {
+   "renorm": {
+    "arm": "m:keep-nounI:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.08579568564891815,
+      "all_cut_floor": 0.003041565418243408,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-nounI:ball",
+        "control_effect": 0.06264446675777435,
+        "control_floor_missing": false,
+        "floor": 0.003006140934303403,
+        "kind": "random",
+        "margin": 0.025986813008785248,
+        "mass_relation": "less",
+        "recovery": 0.2698412946529757,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.036657653748989105,
+      "finding": "low_recovery",
+      "floor": 0.003006140934303403,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.003006140934303403
+      },
+      "keep_effect": 0.036657653748989105,
+      "recovery": 0.5727331337033106,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-snow:ball",
+        "control_effect": 0.21183699369430542,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.4690867855658496
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.573 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06489931792020798,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "m:keep-rand0-nounI:ball",
+        "control_effect": 0.06116707623004913,
+        "control_floor_missing": false,
+        "floor": 0.002509781625121832,
+        "kind": "random",
+        "margin": 0.024153903126716614,
+        "mass_relation": "less",
+        "recovery": 0.0575081805135077,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.03701317310333252,
+      "finding": "low_recovery",
+      "floor": 0.002509781625121832,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham": 0.002509781625121832
+      },
+      "keep_effect": 0.03701317310333252,
+      "recovery": 0.42968317249744825,
+      "references": [
+       {
+        "control": "m:keep-nounI@rows-snow:ball",
+        "control_effect": 0.14706677198410034,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.2660757723974099
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.43 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "m:keep-rand0-nounI:ball"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   },
+   "zero": {
+    "arm": "z:keep-nounI:ball",
+    "contexts": [
+     {
+      "all_cut_effect": 0.09809520840644836,
+      "all_cut_floor": 0.003662966890260577,
+      "context": "4242",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-nounI:ball",
+        "control_effect": 0.0662730485200882,
+        "control_floor_missing": false,
+        "floor": 0.004630334209650755,
+        "kind": "random",
+        "margin": 0.021524205803871155,
+        "mass_relation": "less",
+        "recovery": 0.324400757216479,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.04474884271621704,
+      "finding": "low_recovery",
+      "floor": 0.004630334209650755,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.003006140934303403,
+       "twin_gap": 0.004630334209650755,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.04474884271621704,
+      "recovery": 0.543822339101372,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-snow:ball",
+        "control_effect": 0.2290627360343933,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.3351062682419021
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.544 of the all-cut effect, below 0.7"
+     },
+     {
+      "all_cut_effect": 0.06818823516368866,
+      "all_cut_floor": 0.0030166725628077984,
+      "context": "9001",
+      "controls": [
+       {
+        "beyond_floor": true,
+        "confounded_with_mass": true,
+        "control": "z:keep-rand0-nounI:ball",
+        "control_effect": 0.06448554992675781,
+        "control_floor_missing": false,
+        "floor": 0.002890214091166854,
+        "kind": "random",
+        "margin": 0.006738990545272827,
+        "mass_relation": "less",
+        "recovery": 0.054300939568862616,
+        "refutes": false,
+        "rules_out": [
+         "set_size"
+        ]
+       }
+      ],
+      "effect": 0.057746559381484985,
+      "finding": "low_recovery",
+      "floor": 0.0026939441449940205,
+      "floor_incomplete": false,
+      "floor_parts": {
+       "floor_incomplete": false,
+       "sham_recompute": 0.002509781625121832,
+       "twin_gap": 0.0026939441449940205,
+       "twin_gap_source": "pair distance"
+      },
+      "keep_effect": 0.057746559381484985,
+      "recovery": 0.15313016618098418,
+      "references": [
+       {
+        "control": "z:keep-nounI@rows-snow:ball",
+        "control_effect": 0.15723516047000885,
+        "kind": "other_item",
+        "note": "reported reference only; never counted for sufficiency",
+        "recovery": -1.3058986655477942
+       }
+      ],
+      "ruled_out": [
+       "set_size"
+      ],
+      "status": "not_supported",
+      "why": "keeping the set recovers 0.153 of the all-cut effect, below 0.7"
+     }
+    ],
+    "mass_confounded_controls": [
+     "z:keep-rand0-nounI:ball"
+    ],
+    "refuting_controls": [],
+    "ruled_out": [
+     "set_size"
+    ],
+    "separating_controls": [],
+    "status": "not_supported"
+   }
+  },
+  "cut_types_agree": true,
+  "findings": [
+   "low_recovery"
+  ],
+  "floor_incomplete": false,
+  "identity": {
+   "other_item_cut": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "other_item_keep": {
+    "other": "snow",
+    "separable": true,
+    "why": "same units on another item's rows: the mass the units carry for this item is not what is cut, so an equal effect means the units, not the item, matter"
+   },
+   "random_cut": {
+    "control_mass": [
+     0.2671861154410167
+    ],
+    "max_reachable_mass_bound": 0.29808122076865734,
+    "separable": false,
+    "target_mass": 0.5898258755737055,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2981 < 0.5698); identity cannot be separated from mass by random draws, use the other-item control"
+   },
+   "random_keep": {
+    "control_mass": [
+     0.2671861154410167
+    ],
+    "max_reachable_mass_bound": 0.29808122076865734,
+    "separable": false,
+    "target_mass": 0.5898258755737055,
+    "tolerance": 0.02,
+    "why": "random sets could not be mass-matched: no disjoint stratum-matched set can reach the target mass (bound 0.2981 < 0.5698); identity cannot be separated from mass by random draws, use the other-item control"
+   }
+  },
+  "item": "ball",
+  "missing_cut_types": [],
+  "overridden_by_picture": false,
+  "picture": null,
+  "picture_blocked_by": [],
+  "refuted_by": [],
+  "remaining_alternatives": [
+   "mass"
+  ],
+  "ruled_out": [
+   "set_size"
+  ],
+  "scalar_status": "not_supported",
+  "status": "not_supported",
+  "thresholds": {
+   "floor_factor": 1.0,
+   "floor_factor_waiver": null,
+   "mass_tolerance": 0.02,
+   "overlap_sd": null,
+   "recovery_threshold": 0.7,
+   "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)"
+  },
+  "twin_gap_waiver": null,
+  "unit_set": "keep-nounI",
+  "waivers": {},
+  "why": "both cut types agree"
+ }
+]
