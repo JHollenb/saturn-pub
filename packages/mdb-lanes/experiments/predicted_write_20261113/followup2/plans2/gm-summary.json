@@ -1,0 +1,25 @@
+{
+ "arms": 282,
+ "branches": 282,
+ "lease_cap": 141,
+ "leases": [
+  [
+   141,
+   148
+  ],
+  [
+   141,
+   149
+  ]
+ ],
+ "per_word": {
+  "ball": 47,
+  "black": 47,
+  "night": 47,
+  "rain": 47,
+  "red": 47,
+  "snow": 47
+ },
+ "plan_sha256": "1d5e93e99256d7da87aa02927c755446df7010ecb6af336682850842b726b623",
+ "seal_sha256": "3d1ef586983385ff1790d55688d8b68a1dd2ce9e06cfcb4945c3aab0458f4426"
+}

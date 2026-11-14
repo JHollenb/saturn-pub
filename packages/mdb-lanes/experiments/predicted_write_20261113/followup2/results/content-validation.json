@@ -1,0 +1,84 @@
+{
+ "definitions": "Content measures for rain and snow on decoded 256 px images (numpy + PIL only; no model).\n\nDefinitions (fixed before PREREG-ADDENDUM-2 was sealed; validated on native / deleted / sham first,\nsee ``validate`` and ``results/content-validation.json``):\n\n* ``rain_streak(img)``: vertical-streak energy. Y = Rec.601 luminance in [0, 1]. Horizontal\n  high-pass HP = Y - (Y box-averaged over 7 px along x). Vertical coherence V = HP box-averaged\n  over 15 px along y (rain streaks are thin, near-vertical and long, so they survive; isolated\n  texture averages out). Score = root mean square of V over the whole image.\n* ``snow_ground(img)``: fraction of pixels in the bottom 35% of the image (rows >= 0.65 H) that are\n  bright and not strongly coloured: HSV value max(R,G,B) >= 0.60 and HSV saturation <= 0.50. Snow\n  under the prompt's blue dawn light is light blue-white; the deleted image's ground is dark grey;\n  the black cat is dark and the red ball is saturated, so neither counts.\n\n``removed(c_arm, c_ref, c_del) = (c_ref - c_arm) / (c_ref - c_del)``: 0 = as the arm's reference\n(iso for head cuts, native for value swaps), 1 = as the deleted image.\n",
+ "validation": {
+  "rain": {
+   "primary": {
+    "V1": true,
+    "V1_span_over_sham": 45.318828947375586,
+    "V2": true,
+    "V3": true,
+    "allcut_removed": {
+     "m": 0.9541124962295707,
+     "z": 1.0143016573361383
+    },
+    "n_shams": 21,
+    "random_removed": {
+     "m_rand60a": 0.055512034650338514,
+     "m_rand60b": 0.029738947538954515,
+     "z_rand60a": 0.04699533272407803,
+     "z_rand60b": 0.041286188141562354
+    },
+    "roots": {
+     "del": 0.016934513951113308,
+     "iso": 0.028019362231637288,
+     "native": 0.028032262125359253
+    },
+    "sham_max_abs_dev": 0.00024488161834747973,
+    "sham_worst": "m_none_rain_sham (vs iso)",
+    "span_native_del": 0.011097748174245945
+   },
+   "rain_coherence": {
+    "V1": true,
+    "V1_span_over_sham": 23.30042822169098,
+    "V2": true,
+    "V3": false,
+    "allcut_removed": {
+     "m": 1.060917380891805,
+     "z": 1.1898055845203659
+    },
+    "n_shams": 21,
+    "random_removed": {
+     "m_rand60a": 0.10286320476521955,
+     "m_rand60b": 0.075546355803199,
+     "z_rand60a": 0.08616899660910543,
+     "z_rand60b": 0.061784701245745026
+    },
+    "roots": {
+     "del": 0.44128563094954865,
+     "iso": 0.5363635261627971,
+     "native": 0.5254691910286027
+    },
+    "sham_max_abs_dev": 0.003612961928342817,
+    "sham_worst": "vswap_sham (vs native)",
+    "span_native_del": 0.08418356007905403
+   }
+  },
+  "snow": {
+   "primary": {
+    "V1": true,
+    "V1_span_over_sham": 77.73387096774181,
+    "V2": true,
+    "V3": true,
+    "allcut_removed": {
+     "m": 0.9330543933054394,
+     "z": 0.8784286378428638
+    },
+    "n_shams": 21,
+    "random_removed": {
+     "m_rand60a": -0.022315202231520295,
+     "m_rand60b": -0.0016271501627149734,
+     "z_rand60a": -0.016620176662017663,
+     "z_rand60b": 0.004300325430032547
+    },
+    "roots": {
+     "del": 0.05959201388888889,
+     "iso": 0.4330295138888889,
+     "native": 0.4779513888888889
+    },
+    "sham_max_abs_dev": 0.005381944444444453,
+    "sham_worst": "m_own60_snow_sham (vs iso)",
+    "span_native_del": 0.418359375
+   }
+  }
+ }
+}
