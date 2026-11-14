@@ -491,11 +491,8 @@ class RowModel:
         refusal = _rope_refusal(self.config)
         if refusal is not None:
             raise Refusal(refusal)
-        rope = getattr(self.config, "rope_parameters", None) or {}
-        theta = float(rope.get("rope_theta", getattr(self.config, "rope_theta", 10000.0)))
         half = x.shape[-1] // 2
-        inv = theta ** (-2.0 * torch.arange(half, dtype=torch.float64) / x.shape[-1])
-        angle = self.row * inv
+        angle = self.row * self._inv_freq(x.shape[-1])
         cos, sin = torch.cos(angle), torch.sin(angle)
         first, second = x[..., :half], x[..., half:]
         value = torch.cat((first * cos - second * sin, first * sin + second * cos), dim=-1)
@@ -520,6 +517,22 @@ class RowModel:
             half_bound(mag_second, bsecond, mag_first, bfirst, cos.abs(), sin.abs()),
         ), dim=-1)
         return value, bound
+
+    def _rotary(self) -> Any:
+        return getattr(self.adapter.backbone, "rotary_emb", None)
+
+    def _inv_freq(self, width: int) -> Any:
+        """The RoPE inverse frequencies the model runs with: float64 of its float32
+        ``rotary_emb.inv_freq`` buffer (M49: the buffer, not ``theta^(-2i/d)`` recomputed in
+        float64, which differs from it by the buffer's float32 rounding); the formula only for a
+        model without the buffer."""
+        buffer = getattr(self._rotary(), "inv_freq", None)
+        if buffer is not None:
+            return f64(buffer)
+        torch = _torch()
+        rope = getattr(self.config, "rope_parameters", None) or {}
+        theta = float(rope.get("rope_theta", getattr(self.config, "rope_theta", 10000.0)))
+        return theta ** (-2.0 * torch.arange(width // 2, dtype=torch.float64) / width)
 
     def _kappa(self, tensor: Any) -> Any:
         groups = self.heads // self.kv_heads

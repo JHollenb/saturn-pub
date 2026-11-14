@@ -374,3 +374,19 @@ def test_a_chain_longer_than_the_record_cap_is_stored_by_pointer_with_a_project(
     assert float(other_entry.predicted) == float(entry.predicted)
     assert other_result["residual_max_abs"] == result["residual_max_abs"]
     assert other_result["native"] == result["native"]
+
+
+def test_rope_reads_the_model_inv_freq_buffer_not_the_theta_formula():
+    """M49: RoPE takes the inverse frequencies from the model's float32 ``rotary_emb.inv_freq``
+    buffer. A model whose buffer is not ``theta^(-2i/d)`` (here scaled by 1.5) runs with the
+    buffer, and so must the forecast: the old formula predicted the rotation of another model."""
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    model = tiny_model("qwen2", "fp32")
+    model.model.rotary_emb.inv_freq.mul_(1.5)
+    run = attach(model).run(PROMPT)
+    forecast.seal(run, "t3.L0.qr")
+    run.until("t3.L0.kr")
+    result = forecast.verify(run)[0]
+    assert result["verdict"] == "confirmed", result
