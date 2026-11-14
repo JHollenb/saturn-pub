@@ -201,13 +201,15 @@ def row_table(run: Any, bindings: dict[str, list[int]] | None = None, *, letters
         p = out[1]
         if p is None:
             raise Refusal("the attention module returned no weights (eager attention needed)")
-        p = p[0].double()                                            # (H, T, T)
         v = store.pop(li)                                            # (T, G, dh)
-        vb = torch.stack([v[:, h // per, :] @ backs[li][h] for h in range(H)])  # (H, T)
-        pv = p * vb[:, None, :]
-        contrib.add_(torch.einsum("hts,bs->bt", pv, masks))
-        total.add_(pv.sum((0, 2)))
-        mass.add_(torch.einsum("hts,bs->bt", p, masks))
+        for h in range(H):  # one head at a time: float64 (T, T) blocks, bounded memory
+            ph = p[0, h].double()                                    # (T, T)
+            vb = v[:, h // per, :] @ backs[li][h]                    # (T,)
+            pv = ph * vb[None, :]
+            contrib.add_((pv @ masks.T).T)
+            total.add_(pv.sum(1))
+            mass.add_((ph @ masks.T).T)
+            del ph, pv
 
     def n_hook(mod, inp, out):
         store["pre"] = inp[0][0]
