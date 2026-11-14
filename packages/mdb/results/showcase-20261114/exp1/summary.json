@@ -1,0 +1,61 @@
+{
+ "n": 110,
+ "wrong": 27,
+ "correct": 83,
+ "W1": {
+  "fired_wrong": "18/27",
+  "fired_correct": "30/83",
+  "holds": false,
+  "below_15_country_not_in_dictionary": false,
+  "wrong_with_truth_feature": 26,
+  "wrong_with_wrong_feature_active": 19
+ },
+ "W2": {
+  "R1_repairs_where_fired": "9/18",
+  "R1_repairs_all_wrong": "12/27",
+  "R2_repairs_all_wrong": "22/27",
+  "median_R1_over_R2_margin_move": 0.38742964352720455,
+  "n_ratio": 26,
+  "holds": false,
+  "repaired_ids": [
+   "d3-lm:the Astronomical Clock of the Old Town",
+   "d3-per:Harry Houdini",
+   "d4-work:the film The Great Dictator",
+   "d4-work:the opera Carmen",
+   "d4-work:the play Miss Julie",
+   "d3-lm:the Pantheon",
+   "d3-per:Franz Kafka",
+   "d3-per:Marie Curie",
+   "d4-work:the novel The Trial"
+  ]
+ },
+ "W3": {
+  "R1_copy": 0,
+  "R2_copy_city_donor": "0/0",
+  "R2_copy_any_donor": "0/27",
+  "holds": false
+ },
+ "W4": {
+  "R3_below_floor": "51/110",
+  "holds": false,
+  "R3_repairs_wrong": 6
+ },
+ "nulls": {
+  "RND_repairs_wrong": "2/26",
+  "R1_on_correct_argmax_changes": "1/82",
+  "lastrow_watch_wrong": "14/27",
+  "lastrow_watch_correct": "22/83"
+ },
+ "falsifier": {
+  "R1_repairs_lt_RND_plus_2": false,
+  "W1_fails": true
+ },
+ "verify_R1": {
+  "n": 26,
+  "verdicts": {
+   "confirmed": 26
+  },
+  "refused": 0
+ },
+ "seal_refusals": 0
+}

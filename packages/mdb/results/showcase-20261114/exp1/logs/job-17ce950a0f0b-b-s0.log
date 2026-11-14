@@ -1,0 +1,65 @@
+mrun: job-17ce950a0f0b -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision a727389 script exp1_depth.py
+[    5.8s] load
+[    9.7s] B d3-lm:Anitkabir 3.9s
+[   12.2s] B d3-lm:Buckingham Palace 2.55s
+[   16.6s] B d3-lm:Gyeongbokgung Palace 4.35s
+[   19.7s] B d3-lm:Red Square 3.16s
+[   22.9s] B d3-lm:Saint Basil's Cathedral 3.17s
+[   26.6s] B d3-lm:Shibuya Crossing 3.66s
+[   29.7s] B d3-lm:Suomenlinna fortress 3.19s
+[   31.3s] B d3-lm:Tower Bridge 1.6s
+[   35.0s] B d3-lm:the Acropolis 3.63s
+[   41.9s] B d3-lm:the Astronomical Clock of the Old Town 6.92s
+[   46.3s] B d3-lm:the Belvedere palace 4.45s
+[   49.1s] B d3-lm:the Charles Bridge 2.71s
+[   53.2s] B d3-lm:the Eiffel Tower 4.13s
+[   57.8s] B d3-lm:the Jeronimos Monastery 4.63s
+[   59.4s] B d3-lm:the Kremlin 1.59s
+[   61.3s] B d3-lm:the Louvre 1.9s
+[   65.0s] B d3-lm:the Palace of Culture and Science 3.66s
+[   68.5s] B d3-lm:the Parthenon 3.48s
+[   72.3s] B d3-lm:the Reichstag building 3.81s
+[   76.6s] B d3-lm:the Senso-ji temple 4.35s
+[   81.1s] B d3-lm:the Trevi Fountain 4.52s
+[   84.3s] B d3-lm:the Vigeland sculpture park 3.2s
+[   86.6s] B d3-per:Alexander von Humboldt 2.25s
+[   92.5s] B d3-per:Baruch Spinoza 5.95s
+[   94.5s] B d3-per:Claude Monet 1.93s
+[   98.8s] B d3-per:Ennio Morricone 4.31s
+[  100.4s] B d3-per:Fernando Pessoa 1.61s
+[  102.6s] B d3-per:Franz Schubert 2.25s
+[  104.5s] B d3-per:Georges Bizet 1.93s
+[  111.1s] B d3-per:Harry Houdini 6.59s
+[  113.1s] B d3-per:Johann Strauss II 1.95s
+[  116.3s] B d3-per:Julius Caesar 3.23s
+[  118.7s] B d3-per:Ludwig Wittgenstein 2.43s
+[  121.0s] B d3-per:Marlene Dietrich 2.25s
+[  126.9s] B d3-per:Naguib Mahfouz 5.93s
+[  131.3s] B d3-per:Niels Bohr 4.4s
+[  133.5s] B d3-per:Pericles 2.21s
+[  139.9s] B d3-per:Rainer Maria Rilke 6.33s
+[  143.8s] B d3-per:Soren Kierkegaard 3.9s
+[  146.2s] B d3-per:Voltaire 2.4s
+[  149.2s] B d3-per:Yukio Mishima 3.04s
+[  151.9s] B d4-work:Eugene Onegin 2.67s
+[  158.7s] B d4-work:The Blue Danube waltz 6.81s
+[  163.1s] B d4-work:The Great Wave off Kanagawa 4.4s
+[  167.4s] B d4-work:The Republic 4.31s
+[  173.7s] B d4-work:the Duino Elegies 6.35s
+[  179.7s] B d4-work:the Tractatus Logico-Philosophicus 5.92s
+[  185.4s] B d4-work:the book Either/Or 5.74s
+[  191.6s] B d4-work:the film The Great Dictator 6.16s
+[  195.8s] B d4-work:the novel Crime and Punishment 4.27s
+[  199.8s] B d4-work:the novel Mrs Dalloway 3.99s
+[  205.9s] B d4-work:the novel The Sound of Waves 6.04s
+[  210.9s] B d4-work:the opera Carmen 5.08s
+[  217.1s] B d4-work:the play Fuenteovejuna 6.16s
+[  224.5s] B d4-work:the play Miss Julie 7.35s
+[  224.5s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:46.03
+	Maximum resident set size (kbytes): 4358556
+mrun: job-17ce950a0f0b -> succeeded
+mrun: job-17ce950a0f0b finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 226.36, 'peak_rss_mb': 3803.6, 'peak_vram_mb': 3876.0}
