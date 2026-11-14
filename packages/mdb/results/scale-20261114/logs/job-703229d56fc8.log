@@ -1,0 +1,32 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 824166cb6f811d0ac07be28e5aa39c3bf38fa5c1 script arms.py args /mnt/ssd1tb/cache/beast/scale/substrate-bind/Qwen2.5-0.5B-substrate-bind /mnt/ssd1tb/cache/beast/scale/Qwen2.5-0.5B-substrate-bind /mnt/big/mrun-scratch/job-eba76bfce5e3/sw-nc capture-Qwen2.5-0.5B-substrate-bind-nc.json a2-nc-split.json split
+load 2.8s
+A2s {"id": "currency:afghani", "s": 0.89}
+A2s {"id": "currency:dollar", "s": 0.71}
+A2s {"id": "currency:pound sterling", "s": 0.71}
+A2s {"id": "currency:renminbi", "s": 0.63}
+A2s {"id": "currency:rupiah", "s": 0.63}
+A2s {"id": "currency:shekel", "s": 0.63}
+A2s {"id": "currency:yen", "s": 0.75}
+A2s {"id": "person:Mozart", "s": 0.66}
+A2s {"id": "person:Charles Dickens", "s": 0.9}
+A2s {"id": "person:Pablo Neruda", "s": 0.65}
+A2s {"id": "person:Confucius", "s": 0.65}
+A2s {"id": "person:Fidel Castro", "s": 0.65}
+A2s {"id": "person:Antonin Dvorak", "s": 0.65}
+A2s {"id": "person:Hans Christian Andersen", "s": 0.64}
+A2s {"id": "person:Plato", "s": 0.93}
+A2s {"id": "person:Franz Liszt", "s": 1.26}
+A2s {"id": "person:James Joyce", "s": 0.67}
+A2s {"id": "landmark:Mount Rushmore", "s": 0.76}
+A2s {"id": "landmark:Schonbrunn Palace", "s": 0.66}
+A2s {"id": "landmark:the Forbidden City", "s": 0.73}
+A2s {"id": "landmark:the Acropolis", "s": 0.74}
+A2s {"id": "landmark:Borobudur", "s": 0.65}
+A2s {"id": "landmark:Persepolis", "s": 0.65}
+A2s {"id": "city:Plovdiv", "s": 0.67}
+A2s {"id": "city:Valparaiso", "s": 0.66}
+TOTAL 20.9s peak 992 MB
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:22.49
+	Maximum resident set size (kbytes): 3810576

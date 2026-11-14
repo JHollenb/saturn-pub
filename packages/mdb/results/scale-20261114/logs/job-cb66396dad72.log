@@ -1,0 +1,41 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 36c3236207b8c21a7814a9abb6cc06c7c88f6ef7 script hopmath.py args /mnt/big/llm-models/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale-supp/Qwen3-4B-Base /mnt/big/mrun-scratch/job-814cba27cc43/score-Qwen3-4B-Base.json /mnt/big/mrun-scratch/job-27b3c55637ea/supscore-Qwen3-4B-Base.json hm-Qwen3-4B-Base-s2.json h3
+load 3.7s
+H3 {"id": "currency:pound sterling", "s": 14.64}
+H3 {"id": "currency:koruna", "s": 14.56}
+H3 {"id": "currency:rial", "s": 14.55}
+H3 {"id": "currency:shilling", "s": 1.45}
+H3 {"id": "person:Pablo Neruda", "s": 14.65}
+H3 {"id": "person:Antonin Dvorak", "s": 14.57}
+H3 {"id": "person:Goethe", "s": 14.57}
+H3 {"id": "person:James Joyce", "s": 15.81}
+H3 {"id": "landmark:Schonbrunn Palace", "s": 20.78}
+H3 {"id": "landmark:the Forbidden City", "s": 17.81}
+H3 {"id": "landmark:the Acropolis", "s": 21.72}
+H3 {"id": "landmark:Babylon", "s": 21.85}
+H3 {"id": "city:Salzburg", "s": 21.6}
+H3 {"id": "city:Plovdiv", "s": 21.66}
+H3 {"id": "city:Shanghai", "s": 21.99}
+H3 {"id": "city:Alexandria", "s": 21.79}
+H3 {"id": "d2:Prague", "s": 21.57}
+H3 {"id": "d2:Helsinki", "s": 21.77}
+H3 {"id": "d2:Athens", "s": 15.34}
+H3 {"id": "d2:Tokyo", "s": 14.6}
+H3 {"id": "d3-lm:Schonbrunn Palace", "s": 14.47}
+H3 {"id": "d3-lm:Tivoli Gardens", "s": 1.47}
+H3 {"id": "d3-lm:Notre-Dame Cathedral", "s": 14.54}
+H3 {"id": "d3-lm:Fisherman's Bastion", "s": 14.45}
+H3 {"id": "d3-lm:Gyeongbokgung Palace", "s": 17.1}
+H3 {"id": "d3-per:Charlie Chaplin", "s": 20.3}
+H3 {"id": "d3-per:Naguib Mahfouz", "s": 20.99}
+H3 {"id": "d3-per:Pericles", "s": 14.74}
+H3 {"id": "d3-per:Hokusai", "s": 14.65}
+H3 {"id": "d3-per:Fernando Pessoa", "s": 14.6}
+H3 {"id": "d4-work:The Metamorphosis", "s": 1.45}
+H3 {"id": "d4-work:Candide", "s": 14.52}
+H3 {"id": "d4-work:the Rubik's Cube", "s": 14.64}
+H3 {"id": "d4-work:The Book of Disquiet", "s": 14.64}
+TOTAL 551.0s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:14.12
+	Maximum resident set size (kbytes): 24216320

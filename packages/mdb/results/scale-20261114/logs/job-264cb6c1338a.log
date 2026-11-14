@@ -1,0 +1,61 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 7613626f01146450b60319a04d1216c1a7771664 script hopmath.py args /mnt/big/llm-models/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale-supp/Qwen3-4B-Base /mnt/big/mrun-scratch/job-814cba27cc43/score-Qwen3-4B-Base.json /mnt/big/mrun-scratch/job-27b3c55637ea/supscore-Qwen3-4B-Base.json hm-Qwen3-4B-Base-s0.json all
+load 2.9s
+OP {"id": "d3-lm:Tivoli Gardens", "s": 1.81}
+OP {"id": "d3-lm:the Colosseum", "s": 1.57}
+OP {"id": "d3-per:Franz Kafka", "s": 1.49}
+OP {"id": "d4-work:the film The Great Dictator", "s": 1.57}
+OP {"id": "d4-work:The Metamorphosis", "s": 1.54}
+OP {"id": "d4-work:the novel Palace Walk", "s": 1.47}
+OP {"id": "d4-work:The Arcades Project", "s": 1.48}
+OP {"id": "d4-work:the Commentaries on the Gallic War", "s": 1.48}
+OP {"id": "d5:d5-081", "s": 1.46}
+OP {"id": "d5:d5-102", "s": 1.46}
+OP {"id": "d5:d5-042", "s": 1.46}
+OP {"id": "d5:d5-005", "s": 1.47}
+OP {"id": "d5:d5-088", "s": 1.47}
+OP {"id": "d5:d5-064", "s": 1.45}
+OP {"id": "d5:d5-104", "s": 1.45}
+OP {"id": "d5:d5-094", "s": 1.57}
+OP {"id": "d5:d5-012", "s": 1.53}
+OP {"id": "d5:d5-065", "s": 1.48}
+OP {"id": "d5:d5-105", "s": 1.48}
+H3 {"id": "currency:afghani", "s": 14.55}
+H3 {"id": "currency:lev", "s": 14.54}
+H3 {"id": "currency:forint", "s": 14.54}
+H3 {"id": "currency:shekel", "s": 14.53}
+H3 {"id": "person:Mozart", "s": 14.52}
+H3 {"id": "person:Confucius", "s": 14.5}
+H3 {"id": "person:Hans Christian Andersen", "s": 14.52}
+H3 {"id": "person:Plato", "s": 14.35}
+H3 {"id": "landmark:Mount Rushmore", "s": 14.51}
+H3 {"id": "landmark:Stonehenge", "s": 14.53}
+H3 {"id": "landmark:the Sphinx", "s": 14.6}
+H3 {"id": "landmark:Borobudur", "s": 1.46}
+H3 {"id": "city:Chicago", "s": 14.54}
+H3 {"id": "city:Antwerp", "s": 14.54}
+H3 {"id": "city:Toronto", "s": 14.54}
+H3 {"id": "city:Brno", "s": 14.52}
+H3 {"id": "d2:Vienna", "s": 14.53}
+H3 {"id": "d2:Copenhagen", "s": 14.52}
+H3 {"id": "d2:Paris", "s": 14.49}
+H3 {"id": "d2:Budapest", "s": 14.5}
+H3 {"id": "d2:Seoul", "s": 14.47}
+H3 {"id": "d3-lm:Big Ben", "s": 14.4}
+H3 {"id": "d3-lm:the Khan el-Khalili bazaar", "s": 14.49}
+H3 {"id": "d3-lm:the Brandenburg Gate", "s": 14.51}
+H3 {"id": "d3-lm:the Colosseum", "s": 1.43}
+H3 {"id": "d3-lm:the Anne Frank House", "s": 14.58}
+H3 {"id": "d3-per:Franz Kafka", "s": 1.45}
+H3 {"id": "d3-per:Claude Monet", "s": 14.66}
+H3 {"id": "d3-per:Erno Rubik", "s": 14.68}
+H3 {"id": "d3-per:Baruch Spinoza", "s": 14.68}
+H3 {"id": "d4-work:The Blue Danube waltz", "s": 14.7}
+H3 {"id": "d4-work:the book Either/Or", "s": 14.67}
+H3 {"id": "d4-work:The Arcades Project", "s": 1.45}
+H3 {"id": "d4-work:the Commentaries on the Gallic War", "s": 1.45}
+H3 {"id": "d4-work:Eugene Onegin", "s": 14.65}
+TOTAL 505.9s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:29.25
+	Maximum resident set size (kbytes): 24045300

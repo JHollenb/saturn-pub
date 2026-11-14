@@ -1,0 +1,8 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 824166cb6f811d0ac07be28e5aa39c3bf38fa5c1 script merge_lora.py args /mnt/big/llm-models/Qwen2.5-0.5B /mnt/ssd1tb/cache/beast/scale/substrate-bind/bind_adapter.pt /mnt/ssd1tb/cache/beast/scale/substrate-bind/Qwen2.5-0.5B-substrate-bind
+meta {'arm': 'sft', 'base': 'qwen2.5-0.5b', 'rank': 8, 'alpha': 16.0, 'targets': ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'], 'steps': 500, 'operator': 'k-hop-binding'}
+merged 168 modules; relative |dW|/|W| median 0.0200 max 0.0472
+saved /mnt/ssd1tb/cache/beast/scale/substrate-bind/Qwen2.5-0.5B-substrate-bind torch.float32
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.06
+	Maximum resident set size (kbytes): 3824168

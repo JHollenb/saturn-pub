@@ -1,0 +1,143 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 439fd7b398be3a7a8a803edfdf110e856684ad8b script hopmath.py args /mnt/big/llm-models/Qwen3-0.6B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-0.6B-Base /mnt/ssd1tb/cache/beast/scale-supp/Qwen3-0.6B-Base /mnt/big/mrun-scratch/job-ab9518fdaae9/score-Qwen3-0.6B-Base.json /mnt/big/mrun-scratch/job-4eabe5b81476/supscore-Qwen3-0.6B-Base.json hm-Qwen3-0.6B-Base.json all
+load 0.4s
+OP {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 0.34}
+OP {"id": "d3-lm:Tivoli Gardens", "s": 0.28}
+OP {"id": "d3-lm:Fisherman's Bastion", "s": 0.28}
+OP {"id": "d3-per:Franz Kafka", "s": 0.27}
+OP {"id": "d3-per:Erno Rubik", "s": 0.27}
+OP {"id": "d3-per:Baruch Spinoza", "s": 0.27}
+OP {"id": "d4-work:the film The Great Dictator", "s": 0.28}
+OP {"id": "d4-work:The Metamorphosis", "s": 0.28}
+OP {"id": "d4-work:the book Either/Or", "s": 0.27}
+OP {"id": "d4-work:the novel Palace Walk", "s": 0.28}
+OP {"id": "d4-work:The Arcades Project", "s": 0.27}
+OP {"id": "d4-work:The Republic", "s": 0.28}
+OP {"id": "d4-work:the Rubik's Cube", "s": 0.29}
+OP {"id": "d4-work:the Commentaries on the Gallic War", "s": 0.26}
+OP {"id": "d4-work:The Book of Disquiet", "s": 0.26}
+OP {"id": "d5:d5-055", "s": 0.26}
+OP {"id": "d5:d5-081", "s": 0.26}
+OP {"id": "d5:d5-093", "s": 0.26}
+OP {"id": "d5:d5-102", "s": 0.26}
+OP {"id": "d5:d5-022", "s": 0.25}
+OP {"id": "d5:d5-042", "s": 0.25}
+OP {"id": "d5:d5-005", "s": 0.25}
+OP {"id": "d5:d5-088", "s": 0.25}
+OP {"id": "d5:d5-064", "s": 0.25}
+OP {"id": "d5:d5-104", "s": 0.26}
+OP {"id": "d5:d5-094", "s": 0.26}
+OP {"id": "d5:d5-012", "s": 0.25}
+OP {"id": "d5:d5-082", "s": 0.25}
+OP {"id": "d5:d5-023", "s": 0.25}
+OP {"id": "d5:d5-045", "s": 0.26}
+OP {"id": "d5:d5-065", "s": 0.25}
+OP {"id": "d5:d5-105", "s": 0.26}
+H3 {"id": "currency:afghani", "s": 0.25}
+H3 {"id": "currency:dollar", "s": 0.24}
+H3 {"id": "currency:pound sterling", "s": 1.74}
+H3 {"id": "currency:lev", "s": 0.24}
+H3 {"id": "currency:renminbi", "s": 1.56}
+H3 {"id": "currency:koruna", "s": 0.25}
+H3 {"id": "currency:forint", "s": 0.25}
+H3 {"id": "currency:rupiah", "s": 1.56}
+H3 {"id": "currency:rial", "s": 0.25}
+H3 {"id": "currency:shekel", "s": 1.72}
+H3 {"id": "currency:yen", "s": 1.84}
+H3 {"id": "currency:shilling", "s": 0.28}
+H3 {"id": "person:Mozart", "s": 1.74}
+H3 {"id": "person:Charles Dickens", "s": 1.72}
+H3 {"id": "person:Pablo Neruda", "s": 1.72}
+H3 {"id": "person:Confucius", "s": 1.72}
+H3 {"id": "person:Fidel Castro", "s": 1.72}
+H3 {"id": "person:Antonin Dvorak", "s": 0.25}
+H3 {"id": "person:Hans Christian Andersen", "s": 1.72}
+H3 {"id": "person:Jean Sibelius", "s": 1.73}
+H3 {"id": "person:Goethe", "s": 0.25}
+H3 {"id": "person:Plato", "s": 1.8}
+H3 {"id": "person:Franz Liszt", "s": 0.26}
+H3 {"id": "person:James Joyce", "s": 1.8}
+H3 {"id": "landmark:Mount Rushmore", "s": 1.74}
+H3 {"id": "landmark:Uluru", "s": 1.72}
+H3 {"id": "landmark:Schonbrunn Palace", "s": 1.72}
+H3 {"id": "landmark:Stonehenge", "s": 0.25}
+H3 {"id": "landmark:Niagara Falls", "s": 0.25}
+H3 {"id": "landmark:the Forbidden City", "s": 1.74}
+H3 {"id": "landmark:the Sphinx", "s": 0.24}
+H3 {"id": "landmark:Neuschwanstein Castle", "s": 0.24}
+H3 {"id": "landmark:the Acropolis", "s": 1.72}
+H3 {"id": "landmark:Borobudur", "s": 1.72}
+H3 {"id": "landmark:Persepolis", "s": 1.86}
+H3 {"id": "landmark:Babylon", "s": 0.28}
+H3 {"id": "city:Chicago", "s": 0.28}
+H3 {"id": "city:Melbourne", "s": 0.28}
+H3 {"id": "city:Salzburg", "s": 2.15}
+H3 {"id": "city:Antwerp", "s": 2.06}
+H3 {"id": "city:Liverpool", "s": 0.28}
+H3 {"id": "city:Plovdiv", "s": 1.98}
+H3 {"id": "city:Toronto", "s": 1.97}
+H3 {"id": "city:Valparaiso", "s": 1.98}
+H3 {"id": "city:Shanghai", "s": 1.97}
+H3 {"id": "city:Brno", "s": 1.96}
+H3 {"id": "city:Aarhus", "s": 1.92}
+H3 {"id": "city:Alexandria", "s": 2.07}
+H3 {"id": "d2:Vienna", "s": 1.91}
+H3 {"id": "d2:London", "s": 1.81}
+H3 {"id": "d2:Prague", "s": 1.82}
+H3 {"id": "d2:Copenhagen", "s": 1.82}
+H3 {"id": "d2:Cairo", "s": 1.88}
+H3 {"id": "d2:Helsinki", "s": 1.81}
+H3 {"id": "d2:Paris", "s": 1.81}
+H3 {"id": "d2:Berlin", "s": 1.93}
+H3 {"id": "d2:Athens", "s": 1.88}
+H3 {"id": "d2:Budapest", "s": 1.89}
+H3 {"id": "d2:Rome", "s": 1.78}
+H3 {"id": "d2:Tokyo", "s": 1.81}
+H3 {"id": "d2:Seoul", "s": 1.8}
+H3 {"id": "d2:Amsterdam", "s": 1.82}
+H3 {"id": "d3-lm:Schonbrunn Palace", "s": 1.87}
+H3 {"id": "d3-lm:Big Ben", "s": 1.86}
+H3 {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 0.29}
+H3 {"id": "d3-lm:Tivoli Gardens", "s": 0.29}
+H3 {"id": "d3-lm:the Khan el-Khalili bazaar", "s": 1.9}
+H3 {"id": "d3-lm:Suomenlinna fortress", "s": 1.85}
+H3 {"id": "d3-lm:Notre-Dame Cathedral", "s": 1.88}
+H3 {"id": "d3-lm:the Brandenburg Gate", "s": 1.81}
+H3 {"id": "d3-lm:the Acropolis", "s": 1.82}
+H3 {"id": "d3-lm:Fisherman's Bastion", "s": 0.26}
+H3 {"id": "d3-lm:the Colosseum", "s": 1.83}
+H3 {"id": "d3-lm:Shibuya Crossing", "s": 1.89}
+H3 {"id": "d3-lm:Gyeongbokgung Palace", "s": 1.92}
+H3 {"id": "d3-lm:the Anne Frank House", "s": 1.89}
+H3 {"id": "d3-per:Franz Schubert", "s": 1.83}
+H3 {"id": "d3-per:Charlie Chaplin", "s": 1.83}
+H3 {"id": "d3-per:Franz Kafka", "s": 0.27}
+H3 {"id": "d3-per:Niels Bohr", "s": 1.87}
+H3 {"id": "d3-per:Naguib Mahfouz", "s": 1.79}
+H3 {"id": "d3-per:Claude Monet", "s": 1.82}
+H3 {"id": "d3-per:Alexander von Humboldt", "s": 1.82}
+H3 {"id": "d3-per:Pericles", "s": 1.9}
+H3 {"id": "d3-per:Erno Rubik", "s": 0.32}
+H3 {"id": "d3-per:Ennio Morricone", "s": 1.88}
+H3 {"id": "d3-per:Hokusai", "s": 1.84}
+H3 {"id": "d3-per:Baruch Spinoza", "s": 0.26}
+H3 {"id": "d3-per:Marie Curie", "s": 0.27}
+H3 {"id": "d3-per:Fernando Pessoa", "s": 1.84}
+H3 {"id": "d4-work:The Blue Danube waltz", "s": 1.84}
+H3 {"id": "d4-work:the film The Great Dictator", "s": 0.27}
+H3 {"id": "d4-work:The Metamorphosis", "s": 0.27}
+H3 {"id": "d4-work:the book Either/Or", "s": 0.27}
+H3 {"id": "d4-work:the novel Palace Walk", "s": 0.27}
+H3 {"id": "d4-work:Candide", "s": 1.89}
+H3 {"id": "d4-work:The Arcades Project", "s": 0.26}
+H3 {"id": "d4-work:The Republic", "s": 0.26}
+H3 {"id": "d4-work:the Rubik's Cube", "s": 0.25}
+H3 {"id": "d4-work:the Commentaries on the Gallic War", "s": 0.26}
+H3 {"id": "d4-work:The Great Wave off Kanagawa", "s": 1.85}
+H3 {"id": "d4-work:The Book of Disquiet", "s": 0.28}
+H3 {"id": "d4-work:Eugene Onegin", "s": 1.9}
+H3 {"id": "d4-work:the play Fuenteovejuna", "s": 1.95}
+TOTAL 151.6s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:34.40
+	Maximum resident set size (kbytes): 4504700

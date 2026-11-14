@@ -1,0 +1,42 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 331d677f0e973e5c44fda98055ecab1dc1635420 script hopmath.py args /mnt/big/llm-models/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale-supp/Qwen3-4B-Base /mnt/big/mrun-scratch/job-814cba27cc43/score-Qwen3-4B-Base.json /mnt/big/mrun-scratch/job-27b3c55637ea/supscore-Qwen3-4B-Base.json hm-Qwen3-4B-Base-s1.json h3
+load 4.2s
+H3 {"id": "currency:dollar", "s": 14.71}
+H3 {"id": "currency:renminbi", "s": 14.4}
+H3 {"id": "currency:rupiah", "s": 14.45}
+H3 {"id": "currency:yen", "s": 14.42}
+H3 {"id": "person:Charles Dickens", "s": 14.41}
+H3 {"id": "person:Fidel Castro", "s": 14.37}
+H3 {"id": "person:Jean Sibelius", "s": 14.34}
+H3 {"id": "person:Franz Liszt", "s": 1.52}
+H3 {"id": "landmark:Uluru", "s": 1.46}
+H3 {"id": "landmark:Niagara Falls", "s": 1.43}
+H3 {"id": "landmark:Neuschwanstein Castle", "s": 1.43}
+H3 {"id": "landmark:Persepolis", "s": 14.31}
+H3 {"id": "city:Melbourne", "s": 14.41}
+H3 {"id": "city:Liverpool", "s": 14.49}
+H3 {"id": "city:Valparaiso", "s": 14.24}
+H3 {"id": "city:Aarhus", "s": 14.19}
+H3 {"id": "d2:London", "s": 14.31}
+H3 {"id": "d2:Cairo", "s": 14.43}
+H3 {"id": "d2:Berlin", "s": 14.45}
+H3 {"id": "d2:Rome", "s": 14.45}
+H3 {"id": "d2:Amsterdam", "s": 14.45}
+H3 {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 14.44}
+H3 {"id": "d3-lm:Suomenlinna fortress", "s": 14.45}
+H3 {"id": "d3-lm:the Acropolis", "s": 14.46}
+H3 {"id": "d3-lm:Shibuya Crossing", "s": 14.36}
+H3 {"id": "d3-per:Franz Schubert", "s": 14.34}
+H3 {"id": "d3-per:Niels Bohr", "s": 14.42}
+H3 {"id": "d3-per:Alexander von Humboldt", "s": 14.46}
+H3 {"id": "d3-per:Ennio Morricone", "s": 14.47}
+H3 {"id": "d3-per:Marie Curie", "s": 1.45}
+H3 {"id": "d4-work:the film The Great Dictator", "s": 1.45}
+H3 {"id": "d4-work:the novel Palace Walk", "s": 1.54}
+H3 {"id": "d4-work:The Republic", "s": 14.31}
+H3 {"id": "d4-work:The Great Wave off Kanagawa", "s": 14.46}
+H3 {"id": "d4-work:the play Fuenteovejuna", "s": 14.46}
+TOTAL 424.6s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:07.75
+	Maximum resident set size (kbytes): 24101120

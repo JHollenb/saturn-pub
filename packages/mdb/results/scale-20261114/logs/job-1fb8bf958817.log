@@ -1,0 +1,6 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b4a7779d2aad5f314460826855eca8117e9d2dd7 script retrace.py args /mnt/big/llm-models/Qwen2.5-0.5B /mnt/ssd1tb/cache/beast/scale/Qwen2.5-0.5B /mnt/big/mrun-scratch/job-89b589182160/score-Qwen2.5-0.5B.json rt-Qwen2.5-0.5B.json
+TOTAL 128
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.86
+	Maximum resident set size (kbytes): 3825716

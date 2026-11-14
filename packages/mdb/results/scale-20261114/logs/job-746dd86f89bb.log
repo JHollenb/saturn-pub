@@ -1,0 +1,86 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 439fd7b398be3a7a8a803edfdf110e856684ad8b script hopmath.py args /mnt/big/llm-models/Qwen3-1.7B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-1.7B-Base /mnt/ssd1tb/cache/beast/scale-supp/Qwen3-1.7B-Base /mnt/big/mrun-scratch/job-6b599614fc60/score-Qwen3-1.7B-Base.json /mnt/big/mrun-scratch/job-46abe93b5edd/supscore-Qwen3-1.7B-Base.json hm-Qwen3-1.7B-Base-s0.json all
+load 0.7s
+OP {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 0.68}
+OP {"id": "d3-lm:Tivoli Gardens", "s": 0.59}
+OP {"id": "d3-lm:Fisherman's Bastion", "s": 0.59}
+OP {"id": "d3-lm:the Colosseum", "s": 0.59}
+OP {"id": "d3-per:Franz Kafka", "s": 0.59}
+OP {"id": "d3-per:Baruch Spinoza", "s": 0.59}
+OP {"id": "d4-work:The Blue Danube waltz", "s": 0.6}
+OP {"id": "d4-work:the film The Great Dictator", "s": 0.59}
+OP {"id": "d4-work:The Metamorphosis", "s": 0.59}
+OP {"id": "d4-work:the book Either/Or", "s": 0.59}
+OP {"id": "d4-work:The Arcades Project", "s": 0.59}
+OP {"id": "d4-work:The Republic", "s": 0.58}
+OP {"id": "d4-work:the Commentaries on the Gallic War", "s": 0.59}
+OP {"id": "d4-work:The Book of Disquiet", "s": 0.58}
+OP {"id": "d5:d5-055", "s": 0.58}
+OP {"id": "d5:d5-081", "s": 0.59}
+OP {"id": "d5:d5-102", "s": 0.59}
+OP {"id": "d5:d5-022", "s": 0.58}
+OP {"id": "d5:d5-042", "s": 0.61}
+OP {"id": "d5:d5-005", "s": 0.62}
+OP {"id": "d5:d5-088", "s": 0.66}
+OP {"id": "d5:d5-064", "s": 0.66}
+OP {"id": "d5:d5-104", "s": 0.67}
+OP {"id": "d5:d5-094", "s": 0.76}
+OP {"id": "d5:d5-023", "s": 0.66}
+OP {"id": "d5:d5-065", "s": 0.68}
+OP {"id": "d5:d5-105", "s": 0.7}
+H3 {"id": "currency:afghani", "s": 4.87}
+H3 {"id": "currency:pound sterling", "s": 4.63}
+H3 {"id": "currency:renminbi", "s": 4.47}
+H3 {"id": "currency:forint", "s": 4.51}
+H3 {"id": "currency:rial", "s": 4.43}
+H3 {"id": "currency:yen", "s": 4.39}
+H3 {"id": "person:Mozart", "s": 4.6}
+H3 {"id": "person:Pablo Neruda", "s": 4.41}
+H3 {"id": "person:Fidel Castro", "s": 4.48}
+H3 {"id": "person:Hans Christian Andersen", "s": 4.42}
+H3 {"id": "person:Goethe", "s": 0.66}
+H3 {"id": "person:Franz Liszt", "s": 4.47}
+H3 {"id": "landmark:Mount Rushmore", "s": 4.44}
+H3 {"id": "landmark:Schonbrunn Palace", "s": 4.42}
+H3 {"id": "landmark:Niagara Falls", "s": 0.62}
+H3 {"id": "landmark:the Sphinx", "s": 4.59}
+H3 {"id": "landmark:the Acropolis", "s": 4.42}
+H3 {"id": "landmark:Persepolis", "s": 4.52}
+H3 {"id": "city:Chicago", "s": 4.43}
+H3 {"id": "city:Salzburg", "s": 4.56}
+H3 {"id": "city:Liverpool", "s": 4.46}
+H3 {"id": "city:Toronto", "s": 4.42}
+H3 {"id": "city:Shanghai", "s": 4.59}
+H3 {"id": "city:Aarhus", "s": 4.43}
+H3 {"id": "d2:Vienna", "s": 4.48}
+H3 {"id": "d2:Prague", "s": 4.38}
+H3 {"id": "d2:Cairo", "s": 4.6}
+H3 {"id": "d2:Paris", "s": 4.64}
+H3 {"id": "d2:Athens", "s": 4.52}
+H3 {"id": "d2:Rome", "s": 4.89}
+H3 {"id": "d2:Seoul", "s": 4.5}
+H3 {"id": "d3-lm:Schonbrunn Palace", "s": 4.58}
+H3 {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 0.65}
+H3 {"id": "d3-lm:the Khan el-Khalili bazaar", "s": 4.52}
+H3 {"id": "d3-lm:Notre-Dame Cathedral", "s": 4.64}
+H3 {"id": "d3-lm:the Acropolis", "s": 4.4}
+H3 {"id": "d3-lm:the Colosseum", "s": 0.62}
+H3 {"id": "d3-lm:Gyeongbokgung Palace", "s": 4.62}
+H3 {"id": "d3-per:Franz Schubert", "s": 5.12}
+H3 {"id": "d3-per:Franz Kafka", "s": 0.63}
+H3 {"id": "d3-per:Naguib Mahfouz", "s": 4.44}
+H3 {"id": "d3-per:Alexander von Humboldt", "s": 4.5}
+H3 {"id": "d3-per:Erno Rubik", "s": 4.54}
+H3 {"id": "d3-per:Hokusai", "s": 4.54}
+H3 {"id": "d3-per:Marie Curie", "s": 0.61}
+H3 {"id": "d4-work:The Blue Danube waltz", "s": 0.62}
+H3 {"id": "d4-work:The Metamorphosis", "s": 0.62}
+H3 {"id": "d4-work:the novel Palace Walk", "s": 4.4}
+H3 {"id": "d4-work:The Arcades Project", "s": 0.63}
+H3 {"id": "d4-work:the Rubik's Cube", "s": 4.66}
+H3 {"id": "d4-work:The Great Wave off Kanagawa", "s": 5.08}
+H3 {"id": "d4-work:Eugene Onegin", "s": 4.39}
+TOTAL 232.2s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:55.09
+	Maximum resident set size (kbytes): 11092676
