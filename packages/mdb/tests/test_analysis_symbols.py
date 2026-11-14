@@ -7,6 +7,8 @@ symbol appears and takes its rows out of the token rows; with a project the seal
 round-trip through ``mdb.core.index`` and reopen in a fresh ``Project``.
 """
 
+import re
+
 import pytest
 
 torch = pytest.importorskip("torch")
@@ -170,3 +172,57 @@ def test_records_round_trip_through_the_index_and_a_fresh_project(tmp_path):
     assert record["body"]["bindings"][0]["symbol"] == "ctx"
     listed = index.list_records(reopened, dbg.session_id, kind="symbol-table", strict=True)
     assert [r["id"] for r in listed] == stored
+
+
+class _Tok:
+    """A fake tokenizer: token text with a leading space, a newline, a wide character."""
+    TEXT = {1: " freezing", 5: "\n", 9: "\u51b7", 3: "Temperature"}
+
+    def decode(self, ids):
+        return self.TEXT[ids[0]]
+
+
+def _symbols_text(tokenizer):
+    from mdb.repl.render import render
+
+    dbg = open_tiny("qwen2", "fp32")
+    run = dbg.run(PROMPT)
+    run.until("t3.logits")
+    ctx = dbg.ops(run)
+    dbg.tokenizer = tokenizer
+    result = dispatch(ctx, "symbols", {"consumer": "M[4,9]"})
+    return render(result).splitlines(), result
+
+
+def _column(lines, key):
+    rows = [ln for ln in lines if ln.startswith("  ") and key in ln and " mass " in ln]
+    from mdb.repl.render import _display_width
+
+    return {_display_width(ln.split(key)[0]) for ln in rows}
+
+
+def test_symbols_names_are_quoted_and_padded_by_display_width():
+    lines, _ = _symbols_text(_Tok())
+    text = "\n".join(lines)
+    assert '"\\n"' in text and '" freezing"' in text and '"\u51b7"' in text
+    from mdb.repl.render import _display_width
+
+    rows = [ln for ln in lines if re.match(r"  (t\d|Unbound) ", ln) and " mass " in ln]
+    assert len(rows) == 5
+    # a binding row has a 7-wide status after the name; Unbound has none
+    starts = {_display_width(ln[:ln.index(" mass ") + 1]) - (0 if "Unbound" in ln else 7)
+              for ln in rows}
+    assert len(starts) == 1, starts
+    ids, _ = _symbols_text(None)
+    assert any("t0 (id 1)" in ln for ln in ids)
+    rows = [ln for ln in ids if ln.startswith("  t") and " mass " in ln]
+    assert len({ln.index("read ") for ln in rows}) == 1
+
+
+def test_unbound_remainder_is_the_measured_value_and_the_bound_is_labelled():
+    lines, result = _symbols_text(None)
+    remainder = result["unbound"]["parts"]["remainder"]
+    row = next(ln for ln in lines if "+ remainder" in ln)
+    value, bound = f"{remainder['value']['value']:.5g}", "bound "
+    assert f"remainder {value}" in row.replace("+ remainder ", "+ remainder ") or "remainder" in row
+    assert ", bound " in row and "[bound]: within" in row

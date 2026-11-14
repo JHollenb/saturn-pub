@@ -15,19 +15,19 @@ reads t2 at t3.L1.p  rows t3  consumer o of each read's layer (default)  (4 read
 symbols at t3.L1.p  consumer none: per-layer o (norm of each read's share); give consumer= or run until logits  min_mass 0.1 [supplied]
   mass: a sum over the heads and layers that read the binding (n reads, mean per read)
   life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
-  t0 (id 1)   read   mass 1.0039 [derived-exact] over 4 reads (mean 0.25098 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
+  t0 (id 1) read   mass 1.0039 [derived-exact] over 4 reads (mean 0.25098 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
     defined t0.L*.k, t0.L*.v
     readers t3.L1.h1 mass 0.25 [measured] effect norm 0.0058603 [derived-exact P07]; t3.L1.h0 mass 0.25 [measured] effect norm 0.0054427 [derived-exact P07]; t3.L0.h1 mass 0.25195 [measured] effect norm 0.0045317 [derived-exact P07] (+1 more)
-  t1 (id 5)   read   mass 0.99805 [derived-exact] over 4 reads (mean 0.24951 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
+  t1 (id 5) read   mass 0.99805 [derived-exact] over 4 reads (mean 0.24951 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
     defined t1.L*.k, t1.L*.v
     readers t3.L0.h0 mass 0.25 [measured] effect norm 0.0074256 [derived-exact P07]; t3.L1.h0 mass 0.24902 [measured] effect norm 0.0051603 [derived-exact P07]; t3.L0.h1 mass 0.25 [measured] effect norm 0.0051168 [derived-exact P07] (+1 more)
-  t2 (id 9)   read   mass 0.99609 [derived-exact] over 4 reads (mean 0.24902 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
+  t2 (id 9) read   mass 0.99609 [derived-exact] over 4 reads (mean 0.24902 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
     defined t2.L*.k, t2.L*.v
     readers t3.L1.h1 mass 0.25 [measured] effect norm 0.00558 [derived-exact P07]; t3.L1.h0 mass 0.24902 [measured] effect norm 0.0054097 [derived-exact P07]; t3.L0.h0 mass 0.24902 [measured] effect norm 0.0042643 [derived-exact P07] (+1 more)
-  t3 (id 3)   read   mass 1.001 [derived-exact] over 4 reads (mean 0.25024 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
+  t3 (id 3) read   mass 1.001 [derived-exact] over 4 reads (mean 0.25024 [derived-exact])  to_consumer unresolved (no scalar consumer)  life t3:## (t3.L0..t3.L1)
     defined t3.L*.k, t3.L*.v
     readers t3.L0.h1 mass 0.25195 [measured] effect norm 0.0088044 [derived-exact P07]; t3.L0.h0 mass 0.24902 [measured] effect norm 0.007572 [derived-exact P07]; t3.L1.h0 mass 0.25 [measured] effect norm 0.0039196 [derived-exact P07] (+1 more)
-  Unbound     mass 0 [derived-exact]  readout unresolved (no scalar consumer: the per-layer o shares have no common total)
+  Unbound   mass 0 [derived-exact]  readout unresolved (no scalar consumer: the per-layer o shares have no common total)
   accounting: 4 heads, listed mass 3.999 [derived-exact], max |sum p - 1| 0.0019531 [measured] <= 0.015625 [bound], partition gap 0 [derived-exact]
   (bindings 1-4 of 4)
 state: unresolved
@@ -50,19 +50,19 @@ symbol ctx = t1, cache.L1.v[row=2]  (declared: ctx)
 symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [supplied]
   mass: a sum over the heads and layers that read the binding (n reads, mean per read)
   life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
-  ctx         read   mass 1.4971 [derived-exact] over 4 reads (mean 0.37427 [derived-exact])  to_consumer 0.0020898 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+  ctx       read   mass 1.4971 [derived-exact] over 4 reads (mean 0.37427 [derived-exact])  to_consumer 0.0020898 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
     defined t1, cache.L1.v[row=2]
     readers t3.L1.h0 mass 0.49805 [derived-exact] effect 0.013241 [derived-exact P19]; t3.L0.h1 mass 0.25 [measured] effect -0.0081352 [derived-exact P19]; t3.L0.h0 mass 0.25 [measured] effect -0.0025448 [derived-exact P19] (+1 more)
-  t0 (id 1)   read   mass 1.0039 [derived-exact] over 4 reads (mean 0.25098 [derived-exact])  to_consumer 0.0075996 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+  t0 (id 1) read   mass 1.0039 [derived-exact] over 4 reads (mean 0.25098 [derived-exact])  to_consumer 0.0075996 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
     defined t0.L*.k, t0.L*.v
     readers t3.L1.h0 mass 0.25 [measured] effect 0.013624 [derived-exact P19]; t3.L0.h0 mass 0.25195 [measured] effect -0.0107 [derived-exact P19]; t3.L1.h1 mass 0.25 [measured] effect 0.0091402 [derived-exact P19] (+1 more)
-  t2 (id 9)   read   mass 0.49707 [derived-exact] over 2 reads (mean 0.24854 [derived-exact])  to_consumer -0.012439 [derived-exact P19]  life t3:#- (t3.L0..t3.L0)
+  t2 (id 9) read   mass 0.49707 [derived-exact] over 2 reads (mean 0.24854 [derived-exact])  to_consumer -0.012439 [derived-exact P19]  life t3:#- (t3.L0..t3.L0)
     defined t2 (uncovered part: 3 of 4 k/v cells)
     readers t3.L0.h0 mass 0.24902 [measured] effect -0.015325 [derived-exact P19]; t3.L0.h1 mass 0.24805 [measured] effect 0.0028856 [derived-exact P19]
-  t3 (id 3)   read   mass 1.001 [derived-exact] over 4 reads (mean 0.25024 [derived-exact])  to_consumer 0.033362 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+  t3 (id 3) read   mass 1.001 [derived-exact] over 4 reads (mean 0.25024 [derived-exact])  to_consumer 0.033362 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
     defined t3.L*.k, t3.L*.v
     readers t3.L0.h0 mass 0.24902 [measured] effect 0.02564 [derived-exact P19]; t3.L0.h1 mass 0.25195 [measured] effect 0.012575 [derived-exact P19]; t3.L1.h1 mass 0.25 [measured] effect -0.0031186 [derived-exact P19] (+1 more)
-  Unbound     mass 0 [derived-exact]  readout -0.14463 [measured]
-    = embedding+mlp -0.14507 [derived-exact P19] + attention not listed -3.2805e-05 [derived-exact P19] + remainder 0.00047376 [measured] within 0.016137 [bound]
+  Unbound   mass 0 [derived-exact]  readout -0.14463 [measured]
+    = embedding+mlp -0.14507 [derived-exact P19] + attention not listed -3.2805e-05 [derived-exact P19] + remainder 0.00047376 [measured], bound 0.016137 [bound]: within
   accounting: 4 heads, listed mass 3.999 [derived-exact], max |sum p - 1| 0.0019531 [measured] <= 0.015625 [bound], partition gap 0 [derived-exact]
   (bindings 1-4 of 4)

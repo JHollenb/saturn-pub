@@ -744,20 +744,40 @@ def _reads_lines(result: dict[str, Any]) -> list[str]:
 def _symbols_lines(result: dict[str, Any]) -> list[str]:
     head = f"symbols at {result['where']}  consumer {result['consumer']}"
     if "consumer_total" in result:
+def _display_width(text: str) -> int:
+    """Terminal columns: wide characters count 2, combining marks 0."""
+    import unicodedata
+
+    return sum(0 if unicodedata.combining(c) else 2 if unicodedata.east_asian_width(c) in "WF"
+               else 1 for c in text)
+
+
+def _pad(text: str, width: int) -> str:
+    return text + " " * max(width - _display_width(text), 0)
+
+
+def _symbol_name(item: dict[str, Any]) -> str:
+    """A binding's name; token text is quoted with escapes so spaces and newlines show."""
+    name = item["symbol"]
+    if "text" in item:
+        name += f" {json.dumps(item['text'], ensure_ascii=False)}"
+    elif "token" in item:
+        name += f" (id {item['token']})"
+    return name
+
+
         head += f" = {_claimed(result['consumer_total'])}"
     lines = [head + f"  min_mass {_claimed(result['min_mass'])}",
              "  mass: a sum over the heads and layers that read the binding (n reads, mean per "
              "read)",
              "  life: " + "  ".join(f"{mark} {text}" for mark, text in result["legend"].items())]
-    for item in result["bindings"]:
-        name = item["symbol"]
-        if "text" in item:
-            name += f" {json.dumps(item['text'])}"
-        elif "token" in item:
-            name += f" (id {item['token']})"
+    names = [_symbol_name(item) for item in result["bindings"]]
+    names += [item["symbol"] for item in result.get("unresolved_symbols", ())] + ["Unbound"]
+    width = max(len(n) if n.isascii() else _display_width(n) for n in names) + 1
+    for item, name in zip(result["bindings"], names):
         life = item["lifetime"]
         span = f" ({life['first']}..{life['last']})" if life["first"] else ""
-        lines.append(f"  {name:<12}{item['status']:<7}mass {_claimed(item['mass'])} over "
+        lines.append(f"  {_pad(name, width)}{item['status']:<7}mass {_claimed(item['mass'])} over "
                      f"{item['count']} reads (mean {_short(item['mean_mass'])})  to_consumer "
                      f"{_short(item['to_consumer'])}  life {life['strip']}{span}")
         lines.append(f"    defined {', '.join(item['definitions'])}")
@@ -768,10 +788,10 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
         if item.get("edited_by"):
             lines.append(f"    edited by {', '.join(item['edited_by'])}")
     for item in result.get("unresolved_symbols", ()):
-        lines.append(f"  {item['symbol']:<12}unresolved  defined {', '.join(item['definitions'])}"
+        lines.append(f"  {_pad(item['symbol'], width)}unresolved  defined {', '.join(item['definitions'])}"
                      f"  ({item['reason']})")
     unbound = result["unbound"]
-    lines.append(f"  Unbound     mass {_short(unbound['mass'])}  readout "
+    lines.append(f"  {_pad('Unbound', width)}mass {_short(unbound['mass'])}  readout "
                  f"{_short(unbound['readout'])}")
     parts = unbound.get("parts")
     if parts:
@@ -783,9 +803,9 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
         if remainder["within"] is None:
             tail = "bound refused (accumulation premise fails)"
         else:
-            tail = (f"{'within' if remainder['within'] else 'OUTSIDE'} "
-                    f"{_claimed(remainder['bound'])}")
-        lines.append(text + f" + remainder {_claimed(remainder['value'])} {tail}")
+            tail = (f"bound {_claimed(remainder['bound'])}: "
+                    f"{'within' if remainder['within'] else 'OUTSIDE'}")
+        lines.append(text + f" + remainder {_claimed(remainder['value'])}, {tail}")
     accounting = result["accounting"]
     partition = accounting["partition"]
     split = (f"partition gap {_claimed(partition['max_gap'])}" if "max_gap" in partition
