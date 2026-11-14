@@ -41,7 +41,11 @@ SYMBOL_TABLE = declare_kind(
                    "bindings.*.token", "bindings.*.omitted", "bindings.*.count",
                    "accounting.heads", "bindings.*.content.*.best",
                    "bindings.*.content.*.size", "bindings.*.content.*.truth_rank",
-                   "bindings.*.content.vocab_top.tokens"),
+                   "bindings.*.content.vocab_top.tokens", "bindings.*.hop.edge.mlp.*.layer",
+                   "bindings.*.hop.edge.mlp.*.omitted.count", "bindings.*.hop.edge.reread.*.layer",
+                   "bindings.*.hop.edge.mlp.*.spectral.bins",
+                   "bindings.*.hop.edge.mlp.*.spectral.top_bins",
+                   "bindings.*.hop.edge.mlp.*.spectral.neurons_at_same_fraction"),
 )
 
 __all__ = ["CIRCUIT", "FORECAST", "SYMBOL_TABLE", "WHATIF"]

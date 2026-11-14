@@ -8,6 +8,7 @@ round-trip through ``mdb.core.index`` and reopen in a fresh ``Project``.
 """
 
 import pytest
+import torch
 
 torch = pytest.importorskip("torch")
 pytest.importorskip("transformers")
@@ -15,7 +16,7 @@ pytest.importorskip("transformers")
 import mdb  # noqa: E402
 from mdb.analysis import symbols  # noqa: E402
 from mdb.analysis.forecast import Margin, Refusal  # noqa: E402
-from mdb.analysis.reads import head_mask  # noqa: E402
+from mdb.analysis.reads import head_mask, readout  # noqa: E402
 from mdb.core import index  # noqa: E402
 from mdb.core.pointers import check_bounded  # noqa: E402
 from mdb.core.project import Project  # noqa: E402
@@ -217,3 +218,46 @@ def test_content_is_absent_without_sets_and_hop_reports_the_indirect_share(debug
     assert view["hop"]["native_delta"]["authority"] == "measured"
     with pytest.raises(Refusal, match="at least two"):
         symbols.table(run, consumer=Margin(3, 4, 9), sets=[symbols.Candidates("one", (2,))])
+
+
+def test_hop_edge_ladder_closes_and_its_parts_match_hand_computations(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    reader = readout(run, Margin(3, 4, 9))
+    donor = debugger.run([2, 7, 9, 3])
+    value = donor.read_cache(0, "v", staged=False).clone()[:, 0:1, 1:2]
+    edited = debugger.run(PROMPT)
+    edited.set_cell(0, "v", value, rows=[1], kv=[0])
+    edited.until("t3.logits")
+    edge = symbols.hop_edge(run, edited, reader, cell_layer=0, top_neurons=3, spectral=True,
+                            top_bins=2)
+    fp32 = run.adapter.model.lm_head.weight.dtype == torch.float32
+    tol = 1e-4 if fp32 else 5e-2
+    assert edge["upstream"]["value"] == 0.0               # the cell layer's input row is untouched
+    from mdb.analysis.reads import head_mix
+    w = [sum(head_mix(r, 3, 0, {}).o_parts()[h, 1] for h in range(run.adapter.num_heads)
+             if head_mix(r, 3, 0, {}).kappa[h] == 0) for r in (run, edited)]
+    hand = float(reader.vector @ (w[1] - w[0]).double().reshape(-1))
+    assert edge["direct"]["value"] == pytest.approx(hand, abs=tol)
+    for layer in edge["mlp"]:
+        listed = sum(n["effect"]["value"] for n in layer["neurons"])
+        assert listed + layer["omitted"]["effect"]["value"] == pytest.approx(
+            layer["exact"]["value"], abs=1e-9)
+        for n in layer["neurons"]:
+            assert n["b0_ds"]["value"] + n["s0_db"]["value"] + n["ds_db"]["value"] == \
+                pytest.approx(n["df"]["value"], abs=1e-12)
+        assert abs(layer["down_rounding"]["value"]) <= tol + 1e-3 * abs(layer["exact"]["value"])
+        assert layer["spectral"]["parseval_max_error"]["value"] < 1e-9
+    native = edge["consumer"]["native_delta"]["value"]
+    parts = (edge["direct"]["value"] + edge["upstream"]["value"] + edge["totals"]["mlp"]["value"]
+             + edge["totals"]["reread"]["value"] + edge["norm"]["value"]
+             + edge["residual_add_rounding"]["value"] + edge["rounding"]["value"])
+    assert parts == pytest.approx(native, abs=1e-9)
+    if fp32:
+        assert abs(edge["rounding"]["value"]) < 1e-3 * max(1.0, abs(native))
+    table = symbols.table(run, consumer=Margin(3, 4, 9), hops={"t1": {
+        "native_delta": native, "direct_delta": edge["direct"]["value"], "edge": edge}})
+    view = next(b for b in table.report["bindings"] if b["symbol"] == "t1")
+    assert view["hop"]["edge"]["mlp"][0]["layer"] == 0
+    assert len(view["hop"]["edge"]["reread"]) == run.adapter.layers - 1
+    check_bounded(table.report)

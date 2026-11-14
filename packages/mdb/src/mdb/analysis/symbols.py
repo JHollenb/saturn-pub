@@ -227,6 +227,186 @@ def _content_strip(run: Any, writes: dict[int, Any], layers: int, cand: Candidat
     return "".join(marks)
 
 
+def _silu_prime(x: Any) -> Any:
+    torch = _torch()
+    sig = torch.sigmoid(x)
+    return sig * (1 + x * (1 - sig))
+
+
+def _rfft_parts(weight_rows: Any, delta: Any) -> Any:
+    """Parseval split of ``weight_rows @ delta`` over channel-DFT bins: (rows, bins) float64 whose
+    row sums equal ``weight_rows @ delta`` (real rfft, x.y = (1/d) sum_k s_k Re(conj(X_k) Y_k),
+    s_k = 1 at DC and Nyquist, else 2)."""
+    torch = _torch()
+    d = int(delta.numel())
+    gw = torch.fft.rfft(weight_rows, dim=1)
+    dn = torch.fft.rfft(delta.reshape(-1))
+    scale = torch.full((gw.shape[1],), 2.0, dtype=torch.float64)
+    scale[0] = 1.0
+    if d % 2 == 0:
+        scale[-1] = 1.0
+    return (gw.conj() * dn[None, :]).real * (scale / d)[None, :]
+
+
+def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons: int = 8,
+             spectral: bool = False, top_bins: int = 32, seed: int = 0) -> dict[str, Any]:
+    """The exact hop ladder of a finite cell edit at the consumer's row (advisor memo 4.2).
+
+    ``run`` is the native run and ``edited`` the same prompt with the cell edit staged and run
+    natively to the consumer's logits; ``reader`` the native scalar ``Readout`` (``c``, native
+    rho). ``Delta M_native = c.delta + sum_l c.Delta m_l + sum_{l>cell} c.Delta o_l + Delta_norm
+    + Delta_round``: ``delta`` = the change of the cell layer's attention write at the row,
+    ``Delta m_l`` / ``Delta o_l`` the captured MLP and attention-write changes (re-reads), the
+    norm term ``(rho_1 - rho_0) w . h_out,1`` (exact finite RMS identity) and the rounding the
+    measured remainder. Per neuron (finite SwiGLU identity, exact): ``Delta f_i = b0 Delta s +
+    s0 Delta b + Delta s Delta b`` on the captured ``sg`` and ``u``; effect ``c . W_down[:, i]
+    Delta f_i`` (P15); the top ``top_neurons`` by |effect| per layer are listed and the rest
+    summed. ``linear`` is the one-layer Jacobian term on the layer's actual input change (P14,
+    derived-local), never the effect; ``nonlinear = exact - linear``. With ``spectral`` the
+    ``Delta a`` of every neuron is split over channel-DFT bins by Parseval and the top
+    ``top_bins`` bins' share of the |effect|-weighted credit is reported against the same share
+    under a random channel permutation and against the neuron basis at the same unit fraction.
+    """
+    torch = _torch()
+    from .reads import layer_module
+
+    if reader is None or not reader.scalar:
+        raise Refusal("hop_edge needs a scalar consumer (a margin or a logit)")
+    j, layers = reader.row, run.adapter.layers
+    c = f64(reader.vector).reshape(-1)
+
+    def port(r, layer, name):
+        return f64(r.read(f"t{j}.L{layer}.{name}")).reshape(-1)
+
+    def margin(r):
+        logits = r.read(f"t{j}.logits").reshape(-1)
+        t = reader.target
+        return float(f64(logits[t.a]) - f64(logits[t.b])) if isinstance(t, Margin) else \
+            float(f64(logits[t.i]))
+
+    native_delta = margin(edited) - margin(run)
+    direct = float(c @ (port(edited, cell_layer, "o") - port(run, cell_layer, "o")))
+    upstream = float(c @ (port(edited, cell_layer, "h") - port(run, cell_layer, "h")))
+    gen = torch.Generator().manual_seed(seed)
+    mlp, reread, closure_sum = [], [], direct + upstream
+    for layer in range(cell_layer, layers):
+        module = layer_module(run.adapter, layer)
+        if layer > cell_layer:
+            d_o = float(c @ (port(edited, layer, "o") - port(run, layer, "o")))
+            reread.append({"layer": layer, "effect": num(d_o, EXACT, "P07"),
+                           "meaning": "c . Delta o at the consumer row: later heads re-reading "
+                                      "changed rows, not an MLP path"})
+            closure_sum += d_o
+        g0, g1 = port(run, layer, "g"), port(edited, layer, "g")
+        s0, s1 = port(run, layer, "sg"), port(edited, layer, "sg")
+        b0, b1 = port(run, layer, "u"), port(edited, layer, "u")
+        ds, db = s1 - s0, b1 - b0
+        terms = torch.stack([b0 * ds, s0 * db, ds * db])           # (3, d_ff)
+        df = terms.sum(0)
+        down = f64(module.mlp.down_proj.weight)                      # (d, d_ff)
+        cd = c @ down
+        del down
+        effect = cd * df
+        exact = float(effect.sum())
+        captured = float(c @ (port(edited, layer, "m") - port(run, layer, "m")))
+        closure_sum += captured
+        # one-layer Jacobian on the actual input change (P14)
+        r0, r1 = port(run, layer, "r"), port(edited, layer, "r")
+        norm = module.post_attention_layernorm
+        gamma_l, eps = f64(norm.weight).reshape(-1), float(norm.variance_epsilon)
+        rho0 = float((r0.pow(2).mean() + eps) ** -0.5)
+        dr = r1 - r0
+        dn_lin = gamma_l * (rho0 * dr - (rho0 ** 3 / dr.numel()) * float(r0 @ dr) * r0)
+        gate = f64(module.mlp.gate_proj.weight)
+        up = f64(module.mlp.up_proj.weight)
+        da_lin, db_lin = gate @ dn_lin, up @ dn_lin
+        linear = float((cd * (b0 * _silu_prime(g0) * da_lin + s0 * db_lin)).sum())
+        order = effect.abs().argsort(descending=True)
+        top = order[:top_neurons]
+        rest = order[top_neurons:]
+        neurons = [{"name": f"L{layer}.f{int(i)}", "da": num(float(g1[i] - g0[i]), EXACT),
+                    "db": num(float(db[i]), EXACT), "df": num(float(df[i]), EXACT),
+                    "b0_ds": num(float(terms[0, i]), EXACT),
+                    "s0_db": num(float(terms[1, i]), EXACT),
+                    "ds_db": num(float(terms[2, i]), EXACT),
+                    "effect": num(float(effect[i]), EXACT, "P15")} for i in top]
+        entry = {"layer": layer,
+                 "exact": num(exact, EXACT, "P15"),
+                 "captured": num(captured, MEASURED),
+                 "down_rounding": num(captured - exact, MEASURED),
+                 "linear": num(linear, "derived-local", "P14"),
+                 "nonlinear": num(exact - linear, EXACT),
+                 "shared_gate": num(float((g1 - g0).mean()), EXACT),
+                 "neurons": neurons,
+                 "omitted": {"count": int(rest.numel()),
+                             "effect": num(float(effect[rest].sum()), EXACT, "P15")},
+                 "top_share": num(float(effect[top].abs().sum() / effect.abs().sum())
+                                  if float(effect.abs().sum()) else 0.0, EXACT)}
+        if spectral:
+            dn = port(edited, layer, "n") - port(run, layer, "n")
+            weights = effect.abs()
+            parts = _rfft_parts(gate, dn)                            # (d_ff, bins)
+            credit = (weights[:, None] * parts.abs()).sum(0)
+            perm = torch.randperm(dn.numel(), generator=gen)
+            pparts = _rfft_parts(gate[:, perm], dn[perm])
+            pcredit = (weights[:, None] * pparts.abs()).sum(0)
+            bins = credit.numel()
+            k_neurons = max(1, round(top_bins / bins * effect.numel()))
+            spec = torch.fft.rfft(dn).abs().pow(2)
+            pspec = torch.fft.rfft(dn[perm]).abs().pow(2)
+
+            def share(x, k):
+                return float(x.sort(descending=True).values[:k].sum() / x.sum()) if float(
+                    x.sum()) else 0.0
+            entry["spectral"] = {
+                "bins": bins, "top_bins": top_bins, "neurons_at_same_fraction": k_neurons,
+                "parseval_max_error": num(float((parts.sum(1) - (gate @ dn)).abs().max()),
+                                          MEASURED),
+                "credit_top_bins_share": num(share(credit, top_bins), EXACT),
+                "credit_top_bins_share_permuted": num(share(pcredit, top_bins), EXACT),
+                "neuron_top_share_same_fraction": num(share(weights, k_neurons), EXACT),
+                "energy_top_bins_share": num(share(spec, top_bins), EXACT),
+                "energy_top_bins_share_permuted": num(share(pspec, top_bins), EXACT),
+                "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of "
+                           "Delta n, weighted by |effect|; permuted = same with a random channel "
+                           "order; neuron share = top neurons at the same unit fraction"}
+        del gate, up
+        mlp.append(entry)
+    last = layers - 1
+    h1, h0 = port(edited, last, "h_out"), port(run, last, "h_out")
+    final = getattr(run.adapter.backbone, run.adapter.spec.final_norm)
+    eps_f = float(final.variance_epsilon)
+    rho_0 = float((h0.pow(2).mean() + eps_f) ** -0.5)
+    rho_1 = float((h1.pow(2).mean() + eps_f) ** -0.5)
+    norm_term = (rho_1 - rho_0) / rho_0 * float(c @ h1)
+    residual_gap = float(c @ (h1 - h0)) - closure_sum
+    total = closure_sum + norm_term
+    mlp_total = sum(e["captured"]["value"] for e in mlp)
+    reread_total = sum(e["effect"]["value"] for e in reread)
+
+    def share_of(x):
+        if not native_delta:
+            return {"state": "unresolved", "reason": "native delta 0"}
+        return num(x / native_delta, MEASURED)
+    return {
+        "consumer": {"native_delta": num(native_delta, MEASURED)},
+        "direct": num(direct, EXACT, "P19"),
+        "upstream": num(upstream, EXACT, "P07"),
+        "mlp": mlp, "reread": reread,
+        "norm": num(norm_term, EXACT),
+        "residual_add_rounding": num(residual_gap, MEASURED),
+        "rounding": num(native_delta - total - residual_gap, MEASURED),
+        "closure": {"sum_of_terms": num(total + residual_gap, MEASURED),
+                    "gap": num(native_delta - total - residual_gap, MEASURED)},
+        "shares": {"direct": share_of(direct), "mlp": share_of(mlp_total),
+                   "reread": share_of(reread_total), "norm": share_of(norm_term),
+                   "meaning": "each exact term over the native delta; signed"},
+        "totals": {"mlp": num(mlp_total, MEASURED), "reread": num(reread_total, EXACT),
+                   "mlp_exact": num(sum(e["exact"]["value"] for e in mlp), EXACT),
+                   "mlp_linear": num(sum(e["linear"]["value"] for e in mlp), "derived-local")},
+    }
+
+
 def _token_rows(run: Any, here: int, users: list[Binding]) -> list[Binding]:
     """One binding per token row holding exactly the cells no declared symbol holds."""
     layers, kv = run.adapter.layers, run.adapter.num_kv_heads
@@ -349,6 +529,8 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
                        "indirect_share": (num(1.0 - direct / native, MEASURED) if native else
                                           {"state": "unresolved", "reason": "native delta 0"}),
                        "replacement": hop.get("replacement", "supplied by the caller")}
+        if hop.get("edge") is not None:
+            view["hop"]["edge"] = hop["edge"]
     listed = sorted(range(offset, min(offset + limit, n)))
     keys = sorted(grid.mass)
     unbound_mass = {key: grid.total[key] - grid.mass[key][listed].sum(0) for key in keys}
@@ -681,5 +863,5 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]
 
 
-__all__ = ["Binding", "Candidates", "LEGEND", "content", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
+__all__ = ["Binding", "Candidates", "LEGEND", "content", "hop_edge", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
            "declared", "table"]
