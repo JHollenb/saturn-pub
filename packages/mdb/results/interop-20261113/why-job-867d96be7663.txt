@@ -1,0 +1,52 @@
+job-867d96be7663  killed_ram  mdb-interop-j1b  host=beast
+detail: strict cgroup scope exited by SIGKILL at memory.max
+reservation: ram=18000MB vram=0MB cpu=4 source=declared-pinned
+needs: {"host": "beast"}
+result: peak_rss=19443.7MB peak_vram=0.0MB elapsed=9.05s
+memory enforcement: linux-cgroup-v2 — strict (kernel boundary)
+failure diagnostics:
+{
+  "classification": {
+    "class": "memory_ceiling",
+    "deterministic": false,
+    "retry": "auto-retried-grown"
+  },
+  "command": [
+    "bash",
+    "run.sh"
+  ],
+  "cwd": "/mnt/big/mrun-scratch/job-867d96be7663",
+  "kind": "killed_ram",
+  "log_tail": "<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour\n\rLoading weights:   0%|          | 0/338 [00:00<?, ?it/s]\rLoading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 338/338 [00:00<00:00, 17197.90it/s]\n",
+  "message": "strict cgroup scope exited by SIGKILL at memory.max",
+  "observed_ts": 1794633223.506751,
+  "phase": "process.finalize",
+  "resources": {
+    "peak_rss_mb": 19443.7,
+    "peak_vram_mb": 0.0,
+    "ram_ceiling_mb": 19800.0,
+    "vram_ceiling_mb": null
+  },
+  "returncode": -9,
+  "signal": 9
+}
+execution phases: payload.prepare -> dispatch.vram_guard -> process.launch -> process.monitor -> process.finalize -> finished
+queue note: mdb interop J1b CPU: TL compatibility-mode numerics vs native (bf16, CPU)
+meta: {"auto_retry_job_id": "job-b7524f5de768", "observed_peak_rss_mb": 19443.7, "observed_peak_rss_ts": 1794633223.3137596}
+recent events (newest first, 16):
+  250s ago job.telemetry host=beast
+  255s ago job.finished host=beast state=killed_ram reason=killed_ram detail=strict cgroup scope exited by SIGKILL at memory.max
+  255s ago job.agent_phase host=beast state=running reason=process.finalize
+  255s ago job.telemetry host=beast
+  260s ago job.logs_append
+  261s ago job.telemetry host=beast
+  262s ago job.logs_append
+  264s ago job.agent_phase host=beast state=running reason=process.monitor
+  264s ago job.agent_event host=beast state=running reason=running
+  264s ago job.agent_phase host=beast state=preparing reason=process.launch
+  264s ago job.agent_phase host=beast state=preparing reason=dispatch.vram_guard
+  264s ago job.agent_phase host=beast state=preparing reason=payload.prepare
+  264s ago job.agent_event host=beast state=preparing reason=preparing
+  264s ago job.claimed host=beast state=assigned
+  264s ago job.payload_sealed state=queued
+  265s ago job.submit state=awaiting_payload
