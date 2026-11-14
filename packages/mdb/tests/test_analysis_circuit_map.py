@@ -148,12 +148,18 @@ def test_hop_edge_cell_consumer_closes_on_the_cells_native_change(debugger):
     assert native == pytest.approx(symbols.cell_value(edited, target) - reader.native, abs=1e-12)
     assert edge["consumer"]["kind"] == "cell"
     assert [e["layer"] for e in edge["mlp"]] == list(range(0, top))
-    parts = (edge["direct"]["value"] + edge["upstream"]["value"] + edge["totals"]["mlp"]["value"]
-             + edge["totals"]["reread"]["value"] + edge["norm"]["value"]
-             + edge["residual_add_rounding"]["value"] + edge["rounding"]["value"])
-    assert parts == pytest.approx(native, abs=1e-9)
-    if fp32:
-        assert abs(edge["rounding"]["value"]) < 1e-3 * max(1.0, abs(native))
+    # The sum of the ladder's parts equals native_delta by construction (``rounding`` is the
+    # remainder), so it is not checked (AUDIT-B1 §4). The real checks: the remainder is small,
+    # i.e. the cache's bf16/fp32 V matches the float64 functional of the captured h, and one
+    # ladder term recomputed by hand from the two runs' ports.
+    tol = 1e-3 if fp32 else 5e-2
+    assert abs(edge["rounding"]["value"]) < tol * max(1.0, abs(native))
+    c = reader.vector
+    d_o = run.read("t3.L0.o").double().reshape(-1) - edited.read("t3.L0.o").double().reshape(-1)
+    assert edge["direct"]["value"] == pytest.approx(float(c @ -d_o), rel=1e-9, abs=1e-12)
+    d_m = sum(edited.read(f"t3.L{x}.m").double().reshape(-1) - run.read(f"t3.L{x}.m").double().reshape(-1)
+              for x in range(top))
+    assert edge["totals"]["mlp"]["value"] == pytest.approx(float(c @ d_m), rel=1e-9, abs=1e-12)
     with pytest.raises(Refusal):
         symbols.hop_edge(run, edited, reader, cell_layer=top)
 
