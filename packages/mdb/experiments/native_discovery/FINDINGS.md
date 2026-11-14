@@ -79,3 +79,64 @@ An independent review flagged that the early-boundary result might be a first-to
 **What changed in the shared code.** `error_metrics` keeps its fields and adds centred and position-0-excluded relative MSE and the position-0 energy fraction. Held-out reports add the position-split mean write (fit on discovery only, scored after the fact and not sealed) and trivial top-source baselines for the native routes. Each learned route also gets a `source_top1` record that always carries position-0, previous-token, current-token and uniform baselines. Training and selection are unchanged.
 
 **What remains open.** Whether learned sparse coordinates carry useful structure on non-first positions is now untested rather than shown: these runs fit to an objective that the first-token vector dominates. The next fit should exclude or separately model position 0, or score positions 1 onward only, and report the split baseline beside every arm. The final-consumer comparison above is unaffected, because it reads only the last position. Why the document starting with `2` has no large first-token activation is not established.
+
+## Addendum, 2026-11-13 21:32 PST: position-robust rerun on a new 80-document panel
+
+**Question.** Does any learned attention route beat the best trivial baseline once the first-token attention sink is split out? **Answer: no.** In this rerun no learned route beats the best trivial baseline in any of 288 held-out cells (16 documents × 3 route layers × 6 learned arms), on all rows or on rows whose native top source is not position 0 (MEASURED). On those non-position-0 rows the learned routes sit at or below chance: 185 of 288 cells score below the expected agreement of uniform attention (MEASURED). The only route predictor that beats the run's four sealed trivial baselines is the learning-free contrast nominator, and it does so because it picks one positional rule per head; a per-head raw-mass rule fitted on the same discovery documents does almost exactly as well (MEASURED, details below).
+
+**Run.** Qwen2.5-1.5B base, eager FP32 CUDA on Beast, the same pipeline and settings as above (64 tokens, layers 0/9/19/28, 32 features, 60 attempted updates per arm, development check every 10). There are six learned arms: the original three plus a `.p0robust` version of each, which uses separate scales and initial writes for position 0 and later positions, selects on position-0-excluded centred error, and keeps the two native KV groups apart in the predicted read. The position-split mean write and the contrast nominator are sealed with the forecasts. The new corpus (`rerun-corpus/main-corpus.json`, fingerprint `325f0c28…`) has 80 source groups, one document per group, split 48 discovery / 16 development / 16 held-out, and shares no group or text hash with the smoke corpus (MEASURED). The nine discovery source hashes printed in both job logs match the committed worktree source (MEASURED).
+
+| Run | Job | Worker s | Scheduler s | Peak VRAM MB | Peak RSS MB | Archive SHA-256 |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| 6-document smoke | `job-f65fbc369bca` | 87.8 | 111.5 | 6,358 | 7,593.7 | `20b1ccad…bcc55` (not transferred) |
+| 80-document main | `job-635f65272039` | 286.3 | 348.8 | 6,554 | 3,959.5 | `b9f9baeb…4229e` (transferred, hash matches) |
+
+All values in this table are MEASURED from the scheduler record and the result marker. The main job reserved 8,270 MB VRAM (smoke peak × 1.3), priority 70, and waited 129 s in the queue. `audit.py --closures` re-scores 1,488 sealed metrics and verifies 48 saved candidate/accepted closures with zero model loads (MEASURED). `rerun_report.py` and the new `posthoc_route_baselines.py` produce the tables below; the full JSON is next to the archive (`rerun-report.json`, `posthoc-route-baselines.json`).
+
+**First-token sink is present.** Position 0 carries more than half of the native residual energy at layers 9 and 19 in 16 of 16 held-out documents, and in 0 of 16 at layer 28 (MEASURED).
+
+**Route top-source agreement, all rows** (mean over 16 held-out documents; learned arms are the best and worst of the six; MEASURED):
+
+| Layer | position 0 | previous token | current token | uniform | raw mass per head (post hoc) | best trivial per document | learned arms (range of means) | contrast nominator | held-out per-head ceiling |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0.038 | 0.199 | 0.506 | 0.074 | 0.621 | 0.621 | 0.066–0.086 | 0.632 | 0.641 |
+| 9 | 0.795 | 0.069 | 0.059 | 0.074 | 0.795 | 0.795 | 0.124–0.410 | 0.796 | 0.803 |
+| 19 | 0.713 | 0.069 | 0.115 | 0.074 | 0.814 | 0.814 | 0.101–0.383 | 0.814 | 0.815 |
+
+The best learned cell is still 0.26 below the best trivial baseline for that document and layer (MEASURED: largest learned margin −0.263 at layer 9, −0.327 at layer 19, −0.457 at layer 0). "Best trivial per document" takes the maximum over position 0, previous token, offsets 0–7 from the end, uniform and raw mass per head, which is generous to the baselines. With only the run's four sealed baselines it is 0.506 / 0.795 / 0.713, and no learned arm reaches those either (MEASURED: `beats_every_trivial_baseline` is false in all 288 sealed records).
+
+**Route top-source agreement, rows whose native top source is not position 0** (the sink split out; these rows all have query ≥ 1, so previous token is always defined; MEASURED):
+
+| Layer | rows (share) | current token | previous token | uniform (expected) | best trivial per document | learned arms (range of means) | raw mass per head | contrast nominator |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 11,819 (0.962) | 0.510 | 0.198 | 0.056 | 0.510 | 0.046–0.068 | 0.611 | 0.625 |
+| 9 | 2,522 (0.205) | 0.210 | 0.263 | 0.047 | 0.274 | 0.026–0.058 | 0.000 | 0.202 |
+| 19 | 3,526 (0.287) | 0.353 | 0.191 | 0.047 | 0.353 | 0.027–0.075 | 0.410 | 0.410 |
+
+Here the learned arms are 5–10 times below the best single trivial rule and mostly below uniform. The `.p0robust` arms do not change this: their non-position-0 means are 0.057 / 0.045 / 0.027 (linear), 0.068 / 0.026 / 0.075 (sparse consumer) and 0.046 / 0.046 / 0.030 (sparse reconstruction) at layers 0 / 9 / 19 (MEASURED). On all rows their layer-9/19 agreement (0.12–0.41) is higher than the original arms' in five of six comparisons, but at most about half of the position-0 baseline (MEASURED).
+
+**The contrast nominator is a per-head positional rule, not a learned route.** It beats the run's sealed trivial set on 16/16 documents at layers 0 and 19 and 8/16 at layer 9 (MEASURED), but its rules differ from the raw-mass per-head rules in one of twelve heads at layer 0, one at layer 9 and none at layer 19 (MEASURED). Its mean gain over raw mass per head is +0.011 at layer 0 (14 of 16 documents above, 1 below), +0.0015 at layer 9 (8 above, 8 below) and exactly 0 at layer 19 (MEASURED). The fair reading is that one positional rule per head (position 0, current token or a short offset) explains about 62–81% of top sources, and that a single rule per layer cannot capture that. Contrast ranking adds at most a small amount on top of raw mass. On non-position-0 rows at layer 9 the contrast nominator (0.202) is below previous token (0.263) on every document (MEASURED).
+
+**Could a learned route have won in this pipeline?** Partly checked. The scorer can register a win: the per-head positional rules (raw mass, contrast) clear the sealed baselines on 16/16 documents at layer 0 with the same `evaluate_route_forecast` code (MEASURED). A held-out per-head ceiling, which reads the answer, scores 0.641 / 0.803 / 0.815, so head-level positional rules leave little headroom on all rows (MEASURED). **No planted-route check exists for the learned predictor itself.** No test plants a known route in synthetic traces and confirms that the learned `SpanPredictor` recovers it, so this run cannot separate "the learned route has nothing to find" from "this learned route cannot find it". There are concrete structural reasons it may not be able to (ASSERTED from reading `native_discovery_learning.py`, not tested):
+1. The predicted route is a rank-4 query·key softmax over the predicted state's feature code, with no position input. Previous token, current token and fixed offsets are not directly expressible.
+2. The `sparse_reconstruction` arms have no route loss at all (`auxiliary=False`). Their routes are shaped only through the state write.
+3. Each arm fits at most 60 single-document updates and accepts only 10–40 of them (MEASURED from the fit log: accepted 10 / 20 / 10 / 10 / 40 / 20).
+4. Layer-9 and layer-19 routes are computed on predicted, not native, states.
+
+**State and output results (secondary; split baseline shown beside each, MEASURED).**
+- Position-0-excluded relative MSE at layers 9 and 19: the original arms score 13.8–14.1 and 6.5–6.7, against 0.70 and 0.58 for the split mean write and 1.0 for holding the state.
+- The `.p0robust` arms match the split mean write to within about 0.05 (mean paired difference) and beat it, with a bootstrap interval excluding zero, in only one of nine comparisons. Sparse reconstruction `.p0robust` at layer 9 wins 10 of 16 documents by a mean of −0.0015 (bootstrap 95% [−0.0027, −0.0005]). That edge is far too small to matter.
+- Last-position output KL: `linear_features.p0robust` 7.425 vs split mean write 8.119, 16 of 16 documents better, mean −0.69 [−0.83, −0.56]. `sparse_consumer.p0robust` scores 7.621, 13 of 16 better.
+- Every arm and baseline gets 0 of 16 native top-1 tokens. The KL gain is real on these documents but leaves the forecasts far from the native output.
+- At layer 28, `sparse_consumer.p0robust` and `sparse_reconstruction.p0robust` have uncentred relative MSE of 18.0 and 8.4 (split mean write 0.43), while their position-0-excluded error is normal (0.47, 0.46). Their position-0 write extrapolates badly at the last span, where there is no sink. The cause has not been diagnosed.
+
+**What was not tested.**
+- A planted or oracle route for the learned predictor (see above).
+- A learned route with explicit position input, or with a route loss in the reconstruction arms.
+- Longer training, more than one seed, other models or sequence lengths above 64 tokens.
+- Generated-token continuation.
+- Whether learned routes help the state or output forecasts even though their top source is wrong. Top-source agreement is the only route metric reported here; route KL is in `report.json` but not analysed.
+- The smoke archive was not transferred or hash-checked; only its result marker and report were read. `mdb analyze verify` was not run on the main archive; `verify_run` (inside the worker and again in `audit.py`) and the archive hash were.
+- Offsets 1–7 from the end clamp early rows to position 0 and get free hits there. This affects only the all-rows table, and it raises the baselines, not the learned numbers.
+
+The answer is therefore not that a learned route cannot beat trivial baselines. In this predictor, at this training budget, none does, and the predictor has no direct way to express the positional rules that the native heads mostly follow.
