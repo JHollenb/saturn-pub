@@ -26,16 +26,16 @@ W_U = ad.model.lm_head.weight.detach()
 gamma = final.weight.detach()
 tok = dbg.tokenizer
 items = {i["id"]: i for i in json.load(open("r1_items.json"))["items"]}
-for _i in items.values():  # hard items carry capital_token None; their answer is the capital token
-    if _i.get("capital_token") is None and _i.get("group") == "hard":
-        _i["capital_token"] = _i["answer"]
 base_c = json.load(open("candidates.json"))
 ext_c = json.load(open("candidates_ext.json"))
 allc = base_c["items"] + ext_c["items"]
 COUNTRIES = sorted({i["country_token"] for i in allc if i.get("country_token")})
 CAPITALS = sorted(set(base_c["capital_tokens"].values()) | {i["capital_token"] for i in ext_c["items"]
                                                            if i.get("capital_token")}
-                  | {i["capital_token"] for i in items.values() if i.get("capital_token")})
+)
+for _i in items.values():  # hard items carry capital_token None: co-read the bridge's canonical capital
+    if _i.get("capital_token") is None and _i.get("group") == "hard":     # (their answers include format
+        _i["capital_token"] = base_c["capital_tokens"].get(_i["bridge"])  # variants: no-space, other language)
 ENT = sorted({tok(" " + i["descriptor"], add_special_tokens=False)["input_ids"][0] for i in allc})
 ALL = sorted(set(COUNTRIES) | set(CAPITALS) | set(ENT))
 g_of = torch.arange(H) // (H // KV)
@@ -107,7 +107,7 @@ def readout(write, item):
                               ("capitals", CAPITALS, item["capital_token"]),
                               ("all", ALL, item["country_token"])):
         b = best(write, toks)
-        out[name] = {"best": b, "text": tok.decode([b]), "ok": b == truth}
+        out[name] = {"best": b, "text": tok.decode([b]), "ok": b == truth, "defined": truth is not None}
     out["all"]["kind"] = ("country" if out["all"]["best"] in COUNTRIES else
                           "capital" if out["all"]["best"] in CAPITALS else "entity")
     return out
@@ -298,7 +298,7 @@ for g, rows in res["address"].items():
     res["address"][g] = {k: rate(r[k] == r["gt"] for r in rows) for k in ("argmax", "last", "first", "random")}
 for g, rd in res["readouts"].items():
     res["readouts"][g] = {k: {"country": rate(x["countries"]["ok"] for x in v),
-                              "capital": rate(x["capitals"]["ok"] for x in v),
+                              "capital": rate(x["capitals"]["ok"] for x in v if x["capitals"]["defined"]),
                               "all": rate(x["all"]["ok"] for x in v),
                               "all_kind": {kk: sum(x["all"]["kind"] == kk for x in v) for kk in ("country", "capital", "entity")}}
                           for k, v in rd.items()}
