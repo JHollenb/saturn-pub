@@ -109,4 +109,5 @@ One mrun job, `job-4898fc946910` (Beast, bf16 eager, `MDB_NPAIRS=6`, priority 70
 
 Differences from the original: only the SAELens check (section 4) was skipped in this job, because
 `einops` was not on the path (`sae_lens not installed: No module named 'einops'`); `run.sh` now adds
-`site-tl440-nn082`, which holds it. See the follow-up line below.
+`site-tl440-nn082`, which holds it. That `run.sh` fix and the SAELens strict-load check (section 4) are
+NOT yet run on Beast: a rerun was blocked because another job held the GPU for over an hour.
