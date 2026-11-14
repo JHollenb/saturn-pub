@@ -1,0 +1,441 @@
+{
+ "P6": {
+  "items": 64,
+  "within_2_spacing_at_abs_M (prereg wording)": 25,
+  "within_2_spacing_at_larger_abs_logit_of_the_pair": 64,
+  "note": "verdicts.json said 64/64; that number came from an ad-hoc check whose spacing used the largest |logit| over all kept tokens (incl. the control's answer), not saved; superseded by this file"
+ },
+ "P5_split": {
+  "other-capital": 2,
+  "non-capital other (mostly a city of the country)": 24,
+  "copy (word-prefix of the descriptor)": 8
+ },
+ "repair": {
+  "A_wrong_capital_by_answer": {
+   "class": {
+    "items": [
+     "currency:lira",
+     "currency:lev",
+     "currency:sol",
+     "currency:shilling",
+     "person:Ludwig van Beethoven"
+    ],
+    "repairs": 7,
+    "cell_fixed": 4,
+    "band_fixed": 5,
+    "readout_best_country_is_true": 0,
+    "readout_best_country": {
+     "currency:lira": " Italy",
+     "currency:lev": " Russia",
+     "currency:sol": " Czech",
+     "currency:shilling": " Britain",
+     "person:Ludwig van Beethoven": " Austria"
+    }
+   },
+   "rest": {
+    "items": 36,
+    "repairs": 61,
+    "cell_fixed": 15,
+    "band_fixed": 37,
+    "readout_best_country_is_true": 30,
+    "readout_best_country": null
+   }
+  },
+  "B_my_tracker_set (lira, lev, sol, peso, shilling)": {
+   "class": {
+    "items": [
+     "currency:lira",
+     "currency:lev",
+     "currency:sol",
+     "currency:peso",
+     "currency:shilling"
+    ],
+    "repairs": 6,
+    "cell_fixed": 5,
+    "band_fixed": 5,
+    "readout_best_country_is_true": 1,
+    "readout_best_country": {
+     "currency:lira": " Italy",
+     "currency:lev": " Russia",
+     "currency:sol": " Czech",
+     "currency:peso": " Philippines",
+     "currency:shilling": " Britain"
+    }
+   },
+   "rest": {
+    "items": 36,
+    "repairs": 62,
+    "cell_fixed": 14,
+    "band_fixed": 37,
+    "readout_best_country_is_true": 29,
+    "readout_best_country": null
+   }
+  },
+  "note": "readout best country = best of the candidate panel's single-token country tokens (Armenia is not among them; lev's full-vocabulary top-1 is ' Armenia', its best panel country is ' Russia')"
+ },
+ "sweep_timing": {
+  "items": 64,
+  "median_seconds": 0.4751728430019284,
+  "median_arms": 2128.0,
+  "median_ms_per_arm": 0.21279127184543795,
+  "smoke_job-febd18f58dd4_first_item": "1,120 arms, 0.24 s (job log)"
+ },
+ "F2_equals_F1_site": "64/64",
+ "P4_failures": {
+  "F1.V.ctl": {
+   "n": 6,
+   "city_controls": 6,
+   "other_capital": []
+  },
+  "GT.V.ctl": {
+   "n": 6,
+   "city_controls": 6,
+   "other_capital": []
+  },
+  "band8.V.ctl": {
+   "n": 11,
+   "city_controls": 8,
+   "other_capital": [
+    "currency:rupiah"
+   ]
+  }
+ },
+ "bridge_feature_naming": {
+  "definition": "recipient-side features of a pair = top_features with delta_act < 0 and along > 0, first 3 by |along|; 'names the bridge' = a logit-lens token matches the bridge's name list in bridge_names.json (country, adjective, capital, Chinese name): substring = any key is a substring of any of the 5 lens tokens; top3 = same on the first 3 lens tokens; exact = a stripped lowercased token equals a key",
+  "substring": {
+   "pairs": 123,
+   "top1_names_bridge": 69,
+   "any_of_top3_names_bridge": 76
+  },
+  "top3": {
+   "pairs": 123,
+   "top1_names_bridge": 69,
+   "any_of_top3_names_bridge": 76
+  },
+  "exact": {
+   "pairs": 123,
+   "top1_names_bridge": 64,
+   "any_of_top3_names_bridge": 70
+  }
+ },
+ "bridge_feature_cross_bridge_null": [
+  {
+   "feature": 17491,
+   "bridge": "China",
+   "in_bridge": "7/7",
+   "other_bridges": "1/57",
+   "other_bridge_list": [
+    "Indonesia"
+   ]
+  },
+  {
+   "feature": 32521,
+   "bridge": "Japan",
+   "in_bridge": "6/6",
+   "other_bridges": "2/58",
+   "other_bridge_list": [
+    "Korea"
+   ]
+  },
+  {
+   "feature": 2502,
+   "bridge": "Poland",
+   "in_bridge": "4/4",
+   "other_bridges": "2/60",
+   "other_bridge_list": [
+    "Denmark",
+    "Japan"
+   ]
+  },
+  {
+   "feature": 24531,
+   "bridge": "Poland",
+   "in_bridge": "4/4",
+   "other_bridges": "3/60",
+   "other_bridge_list": [
+    "Czech",
+    "Hungary",
+    "Italy"
+   ]
+  },
+  {
+   "feature": 22638,
+   "bridge": "Greece",
+   "in_bridge": "4/4",
+   "other_bridges": "2/60",
+   "other_bridge_list": [
+    "Egypt",
+    "Iran"
+   ]
+  },
+  {
+   "feature": 11201,
+   "bridge": "Spain",
+   "in_bridge": "3/3",
+   "other_bridges": "1/61",
+   "other_bridge_list": [
+    "Portugal"
+   ]
+  },
+  {
+   "feature": 14971,
+   "bridge": "Greece",
+   "in_bridge": "3/4",
+   "other_bridges": "5/60",
+   "other_bridge_list": [
+    "America",
+    "Japan",
+    "Portugal",
+    "Spain",
+    "Sweden"
+   ]
+  },
+  {
+   "feature": 26232,
+   "bridge": "Italy",
+   "in_bridge": "3/4",
+   "other_bridges": "1/60",
+   "other_bridge_list": [
+    "China"
+   ]
+  },
+  {
+   "feature": 27085,
+   "bridge": "Netherlands",
+   "in_bridge": "3/3",
+   "other_bridges": "1/61",
+   "other_bridge_list": [
+    "Indonesia"
+   ]
+  },
+  {
+   "feature": 23913,
+   "bridge": "Russia",
+   "in_bridge": "3/3",
+   "other_bridges": "0/61",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 30986,
+   "bridge": "Spain",
+   "in_bridge": "2/3",
+   "other_bridges": "1/61",
+   "other_bridge_list": [
+    "Japan"
+   ]
+  },
+  {
+   "feature": 11471,
+   "bridge": "Korea",
+   "in_bridge": "2/2",
+   "other_bridges": "2/62",
+   "other_bridge_list": [
+    "Denmark",
+    "Thailand"
+   ]
+  },
+  {
+   "feature": 1890,
+   "bridge": "Korea",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 14375,
+   "bridge": "Sweden",
+   "in_bridge": "2/2",
+   "other_bridges": "4/62",
+   "other_bridge_list": [
+    "Czech",
+    "Denmark",
+    "Germany"
+   ]
+  },
+  {
+   "feature": 25065,
+   "bridge": "Sweden",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 10025,
+   "bridge": "Austria",
+   "in_bridge": "2/2",
+   "other_bridges": "6/62",
+   "other_bridge_list": [
+    "Germany",
+    "Netherlands",
+    "Russia",
+    "Sweden"
+   ]
+  },
+  {
+   "feature": 21698,
+   "bridge": "Germany",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 5458,
+   "bridge": "Egypt",
+   "in_bridge": "2/2",
+   "other_bridges": "4/62",
+   "other_bridge_list": [
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Poland"
+   ]
+  },
+  {
+   "feature": 31083,
+   "bridge": "Japan",
+   "in_bridge": "2/6",
+   "other_bridges": "1/58",
+   "other_bridge_list": [
+    "Indonesia"
+   ]
+  },
+  {
+   "feature": 1529,
+   "bridge": "Russia",
+   "in_bridge": "2/3",
+   "other_bridges": "2/61",
+   "other_bridge_list": [
+    "Spain",
+    "Thailand"
+   ]
+  },
+  {
+   "feature": 29308,
+   "bridge": "Indonesia",
+   "in_bridge": "2/2",
+   "other_bridges": "1/62",
+   "other_bridge_list": [
+    "Thailand"
+   ]
+  },
+  {
+   "feature": 10710,
+   "bridge": "Britain",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 20698,
+   "bridge": "Britain",
+   "in_bridge": "2/2",
+   "other_bridges": "1/62",
+   "other_bridge_list": [
+    "Ireland"
+   ]
+  },
+  {
+   "feature": 25967,
+   "bridge": "Britain",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 27252,
+   "bridge": "China",
+   "in_bridge": "2/7",
+   "other_bridges": "0/57",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 11596,
+   "bridge": "Iran",
+   "in_bridge": "2/2",
+   "other_bridges": "2/62",
+   "other_bridge_list": [
+    "Egypt",
+    "Israel"
+   ]
+  },
+  {
+   "feature": 24255,
+   "bridge": "Iran",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 18616,
+   "bridge": "Russia",
+   "in_bridge": "2/3",
+   "other_bridges": "0/61",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 28432,
+   "bridge": "Israel",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 13884,
+   "bridge": "Israel",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 15308,
+   "bridge": "Japan",
+   "in_bridge": "2/6",
+   "other_bridges": "0/58",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 19243,
+   "bridge": "Norway",
+   "in_bridge": "2/2",
+   "other_bridges": "1/62",
+   "other_bridge_list": [
+    "Austria"
+   ]
+  },
+  {
+   "feature": 12427,
+   "bridge": "Greece",
+   "in_bridge": "2/4",
+   "other_bridges": "1/60",
+   "other_bridge_list": [
+    "China"
+   ]
+  },
+  {
+   "feature": 16678,
+   "bridge": "Netherlands",
+   "in_bridge": "2/3",
+   "other_bridges": "2/61",
+   "other_bridge_list": [
+    "Japan",
+    "Norway"
+   ]
+  },
+  {
+   "feature": 13110,
+   "bridge": "Egypt",
+   "in_bridge": "2/2",
+   "other_bridges": "0/62",
+   "other_bridge_list": []
+  },
+  {
+   "feature": 15497,
+   "bridge": "Greece",
+   "in_bridge": "2/4",
+   "other_bridges": "1/60",
+   "other_bridge_list": [
+    "Denmark"
+   ]
+  }
+ ]
+}
