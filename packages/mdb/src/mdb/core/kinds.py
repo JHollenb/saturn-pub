@@ -168,5 +168,26 @@ CIRCUIT_MAP = declare_kind(
                    "payload.tensor.shape.*", "table.bytes", "table.tensor.shape.*"),
 )
 
-__all__ = ["CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+# Debugger objects of the gap audit 2026-11-14 (P1, P6). ``branches``: named native branches from
+# one checkpoint, every arm measured at one consumer against ONE floor, with its edits (origins
+# included), holds, kernel path and effect in floors. ``pool``: values collected at one address
+# over a prompt set, one per item with its origin, as a sha256-checked blob. Both always carry
+# ``custody`` (P8).
+BRANCHES = declare_kind(
+    "branches",
+    required=("schema", "name", "at", "consumer", "base", "floor", "arms", "custody"),
+    plain_numeric=("at.row", "at.transitions", "consumer.row", "consumer.a", "consumer.b",
+                   "consumer.i", "arms.*.argmax", "arms.*.edits.**", "arms.*.cells.**",
+                   "arms.*.holds.**", "arms.*.stepped.argmax",
+                   "base.argmax", "arms_omitted", "n_arms", *PROCEDURE),
+)
+
+POOL = declare_kind(
+    "pool",
+    required=("schema", "name", "address", "items", "items_sha256", "payload", "custody"),
+    plain_numeric=("n", "shape.*", "payload.bytes", "payload.tensor.shape.*", "items.**",
+                   "labels.**", "items_omitted"),
+)
+
+__all__ = ["BRANCHES", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

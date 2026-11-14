@@ -258,6 +258,9 @@ class Run:
         self._trail: list[_Mark] = [self._mark(root_transitions)]
         self._reads: OrderedDict[tuple[str, int], PortController] = OrderedDict()
         self._hydrated: tuple[str, Session] | None = None
+        self._holds: list[Any] = []          # engine.holds.Hold, in the order they were added
+        self._hold_key: Any = None           # what the pending layer's hold edits were made for
+        self._replaying = False              # a restore replays recorded edits, holds untouched
 
     # --- procedure (prefill split) ------------------------------------------------------
 
@@ -503,6 +506,8 @@ class Run:
     def _commit(self) -> Any:
         mark = self._trail[-1]
         layer = mark.phase == "layer"
+        if layer:
+            self._sync_holds()
         edits = tuple(self._edits) if layer else ()
         cells = tuple(self._cells) if layer else ()  # carried across non-layer transitions
         snapshot = _Snapshot(self)
@@ -553,6 +558,7 @@ class Run:
         layer = self.pending_layer
         if layer is None:
             raise ValueError(f"no pending decoder layer at {self.where}")
+        self._sync_holds()
         port = self._port if port is None else port
         if self.lookahead == "layer":
             if self._cache is None:
@@ -694,6 +700,14 @@ class Run:
 
     def read(self, target: str | None = None) -> torch.Tensor:
         return self._read(target)[0]
+
+    def ref(self, target: str) -> Any:
+        """The value at ``ADDR[sel]`` (a port or stop occurrence, or ``cache.L<l>.k|v[...]``)
+        with its origin pointer, as an ``engine.refs.ValueRef``: pass it to another run's
+        ``set`` and the edit records where the value came from (P5). Moves nothing."""
+        from . import refs
+
+        return refs.ref(self, target)
 
     def read_info(
         self, target: str | None = None, *, select: torch.Tensor | None = None
@@ -1040,7 +1054,30 @@ class Run:
         and the next read (or ``staged_info``) probes the layer once with every staged edit.
         ``check=True`` probes such an edit now instead, so a realisation failure un-stages it
         here rather than at the next read (the ``set`` op, which prints the realised edit).
+
+        Selectors and origins (P5, ``engine.refs``): ``target`` may carry the REPL's selector
+        (``t5.L1.p[h0,src=1:3]``, ``L1.v[kv1]``, ``t@last.L1.A[h1]``): it becomes ONE masked edit
+        with ``selection`` the selector text. ``value`` may be a ``ValueRef`` (``other.ref(ADDR)``)
+        whose pointer is recorded as ``origin``; a ref must have the selected block's shape. A
+        ``cache.L<l>.k|v[kv,row,d]`` target is a state-cell edit (``set_cell``).
         """
+        from . import refs
+
+        if isinstance(target, str) and ("[" in target or target.strip().startswith(("cache.", "t@"))
+                                        or isinstance(value, refs.ValueRef)):
+            found = refs.resolve(self, target)
+            if found["kind"] == "cell":
+                if mask is not None:
+                    raise ValueError("a cache cell edit takes its rows/kv/d from the selector")
+                kwargs = refs.cell_edit(self, found, value, origin)
+                kwargs["selection"] = selection or kwargs["selection"]
+                cell_value = kwargs.pop("value")
+                return self.set_cell(kwargs.pop("layer"), kwargs.pop("tensor"), cell_value, op,
+                                     check=check, **kwargs)
+            request = refs.port_edit(self, found, value, origin, mask)
+            target = found["address"].partition("[")[0]
+            value, mask, origin = request["value"], request["mask"], request["origin"]
+            selection = selection or request["selection"]
         key = self.parse(target)
         mark = self._trail[-1]
         label = self._stops[key[1]]
@@ -1425,16 +1462,122 @@ class Run:
                 out[tensor_digest(cell.value)] = cell.value
         return out
 
-    def hold(self, tensors: dict[str, torch.Tensor]) -> None:
-        """Hold edit values and masks (payload sha256 -> tensor) so ``restore`` can rebuild edits
-        this process did not stage, e.g. a checkpoint read back from a project store. Every
-        digest is checked first; nothing is held when one differs."""
+    def hold(self, tensors: dict[str, torch.Tensor] | str, *, source: Any = None,
+             name: str | None = None) -> dict[str, Any] | None:
+        """Two meanings, by argument type.
+
+        ``hold(ADDRESS, source=RUN, name=)`` (P4, ``engine.holds``): keep a port (``p``, ``A``,
+        ``m``, ...), an RMSNorm scale (``attn_norm_scale``, ``mlp_norm_scale``, ``norm_scale``)
+        or a cache cell (``cache.L<l>.k|v[kv,row=...]``) at ``source``'s values on every covered
+        ``(row, layer)`` this run steps from now on, e.g. ``run.hold("t@last.L>3.p",
+        source=base)``. Each covered layer gets an ordinary ``replace`` edit whose origin says
+        it is a hold. Returns the hold's description; ``release`` drops it, ``holds`` lists.
+
+        ``hold(TENSORS)``: hold edit values and masks (payload sha256 -> tensor) so ``restore``
+        can rebuild edits this process did not stage, e.g. a checkpoint read back from a project
+        store. Every digest is checked first; nothing is held when one differs."""
+        if isinstance(tensors, str):
+            return self._add_hold(tensors, source, name)
         for sha, value in tensors.items():
             if tensor_digest(value) != sha:
                 raise ValueError(f"tensor held as {sha[:12]} has another payload digest")
         for sha, value in tensors.items():
             (self._masks if value.dtype == torch.bool else self._values)[sha] = value
             self._pinned.add(sha)
+
+    # --- holds (P4) ----------------------------------------------------------------------
+
+    @property
+    def holds(self) -> list[dict[str, Any]]:
+        """The active holds (``hold``), oldest first."""
+        return [hold.describe() for hold in self._holds]
+
+    def release(self, name: str | None = None) -> list[str]:
+        """Drop the hold ``name`` (every hold when None); returns the names dropped. Hold edits
+        already committed stay on the trail (they are the path); the pending layer's are
+        dropped. A cell hold's staged cell edit is not unstaged (``abort`` does that)."""
+        dropped = [h.name for h in self._holds if name is None or h.name == name]
+        if name is not None and not dropped:
+            raise ValueError(f"no hold named {name!r} (holds: "
+                             f"{', '.join(h.name for h in self._holds) or 'none'})")
+        from . import holds
+
+        self._holds = [h for h in self._holds if h.name not in dropped]
+        kept = [e for e in self._edits
+                if not (holds.is_hold(e) and e.origin.get("hold") in dropped)]
+        if len(kept) != len(self._edits):
+            self._edits, self._cache = kept, None
+        self._hold_key = None
+        return dropped
+
+    def _add_hold(self, text: str, source: Any, name: str | None) -> dict[str, Any]:
+        from . import holds
+
+        if source is None:
+            raise ValueError("a hold needs source=RUN, the reference run whose values it keeps")
+        if source.adapter.model_identity != self.adapter.model_identity:
+            raise ValueError("a hold's source must be a run of the same model")
+        name = name or f"hold{len(self._holds) + 1}"
+        if any(h.name == name for h in self._holds):
+            raise ValueError(f"a hold named {name!r} exists; release it or pick another name")
+        if text.strip().startswith("cache."):
+            ref = source.ref(text)
+            origin = {**ref.pointer, "kind": "hold", "hold": name,
+                      "rule": "state cell replaced with the source's block"}
+            manifest = self.set(text, ref, origin=origin)
+            layer = int(text.strip().split(".")[1][1:])
+            hold = holds.Hold(name, "cell", (layer,), None, source, text, cells=[manifest])
+            self._holds.append(hold)
+            return {**hold.describe(), "kind": "cell", "cell": manifest}
+        port, layers, rows = holds.parse(self, text)
+        hold = holds.Hold(name, port, layers, rows, source, text.strip())
+        self._holds.append(hold)
+        self._hold_key = None
+        return hold.describe()
+
+    def _sync_holds(self) -> None:
+        """Make the pending layer's hold edits those of the active holds for its ``(row,
+        layer)``, given the user's staged edits (recomputed only when those, the cut or the
+        holds changed). Never during a replay: the recorded edits are the path."""
+        if self._replaying:
+            return
+        mark = self._trail[-1]
+        if mark.phase != "layer":
+            return
+        from . import holds
+
+        mine = {h.name for h in self._holds}
+        ours = [holds.is_hold(e) and e.origin.get("hold") in mine for e in self._edits]
+        user = [e for e, own in zip(self._edits, ours) if not own]
+        present = [e for e, own in zip(self._edits, ours) if own]
+        active = [h for h in self._holds if not h.cells and h.covers(mark.row, mark.layer)]
+        if not active:
+            if present:
+                self._edits, self._cache, self._hold_key = user, None, None
+            return
+        import json
+
+        key = (mark.fingerprint, tuple(id(h) for h in active),
+               json.dumps([e.manifest() for e in user], sort_keys=True, default=str),
+               json.dumps([c.manifest() for c in self._cells], sort_keys=True, default=str))
+        if (self._hold_key is not None and self._hold_key[0] == key
+                and len(present) == len(self._hold_key[1])
+                and all(a is b for a, b in zip(present, self._hold_key[1]))):
+            return
+
+        def probe_input(port: str, edits: list[PortEdit]) -> torch.Tensor:
+            stop = self.program.spec(port).name
+            controller = self._controller(mark.layer, edits, self._cells, stop=stop,
+                                          capture=(stop,))
+            if not self._probe(self.session, controller)["stopped"]:
+                raise RuntimeError(f"hold probe did not stop at {stop}")
+            return controller.captures[stop]
+
+        new = holds.edits_for(self, mark.row, mark.layer, user, probe_input)
+        for edit in new:
+            self._values[edit.key] = edit.value
+        self._edits, self._cache = [*user, *new], None
+        self._hold_key = (key, new)  # the edit objects themselves: identity, never a reused id
 
     def _sweep_tensors(self) -> None:
         """Drop the held edit tensors no edit of the trail or the staged set uses and no
@@ -1673,10 +1816,12 @@ class Run:
             self._cells = [e for e in here if isinstance(e, CellEdit)]
             if self._trail[-1].phase == "sample":
                 self._feeding = fed.get(self._trail[-1].transitions)
+            self._replaying = True  # the recorded edits (hold edits included) are the path
             try:
                 self._commit()
             finally:
                 self._feeding = None
+                self._replaying = False
         if self._trail[-1].fingerprint != checkpoint["cut"]:
             raise ReplayMismatch(checkpoint["cut"], self._trail[-1].fingerprint)
 

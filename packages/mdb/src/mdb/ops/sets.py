@@ -111,6 +111,45 @@ class PromptSet:
         return next(item for item in self.items if item.name == name)
 
 
+def roles_from_text(tokenizer: Any, text: str, spans: dict[str, Any], *,
+                    ids: list[int] | None = None) -> dict[str, list[int]]:
+    """Token rows of named text spans (gap audit P7, the CoT drivers' four ``spans_for``):
+    ``spans`` maps a role to a substring (its first occurrence), ``(substring, after)`` (the first
+    occurrence at or after character ``after``, or after the end of the role named ``after``)
+    or ``(start, end)`` character offsets. A row belongs to a role when its token's character
+    span overlaps the role's (tokens with an empty span, e.g. special tokens, never do).
+    ``ids``: the item's token ids, checked against the tokenizer's encoding of ``text``.
+    Returns ``{role: [rows]}`` for ``roles`` of a prompt-set item."""
+    encoded = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
+    if ids is not None and list(encoded["input_ids"]) != list(ids):
+        raise Refused("the tokenizer's encoding of text differs from the item's ids")
+    found: dict[str, tuple[int, int]] = {}
+    for role, spec in spans.items():
+        if isinstance(spec, str):
+            start = text.find(spec)
+            if start < 0:
+                raise Refused(f"role {role}: {spec!r} is not in the text")
+            found[role] = (start, start + len(spec))
+            continue
+        first, second = spec
+        if isinstance(first, int) and isinstance(second, int):
+            found[role] = (first, second)
+            continue
+        after = found[second][1] if isinstance(second, str) else int(second)
+        start = text.find(first, after)
+        if start < 0:
+            raise Refused(f"role {role}: {first!r} is not in the text after {after}")
+        found[role] = (start, start + len(first))
+    out: dict[str, list[int]] = {role: [] for role in spans}
+    for row, (a, b) in enumerate(encoded["offset_mapping"]):
+        if a >= b:
+            continue
+        for role, (lo, hi) in found.items():
+            if a < hi and b > lo:
+                out[role].append(row)
+    return out
+
+
 def _item(raw: Any, where: str) -> Item:
     if not isinstance(raw, dict):
         raise BadArgs(f"{where}: an item is a JSON object")

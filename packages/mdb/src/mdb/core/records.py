@@ -449,19 +449,28 @@ def _check_envelope(record):
 
 @_huge_int_guard
 def seal_record(*, session_id, kind, model_identity, execution, authority, body, pointers=()):
-    """Build and seal one record. ``model_identity``/``execution`` are the session's values."""
+    """Build and seal one record. ``model_identity``/``execution`` are the session's values.
+
+    Custody (P8, ``core.custody``): while custody is declared the body gains ``custody`` (script
+    and prereg sha256, library versions, kernel path) unless it carries its own; every open
+    record sink receives the sealed record."""
+    from . import custody
+
     if not isinstance(session_id, str) or not session_id.strip():
         raise RecordError("a record needs a session id")
     pointers = [_record_pointer(p) for p in pointers]
     envelope = _bounded_record({
         "schema": SCHEMA, "session_id": session_id, "kind": _short_text(kind, "record kind"),
         "model_identity": model_identity, "execution": execution,
-        "authority": _authority(authority), "pointers": pointers, "body": dict(body),
+        "authority": _authority(authority), "pointers": pointers,
+        "body": custody.attach_custody(kind, dict(body)),
     }, "record")
     _check_envelope(envelope)
     validate_body(kind, envelope["body"], envelope["pointers"])
     digest = seal_digest(envelope)
-    return _bounded_record({**envelope, "id": digest, "digest": digest}, "record")
+    record = _bounded_record({**envelope, "id": digest, "digest": digest}, "record")
+    custody.emit(record)
+    return record
 
 
 @_huge_int_guard

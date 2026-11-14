@@ -63,6 +63,30 @@ def spacing(magnitude: float, dtype: Any) -> float:
     return 2.0 ** math.floor(math.log2(size)) * float(info.eps)
 
 
+MARGIN_FLOOR_SPACINGS = 2.0  # the showcase / B1 / P6 wording that held: 2 spacings
+
+
+def margin_floor(logits: Any, a: int, b: int, *, dtype: Any = None,
+                 spacings: float = MARGIN_FLOOR_SPACINGS, extra: float = 0.0) -> float:
+    """The noise floor of a margin ``logits[a] - logits[b]``: ``spacings`` x the dtype spacing
+    at the larger ``|logit|`` of the pair, plus a measured kernel-path delta ``extra`` (the
+    showcase ``common.floor_of``, ``scale_common`` and exp5 copies, on ``spacing``). ``dtype``
+    defaults to the logits' dtype (read the logits in the model dtype, not upcast)."""
+    flat = logits.reshape(-1)
+    size = max(abs(float(flat[a])), abs(float(flat[b])))
+    return float(spacings) * spacing(size, dtype if dtype is not None else logits.dtype) + abs(
+        float(extra))
+
+
+def floors(effect: float, floor: float) -> float:
+    """``|effect|`` in floor units (the effect-in-floors column; ``inf`` for a zero floor and a
+    nonzero effect)."""
+    effect, floor = abs(float(effect)), float(floor)
+    if floor > 0:
+        return effect / floor
+    return math.inf if effect else 0.0
+
+
 def magnitude(consumer: Any, *tensors: Any) -> float:
     """The consumer's magnitude over native tensors read at its stop: the two logits of a margin
     (``consumer.a``/``.b``), the logit (``.i``), else the largest element."""
@@ -203,5 +227,6 @@ def confirm(residual: Any, size: float, dtype: Any, *, partner: float | None = N
     return out
 
 
-__all__ = ["CONFIRMED", "CONFIRM_CRITERION", "CRITERION", "EFFECT", "NATIVE_ONLY", "NOT_CONFIRMED",
-           "NO_EFFECT", "UNRESOLVED", "FLOOR_SPACINGS", "confirm", "decide", "magnitude", "spacing"]
+__all__ = ["CONFIRMED", "CONFIRM_CRITERION", "CRITERION", "EFFECT", "MARGIN_FLOOR_SPACINGS",
+           "NATIVE_ONLY", "NOT_CONFIRMED", "NO_EFFECT", "UNRESOLVED", "FLOOR_SPACINGS", "confirm",
+           "decide", "floors", "magnitude", "margin_floor", "spacing"]

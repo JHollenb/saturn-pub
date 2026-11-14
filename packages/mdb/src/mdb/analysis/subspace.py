@@ -259,43 +259,45 @@ def from_pyvene(intervention: Any, name: str, layer: int, kv: int, *,
 
 
 def interchange(debugger: Any, sb: SubspaceBinding, ids: list[int], row: int, source_value: Any,
-                consumer: Any, floor: float | None = None) -> dict[str, Any]:
-    """Measure the subspace interchange on an mdb branch: a run of ``ids`` with prefill = ``row``
-    stepped to ``t<row>.L<layer>.h``, checkpointed; the cell set to its native value (``M0``),
-    to ``swap(native, source_value)`` (``M``) and to ``source_value`` (``M_whole``), each run to
-    the consumer (``forecast.Margin``/``Logit``: ``consumer.value(logits)`` or a callable)."""
+                consumer: Any, floor: float | None = None, keep: bool = False) -> dict[str, Any]:
+    """Measure the subspace interchange on mdb branches (``branches.Branches``): a run of ``ids``
+    with prefill = ``row`` branched at ``t<row>.L<layer>.h``; arms ``M`` (the cell's value
+    projection set to ``swap(native, source_value)``) and ``M_whole`` (set to ``source_value``),
+    each run to the consumer (``forecast.Margin``/``Logit``, or a callable of the last row's
+    logits), against the base ``M0`` and ONE floor shared with every other arm of the branch
+    point: the caller's ``floor``, else the branches' default (2 spacings at the base margin)
+    for a margin or logit. ``branches`` in the result is the ``Branches`` object (seal it, add
+    nulls, compare) when ``keep``; ``arms`` is its plain table (JSON-able) always."""
+    from .branches import Branches, edit
+
     torch = _torch()
     adapter = debugger.adapter
     dh = adapter.head_dim
     last = len(ids) - 1
     run = debugger.run(list(ids), name="subspace", prefill=row)
-    run.until(f"t{row}.L{sb.layer}.h")
-    ck = run.checkpoint("subspace-pre")
-
-    def score() -> float:
-        run.until(f"t{last}.logits")
-        lg = f64(run.read(f"t{last}.logits")).reshape(-1)
-        return float(consumer(lg)) if callable(consumer) else float(lg[consumer.a] - lg[consumer.b])
-
-    m0 = score()
-    native = f64(run.read_cache(sb.layer, "v", staged=False)[0, sb.kv, row]).cpu()
-    run.restore(ck)
-    out = {"M0": num(m0, MEASURED)}
+    br = Branches(run, consumer, at=f"t{row}.L{sb.layer}.h", row=last, floor=floor,
+                  name=f"interchange:{sb.name}")
+    native = f64(br.reference.read_cache(sb.layer, "v", staged=False)[0, sb.kv, row]).cpu()
+    shape = run.port_shape("v")
+    mask = torch.zeros(shape, dtype=torch.bool)
+    mask.reshape(-1)[sb.kv * dh:(sb.kv + 1) * dh] = True
     for key, value in (("M", sb.swap(native, source_value)), ("M_whole", f64(source_value))):
-        shape = run.port_shape("v")
         full = torch.zeros(shape, dtype=adapter.dtype)
-        mask = torch.zeros(shape, dtype=torch.bool)
         full.reshape(-1)[sb.kv * dh:(sb.kv + 1) * dh] = value.reshape(-1).to(adapter.dtype)
-        mask.reshape(-1)[sb.kv * dh:(sb.kv + 1) * dh] = True
-        dev = next(adapter.model.parameters()).device
-        run.set(f"t{row}.L{sb.layer}.v", full.to(dev), mask=mask.to(dev))
-        out[key] = num(score(), MEASURED)
-        run.restore(ck)
+        br.add(key, [edit(f"t{row}.L{sb.layer}.v", full, mask=mask,
+                          origin={"kind": "subspace-interchange", "subspace": sb.name,
+                                  "digest": sb.digest(), "arm": key})])
+    rows = {r["name"]: r for r in br.run()}
+    out = {"M0": num(br.M0, MEASURED), "M": rows["M"]["M"], "M_whole": rows["M_whole"]["M"]}
     out["mass_of_delta"] = sb.mass(f64(source_value) - native)
-    if floor:                                  # effect in floors: the numeric column the
-        out["floor"] = num(float(floor), EXACT)   # kernel-sensitive band derives from
+    shared = floor if floor else br.floor
+    if shared:                                 # effect in floors: the numeric column the
+        out["floor"] = num(float(shared), EXACT if floor else MEASURED)  # band derives from
         for key in ("M0", "M", "M_whole"):
-            out[f"{key}_floors"] = num(out[key]["value"] / float(floor), MEASURED)
+            out[f"{key}_floors"] = num(out[key]["value"] / float(shared), MEASURED)
+    out["arms"] = br.table()
+    if keep:
+        out["branches"] = br
     return out
 
 

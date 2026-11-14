@@ -472,6 +472,38 @@ class Debugger:
                         keep=keep, prefill=None if prefill is None else str(prefill),
                         shard=shard)
 
+    # --- debugger objects of the gap audit (P1, P6, P8) --------------------------------------
+
+    def branches(self, run: Run, consumer: Any, **options: Any) -> Any:
+        """Named native branches of ``run`` from one checkpoint (``analysis.branches``)."""
+        from mdb.analysis.branches import Branches
+
+        return Branches(run, consumer, **options)
+
+    def pool(self, items: Sequence[dict[str, Any]], address: str, **options: Any) -> Any:
+        """A value pool collected at ``address`` over ``items`` (``analysis.pools.collect``)."""
+        from mdb.analysis.pools import collect
+
+        return collect(self, items, address, **options)
+
+    @staticmethod
+    def custody(*, script: Any = None, prereg: Any = None, kernel_path: str | None = None,
+                note: str | None = None) -> dict[str, Any]:
+        """Declare record custody for this process (``core.custody.declare``): every record
+        sealed from now on carries the script and prereg sha256, library versions and kernel
+        path."""
+        from mdb.core import custody
+
+        return custody.declare(script=script, prereg=prereg, kernel_path=kernel_path, note=note)
+
+    @staticmethod
+    def records_to(path: Any) -> Any:
+        """Append every record sealed from now on to ``path`` (JSONL; ``core.custody.Sink``):
+        records persist with no project attached."""
+        from mdb.core import custody
+
+        return custody.records_to(path)
+
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""
         from mdb.repl.shell import Shell  # sanctioned upward import: Debugger.repl convenience
