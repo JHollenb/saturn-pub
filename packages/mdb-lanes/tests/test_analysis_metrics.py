@@ -102,7 +102,8 @@ def test_bounds_propagate_through_differences_and_interactions():
     m = {k: margin(np.array(v), 0, 1, dtype="bfloat16", source=k) for k, v in logits.items()}
     assert m["native"].value == -4.75 and m["native"].bound == 0.125
     single = m["a"] - m["native"]
-    assert single.bound == 0.25 and single.resolved
+    # BF16: outside the readout-rounding bound, but that bound omits compute error -> unresolved
+    assert single.bound == 0.25 and single.readout_rounding_resolved and not single.resolved
     interaction = m["ab"] - m["a"] - m["b"] + m["native"]
     assert interaction.bound == 0.5
     assert interaction.value == pytest.approx(0.5 - (-0.875) - (-4.25) + (-4.75))
@@ -117,6 +118,40 @@ def test_bounds_propagate_through_differences_and_interactions():
     assert (2 * m["a"]).bound == 0.25 and (-m["a"]).bound == 0.125
     with pytest.raises(TypeError):
         m["a"] * m["b"]
+
+
+def test_bf16_resolved_needs_a_compute_error_term_fp32_unchanged():
+    """Audit 2026-11-13 finding 5: a BF16 readout-rounding bound is not an uncertainty bound."""
+    logits = {"native": (16.625, 21.375), "a": (19.75, 20.625)}
+    # FP32: unchanged behaviour (resolved = |value| > bound), no compute term needed
+    f = {k: margin(np.array(v), 0, 1, dtype="float32", source=k) for k, v in logits.items()}
+    d = f["a"] - f["native"]
+    assert d.resolved == d.readout_rounding_resolved == (abs(d.value) > d.bound) is True
+    assert d.compute_bound == 0.0 and "readout_rounding_resolved" not in d.as_dict()
+    tiny = Bounded(1e-7, 2e-6, dtype="float32")
+    assert not tiny.resolved and tiny.as_dict()["status"] == "inside rounding bound"
+    # BF16 without a compute-error term: unresolved, whatever the rounding bound says
+    b = {k: margin(np.array(v), 0, 1, dtype="bfloat16", source=k) for k, v in logits.items()}
+    single = b["a"] - b["native"]
+    assert single.readout_rounding_resolved and not single.resolved
+    assert single.uncovered_low_precision == {"a", "native"}
+    assert single.as_dict()["status"].startswith("unresolved: low-precision readout-rounding bound only")
+    # one margin covered, the other not: still unresolved
+    half = b["a"].with_compute_error(0.125, source="a") - b["native"]
+    assert not half.resolved and half.uncovered_low_precision == {"native"}
+    # both covered: resolved iff |value| > rounding + compute bound
+    cov = {k: v.with_compute_error(0.125, source=k) for k, v in b.items()}
+    s = cov["a"] - cov["native"]
+    assert s.readout_bound == 0.25 and s.compute_bound == 0.25 and s.bound == 0.5 and s.resolved
+    big = {k: v.with_compute_error(2.0, source=k) for k, v in b.items()}
+    s = big["a"] - big["native"]
+    assert s.bound == 4.25 and not s.resolved and s.as_dict()["status"] == "inside rounding + compute-error bound"
+    # a compute term on a cancelled quantity is dropped with it (native - native)
+    assert (cov["native"] - cov["native"]).bound == 0.0
+    with pytest.raises(ValueError):
+        cov["a"].with_compute_error(0.1, source="a")             # one term per source
+    with pytest.raises(ValueError):
+        b["a"].with_compute_error(-1.0, source="a")
 
 
 def test_correlation_report_returns_pearson_spearman_and_leave_one_out():

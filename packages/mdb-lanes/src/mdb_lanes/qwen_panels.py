@@ -287,17 +287,23 @@ def native_recipe(arm, *, model_identity, execution):
 
 # ----------------------------------------------------------------------------------- analysis
 
-def bounded_margin(arm, logits, dtype):
+def bounded_margin(arm, logits, dtype, compute_error=None):
     """hot - cold margin as an ``analysis_metrics.Bounded`` with the readout rounding bound of
-    ``dtype`` (the dtype the logits were produced in); keys (arm, token) so reused logits cancel."""
+    ``dtype`` (the dtype the logits were produced in); keys (arm, token) so reused logits cancel.
+
+    ``compute_error``: a per-margin compute-error term (e.g. the lane's measured recompute-sham
+    margin floor). In BF16 the margin is ``resolved`` only with it (``Bounded.resolved``)."""
     from .analysis_metrics import bounded_values
     hot, cold = bounded_values([logits["hot"], logits["cold"]], dtype=dtype, keys=[(arm, "hot"), (arm, "cold")])
-    return hot - cold
+    margin = hot - cold
+    if compute_error is not None:
+        margin = margin.with_compute_error(compute_error, source=arm, note="measured per-margin floor")
+    return margin
 
 
-def value_margins(arms, dtype):
+def value_margins(arms, dtype, compute_error=None):
     """{arm: Bounded margin} from worker rows ``{arm, tracked: {word: logit}}``."""
-    return {row["arm"]: bounded_margin(row["arm"], row["tracked"], dtype) for row in arms}
+    return {row["arm"]: bounded_margin(row["arm"], row["tracked"], dtype, compute_error) for row in arms}
 
 
 def coefficients(margin):
