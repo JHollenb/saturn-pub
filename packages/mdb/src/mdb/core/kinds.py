@@ -176,7 +176,8 @@ CIRCUIT_MAP = declare_kind(
 BRANCHES = declare_kind(
     "branches",
     required=("schema", "name", "at", "consumer", "base", "floor", "arms", "custody"),
-    plain_numeric=("at.row", "at.transitions", "consumer.row", "consumer.a", "consumer.b",
+    plain_numeric=("at.row", "at.transitions", "at.path_edits.**",
+                   "at.path_cells.**", "consumer.row", "consumer.a", "consumer.b",
                    "consumer.i", "arms.*.argmax", "arms.*.edits.**", "arms.*.cells.**",
                    "arms.*.holds.**", "arms.*.stepped.argmax",
                    "base.argmax", "arms_omitted", "n_arms", *PROCEDURE),
@@ -186,7 +187,7 @@ POOL = declare_kind(
     "pool",
     required=("schema", "name", "address", "items", "items_sha256", "payload", "custody"),
     plain_numeric=("n", "shape.*", "payload.bytes", "payload.tensor.shape.*", "items.**",
-                   "labels.**", "items_omitted"),
+                   "labels.**", "items_omitted", "duplicates"),
 )
 
 # ``core-file`` (gap audit P2): a run's prefix (K/V of every layer at a row start, the prompt,
@@ -195,7 +196,7 @@ CORE_FILE = declare_kind(
     "core-file",
     required=("schema", "split", "prompt", "shape", "source", "tensors", "custody"),
     plain_numeric=("split.row", "split.tokens", "prompt.tokens", "prompt.length", "shape.**",
-                   "procedure.**", "path_edits.**", "tensors.count"),
+                   "procedure.**", "path_edits.**", "post_split_edits", "tensors.count"),
 )
 
 __all__ = ["BRANCHES", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",

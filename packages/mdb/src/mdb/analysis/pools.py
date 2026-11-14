@@ -104,6 +104,9 @@ class Pool:
     def payload(self) -> dict[str, Any]:
         return {"schema": SCHEMA, "dtype": str(self.values.dtype).removeprefix("torch."),
                 "shape": list(self.values.shape[1:]), "ids": self.ids,
+                "labels": [it.get("labels") or {} for it in self.items],
+                "tokens_sha256": [(it.get("origin") or {}).get("tokens_sha256")
+                                  for it in self.items],
                 "values": f64(self.values).reshape(len(self.items), -1).tolist()}
 
     def __len__(self) -> int:
@@ -119,9 +122,40 @@ class Pool:
         return self._index[key]
 
     def _label(self, item: Any, by: str) -> Any:
-        if isinstance(item, dict) and by in (item.get("labels") or item):
-            return (item.get("labels") or {}).get(by, item.get(by))
+        if isinstance(item, dict) and by in ((item.get("labels") or {}).keys() | item.keys()):
+            return (item.get("labels") or {}).get(by, item.get(by))   # nested labels win
         return self.items[self._position(item)]["labels"].get(by)
+
+    @property
+    def kernel_path(self) -> str:
+        """``mdb-prefill-batched`` for cache-cell pools (read from the batched prefill; the
+        per-item ``origin.prefill`` is recorded), else ``mdb-stepped``."""
+        return "mdb-prefill-batched" if self.address.startswith("cache.") else "mdb-stepped"
+
+    def duplicates(self) -> int:
+        """Items whose prompt tokens equal an earlier item's (by ``tokens_sha256``)."""
+        seen = [(it.get("origin") or {}).get("tokens_sha256") for it in self.items]
+        return len([h for i, h in enumerate(seen) if h is not None and h in seen[:i]])
+
+    def _excluded(self, item: Any, exclude: str) -> set[int]:
+        """Positions that must not feed ``item``'s value: its own id and, when ``exclude`` is
+        ``"tokens"`` (default), every item with the same prompt tokens under another id (a
+        duplicated prompt would put the item's own value in its leave-one-out mean)."""
+        if exclude not in ("id", "tokens"):
+            raise Refusal("exclude is 'id' or 'tokens'")
+        key = str(item["id"] if isinstance(item, dict) else item)
+        out = {self._index[key]} if key in self._index else set()
+        if exclude == "tokens":
+            sha = None
+            if isinstance(item, dict) and item.get("ids") is not None:
+                sha = hashlib.sha256(json.dumps([int(t) for t in item["ids"]]).encode()
+                                     ).hexdigest()
+            elif key in self._index:
+                sha = (self.items[self._index[key]].get("origin") or {}).get("tokens_sha256")
+            if sha is not None:
+                out |= {i for i, it in enumerate(self.items)
+                        if (it.get("origin") or {}).get("tokens_sha256") == sha}
+        return out
 
     # --- values handed out ------------------------------------------------------------------
 
@@ -152,23 +186,29 @@ class Pool:
         pool use ``mean_for`` (it is excluded by construction)."""
         return self._mean(list(range(len(self))), "mean of all items", None)
 
-    def mean_for(self, item: Any) -> Any:
+    def mean_for(self, item: Any, *, exclude: str = "tokens") -> Any:
         """Leave-one-out mean: every item but ``item`` (excluded by construction; an item not
-        in the pool gets the full mean, ``excluded`` None)."""
+        in the pool gets the full mean, ``excluded`` None). ``exclude="tokens"`` (default) also
+        drops items with the same prompt tokens under another id; ``"id"`` drops only the id."""
         key = str(item["id"] if isinstance(item, dict) else item)
-        keep = [i for i, k in enumerate(self.ids) if k != key]
-        return self._mean(keep, "leave-one-out mean", key if key in self._index else None)
+        gone = self._excluded(item, exclude)
+        keep = [i for i in range(len(self)) if i not in gone]
+        own = {self._index[key]} if key in self._index else set()
+        return self._mean(keep, "leave-one-out mean", key if key in self._index else None,
+                          exclude=exclude, duplicates_dropped=len(gone - own))
 
-    def class_mean_for(self, item: Any, *, by: str) -> Any:
+    def class_mean_for(self, item: Any, *, by: str, exclude: str = "tokens") -> Any:
         """Mean over the items with ``item``'s label ``by``, ``item`` excluded."""
         key = str(item["id"] if isinstance(item, dict) else item)
         label = self._label(item, by)
+        gone = self._excluded(item, exclude)
         keep = [i for i, it in enumerate(self.items)
-                if it["labels"].get(by) == label and str(it["id"]) != key]
+                if it["labels"].get(by) == label and i not in gone]
         return self._mean(keep, f"same-{by} mean, item excluded", key if key in self._index
-                          else None, label={by: label})
+                          else None, label={by: label}, exclude=exclude)
 
-    def donor(self, item: Any, *, rule: str = "other", order: Sequence[str] | None = None) -> Any:
+    def donor(self, item: Any, *, rule: str = "other", order: Sequence[str] | None = None,
+              exclude: str = "tokens") -> Any:
         """One other item's value: ``rule`` ``any`` (any other item), ``same:<label>`` (same
         label) or ``other:<label>`` (another label); the first eligible item in ``order``
         (default: pool order) that is not ``item``."""
@@ -177,8 +217,10 @@ class Pool:
         if kind not in ("any", "same", "other") or (kind != "any" and not by):
             raise Refusal("donor rule is any, same:<label> or other:<label>")
         label = None if kind == "any" else self._label(item, by)
+        gone = self._excluded(item, exclude)
         for donor_id in (order or self.ids):
-            if str(donor_id) == key or str(donor_id) not in self._index:
+            if str(donor_id) == key or str(donor_id) not in self._index \
+                    or self._index[str(donor_id)] in gone:
                 continue
             labels = self.items[self._index[str(donor_id)]]["labels"]
             if kind == "same" and labels.get(by) != label:
@@ -216,7 +258,8 @@ class Pool:
 
         payload = put_json(self.payload(), store=store, run=self)
         shown = [{"id": str(it["id"]), "labels": it["labels"],
-                  "origin": {k: it["origin"][k] for k in ("address", "sha256", "cut")}}
+                  "origin": {k: it["origin"][k] for k in ("address", "sha256", "cut", "prefill")
+                             if k in it["origin"]}}
                  for it in self.items[:_CAP]]
         body = {"schema": SCHEMA, "name": self.name, "address": self.address,
                 "n": len(self.items), "shape": list(self.values.shape[1:]),
@@ -227,7 +270,8 @@ class Pool:
                 "labels": list(self.labels), "payload": payload,
                 "norms": {"mean": num(float(f64(self.values).reshape(len(self), -1).norm(dim=1)
                                             .mean()), MEASURED)} if len(self) else {},
-                "custody": custody("mdb-stepped")}
+                "duplicates": self.duplicates(),
+                "custody": custody(self.kernel_path)}
         session = session_id or "mdb-pool:" + self.items_sha256()[:32]
         self.record = seal_record(session_id=session, kind="pool",
                                   model_identity=self.model_identity,
@@ -254,10 +298,24 @@ class Pool:
         payload = data["payload"]
         if hashlib.sha256(json_bytes(payload)).hexdigest() != record["body"]["payload"]["sha256"]:
             raise Refusal("pool payload differs from its sealed sha256")
+        items = data["items"]
+        if [str(it["id"]) for it in items] != [str(i) for i in payload["ids"]]:
+            raise Refusal("pool items differ from the payload ids (order or content): refused, "
+                          "the leave-one-out mean would use the wrong rows")
+        body = record["body"]
+        if hashlib.sha256(json.dumps([str(i) for i in payload["ids"]], separators=(",", ":"))
+                          .encode()).hexdigest() != body["items_sha256"]:
+            raise Refusal("pool ids differ from the sealed items_sha256")
+        for it, label in zip(items, payload.get("labels", [None] * len(items))):
+            if label is not None and (it.get("labels") or {}) != label:
+                raise Refusal(f"pool item {it['id']!r} labels differ from the sealed payload")
+        for it, sha in zip(items, payload.get("tokens_sha256", [None] * len(items))):
+            if sha is not None and (it.get("origin") or {}).get("tokens_sha256") != sha:
+                raise Refusal(f"pool item {it['id']!r} tokens digest differs from the payload")
         dtype = getattr(torch, payload["dtype"])
         values = torch.tensor(payload["values"], dtype=torch.float64).reshape(
             len(payload["ids"]), *payload["shape"]).to(dtype)
-        pool = cls(record["body"]["name"], record["body"]["address"], data["items"], values,
+        pool = cls(record["body"]["name"], record["body"]["address"], items, values,
                    skipped=record["body"]["skipped"], model_identity=record["model_identity"],
                    execution=record["execution"], labels=record["body"]["labels"])
         pool.record = record
@@ -297,8 +355,8 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
             skipped.append(item["id"])
             continue
         kept.append({"id": str(item["id"]), "address": bound,
-                     "labels": {k: item.get(k, (item.get("labels") or {}).get(k)) for k in labels},
-                     "origin": {**ref.pointer, "tokens_sha256": hashlib.sha256(
+                     "labels": {k: (item.get("labels") or {}).get(k, item.get(k)) for k in labels},
+                     "origin": {**ref.pointer, "prefill": int(run.prefill), "tokens_sha256": hashlib.sha256(
                          json.dumps(ids).encode()).hexdigest()}})
         values.append(ref.value.detach().to("cpu"))
     if not kept:

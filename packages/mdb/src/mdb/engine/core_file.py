@@ -64,9 +64,17 @@ def dump(run: Any, path: str | Path, *, row: int | None = None,
     values = [v.detach().to("cpu") for v in payload["values"]]
     tokens = [int(t) for t in payload["tokens"][0].tolist()]
     last = len(run.tokens) - 1
+    # edits/cells the run committed AFTER the split are not in the stored cache: a captured
+    # value that includes them would fail the replica's null check and blame the replica
+    post = [m for m in run._trail[index:-1] if m.edits or m.cells]
     if capture is None:
-        capture = (f"t{last}.logits",) if run.parse(f"t{last}.logits") <= run.parse(run.where) \
-            else ()
+        capture = (f"t{last}.logits",) if not post and run.parse(f"t{last}.logits") \
+            <= run.parse(run.where) else ()
+    elif post and capture:
+        raise ValueError(
+            f"the run committed edits after t{row}.start ({len(post)} transitions): a captured "
+            "value would include them but the core file replays only the prefix; dump with "
+            "capture=() or dump before editing")
     captured = {address: run.read(address).detach().to("cpu") for address in capture}
     tensors = {f"keys.{i}": k for i, k in enumerate(keys)}
     tensors.update({f"values.{i}": v for i, v in enumerate(values)})
@@ -76,7 +84,8 @@ def dump(run: Any, path: str | Path, *, row: int | None = None,
                 for name, t in tensors.items()}
     adapter = run.adapter
     body = {
-        "schema": SCHEMA, "split": {"row": row, "tokens": len(tokens)},
+        "schema": SCHEMA, "split": {"row": row, "tokens": len(tokens),
+                  "tokens_sha256": hashlib.sha256(str(tokens).encode()).hexdigest()},
         "prompt": {"tokens": list(run.tokens)[:64], "length": len(run.tokens),
                    "sha256": hashlib.sha256(str(list(run.tokens)).encode()).hexdigest()},
         "shape": _shape_of(adapter),
@@ -88,6 +97,7 @@ def dump(run: Any, path: str | Path, *, row: int | None = None,
         "path_edits": [{"transition": e["transition"], "layer": e["layer"],
                         "count": len(e["edits"])} for e in run._path_manifest(index)][:64],
         "edited": bool(run._path_manifest(index)),
+        "post_split_edits": len(post),
         "captured": sorted(captured)[:64],
         "tensors": {"count": len(manifest),
                     "sha256": hashlib.sha256(str(sorted((k, v["sha256"]) for k, v in
@@ -170,9 +180,10 @@ class CoreFile:
         run.core = {"record": self.id, "path": self.path, "split": self.split,
                     "source_dtype": self.record["body"]["source"]["dtype"],
                     "dtype": str(adapter.dtype).removeprefix("torch."),
-                    "replica": str(adapter.dtype).removeprefix("torch.")
-                    != self.record["body"]["source"]["dtype"],
                     "same_identity": adapter.model_identity == self.record["model_identity"]}
+        # a replica is another dtype OR other weights (same shape, e.g. Base vs Instruct)
+        run.core["replica"] = (run.core["dtype"] != run.core["source_dtype"]
+                               or not run.core["same_identity"])
         run.core_check = self.null_check(adapter, lookahead=lookahead) if check else None
         return run
 
@@ -234,6 +245,18 @@ def load(path: str | Path) -> CoreFile:
                              .encode()).hexdigest()
     if summary != data["record"]["body"]["tensors"]["sha256"]:
         raise ValueError("core file manifest differs from its sealed record")
+    body = data["record"]["body"]
+    prompt = [int(t) for t in data["prompt"]]
+    tokens = [int(t) for t in data["tokens"]]
+    if hashlib.sha256(str(prompt).encode()).hexdigest() != body["prompt"]["sha256"] \
+            or len(prompt) != body["prompt"]["length"]:
+        raise ValueError("core file prompt differs from its sealed prompt sha256")
+    split = body["split"]
+    if len(tokens) != split["tokens"] or tokens != prompt[:len(tokens)] or (
+            "tokens_sha256" in split
+            and hashlib.sha256(str(tokens).encode()).hexdigest() != split["tokens_sha256"]):
+        raise ValueError("core file tokens differ from its sealed split (or are not a prompt "
+                         "prefix)")
     return CoreFile(data, str(path))
 
 

@@ -259,6 +259,7 @@ class Run:
         self._reads: OrderedDict[tuple[str, int], PortController] = OrderedDict()
         self._hydrated: tuple[str, Session] | None = None
         self._holds: list[Any] = []          # engine.holds.Hold, in the order they were added
+        self._hold_serial = 0                # monotonic: auto hold names never repeat
         self._hold_key: Any = None           # what the pending layer's hold edits were made for
         self._replaying = False              # a restore replays recorded edits, holds untouched
 
@@ -1047,8 +1048,13 @@ class Run:
         selection: str | None = None,
         origin: dict[str, Any] | None = None,
         check: bool = False,
+        override_hold: bool = False,
     ) -> dict[str, Any]:
         """Stage one edit at a port of the pending layer; returns the edit's request manifest.
+
+        An edit at a port that an active hold covers on this ``(row, layer)`` is refused (the
+        hold is the last write there and would silently discard it); ``override_hold=True``
+        stages it anyway and records ``origin.overridden_by`` (the edit has no effect).
 
         ``mask`` (bool, broadcastable to the port) limits the op to the elements where it is
         true (the rest stay bit-identical); ``selection`` is an opaque string and ``origin`` the
@@ -1101,6 +1107,15 @@ class Run:
         spec = self.program.spec(port)
         if not spec.editable:
             raise ValueError(f"port {port} is not editable: {spec.edit}")
+        clash = [h.name for h in self._holds if not h.cells and h.covers(mark.row, mark.layer)
+                 and spec.name in h.targets()]
+        if clash:
+            if not override_hold:
+                raise ValueError(
+                    f"{self.address(key)} is held by {', '.join(clash)}: a hold is the last write "
+                    "at its port, so this edit would have no effect; edit an earlier port, "
+                    "release the hold, or pass override_hold=True to record the conflict")
+            origin = {**(origin or {}), "overridden_by": clash}
         edit = PortEdit(port, value, op, mask=mask, selection=selection, origin=origin)
         shape = self.port_shape(port)
         edit.validate(shape)
@@ -1525,7 +1540,12 @@ class Run:
             raise ValueError("a hold needs source=RUN, the reference run whose values it keeps")
         if source.adapter.model_identity != self.adapter.model_identity:
             raise ValueError("a hold's source must be a run of the same model")
-        name = name or f"hold{len(self._holds) + 1}"
+        if name is None:
+            while True:
+                self._hold_serial += 1
+                name = f"hold{self._hold_serial}"
+                if not any(h.name == name for h in self._holds):
+                    break
         if any(h.name == name for h in self._holds):
             raise ValueError(f"a hold named {name!r} exists; release it or pick another name")
         if text.strip().startswith("cache."):
@@ -1539,6 +1559,15 @@ class Run:
             return {**hold.describe(), "kind": "cell", "cell": manifest}
         port, layers, rows = holds.parse(self, text)
         hold = holds.Hold(name, port, layers, rows, source, text.strip())
+        mark = self._trail[-1]
+        if mark.phase == "layer" and hold.covers(mark.row, mark.layer):
+            clash = [self.program.spec(e.port).name for e in self._edits
+                     if not holds.is_hold(e) and self.program.spec(e.port).name in hold.targets()]
+            if clash:
+                raise ValueError(
+                    f"hold {name!r} would override the staged edit at {', '.join(clash)} of "
+                    f"t{mark.row}.L{mark.layer}: abort that edit first (a hold is the last write "
+                    "at its port)")
         self._holds.append(hold)
         self._hold_key = None
         return hold.describe()
@@ -1566,6 +1595,7 @@ class Run:
         import json
 
         key = (mark.fingerprint, tuple(id(h) for h in active),
+               tuple(h.source._trail[-1].fingerprint for h in active),
                json.dumps([e.manifest() for e in user], sort_keys=True, default=str),
                json.dumps([c.manifest() for c in self._cells], sort_keys=True, default=str))
         if (self._hold_key is not None and self._hold_key[0] == key
