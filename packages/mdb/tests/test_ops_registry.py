@@ -153,6 +153,7 @@ def _fuzz_args(ctx, name):
         "seek": {"target": ahead},
         "features": {"address": f"t{row}.L0.h_out", "top": 2},
         "feature": {"feature": 0, "layer": 0},
+        "feed": {"ids": [2, 3]},
     }[name]
 
 

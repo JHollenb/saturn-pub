@@ -1234,3 +1234,137 @@ def run_reverse(run: Any, table: Table, *, tokenizer: Any = None) -> dict[str, A
     if (row, index) < here:
         jump_back(run, root)
     return {"reason": "start-of-run", "where": run.where, "hits": []}
+
+
+# --------------------------------------------------------------------------- trace watches
+
+TRACE_SCALARS = ("margin", "step", "argmax_letter", "X", "R")
+TRACE_TABLES = ("share", "to_consumer", "mass", "ablated")
+TRACE_LETTERS = ("A", "B", "C", "D")
+
+
+class TraceCondition(Condition):
+    """A watch predicate over one record of a sealed ``Trace`` (a logits-stop readout of a
+    probe step), not over a port value. Names: ``margin step argmax_letter X R`` (``X`` the
+    hinted letter, ``R`` the consumer's rival letter), the letters ``A B C D``, and string-keyed
+    tables ``share["hint"] to_consumer["chain_so_far"] mass[...] ablated[...]``. Same literal,
+    arithmetic, comparison and boolean whitelist as ``Condition``; letters compare with ``==``.
+
+        argmax_letter == X and ablated["hint"] < 0
+        share["hint"] > share["chain_so_far"]
+    """
+
+    def _check(self, node: ast.AST, *, value_ok: bool = False) -> None:
+        if isinstance(node, ast.Name):
+            self._nodes += 1
+            if self._nodes > _MAX_NODES:
+                raise ConditionError("condition is too complex")
+            if node.id in TRACE_SCALARS or node.id in TRACE_LETTERS:
+                return
+            raise ConditionError(
+                f"unknown trace name {node.id!r}; use {', '.join(TRACE_SCALARS)}, a letter, "
+                f"or {', '.join(t + '[...]' for t in TRACE_TABLES)}")
+        if isinstance(node, ast.Subscript):
+            self._nodes += 1
+            if not (isinstance(node.value, ast.Name) and node.value.id in TRACE_TABLES):
+                raise ConditionError(f"only {', '.join(TRACE_TABLES)} may be subscripted")
+            key = node.slice
+            if not (isinstance(key, ast.Constant) and isinstance(key.value, str)):
+                raise ConditionError(f'{node.value.id}[...] takes one quoted binding name')
+            return
+        if isinstance(node, ast.Call):
+            raise ConditionError("no calls in a trace condition")
+        super()._check(node, value_ok=value_ok)
+
+    def keys(self) -> list[tuple[str, str]]:
+        """The ``(table, binding)`` pairs the predicate reads."""
+        return [(n.value.id, n.slice.value) for n in ast.walk(self.tree)
+                if isinstance(n, ast.Subscript)]
+
+    def _eval(self, node: ast.AST, env: Any) -> Any:
+        if isinstance(node, ast.Name):
+            return env.name(node.id)
+        if isinstance(node, ast.Subscript):
+            return env.table(node.value.id, node.slice.value)
+        return super()._eval(node, env)
+
+
+@dataclass
+class TraceEnv:
+    """One trace record as a condition sees it. ``record`` holds ``margin``, ``step``,
+    ``argmax_letter`` and the tables (``share`` etc.: ``{binding: float}``); ``X``/``R`` are
+    the item's fixed consumer letters."""
+
+    record: dict[str, Any]
+    X: str
+    R: str
+
+    def name(self, name: str) -> Any:
+        if name in TRACE_LETTERS:
+            return name
+        if name == "X":
+            return self.X
+        if name == "R":
+            return self.R
+        if name not in self.record:
+            raise ConditionError(f"the trace record has no {name!r}")
+        return self.record[name]
+
+    def table(self, table: str, key: str) -> float:
+        values = self.record.get(table)
+        if values is None or key not in values:
+            raise ConditionError(f"the trace record has no {table}[{key!r}]")
+        value = values[key]
+        if value is None or (isinstance(value, float) and not math.isfinite(value)):
+            raise ConditionError(f"{table}[{key!r}] is undefined at step {self.record.get('step')}")
+        return float(value)
+
+
+def replay(predicate: TraceCondition | str, steps: Sequence[dict[str, Any]], *, X: str, R: str,
+           mode: str = "edge") -> dict[str, Any]:
+    """Evaluate a trace watch over a sealed ``Trace`` (record and replay: nothing runs).
+
+    ``steps`` in probe order. ``level`` fires where the predicate holds; ``edge`` where it holds
+    and did not at the previous step (before the first step counts as not holding); ``change``
+    where its truth value differs from the previous step's (the first step is the baseline).
+    A step whose predicate is undefined (a ``ConditionError``, e.g. a share at margin 0) counts
+    as not holding and is listed in ``undefined``. Returns ``fired_at`` (step of the first
+    hit, or None), ``fired_index``, ``hits`` (steps that fired), ``holds`` (per step),
+    ``crossings`` (truth changes from step to step), ``fired_fraction`` (fraction of steps
+    holding) and ``n``."""
+    if mode not in WATCH_MODES:
+        raise ConditionError(f"mode must be one of {', '.join(WATCH_MODES)}")
+    condition = predicate if isinstance(predicate, TraceCondition) else TraceCondition(predicate)
+    holds: list[bool] = []
+    undefined: list[Any] = []
+    for record in steps:
+        try:
+            holds.append(condition.evaluate(TraceEnv(record, X, R)))
+        except ConditionError:
+            holds.append(False)
+            undefined.append(record.get("step"))
+    hits = []
+    for index, value in enumerate(holds):
+        was = holds[index - 1] if index else (None if mode == "change" else False)
+        if mode == "level":
+            fires = value
+        elif mode == "edge":
+            fires = value and not was
+        else:
+            fires = was is not None and value != was
+        if fires:
+            hits.append(index)
+    crossings = sum(1 for a, b in zip(holds, holds[1:]) if a != b)
+    first = hits[0] if hits else None
+    return {
+        "predicate": condition.text,
+        "mode": mode,
+        "n": len(holds),
+        "holds": holds,
+        "hits": [steps[i].get("step", i) for i in hits],
+        "fired_index": first,
+        "fired_at": None if first is None else steps[first].get("step", first),
+        "crossings": crossings,
+        "fired_fraction": (sum(holds) / len(holds)) if holds else None,
+        "undefined": undefined,
+    }
