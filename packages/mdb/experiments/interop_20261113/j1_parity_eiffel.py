@@ -206,70 +206,6 @@ lap("dla")
 bridge = cache = None
 torch.cuda.empty_cache()
 
-# processed TL (HookedTransformer numerics), bf16 and fp32 copies, on the CPU (the GPU is
-# shared with another job; 18-token forwards)
-PROCESSED = os.environ.get("J1_PROCESSED", "bf16").split(",")
-for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
-    if dtype_name not in PROCESSED:
-        continue
-    try:
-        copy = load_local(MODEL, dtype="bf16" if dtype is torch.bfloat16 else "fp32", device="cpu")
-        with torch.no_grad():
-            m_cpu = margin(copy(ids.cpu()).logits)  # same dtype, CPU kernels, unprocessed
-        b2 = tl.bridge(copy, tok, in_place=True)
-        before = copy.model.layers[0]._original_component.self_attn.v_proj.weight.detach().clone() \
-            if hasattr(copy.model.layers[0], "_original_component") else None
-        b2.enable_compatibility_mode(disable_warnings=True)
-        lg, c2 = b2.run_with_cache(ids.cpu())
-        _, rc2 = b2.run_with_cache(torch.tensor([rome]))
-        out = {"M": margin(lg), "M_minus_hf": margin(lg) - R["base_M_hf_full"],
-               "M_unprocessed_same_device": m_cpu, "M_minus_unprocessed_same_device":
-               margin(lg) - m_cpu, "device": "cpu",
-               "processed": tl.processed(b2), "top1": int(lg[0, -1].argmax())}
-        if before is not None:
-            after = copy.model.layers[0]._original_component.self_attn.v_proj.weight
-            out["hf_params_rewritten_in_place"] = not torch.equal(before, after)
-        pattern = {}
-        for layer in (0, 22, 27):
-            hk = f"blocks.{layer}.attn.hook_pattern"
-            pattern[layer] = float((c2[hk].double() - t[f"L{layer}.p"].double().cpu()).abs().max())
-        out["pattern_max_diff_vs_native"] = pattern
-        res = {}
-        for layer in (0, 22, 27):
-            a = c2[f"blocks.{layer}.hook_resid_post"][0].double()
-            b = t[f"L{layer}.h_out"][0].double().cpu()
-            res[layer] = {"raw": float((a - b).abs().max()),
-                          "centred": float(((a - a.mean(-1, keepdim=True))
-                                            - (b - b.mean(-1, keepdim=True))).abs().max())}
-        out["resid_post_diff_vs_native"] = res
-        stack, labels = c2.stack_head_results(layer=-1, pos_slice=-1, apply_ln=True,
-                                              return_labels=True)
-        attrs = c2.logit_attrs(stack, tokens=torch.tensor(FR), incorrect_tokens=torch.tensor(IT),
-                               pos_slice=-1)
-        out["dla_heads_L22"] = [float(attrs[labels.index(f"L22H{h}")]) for h in range(H)]
-        acc, alab = c2.decompose_resid(layer=-1, pos_slice=-1, apply_ln=True, return_labels=True)
-        la = c2.logit_attrs(acc, tokens=torch.tensor(FR), incorrect_tokens=torch.tensor(IT),
-                            pos_slice=-1)
-        out["dla_layers"] = {lab: float(v) for lab, v in zip(alab, la.reshape(-1).tolist())}
-
-        def zh(value, hook):
-            value[:, -1, 6] = 0
-            return value
-        with torch.no_grad():
-            out["zero_L22h6_last"] = margin(b2.run_with_hooks(ids.cpu(), fwd_hooks=[(z, zh)])) - out["M"]
-
-            def vp(value, hook):
-                value[:, 11, 1] = rc2["blocks.22.attn.hook_v"][:, 11, 1]
-                return value
-            out["patch_v_L22kv1_row11_sequence"] = margin(b2.run_with_hooks(
-                ids.cpu(), fwd_hooks=[("blocks.22.attn.hook_v", vp)])) - out["M"]
-        R[f"tl_processed_{dtype_name}"] = out
-        b2 = c2 = rc2 = copy = None
-    except Exception as error:
-        R[f"tl_processed_{dtype_name}"] = {"error": f"{type(error).__name__}: {error}"[:2000]}
-    torch.cuda.empty_cache()
-    lap(f"tl processed {dtype_name}")
-
 # ---------------------------------------------------------------- C. nnsight on the finding
 arms = {"zero_L22h6": [nn.Edit("L22.A[h6]", 0.0, "scale")],
         "v_L22kv1_row11_reader": [nn.Edit("cache.L22.v[kv1,row=11]", "donor")],
@@ -310,6 +246,82 @@ for row in rows:
     row.pop("report", None)
 R["mdb_verify"] = rows
 lap("mdb verify")
+json.dump(R, open(OUT, "w"), indent=1, default=str)  # checkpoint before the processed arm
+keep = {f"L{l}.{p}": t[f"L{l}.{p}"].detach().clone() for l in (0, 22, 27) for p in ("p", "h_out")}
+model = dbg = run = nm = t = None
+torch.cuda.empty_cache()
+
+
+class _T(dict):
+    pass
+
+
+t = _T(keep)
+# ---------------------------------------------------------------- E. processed TL
+# (HookedTransformer numerics) on a separate copy, after the main model is freed (host RAM:
+# processing on the CPU passed 13.8 GB, job-7beddf882ce2)
+PROCESSED = os.environ.get("J1_PROCESSED", "bf16").split(",")
+for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
+    if dtype_name not in PROCESSED:
+        continue
+    try:
+        copy = load_local(MODEL, dtype="bf16" if dtype is torch.bfloat16 else "fp32", device=DEV)
+        with torch.no_grad():
+            m_cpu = margin(copy(ids).logits)  # same dtype and device, unprocessed
+        b2 = tl.bridge(copy, tok, in_place=True)
+        before = copy.model.layers[0]._original_component.self_attn.v_proj.weight.detach().clone() \
+            if hasattr(copy.model.layers[0], "_original_component") else None
+        b2.enable_compatibility_mode(disable_warnings=True)
+        lg, c2 = b2.run_with_cache(ids)
+        _, rc2 = b2.run_with_cache(torch.tensor([rome], device=DEV))
+        out = {"M": margin(lg), "M_minus_hf": margin(lg) - R["base_M_hf_full"],
+               "M_unprocessed_same_device": m_cpu, "M_minus_unprocessed_same_device":
+               margin(lg) - m_cpu, "device": DEV,
+               "processed": tl.processed(b2), "top1": int(lg[0, -1].argmax())}
+        if before is not None:
+            after = copy.model.layers[0]._original_component.self_attn.v_proj.weight
+            out["hf_params_rewritten_in_place"] = not torch.equal(before, after)
+        pattern = {}
+        for layer in (0, 22, 27):
+            hk = f"blocks.{layer}.attn.hook_pattern"
+            pattern[layer] = float((c2[hk].double() - t[f"L{layer}.p"].double()).abs().max())
+        out["pattern_max_diff_vs_native"] = pattern
+        res = {}
+        for layer in (0, 22, 27):
+            a = c2[f"blocks.{layer}.hook_resid_post"][0].double()
+            b = t[f"L{layer}.h_out"][0].double()
+            res[layer] = {"raw": float((a - b).abs().max()),
+                          "centred": float(((a - a.mean(-1, keepdim=True))
+                                            - (b - b.mean(-1, keepdim=True))).abs().max())}
+        out["resid_post_diff_vs_native"] = res
+        stack, labels = c2.stack_head_results(layer=-1, pos_slice=-1, apply_ln=True,
+                                              return_labels=True)
+        attrs = c2.logit_attrs(stack, tokens=torch.tensor(FR), incorrect_tokens=torch.tensor(IT),
+                               pos_slice=-1)
+        out["dla_heads_L22"] = [float(attrs[labels.index(f"L22H{h}")]) for h in range(H)]
+        acc, alab = c2.decompose_resid(layer=-1, pos_slice=-1, apply_ln=True, return_labels=True)
+        la = c2.logit_attrs(acc, tokens=torch.tensor(FR), incorrect_tokens=torch.tensor(IT),
+                            pos_slice=-1)
+        out["dla_layers"] = {lab: float(v) for lab, v in zip(alab, la.reshape(-1).tolist())}
+
+        def zh(value, hook):
+            value[:, -1, 6] = 0
+            return value
+        with torch.no_grad():
+            out["zero_L22h6_last"] = margin(b2.run_with_hooks(ids, fwd_hooks=[(z, zh)])) - out["M"]
+
+            def vp(value, hook):
+                value[:, 11, 1] = rc2["blocks.22.attn.hook_v"][:, 11, 1]
+                return value
+            out["patch_v_L22kv1_row11_sequence"] = margin(b2.run_with_hooks(
+                ids, fwd_hooks=[("blocks.22.attn.hook_v", vp)])) - out["M"]
+        R[f"tl_processed_{dtype_name}"] = out
+        b2 = c2 = rc2 = copy = None
+    except Exception as error:
+        R[f"tl_processed_{dtype_name}"] = {"error": f"{type(error).__name__}: {error}"[:2000]}
+    torch.cuda.empty_cache()
+    lap(f"tl processed {dtype_name}")
+
 R["peak_vram_gb"] = torch.cuda.max_memory_allocated() / 2**30
 json.dump(R, open(OUT, "w"), indent=1, default=str)
 lap("done")
