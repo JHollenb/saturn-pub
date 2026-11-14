@@ -39,7 +39,9 @@ SYMBOL_TABLE = declare_kind(
     required=("schema", "where", "consumer", "bindings", "unbound", "page"),
     plain_numeric=("page.offset", "page.limit", "page.total", "rows", "bindings.*.rows",
                    "bindings.*.token", "bindings.*.omitted", "bindings.*.count",
-                   "accounting.heads"),
+                   "accounting.heads", "bindings.*.content.*.best",
+                   "bindings.*.content.*.size", "bindings.*.content.*.truth_rank",
+                   "bindings.*.content.vocab_top.tokens"),
 )
 
 __all__ = ["CIRCUIT", "FORECAST", "SYMBOL_TABLE", "WHATIF"]

@@ -30,6 +30,20 @@ At the reader rows (the cursor's row by default) each binding gets, from the exa
   of its row lies upstream), else ``read`` (some read at or above ``min_mass``), ``live`` (none
   yet and some layer of the reader row has not computed its ``p``), ``unread``.
 
+Content (optional, ``sets=``): each binding's write into the reader row, summed over its reads
+(``w_B = sum p[h,s] W_o,h v[kappa(h),s]``, P06/P07), is read through the final-norm readout
+``rho * gamma * W_U[t]`` (P19, ``rho`` at the native final state of the cursor's row) over
+declared candidate sets (``Candidates``: e.g. countries, capitals, entities): per set the best
+token, its margin over the runner-up and the rank of a declared true token (derived-exact,
+float64), plus the vocabulary top 5 (derived-local, ``sae.logit_lens`` in float32). With
+``content_layers=True`` a content-lifetime strip per set: per layer of the reader row, ``C``
+when that layer's write names the binding's overall best token, ``c`` when it is in that
+layer's top 3, ``.`` read but naming another, ``-`` no value cell of the binding at that layer.
+``hops=`` (binding name -> ``{"native_delta", "direct_delta"}``) adds a ``hop`` field: the
+measured native change of the consumer under a replacement of the binding, the change of its
+direct path under the same replacement (derived-exact, from a table on the edited run) and the
+indirect share ``1 - direct_delta / native_delta`` (the part routed through later layers).
+
 ``Unbound`` holds, per head, the mass of the bindings not on this page, and the part of the
 consumer no listed binding's reads carry, split into its parts: the embedding, MLP (and head
 bias) terms (``derived-exact``, P19), the attention not listed (the layers' native ``o`` read
@@ -137,6 +151,82 @@ def declare(run: Any, name: str, addresses: list[str]) -> Binding:
     return binding
 
 
+@dataclass(frozen=True)
+class Candidates:
+    """A declared candidate token set for content readouts; ``truth`` is the token the caller
+    expects (its rank is reported), or None."""
+
+    name: str
+    tokens: tuple[int, ...]
+    truth: int | None = None
+
+
+def readout_basis(run: Any, row: int) -> tuple[float, Any]:
+    """``(rho, gamma)`` of the final-norm readout at ``row`` (P19): ``rho`` from the native
+    final state ``t<row>.L<last>.h_out``, ``gamma`` the final norm gain in float64."""
+    adapter = run.adapter
+    last = adapter.layers - 1
+    h_last = f64(run.read(f"t{row}.L{last}.h_out")).reshape(-1)
+    norm = getattr(adapter.backbone, adapter.spec.final_norm)
+    rho = float((h_last.pow(2).mean() + float(norm.variance_epsilon)) ** -0.5)
+    return rho, f64(norm.weight).reshape(-1)
+
+
+def _scores(run: Any, write: Any, tokens: tuple[int, ...], basis: tuple[float, Any]) -> Any:
+    """``rho * gamma . (W_U[t] * write)`` for the tokens (rows sliced, then cast; float64)."""
+    torch = _torch()
+    rho, gamma = basis
+    weight = run.adapter.model.lm_head.weight
+    index = torch.tensor(list(tokens), dtype=torch.long, device=weight.device)
+    rows = f64(weight.index_select(0, index)).cpu()
+    return rho * (rows * gamma) @ f64(write).reshape(-1)
+
+
+def content(run: Any, write: Any, sets: list[Candidates], basis: tuple[float, Any], *,
+            tokenizer: Any = None, top: int = 5) -> dict[str, Any]:
+    """The content readout of one binding's write (see the module docstring)."""
+    from .sae import logit_lens
+
+    out: dict[str, Any] = {}
+    for cand in sets:
+        if len(cand.tokens) < 2:
+            raise Refusal(f"candidate set {cand.name} needs at least two tokens")
+        scores = _scores(run, write, cand.tokens, basis)
+        order = scores.argsort(descending=True)
+        best, second = int(order[0]), int(order[1])
+        item: dict[str, Any] = {
+            "best": cand.tokens[best],
+            "score": num(float(scores[best]), EXACT, "P19"),
+            "margin": num(float(scores[best] - scores[second]), EXACT, "P19"),
+            "size": len(cand.tokens)}
+        if tokenizer is not None:
+            item["text"] = tokenizer.decode([cand.tokens[best]])
+        if cand.truth is not None and cand.truth in cand.tokens:
+            where = cand.tokens.index(cand.truth)
+            item["truth_rank"] = int((scores > scores[where]).sum()) + 1
+            item["names_truth"] = cand.tokens[best] == cand.truth
+        out[cand.name] = item
+    ids = logit_lens(run, write, top=top)
+    out["vocab_top"] = {"tokens": ids, "authority": "derived-local",
+                        "note": "float32 ranking of gamma * write over the vocabulary"}
+    if tokenizer is not None:
+        out["vocab_top"]["text"] = [tokenizer.decode([i]) for i in ids]
+    return out
+
+
+def _content_strip(run: Any, writes: dict[int, Any], layers: int, cand: Candidates,
+                   best: int, basis: tuple[float, Any]) -> str:
+    marks = []
+    for layer in range(layers):
+        if layer not in writes:
+            marks.append("-")
+            continue
+        scores = _scores(run, writes[layer], cand.tokens, basis)
+        order = [cand.tokens[int(i)] for i in scores.argsort(descending=True)[:3]]
+        marks.append("C" if order[0] == best else "c" if best in order else ".")
+    return "".join(marks)
+
+
 def _token_rows(run: Any, here: int, users: list[Binding]) -> list[Binding]:
     """One binding per token row holding exactly the cells no declared symbol holds."""
     layers, kv = run.adapter.layers, run.adapter.num_kv_heads
@@ -201,7 +291,9 @@ class Table:
 def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: float = 0.1,
           readers: int = 3, offset: int = 0, limit: int = PAGE,
           session_id: str | None = None, tokenizer: Any = None,
-          pending: dict[str, dict[str, Any]] | None = None) -> Table:
+          pending: dict[str, dict[str, Any]] | None = None,
+          sets: list[Candidates] | None = None, content_layers: bool = False,
+          hops: dict[str, dict[str, Any]] | None = None) -> Table:
     """The symbol table at the cursor (see the module docstring); ``offset``/``limit`` page
     the bindings (declared symbols first, then token rows in order). ``pending``: declared
     symbols that cannot be bound on this run yet (name -> ``addresses``, ``reason``), listed
@@ -221,10 +313,42 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     users = list(declared(run).values())
     bindings = users + _token_rows(run, here_key[0], users)
     n = len(bindings)
-    grid = _Grid(run, bindings, reader, found_rows)
+    grid = _Grid(run, bindings, reader, found_rows, keep_writes=bool(sets))
     entries = [_entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
                       here_key, tokenizer) for b, binding in enumerate(bindings)]
     shown = entries[offset:offset + limit]
+    if sets:
+        basis = readout_basis(run, here_key[0])
+        for b in range(offset, min(offset + limit, n)):
+            per_layer: dict[int, Any] = {}
+            for (j, layer), w in grid.write.items():
+                if bool(grid.cover[(j, layer)][b].any()):
+                    per_layer[layer] = per_layer.get(layer, 0) + w[b]
+            view = entries[b]["view"]
+            if not per_layer:
+                view["content"] = {"state": "unresolved", "reason": "no read of this binding"}
+                continue
+            total = sum(per_layer.values())
+            view["content"] = content(run, total, sets, basis, tokenizer=tokenizer)
+            view["content"]["meaning"] = ("readout of the binding's write into the reader "
+                                          "row(s), summed over its reads, through rho * gamma * "
+                                          "W_U (P19)")
+            if content_layers:
+                view["content_lifetime"] = {
+                    c.name: _content_strip(run, per_layer, layers, c, view["content"][c.name]["best"],
+                                           basis) for c in sets}
+    for b in range(offset, min(offset + limit, n)):
+        view = entries[b]["view"]
+        hop = (hops or {}).get(view["symbol"])
+        if hop is None:
+            continue
+        native = float(hop["native_delta"])
+        direct = float(hop["direct_delta"])
+        view["hop"] = {"native_delta": num(native, MEASURED),
+                       "direct_delta": num(direct, EXACT, "P19"),
+                       "indirect_share": (num(1.0 - direct / native, MEASURED) if native else
+                                          {"state": "unresolved", "reason": "native delta 0"}),
+                       "replacement": hop.get("replacement", "supplied by the caller")}
     listed = sorted(range(offset, min(offset + limit, n)))
     keys = sorted(grid.mass)
     unbound_mass = {key: grid.total[key] - grid.mass[key][listed].sum(0) for key in keys}
@@ -289,7 +413,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
         report["not_computed"] = grid.missing[:16]
     records = _records(run, report, session_id)
     report["records"] = [r["id"] for r in records]
-    tensors = {"mass": grid.mass, "effect": grid.effect, "total_mass": grid.total,
+    tensors = {"mass": grid.mass, "effect": grid.effect, "write": grid.write, "total_mass": grid.total,
                "unbound_mass": unbound_mass, "contribution": contribution,
                "bindings": [b.name for b in bindings], "listed": listed}
     return Table(report, records, tensors)
@@ -334,8 +458,10 @@ class _Grid:
     """Per (reader row, layer): each binding's mass, effect and reads per head, from the value
     mix; reads are owned by the binding holding their value cell."""
 
-    def __init__(self, run: Any, bindings: list[Binding], reader: Any, rows: list[int]):
+    def __init__(self, run: Any, bindings: list[Binding], reader: Any, rows: list[int], *,
+                 keep_writes: bool = False):
         torch = _torch()
+        self.write: dict[tuple[int, int], Any] = {}   # (row, layer) -> (bindings, d), on request
         n, heads, layers = len(bindings), run.adapter.num_heads, run.adapter.layers
         self.mass: dict[tuple[int, int], Any] = {}
         self.effect: dict[tuple[int, int], Any] = {}
@@ -380,6 +506,8 @@ class _Grid:
                 why = None if reader is None else (reader.reaches(layer, "attn") or (
                     None if reader.row == j else f"{reader.text} is in another row"))
                 blocked = {}
+                total_write = (torch.zeros(n, parts.shape[-1], dtype=torch.float64)
+                               if keep_writes else None)
                 for h in range(heads):
                     reason = edited_block(mix, run, h)
                     if reason:
@@ -395,6 +523,8 @@ class _Grid:
                         share[b] += parts[h, s]
                         if edited_p and source_label(run, mix, h, s) == SUPPLIED:
                             supplied[b, h] = True
+                    if total_write is not None:
+                        total_write += share
                     for b in range(n):
                         if not cover[b, h]:
                             continue
@@ -403,6 +533,8 @@ class _Grid:
                         elif why is None and h not in blocked:
                             e[b, h] = reader.apply(share[b])
                 self.mass[key], self.cover[key], self.effect[key] = m, cover, e
+                if total_write is not None:
+                    self.write[key] = total_write
                 self.sources[key], self.supplied[key] = sources, supplied
                 self.reach[key], self.blocked[key] = why, blocked
                 self.total[key] = mix.p.sum(1)
@@ -549,5 +681,5 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]
 
 
-__all__ = ["Binding", "LEGEND", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
+__all__ = ["Binding", "Candidates", "LEGEND", "content", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
            "declared", "table"]

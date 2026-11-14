@@ -170,3 +170,50 @@ def test_records_round_trip_through_the_index_and_a_fresh_project(tmp_path):
     assert record["body"]["bindings"][0]["symbol"] == "ctx"
     listed = index.list_records(reopened, dbg.session_id, kind="symbol-table", strict=True)
     assert [r["id"] for r in listed] == stored
+
+
+# --- content readouts, content lifetime, hop -------------------------------------------------
+
+
+def test_content_readout_equals_a_hand_projection_of_the_bindings_write(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    symbols.declare(run, "cell", ["cache.L1.v[kv0,row=1]"])
+    sets = [symbols.Candidates("small", (2, 4, 6, 8), truth=4),
+            symbols.Candidates("large", (10, 11, 12))]
+    table = symbols.table(run, consumer=Margin(3, 4, 9), sets=sets, content_layers=True)
+    _sums(table)                                  # the content fields leave the partition intact
+    view = next(b for b in table.report["bindings"] if b["symbol"] == "cell")
+    # by hand: the cell's write is the reads of row 1 through KV head 0 at layer 1
+    from mdb.analysis.reads import head_mix
+    mix = head_mix(run, 3, 1, {})
+    write = sum(mix.o_parts()[h, 1] for h in range(mix.p.shape[0]) if mix.kappa[h] == 0)
+    rho, gamma = symbols.readout_basis(run, 3)
+    W = run.adapter.model.lm_head.weight.double()
+    for cand in sets:
+        hand = rho * (W[list(cand.tokens)] * gamma) @ write.double()
+        best = cand.tokens[int(hand.argmax())]
+        got = view["content"][cand.name]
+        assert got["best"] == best
+        assert got["score"]["value"] == pytest.approx(float(hand.max()), abs=1e-12)
+        assert got["score"]["authority"] == "derived-exact"
+    assert "truth_rank" in view["content"]["small"] and "truth_rank" not in view["content"]["large"]
+    assert len(view["content"]["vocab_top"]["tokens"]) == 5
+    strip = view["content_lifetime"]["small"]
+    assert len(strip) == run.adapter.layers and strip[0] == "-" and strip[1] in "C"
+    check_bounded(table.report)
+
+
+def test_content_is_absent_without_sets_and_hop_reports_the_indirect_share(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    plain = symbols.table(run, consumer=Margin(3, 4, 9))
+    assert all("content" not in b for b in plain.report["bindings"])
+    assert plain.tensors["write"] == {}
+    hop = symbols.table(run, consumer=Margin(3, 4, 9),
+                        hops={"t1": {"native_delta": -2.0, "direct_delta": -0.5}})
+    view = next(b for b in hop.report["bindings"] if b["symbol"] == "t1")
+    assert view["hop"]["indirect_share"]["value"] == pytest.approx(0.75)
+    assert view["hop"]["native_delta"]["authority"] == "measured"
+    with pytest.raises(Refusal, match="at least two"):
+        symbols.table(run, consumer=Margin(3, 4, 9), sets=[symbols.Candidates("one", (2,))])
