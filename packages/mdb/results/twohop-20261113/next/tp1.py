@@ -49,19 +49,25 @@ def mark(name):
     print(f"[{timing[name]:7.1f}s] {name}", flush=True)
 
 
-dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
-tok, model = dbg.tokenizer, dbg.adapter.model
-cfg = model.config
-L, H, KV, DH = cfg.num_hidden_layers, cfg.num_attention_heads, cfg.num_key_value_heads, cfg.head_dim
-for prm in model.parameters():  # only input grads are needed; weight grads cost +3.4 GB (job-b3bc03382981)
-    prm.requires_grad_(False)
-nm = inn.wrap(shared_clone(model))
-prompts = json.load(open("tp1_prompts.json"))["prompts"]
 import os  # noqa: E402
+# main: nnsight + mdb check + SAELens; abl: one mdb ablation shard; tl: TransformerLens arm on CPU
+# (its float32 copy + in-place compatibility processing peaked > 21 GB RAM, job-97d34f7eb3b5)
+PART = os.environ.get("TP1_PART", "main")
+SHARD, NSHARD = int(os.environ.get("TP1_SHARD", 0)), int(os.environ.get("TP1_NSHARD", 1))
+if PART == "tl":
+    from transformers import AutoConfig, AutoTokenizer
+    tok, cfg = AutoTokenizer.from_pretrained(MODEL), AutoConfig.from_pretrained(MODEL)
+else:
+    dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
+    tok, model = dbg.tokenizer, dbg.adapter.model
+    cfg = model.config
+    for prm in model.parameters():  # only input grads are needed; weight grads cost +3.4 GB (job-b3bc03382981)
+        prm.requires_grad_(False)
+    nm = inn.wrap(shared_clone(model))
+L, H, KV, DH = cfg.num_hidden_layers, cfg.num_attention_heads, cfg.num_key_value_heads, cfg.head_dim
+prompts = json.load(open("tp1_prompts.json"))["prompts"]
 if os.environ.get("TP1_N"):
     prompts = prompts[:int(os.environ["TP1_N"])]
-PART = os.environ.get("TP1_PART", "main")       # main: all but ablations; abl: one ablation shard
-SHARD, NSHARD = int(os.environ.get("TP1_SHARD", 0)), int(os.environ.get("TP1_NSHARD", 1))
 mark("load")
 
 # ------------------------------------------------------------------ nnsight forward + backward
@@ -225,7 +231,7 @@ mark("SAELens")
 # ------------------------------------------------------------------ TransformerLens centring arm
 tl_out = {}
 try:
-    if PART != "main":
+    if PART != "tl":
         raise RuntimeError("not run in this part")
     from transformers import AutoModelForCausalLM
 
@@ -258,5 +264,5 @@ mark("TransformerLens")
 
 json.dump({"summary": summary, "checks": checks, "ablations": abl, "sae": sae_out, "tl": tl_out,
            "timing": timing, "versions": {"nnsight": inn.version()}},
-          open("tp1-results.json" if PART == "main" else f"tp1-abl-{SHARD}.json", "w"))
+          open({"main": "tp1-results.json", "tl": "tp1-tl.json"}.get(PART, f"tp1-abl-{SHARD}.json"), "w"))
 print(f"TOTAL {time.monotonic() - T0:.1f}s", flush=True)
