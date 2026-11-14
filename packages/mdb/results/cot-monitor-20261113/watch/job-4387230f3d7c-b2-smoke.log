@@ -1,0 +1,16 @@
+job-4387230f3d7c  succeeded  cotmon-b2-smoke  host=beast
+mrun: job-4387230f3d7c -> succeeded
+== revision 2b24d95 args: smoke --start 0 --count 2 --smoke
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+B2 load 5.9s torch=2.13.0+cu130 transformers=5.13.1 letters=[32, 33, 34, 35] suffix=7
+B2SMOKE {"index": 0, "T": 2113, "steps": 34, "seconds": {"run": 0.77, "sweep": 2.95, "row_table": 5.36, "total": 36.79}, "sweep_meta_seconds": {"prefix": 0.073, "total": 2.952}, "row_table_seconds": {"native": 0.67, "total": 1.301}, "peak_gib": 8.47, "checks": {"null_vs_fresh_max_abs": 1.1444091796875e-05, "trace_check_max_abs": 2.402027667117168e-07, "R_job": "A", "R_agrees": true, "feed_spot": [{"k": 1024, "row": 1096, "supplied": 6, "native_max_abs": 5.7220458984375e-06, "M2_abs": 0.0}, {"k": 2047, "row": 2119, "supplied": 6, "native_max_abs": 3.814697265625e-06, "M2_abs": 0.0}]}}
+B2SMOKE {"index": 1, "T": 2124, "steps": 34, "seconds": {"run": 0.49, "sweep": 3.09, "row_table": 1.31, "total": 4.9}, "sweep_meta_seconds": {"prefix": 0.072, "total": 3.094}, "row_table_seconds": {"native": 0.665, "total": 1.311}, "peak_gib": 8.19, "checks": {"null_vs_fresh_max_abs": 1.9073486328125e-05, "trace_check_max_abs": null, "R_job": "B", "R_agrees": true}}
+B2 done 47.6s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:49.50
+	Maximum resident set size (kbytes): 11463952
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:49.50
+RC 0
+4 MiB, 16376 MiB
+mrun: job-4387230f3d7c finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 51.07, 'peak_rss_mb': 7848.8, 'peak_vram_mb': 9132.0}
+
+[exited with code 0]
