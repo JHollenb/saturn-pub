@@ -53,7 +53,7 @@ def test_step_next_finish_until_units(debugger):
         assert dispatch(ctx, "until", {"target": target})["where"] == where
     with pytest.raises(BadArgs, match="bad address"):
         dispatch(ctx, "until", {"target": "L0.nope"})
-    with pytest.raises(Refused, match="origins"):
+    with pytest.raises(Refused, match="cannot be read with this verb"):
         dispatch(ctx, "print", {"address": "boiling:t3.L0.h"})
 
 
