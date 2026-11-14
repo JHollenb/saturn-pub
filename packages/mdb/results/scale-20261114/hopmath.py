@@ -248,6 +248,9 @@ if PART in ("h3", "all"):
                         prof[f"{kind}{x}"] = (M0 - margin_set(lg, a, setk[blk])) / M0 if M0 else None
                 rec["a2"] = prof
             recs.append(rec)
+            res[blk] = recs
+            out["h3"] = res
+            json.dump(out, open(OUT, "w"), indent=1, default=str)      # incremental: survives a timeout
             print("H3 " + json.dumps({"id": iid, "s": round(time.monotonic() - t, 2)}), flush=True)
         res[blk] = recs
     out["h3"] = res
