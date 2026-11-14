@@ -186,9 +186,17 @@ def test_every_op_returns_what_the_repl_prints(family, tmp_path, capsys):
     server = _server_transcript(tmp_path, family)
     repl = _repl_transcript(tmp_path, family, capsys)
     assert len(repl) == len(SCRIPT) == len(server)
+    def timeless(value):
+        """The result without wall-clock fields (`seconds`): two runs never agree on those."""
+        if isinstance(value, dict):
+            return {k: timeless(v) for k, v in value.items() if k != "seconds"}
+        if isinstance(value, list):
+            return [timeless(v) for v in value]
+        return value
+
     mismatched = [(line, canonical(a).decode()[:300], canonical(b).decode()[:300])
                   for (line, _, _), a, b in zip(SCRIPT, server, repl)
-                  if canonical(a) != canonical(b)]
+                  if canonical(timeless(a)) != canonical(timeless(b))]
     assert not mismatched, mismatched[:3]
     # the script really moves: most lines are resolved op results, not errors
     assert sum("error" not in r for r in server) >= len(SCRIPT) - 14
