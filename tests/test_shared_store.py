@@ -30,7 +30,9 @@ def test_changed_source_or_corrupt_object_never_replaces_source(tmp_path):
         pool.intern(path, expected_sha256="0" * 64)
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     obj = pool.object_path(digest)
-    obj.parent.mkdir(); obj.write_bytes(b"corrupt!"); obj.chmod(0o444)
+    obj.parent.mkdir()
+    obj.write_bytes(b"corrupt!")
+    obj.chmod(0o444)
     with pytest.raises(ValueError, match="content-address mismatch"):
         pool.intern(path)
     assert path.read_bytes() == b"original" and not os.path.samefile(path, obj)
@@ -39,10 +41,13 @@ def test_changed_source_or_corrupt_object_never_replaces_source(tmp_path):
 def test_interrupt_before_replace_retains_both_original_and_canonical(tmp_path, monkeypatch):
     pool = SharedStore(tmp_path / "pool")
     first, second = tmp_path / "one.npy", tmp_path / "two.npy"
-    first.write_bytes(b"same"); second.write_bytes(b"same")
+    first.write_bytes(b"same")
+    second.write_bytes(b"same")
     pool.intern(first)
+
     def fail(*args):
         raise OSError("simulated replacement interruption")
+
     monkeypatch.setattr(os, "replace", fail)
     with pytest.raises(OSError, match="interruption"):
         pool.intern(second)
@@ -52,12 +57,16 @@ def test_interrupt_before_replace_retains_both_original_and_canonical(tmp_path, 
 
 def test_symlink_and_cross_device_link_fail_without_losing_data(tmp_path, monkeypatch):
     pool = SharedStore(tmp_path / "pool")
-    path = tmp_path / "one.npy"; path.write_bytes(b"safe")
-    alias = tmp_path / "alias.npy"; alias.symlink_to(path)
+    path = tmp_path / "one.npy"
+    path.write_bytes(b"safe")
+    alias = tmp_path / "alias.npy"
+    alias.symlink_to(path)
     with pytest.raises(ValueError, match="symbolic links"):
         pool.intern(alias)
+
     def fail(*args):
         raise OSError(errno.EXDEV, "cross-device link")
+
     monkeypatch.setattr(os, "link", fail)
     with pytest.raises(OSError, match="cross-device"):
         pool.intern(path)
@@ -93,8 +102,13 @@ def test_native_statecut_identity_and_legacy_loading_across_shared_stores(tmp_pa
     from saturn_pub.store import LocalStore
 
     configure(tmp_path / "runs", tmp_path / "pool")
-    cut = StateCut("tiny", {"backend": "cpu"}, "boundary", None,
-                   {"value": torch.arange(12, dtype=torch.bfloat16).reshape(3, 4)})
+    cut = StateCut(
+        "tiny",
+        {"backend": "cpu"},
+        "boundary",
+        None,
+        {"value": torch.arange(12, dtype=torch.bfloat16).reshape(3, 4)},
+    )
     stores = [LocalStore(tmp_path / "runs" / name) for name in ["one", "two"]]
     for store in stores:
         assert store.save(cut) == cut.fingerprint

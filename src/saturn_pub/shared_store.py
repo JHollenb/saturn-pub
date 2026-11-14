@@ -4,6 +4,7 @@ Local paths remain regular files (hardlinks), so legacy readers and manifests
 need no changes. The pool is local and on the same filesystem as its clients.
 This is byte sharing, not semantic equivalence or BF16/FP32 conversion.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -71,8 +72,11 @@ class SharedStore:
         self.objects.mkdir(exist_ok=True)
 
     def object_path(self, digest):
-        if (not isinstance(digest, str) or len(digest) != 64
-                or any(c not in "0123456789abcdef" for c in digest)):
+        if (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(c not in "0123456789abcdef" for c in digest)
+        ):
             raise ValueError("expected a lowercase SHA-256")
         return safe_path(self.objects / digest[:2] / digest)
 
@@ -124,10 +128,15 @@ class SharedStore:
                 temporary.unlink(missing_ok=True)
         if not os.path.samefile(path, target):
             raise ValueError("shared-link verification failed")
-        return {"path": str(path), "sha256": digest, "bytes": before.st_size,
-                "object": str(target), "relinked": changed,
-                "released_inode_logical_bytes": released,
-                "released_inode_stat_allocated_bytes": blocks}
+        return {
+            "path": str(path),
+            "sha256": digest,
+            "bytes": before.st_size,
+            "object": str(target),
+            "relinked": changed,
+            "released_inode_logical_bytes": released,
+            "released_inode_stat_allocated_bytes": blocks,
+        }
 
     def publish(self, path, raw):
         """Publish immutable bytes via the pool; return local admission status."""
@@ -174,7 +183,9 @@ def configure(scope, root):
     if scope.stat().st_dev != pool.root.stat().st_dev:
         raise ValueError("configuration requires the same filesystem")
     config = scope / CONFIG_NAME
-    body = (json.dumps({"schema": SCHEMA, "root": str(root)}, sort_keys=True, indent=2) + "\n").encode()
+    body = (
+        json.dumps({"schema": SCHEMA, "root": str(root)}, sort_keys=True, indent=2) + "\n"
+    ).encode()
     if config.exists():
         if config.read_bytes() != body:
             raise ValueError("storage scope is already configured differently")

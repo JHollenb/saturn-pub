@@ -587,8 +587,13 @@ class LocalStore:
         self._repair_tensor(path, data)
         _publish(path, data)
         self._remove_stale_temporaries(path.parent)
-        return {"ref": ref, "shape": shape, "dtype": dtype, "sha256": payload_sha,
-                "bytes": len(payload)}
+        return {
+            "ref": ref,
+            "shape": shape,
+            "dtype": dtype,
+            "sha256": payload_sha,
+            "bytes": len(payload),
+        }
 
     @staticmethod
     def _remove_stale_temporaries(directory: Path) -> None:
@@ -662,7 +667,8 @@ class LocalStore:
                 raise ValueError(
                     f"the pooled object {pooled} is corrupt (it is hard-linked at {path}); "
                     "repair it in the shared pool: remove the object there and publish the "
-                    "tensor again; this store does not repair a pooled blob")
+                    "tensor again; this store does not repair a pooled blob"
+                )
         except ValueError:
             raise
         except OSError:
@@ -671,8 +677,9 @@ class LocalStore:
     @staticmethod
     def _tensor_ref(ref: Any) -> str:
         if not isinstance(ref, str):
-            raise ValueError(f"expected a lowercase SHA-256 identifier (text), not "
-                             f"{type(ref).__name__}")
+            raise ValueError(
+                f"expected a lowercase SHA-256 identifier (text), not {type(ref).__name__}"
+            )
         return _safe_id(ref)
 
     def has_tensor(self, ref: str, *, verify: bool = False) -> bool:
@@ -691,8 +698,13 @@ class LocalStore:
     def tensor_info(self, ref: str) -> dict[str, Any]:
         """Verified descriptor of a stored tensor, without materialising it."""
         dtype, shape, payload_sha, payload = self._read_tensor(ref)
-        return {"ref": ref, "shape": shape, "dtype": dtype, "sha256": payload_sha,
-                "bytes": len(payload)}
+        return {
+            "ref": ref,
+            "shape": shape,
+            "dtype": dtype,
+            "sha256": payload_sha,
+            "bytes": len(payload),
+        }
 
     def get_tensor(
         self, ref: str, *, device: str | None = None, framework: str | None = None
@@ -735,12 +747,16 @@ class LocalStore:
         if size < 2 or 8 + size > len(data):
             raise ValueError("tensor blob header is malformed")
         try:
-            header = json.loads(data[8:8 + size])
+            header = json.loads(data[8 : 8 + size])
             entry = header["tensor"]
             metadata = header["__metadata__"]
             codes = {code: name for name, (code, _) in _SAFETENSORS_DTYPES.items()}
-            if (not isinstance(header, dict) or not isinstance(entry, dict)
-                    or not isinstance(metadata, dict) or not isinstance(entry["dtype"], str)):
+            if (
+                not isinstance(header, dict)
+                or not isinstance(entry, dict)
+                or not isinstance(metadata, dict)
+                or not isinstance(entry["dtype"], str)
+            ):
                 raise ValueError("header sections are mappings and the dtype is text")
             dtype = codes[entry["dtype"]]
             shape = entry["shape"]
@@ -749,13 +765,14 @@ class LocalStore:
             raise ValueError("tensor blob header is malformed") from error
         if (
             set(header) != {"__metadata__", "tensor"}
-            or type(begin) is not int or type(end) is not int
+            or type(begin) is not int
+            or type(end) is not int
             or metadata.get("schema") != _TENSOR_SCHEMA
             or not isinstance(shape, list)
             or any(type(n) is not int or n < 0 for n in shape)
         ):
             raise ValueError("tensor blob header is malformed")
-        payload = data[8 + size:]
+        payload = data[8 + size :]
         count = 1
         for n in shape:
             count *= n

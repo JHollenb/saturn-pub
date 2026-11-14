@@ -1,19 +1,19 @@
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) forecast
-forecast 1  t3.L0.a  sealed at t3.L0.h  record b4dcecf0d06b8678
+forecast 1  t3.L0.a  sealed at t3.L0.h  record 342c8c9ce0cf4f57
   method rms_norm P02: a = RMSNorm(h) * w_in
   predicted max_abs 2.0572 [derived-exact] norm 3.9958 [derived-exact]  sha256 96ed261df6498277  bound 0.016106 [bound] per element
 (mdb) forecast L0.p
-forecast 2  t3.L0.p  sealed at t3.L0.h  record 6516b92607da1410
+forecast 2  t3.L0.p  sealed at t3.L0.h  record 6b8d544d52a8bac1
   method 7 identities t3.L0.a .. t3.L0.p (last softmax P05)
   predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 cb1cc1226f21049d  bound 0.0026798 [bound] per element
 (mdb) forecast M[4,9]
-forecast 3  t3.M[4,9]  sealed at t3.L0.h  record 88e3c73dd5487d15
+forecast 3  t3.M[4,9]  sealed at t3.L0.h  record 780d2eb5502aeeaf
   method 39 identities t3.L0.a .. t3.logits (last readout_logits P19)
   predicted -0.11452 [derived-exact P19]  bound 16.825 [bound]
 (mdb) forecast L1.m
-forecast 4  t3.L1.m  sealed at t3.L0.h  record 2a8ccc10cf620c4a
+forecast 4  t3.L1.m  sealed at t3.L0.h  record 689f0ef148c20214
   method 36 identities t3.L0.a .. t3.L1.m (last affine P10)
   predicted max_abs 0.00051965 [derived-exact] norm 0.00078825 [derived-exact]  sha256 4e96ef75ffb0c469  bound 0.021312 [bound] per element
 (mdb) step
@@ -47,7 +47,7 @@ explain t3.M[4,9]  native -0.11401 [measured P19]  float64 -0.1142 [derived-exac
   ~unlisted          0 [derived-exact P19]
   ~final_norm        0.0002708 [measured P19]  scale 0.0059968 [derived-exact P19] k 2 within
   ~head              -7.9758e-05 [measured P19]  scale 0.00036665 [bound P19] k 1 within
-  listed_sum -0.11449 [derived-exact P19]  closure -1.3878e-17 [derived-exact P19]
+  listed_sum -0.11449 [derived-exact P19]  closure 0 [derived-exact P19]
 (mdb) explain L1.o
 explain t3.L1.o  head_write P01: o = W_o A  {P06 P07}
   eta_max_abs 1.8556e-05 [measured P01]  eta_rel 0.0022354 [measured P01]  (against native)

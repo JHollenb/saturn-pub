@@ -1067,7 +1067,10 @@ def test_security_headers_are_on_404_422_413_and_the_500_without_a_leak(store_co
 # =========================================================================== S3 packaging
 
 def test_serve_extra_names_numpy_and_the_wheel_ships_the_web_build():
-    import tomllib
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        import tomli as tomllib
 
     root = Path(__file__).resolve().parents[1]
     config = tomllib.loads((root / "pyproject.toml").read_text())

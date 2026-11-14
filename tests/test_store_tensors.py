@@ -31,9 +31,13 @@ def test_numpy_round_trip(tmp_path, name):
     assert restored.dtype == expected.dtype.newbyteorder("=") and restored.shape == expected.shape
     assert np.array_equal(restored, expected)
     little = expected.astype(expected.dtype.newbyteorder("<"))
-    assert ref == {"ref": ref["ref"], "shape": list(expected.shape), "dtype": expected.dtype.name,
-                   "sha256": hashlib.sha256(little.tobytes()).hexdigest(),
-                   "bytes": expected.nbytes}
+    assert ref == {
+        "ref": ref["ref"],
+        "shape": list(expected.shape),
+        "dtype": expected.dtype.name,
+        "sha256": hashlib.sha256(little.tobytes()).hexdigest(),
+        "bytes": expected.nbytes,
+    }
     assert store.tensor_info(ref["ref"]) == ref
     assert store.has_tensor(ref["ref"])
 
@@ -56,7 +60,8 @@ def test_idempotent_content_address(tmp_path):
     first, second = store.put_tensor(value), store.put_tensor(value.copy())
     assert first == second
     assert sorted(p.name for p in (tmp_path / "tensors").iterdir()) == [
-        f"{first['ref']}.safetensors"]
+        f"{first['ref']}.safetensors"
+    ]
     # same bytes under another dtype or shape are another tensor
     assert store.put_tensor(value.view(np.int32))["ref"] != first["ref"]
     assert store.put_tensor(value.reshape(2, 5))["ref"] != first["ref"]
@@ -75,17 +80,17 @@ def test_corruption_is_detected(tmp_path):
         store.get_tensor(ref)
     # A file that hashes to its own name but whose payload differs from its sealed sha256.
     size = int.from_bytes(good[:8], "little")
-    forged = good[:8 + size] + bytes(len(good) - 8 - size)
+    forged = good[: 8 + size] + bytes(len(good) - 8 - size)
     forged_ref = hashlib.sha256(forged).hexdigest()
     (tmp_path / "tensors" / f"{forged_ref}.safetensors").write_bytes(forged)
     with pytest.raises(ValueError, match="tensor payload digest mismatch"):
         store.get_tensor(forged_ref)
     # A header whose shape disagrees with the payload length.
-    header = json.loads(good[8:8 + size])
+    header = json.loads(good[8 : 8 + size])
     header["tensor"]["shape"] = [9]
     text = json.dumps(header, sort_keys=True, separators=(",", ":")).encode()
     text += b" " * (-len(text) % 8)
-    bad = len(text).to_bytes(8, "little") + text + good[8 + size:]
+    bad = len(text).to_bytes(8, "little") + text + good[8 + size :]
     bad_ref = hashlib.sha256(bad).hexdigest()
     (tmp_path / "tensors" / f"{bad_ref}.safetensors").write_bytes(bad)
     with pytest.raises(ValueError, match="does not match its header"):
@@ -120,8 +125,9 @@ def test_bfloat16_torch_round_trip(tmp_path):
     assert store.put_tensor(value[:, 1:].clone()) == ref
     with pytest.raises(ValueError, match="needs framework='torch'"):
         store.get_tensor(ref["ref"], framework="numpy")
-    as_torch = store.get_tensor(store.put_tensor(np.arange(3, dtype=np.int64))["ref"],
-                                framework="torch")
+    as_torch = store.get_tensor(
+        store.put_tensor(np.arange(3, dtype=np.int64))["ref"], framework="torch"
+    )
     assert as_torch.dtype == torch.int64 and as_torch.tolist() == [0, 1, 2]
     assert store.get_tensor(ref["ref"], device="cpu").device.type == "cpu"
     flags = torch.tensor([True, False])
@@ -150,11 +156,12 @@ def test_putting_again_repairs_a_corrupt_blob_atomically(tmp_path, monkeypatch):
         calls = []
         real_fsync, real_replace = os.fsync, os.replace
         monkeypatch.setattr(os, "fsync", lambda fd: (calls.append("fsync"), real_fsync(fd))[1])
-        monkeypatch.setattr(os, "replace", lambda a, b: (calls.append("replace"),
-                                                        real_replace(a, b))[1])
-        assert store.put_tensor(value)["ref"] == ref          # repairs instead of raising
+        monkeypatch.setattr(
+            os, "replace", lambda a, b: (calls.append("replace"), real_replace(a, b))[1]
+        )
+        assert store.put_tensor(value)["ref"] == ref  # repairs instead of raising
         monkeypatch.undo()
-        assert calls[:2] == ["fsync", "replace"]               # synced before it was renamed
+        assert calls[:2] == ["fsync", "replace"]  # synced before it was renamed
         assert _blob(tmp_path, ref).read_bytes() == good
         assert np.array_equal(store.get_tensor(ref), value)
         assert sorted(p.name for p in (tmp_path / "tensors").iterdir()) == [f"{ref}.safetensors"]
@@ -188,9 +195,9 @@ def test_has_tensor_verifies_size_and_hash_on_request(tmp_path):
     good = path.read_bytes()
     assert store.has_tensor(ref) and store.has_tensor(ref, verify=True)
     assert not store.has_tensor("0" * 64) and not store.has_tensor("0" * 64, verify=True)
-    path.write_bytes(good[:-4])                                   # wrong size
+    path.write_bytes(good[:-4])  # wrong size
     assert store.has_tensor(ref) and not store.has_tensor(ref, verify=True)
-    path.write_bytes(good[:-1] + bytes([good[-1] ^ 1]))           # right size, wrong hash
+    path.write_bytes(good[:-1] + bytes([good[-1] ^ 1]))  # right size, wrong hash
     assert store.has_tensor(ref) and not store.has_tensor(ref, verify=True)
     path.write_bytes(b"")
     assert store.has_tensor(ref) and not store.has_tensor(ref, verify=True)
@@ -209,11 +216,11 @@ def test_lazy_negation_and_conjugation_views_are_materialised(tmp_path):
     assert lazy.is_neg()
     stored = store.put_tensor(lazy)
     assert store.get_tensor(stored["ref"]).tolist() == (-base).tolist()
-    assert stored == store.put_tensor(-base)                      # same bytes, same address
+    assert stored == store.put_tensor(-base)  # same bytes, same address
     from saturn_pub.values import describe
 
     assert stored["sha256"] == describe((-base).contiguous())["sha256"]
-    assert store.put_tensor(base.conj()) == store.put_tensor(base)   # a no-op on real dtypes
+    assert store.put_tensor(base.conj()) == store.put_tensor(base)  # a no-op on real dtypes
     neg_bf16 = torch._neg_view(base.to(torch.bfloat16))
     assert store.get_tensor(store.put_tensor(neg_bf16)["ref"]).float().tolist() == (-base).tolist()
     complex_view = torch.view_as_complex(torch.zeros(2, 2)).conj()
@@ -223,14 +230,15 @@ def test_lazy_negation_and_conjugation_views_are_materialised(tmp_path):
 
 # --------------------------------------------------------------------------- round 3 (C9)
 
+
 def _rewrite_header(good, mutate):
     """The blob ``good`` with its header edited by ``mutate(header)``, re-addressed by content."""
     size = int.from_bytes(good[:8], "little")
-    header = json.loads(good[8:8 + size])
+    header = json.loads(good[8 : 8 + size])
     mutate(header)
     text = json.dumps(header, sort_keys=True, separators=(",", ":")).encode()
     text += b" " * (-len(text) % 8)
-    raw = len(text).to_bytes(8, "little") + text + good[8 + size:]
+    raw = len(text).to_bytes(8, "little") + text + good[8 + size :]
     ref = hashlib.sha256(raw).hexdigest()
     return ref, raw
 
@@ -250,13 +258,13 @@ def test_c9_stale_temporaries_are_removed_at_the_next_put_and_live_ones_are_kept
     for path in (old, other, stale_other):
         os.utime(path, (ancient, ancient))
     young = time.time() - 600
-    os.utime(fresh, (young, young))                       # a live writer's file: 10 minutes old
+    os.utime(fresh, (young, young))  # a live writer's file: 10 minutes old
     # nothing is removed before a successful put
     assert old.exists()
     ref = store.put_tensor(np.arange(3, dtype=np.int32))["ref"]
-    assert not old.exists()                               # older than an hour: swept
-    assert fresh.exists()                                 # younger: possibly being written
-    assert other.exists() and stale_other.exists()        # only tmp* files are ever touched
+    assert not old.exists()  # older than an hour: swept
+    assert fresh.exists()  # younger: possibly being written
+    assert other.exists() and stale_other.exists()  # only tmp* files are ever touched
     assert np.array_equal(store.get_tensor(ref), np.arange(3, dtype=np.int32))
 
 
@@ -271,6 +279,7 @@ def test_c9_a_failed_put_removes_nothing(tmp_path, monkeypatch):
     ancient = time.time() - 2 * 3600
     os.utime(stale, (ancient, ancient))
     import saturn_pub.store as module
+
     monkeypatch.setattr(module, "_publish", lambda *a, **k: (_ for _ in ()).throw(OSError("no")))
     with pytest.raises(OSError):
         store.put_tensor(np.ones(2, np.float32))
@@ -287,18 +296,25 @@ def test_c9_a_directory_or_a_non_text_ref_is_a_clear_value_error(tmp_path):
     path = _blob(tmp_path, ref)
     path.unlink()
     path.mkdir()
-    for call in (lambda: store.get_tensor(ref), lambda: store.tensor_info(ref),
-                 lambda: store.put_tensor(value)):
+    for call in (
+        lambda: store.get_tensor(ref),
+        lambda: store.tensor_info(ref),
+        lambda: store.put_tensor(value),
+    ):
         with pytest.raises(ValueError, match="is a directory"):
             call()
-    assert store.has_tensor(ref) is False                 # is_file: a directory is not a blob
+    assert store.has_tensor(ref) is False  # is_file: a directory is not a blob
     assert store.has_tensor(ref, verify=True) is False
     path.rmdir()
     store.put_tensor(value)
     assert np.array_equal(store.get_tensor(ref), value)
     for bad in (5, None, b"0" * 64, ["0" * 64], 1.5):
-        for call in (store.get_tensor, store.tensor_info, store.has_tensor,
-                     lambda r: store.has_tensor(r, verify=True)):
+        for call in (
+            store.get_tensor,
+            store.tensor_info,
+            store.has_tensor,
+            lambda r: store.has_tensor(r, verify=True),
+        ):
             with pytest.raises(ValueError, match="SHA-256"):
                 call(bad)
 
@@ -309,7 +325,7 @@ def test_c9_numpy_reads_are_writable_copies(tmp_path):
     ref = store.put_tensor(value)["ref"]
     first = store.get_tensor(ref)
     assert first.flags.writeable and first.flags.owndata
-    first[0, 0] = 99.0                                    # mutating a read does not touch the store
+    first[0, 0] = 99.0  # mutating a read does not touch the store
     second = store.get_tensor(ref)
     assert second[0, 0] == 0.0 and np.array_equal(second, value)
     empty = store.get_tensor(store.put_tensor(np.zeros((0, 3), np.float32))["ref"])
@@ -333,14 +349,21 @@ def test_c9_header_types_are_checked_on_read(tmp_path):
         return lambda h: h["tensor"].update(changes)
 
     cases = {
-        "float shape": entry(shape=[8.0]), "bool shape": entry(shape=[True]),
-        "negative shape": entry(shape=[-8]), "text shape": entry(shape="8"),
-        "nested shape": entry(shape=[[8]]), "mapping shape": entry(shape={"a": 8}),
+        "float shape": entry(shape=[8.0]),
+        "bool shape": entry(shape=[True]),
+        "negative shape": entry(shape=[-8]),
+        "text shape": entry(shape="8"),
+        "nested shape": entry(shape=[[8]]),
+        "mapping shape": entry(shape={"a": 8}),
         "null shape": entry(shape=None),
-        "list dtype": entry(dtype=["F32"]), "number dtype": entry(dtype=5),
-        "unknown dtype": entry(dtype="F33"), "null dtype": entry(dtype=None),
-        "float offsets": entry(data_offsets=[0.0, 32.0]), "bool offsets": entry(data_offsets=[False, 32]),
-        "text offsets": entry(data_offsets="ab"), "short offsets": entry(data_offsets=[0]),
+        "list dtype": entry(dtype=["F32"]),
+        "number dtype": entry(dtype=5),
+        "unknown dtype": entry(dtype="F33"),
+        "null dtype": entry(dtype=None),
+        "float offsets": entry(data_offsets=[0.0, 32.0]),
+        "bool offsets": entry(data_offsets=[False, 32]),
+        "text offsets": entry(data_offsets="ab"),
+        "short offsets": entry(data_offsets=[0]),
         "mapping offsets": entry(data_offsets={"a": 0, "b": 32}),
         "mapping entry replaced by list": lambda h: h.update(tensor=[1, 2]),
         "metadata is text": lambda h: h.update(__metadata__="schema"),
@@ -351,7 +374,7 @@ def test_c9_header_types_are_checked_on_read(tmp_path):
         bad = put(mutate)
         with pytest.raises(ValueError, match="malformed|does not match") as caught:
             store.get_tensor(bad)
-        assert type(caught.value) is ValueError, name        # never TypeError/AttributeError
+        assert type(caught.value) is ValueError, name  # never TypeError/AttributeError
         assert store.has_tensor(bad, verify=True) is False, name
     # the unmutated header (re-addressed, identical bytes) still reads
     same, raw = _rewrite_header(good, lambda h: None)
@@ -361,7 +384,7 @@ def test_c9_header_types_are_checked_on_read(tmp_path):
 def test_a_deeply_nested_header_is_malformed_not_a_recursion_error(tmp_path):
     """Audit round 3: a header of '[' * 200000 escaped json.loads as a raw RecursionError."""
     store = LocalStore(tmp_path)
-    store.put_tensor(np.arange(2, dtype=np.float32))          # creates the tensors directory
+    store.put_tensor(np.arange(2, dtype=np.float32))  # creates the tensors directory
     header = b"[" * 200000
     raw = len(header).to_bytes(8, "little") + header
     ref = hashlib.sha256(raw).hexdigest()
@@ -370,8 +393,8 @@ def test_a_deeply_nested_header_is_malformed_not_a_recursion_error(tmp_path):
         with pytest.raises(ValueError, match="malformed") as caught:
             call()
         assert type(caught.value) is ValueError
-    assert store.has_tensor(ref) is True                        # the file is there ...
-    assert store.has_tensor(ref, verify=True) is False          # ... but not a sound tensor
+    assert store.has_tensor(ref) is True  # the file is there ...
+    assert store.has_tensor(ref, verify=True) is False  # ... but not a sound tensor
 
 
 def test_c9_a_corrupt_blob_hard_linked_into_a_shared_pool_is_refused_naming_the_pool(tmp_path):
@@ -387,7 +410,7 @@ def test_c9_a_corrupt_blob_hard_linked_into_a_shared_pool_is_refused_naming_the_
     info = store.put_tensor(value)
     blob = tmp_path / "runs" / "one" / "tensors" / f"{info['ref']}.safetensors"
     pooled = pool_root / "sha256" / info["ref"][:2] / info["ref"]
-    assert os.path.samefile(blob, pooled)                 # shared by hard link
+    assert os.path.samefile(blob, pooled)  # shared by hard link
     good = blob.read_bytes()
     os.chmod(pooled, 0o644)
     pooled.write_bytes(good[:-1] + bytes([good[-1] ^ 1]))  # same inode: both names are corrupt
@@ -396,7 +419,7 @@ def test_c9_a_corrupt_blob_hard_linked_into_a_shared_pool_is_refused_naming_the_
         store.put_tensor(value)
     assert str(pooled) in str(caught.value) and str(blob) in str(caught.value)
     assert "repair it in the shared pool" in str(caught.value)
-    assert os.path.samefile(blob, pooled) and blob.read_bytes() != good   # nothing was replaced
+    assert os.path.samefile(blob, pooled) and blob.read_bytes() != good  # nothing was replaced
     # repairing in the pool (remove the object and its links) lets the store put again
     os.chmod(pooled, 0o644)
     pooled.unlink()

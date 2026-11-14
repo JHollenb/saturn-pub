@@ -1,6 +1,5 @@
-# A circuit record closes on its consumer; test ablates the retained set and its complement natively.
+# A circuit record closes on its consumer; build and show remain available under issue M4.
 until t3.logits
 circuit M[4,9] top=2 depth=3
-circuit test 1
 circuit show 1
 circuit L1.o top=1 depth=2
