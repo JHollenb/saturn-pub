@@ -597,6 +597,8 @@ export interface StoredBody {
   consumer: string | null;
   where: string | null;
   body: Record<string, unknown>;
+  ledger_id: number | null;
+  node: string | null;
 }
 
 export interface SymbolDetail {

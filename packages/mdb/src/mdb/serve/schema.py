@@ -575,7 +575,11 @@ class StoredBody(Model):
     Live view's components. Numbers are labelled as the Records drawer labels them: a stored
     ``{value, authority}`` keeps its class (and proof, unit); any other number is ``supplied``;
     a stored ``{v, ev}`` look-alike is never passed through. ``consumer`` and ``where`` are the
-    body's own (the consumer and the cursor the op ran at)."""
+    body's own (the consumer and the cursor the op ran at). A circuit record is paged: ``body`` is
+    its root page, a group that did not fit is a node whose ``paged`` holds a pointer to a child
+    page, and ``node`` set asks for that node's page instead (``body`` is then the page,
+    ``{schema, node: <subtree>}``). ``ledger_id`` is the ``circuit N`` number the REPL printed
+    when the record was built (None for a record from before it was stored)."""
     id: str
     kind: str
     record_schema: str
@@ -583,6 +587,8 @@ class StoredBody(Model):
     consumer: str | None
     where: str | None
     body: dict[str, Any]
+    ledger_id: int | None = None
+    node: str | None = None
 
 
 # --------------------------------------------------------------------------- reduce / ops / events

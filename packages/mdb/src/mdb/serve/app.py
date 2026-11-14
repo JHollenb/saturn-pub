@@ -281,9 +281,11 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         return respond(envelope("record", detail, omitted))
 
     @app.get("/api/v1/s/{sid}/stored/{identifier}")
-    def stored(sid: str, identifier: str):
-        """One engine record's whole body (circuit, symbol-table) for the recorded views."""
-        return respond(envelope("stored", records_view.stored_body(model(sid), identifier)))
+    def stored(sid: str, identifier: str, node: str | None = None):
+        """One engine record's whole body (circuit, symbol-table) for the recorded views;
+        ``node`` (a circuit's node id) returns that node's child page instead."""
+        return respond(envelope("stored", records_view.stored_body(model(sid), identifier,
+                                                                    node)))
 
     @app.post("/api/v1/s/{sid}/reduce")
     async def reduce(sid: str, request: ReduceRequest):

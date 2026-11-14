@@ -36,11 +36,15 @@ the ablated contributions, ``rho`` and later layers frozen: ``derived-local``). 
 
 from __future__ import annotations
 
+import hashlib
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, NamedTuple
 
+from mdb.core import circuit_pages as pages_mod
+from mdb.core.bounded import json_bytes, load_json, put_json
+from mdb.core.circuit_pages import PAGE_BYTES, PAGE_SCHEMA, PAGE_VALUES  # noqa: F401
 from mdb.core.kinds import CIRCUIT
 from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
@@ -147,6 +151,9 @@ class Circuit:
     where: str
     tests: list[dict[str, Any]] = field(default_factory=list)
     complement: Any = None  # minus the members' summed contributions (the embedding aside)
+    pages: dict[str, Any] = field(default_factory=dict, repr=False)
+    """Child pages by sha256 when there was no project store to put them in (they travel with
+    the circuit, so one carried to a later run still resolves)."""
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -485,11 +492,54 @@ def top_gap(run: Any, reader: Any, gap: Any) -> list[Node]:
     return nodes
 
 
+# --------------------------------------------------------------------------- paging
+
+
+def load_page(circuit: Circuit, pointer: dict[str, Any], *, store: Any = None
+              ) -> dict[str, Any]:
+    """The child page ``pointer`` names, checked: from ``store`` when it is stored, else from the
+    circuit's own held pages; its sha256 must match the pointer's and its schema be a circuit
+    page, else ``Refusal``."""
+    try:
+        if pointer.get("state") == "stored":
+            from mdb.core.pointers import tensor_pointer
+
+            tensor = tensor_pointer(pointer["ref"], sha256=pointer["tensor_sha256"],
+                                    shape=[int(pointer["bytes"]["value"])], dtype="uint8")
+            found = load_json({"state": "stored", "sha256": pointer["sha256"]}, store=store,
+                              tensor=tensor)
+        else:
+            found = circuit.pages.get(pointer.get("sha256"))
+            if found is None:
+                raise ValueError("the page is not held: " + str(pointer.get("reason", "absent")))
+        if hashlib.sha256(json_bytes(found)).hexdigest() != pointer.get("sha256"):
+            raise ValueError("the page differs from the pointer's sha256")
+    except Exception as error:  # noqa: BLE001 - a missing or changed page is a refusal
+        raise Refusal(f"circuit {circuit.id}: page refused ({error})") from None
+    if not isinstance(found, dict) or found.get("schema") != PAGE_SCHEMA:
+        raise Refusal(f"circuit {circuit.id}: the stored page is not a circuit page")
+    return found
+
+
+def page(circuit: Circuit, node_id: str, *, store: Any = None) -> dict[str, Any]:
+    """The page of node ``node_id`` (``n12``): its subtree, with every group that does not fit
+    again as a pointer. ``Refusal`` for an unknown id or a page that is missing or changed."""
+    body = circuit.record["body"]
+    try:
+        return pages_mod.locate(body["root"], int(body["count"]), node_id,
+                                lambda pointer: load_page(circuit, pointer, store=store))
+    except pages_mod.PageError as error:
+        raise Refusal(f"circuit {circuit.id}: {error}") from None
+
+
 def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
-          session_id: str | None = None) -> Circuit:
+          session_id: str | None = None, store: Any = None) -> Circuit:
     """Decompose ``consumer`` at the cursor's row, seal the circuit record (kind ``circuit``)
     and add it to the run's ledger. ``Refusal`` when the consumer is not computed or has no
-    exact additive decomposition."""
+    exact additive decomposition. A tree that does not fit one page (``PAGE_BYTES``) is paged:
+    the record keeps the root and the first levels, and each group that does not fit is a
+    pointer to a child page (a sha256-checked JSON blob in ``store`` or, with none, held on
+    the circuit); the record's ``count`` is every node, paged ones included."""
     if not 1 <= top <= 8:
         raise Refusal("top must be in 1..8")
     if not 1 <= depth <= 3:
@@ -513,10 +563,26 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
     ident = max(entries, default=0) + 1
     ids = [0]
     tree = root.view(ids)
+    pages: dict[str, Any] = {}
+
+    def put(obj: dict[str, Any]) -> dict[str, Any]:
+        held = put_json(obj, store=store)
+        if held["state"] != "stored":
+            pages[held["sha256"]] = obj
+            return {"state": "absent", "sha256": held["sha256"], "reason": held["reason"]}
+        return {"state": "stored", "ref": held["ref"], "sha256": held["sha256"],
+                "tensor_sha256": held["tensor"]["sha256"], "bytes": num(held["bytes"], EXACT)}
+
+    try:
+        pages_mod.paginate(tree, put, {"consumer": reader.text,
+                                       "ledger_id": num(ident, EXACT)})
+    except pages_mod.PageError as error:
+        raise Refusal(str(error)) from None
     remainders = _remainders(root)
     unexamined = sum(g.unexamined for g in _groups(root))
-    body = {"schema": SCHEMA, "consumer": reader.text, "kind": reader.kind,
-            "where": run.where, "k": top, "depth": depth, "count": ids[0], "root": tree,
+    body = {"schema": SCHEMA, "ledger_id": num(ident, EXACT), "consumer": reader.text,
+            "kind": reader.kind, "where": run.where, "k": top, "depth": depth,
+            "count": ids[0], "root": tree,
             "closure": {"value": claim(closure, EXACT, "P19" if reader.scalar else "P14"),
                         "bound": num(float(64 * 2.0 ** -53 * scale), "bound"),
                         "within": bool(size(closure) <= 64 * 2.0 ** -53 * scale),
@@ -543,7 +609,7 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
         raise Refusal(f"the circuit record does not fit one record ({error}); lower top or "
                       "depth") from None
     circuit = Circuit(ident, record, root, reader.target, run.where,
-                      complement=_fold_members(root))
+                      complement=_fold_members(root), pages=pages)
     entries[ident] = circuit
     return circuit
 
@@ -710,5 +776,5 @@ def test(run: Any, circuit: Circuit, *, tolerance: float = 0.1) -> dict[str, Any
 _terms = terms
 _top_gap = top_gap
 
-__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "SCHEMA", "build", "ledger", "terms", "test",
-           "top_gap"]
+__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "PAGE_SCHEMA", "SCHEMA", "build", "ledger",
+           "load_page", "page", "terms", "test", "top_gap"]

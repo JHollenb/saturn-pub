@@ -26,6 +26,7 @@ import {
   type Placed,
   type WalkKey,
 } from './layout';
+import { pagedCounts, spliceBody, usePages, type PageSource } from './paging';
 
 export interface CircuitActions {
   build(consumer: string, top: number, depth: number): void;
@@ -68,7 +69,7 @@ export function CircuitView(props: CircuitViewProps) {
       {entry ? (
         <>
           <CircuitHead entry={entry} />
-          <Graph entry={entry} {...props} />
+          <Graph key={entry.id} entry={entry} source={{ kind: 'live', id: entry.id }} {...props} />
           <TestPanel entry={entry} {...props} />
         </>
       ) : (
@@ -84,7 +85,16 @@ export function CircuitView(props: CircuitViewProps) {
 
 /** A circuit record's sealed body drawn read-only (recorded mode): the head, the same layered
  *  graph and keyboard walk as the Live tab, no seek, no test. */
-export function StoredCircuit({ id, body }: { id: number; body: Rec }) {
+export function StoredCircuit({
+  id,
+  body,
+  source = null,
+}: {
+  id: number;
+  body: Rec;
+  /** Where its child pages are read from (`/stored/{record}?node=`); None: the body is whole. */
+  source?: PageSource | null;
+}) {
   const [node, setNode] = useState<string | null>(null);
   const entry: CircuitEntry = useMemo(() => ({ id, body, test: null, ablated: null }), [id, body]);
   const circuits = useMemo(() => new Map([[id, entry]]), [id, entry]);
@@ -104,7 +114,9 @@ export function StoredCircuit({ id, body }: { id: number; body: Rec }) {
     <div className="circuit-view" data-testid="stored-circuit">
       <CircuitHead entry={entry} />
       <Graph
+        key={`${id}:${source?.kind === 'stored' ? source.record : ''}`}
         entry={entry}
+        source={source}
         ledger={[]}
         circuits={circuits}
         selected={id}
@@ -357,8 +369,8 @@ function FocusLine({ focus, entry }: { focus: FocusRead; entry: CircuitEntry | n
         </span>
       ) : (
         <span className="faint">
-          not among circuit {entry.id}'s listed nodes (it may sit in a +N more group, or need depth
-          3 or a larger K).
+          not among circuit {entry.id}'s listed nodes (it may sit in a +N more group or a paged
+          group not expanded, or need depth 3 or a larger K).
         </span>
       )}
     </div>
@@ -382,13 +394,22 @@ function Graph({
   busy,
   act,
   readOnly = false,
-}: { entry: CircuitEntry; readOnly?: boolean } & CircuitViewProps) {
+  source,
+}: {
+  entry: CircuitEntry;
+  readOnly?: boolean;
+  /** Where child pages are fetched from; null: this body has none to fetch. */
+  source: PageSource | null;
+} & CircuitViewProps) {
   const consumer = str(entry.body.consumer);
+  const paging = usePages(source ?? { kind: 'live', id: entry.id });
+  const body = useMemo(() => spliceBody(entry.body, paging.pages), [entry.body, paging.pages]);
   const family = useMemo(
-    () => familyOf([...circuits.values()], consumer).map((c) => c.body),
-    [circuits, consumer],
+    () =>
+      familyOf([...circuits.values()], consumer).map((c) => (c.id === entry.id ? body : c.body)),
+    [circuits, consumer, entry.id, body],
   );
-  const layout = useMemo(() => layoutCircuit(entry.body, family), [entry.body, family]);
+  const layout = useMemo(() => layoutCircuit(body, family), [body, family]);
   const ablated = useMemo(() => ablatedIds(entry), [entry]);
   const reads = readNodes(entry, focus, layout);
   const box = useRef<HTMLDivElement>(null);
@@ -450,6 +471,9 @@ function Graph({
     const key = KEYS[e.key];
     if (key) {
       e.preventDefault();
+      // walking into a paged group fetches its page (its children were examined, stored apart)
+      if (key === 'right' && current?.node.paged && !current.node.children.length && source)
+        void paging.load(current.node.id);
       act.node(walk(layout, node, key));
     } else if (e.key === 'Enter' && current && !readOnly) {
       e.preventDefault();
@@ -524,13 +548,23 @@ function Graph({
               selected={p.node.id === node}
               read={reads.has(p.node.id)}
               ablated={ablated.get(p.node.id) ?? null}
+              paged={p.node.paged !== null && p.node.children.length === 0}
               onSelect={() => act.node(p.node.id)}
             />
           ))}
         </svg>
       </div>
       <GraphLegend readOnly={readOnly} />
-      {current && <NodeLine p={current} entry={entry} busy={busy} act={act} readOnly={readOnly} />}
+      {current && (
+        <NodeLine
+          p={current}
+          entry={entry}
+          busy={busy}
+          act={act}
+          readOnly={readOnly}
+          paging={source ? paging : null}
+        />
+      )}
     </div>
   );
 }
@@ -593,6 +627,7 @@ function NodeMark({
   selected,
   read,
   ablated,
+  paged,
   onSelect,
 }: {
   id: string;
@@ -600,6 +635,8 @@ function NodeMark({
   selected: boolean;
   read: boolean;
   ablated: string | null;
+  /** Children examined but stored as a page, not fetched yet. */
+  paged: boolean;
   onSelect: () => void;
 }) {
   const { node, x, y } = p;
@@ -628,7 +665,7 @@ function NodeMark({
       onClick={onSelect}
       style={{ cursor: 'pointer' }}
     >
-      <title>{`${node.name} · ${node.kind} · ${node.address}${node.note ? `\n${node.note}` : ''}`}</title>
+      <title>{`${node.name} · ${node.kind} · ${node.address}${node.note ? `\n${node.note}` : ''}${paged ? '\nchildren examined, stored as a page: walk right or expand to fetch it' : ''}`}</title>
       {(read || ablated) && (
         <rect
           x={x - NODE_R - 4}
@@ -672,6 +709,17 @@ function NodeMark({
         />
       ) : (
         <circle cx={x} cy={y} r={NODE_R} {...common} />
+      )}
+      {paged && (
+        <text
+          x={x - 4}
+          y={y + NODE_R + 9}
+          fontSize={9}
+          fill="var(--ink-2)"
+          data-testid="paged-mark"
+        >
+          ▸
+        </text>
       )}
       <text
         x={x + LABEL_X}
@@ -725,7 +773,8 @@ function GraphLegend({ readOnly = false }: { readOnly?: boolean }) {
       </span>{' '}
       · width ∝ |exact contribution| · <EvidenceMark ev="measured" /> measured{' '}
       <EvidenceMark ev="derived-exact" /> derived · rounded box: +N more (their Σ) · diamond:
-      remainder (measured, with its bound; never dropped) · square: consumer
+      remainder (measured, with its bound; never dropped) · ▸ paged: children examined, stored as
+      a page (fetched on expand; not +N more, which is a sum never expanded) · square: consumer
       {readOnly
         ? ' · arrows walk (recorded: no seek, no test)'
         : ' · after a test: ✕R ablated with the retained set, ✕C with the complement · arrows walk, Enter asks to seek'}
@@ -739,14 +788,18 @@ function NodeLine({
   busy,
   act,
   readOnly = false,
+  paging,
 }: {
   p: Placed;
   entry: CircuitEntry;
   busy: boolean;
   act: CircuitActions;
   readOnly?: boolean;
+  paging: ReturnType<typeof usePages> | null;
 }) {
   const target = readOnly ? null : seekable(p.node.address);
+  const counts = p.node.children.length === 0 ? pagedCounts(p.node.paged) : null;
+  const state = paging?.status.get(p.node.id);
   return (
     <div className="circuit-node-line" data-testid="circuit-node-line">
       <strong>{p.node.name}</strong> <span className="faint">{p.node.kind}</span>{' '}
@@ -759,6 +812,29 @@ function NodeLine({
         </>
       )}
       {p.node.note && <span className="faint"> · {p.node.note}</span>}{' '}
+      {counts && (
+        <span data-testid="paged-node">
+          <span className="chip">paged</span>{' '}
+          <span className="faint">
+            {counts.children} children examined ({counts.descendants} nodes below), stored as a
+            page, not listed here
+          </span>{' '}
+          {paging && (
+            <button
+              type="button"
+              disabled={state?.state === 'loading'}
+              onClick={() => void paging.load(p.node.id)}
+            >
+              {state?.state === 'loading' ? 'fetching…' : 'expand'}
+            </button>
+          )}{' '}
+          {state?.state === 'failed' && (
+            <span className="na" data-testid="paged-failed">
+              page refused: {state.reason}
+            </span>
+          )}
+        </span>
+      )}{' '}
       {target ? (
         <button
           type="button"

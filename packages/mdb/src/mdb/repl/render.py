@@ -873,7 +873,7 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
 
 
 def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = None,
-          texts: dict[str, str] | None = None) -> list[str]:
+          texts: dict[str, str] | None = None, circuit: Any = None) -> list[str]:
     marks, texts = marks or {}, texts or {}
     name = node["name"] if node["name"] == node["address"] else (
         f"{node['name']}  {node['address']}")
@@ -889,7 +889,13 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
         line += f"  [ablated: {marks[node['id']]}]"
     lines = [line]
     for child in node.get("children", ()):
-        lines += _walk(child, depth + 1, marks, texts)
+        lines += _walk(child, depth + 1, marks, texts, circuit)
+    paged = node.get("paged")
+    if paged:
+        lines.append(f"{'  ' * (depth + 1)}[paged: {_claimed(paged['children'])} children examined, "
+                     f"{_claimed(paged['descendants'])} nodes below, stored as page "
+                     f"{paged['pointer']['sha256'][:12]}; circuit show {circuit} "
+                     f"node={node['id']}]")
     return lines
 
 
@@ -914,11 +920,20 @@ def _circuit_test_lines(test: dict[str, Any]) -> list[str]:
 def _circuit_lines(result: dict[str, Any]) -> list[str]:
     if result["action"] == "test":
         return _circuit_test_lines(result["test"])
+    if "page" in result:
+        page = result["page"]
+        lines = [f"circuit {result['id']} node {result['node']}  "
+                 f"({'inline subtree' if page.get('state') == 'inline' else 'stored page'})"]
+        marks = {}
+        lines += ["  " + line for line in _walk(page["node"], 0, marks, result.get("token_text"),
+                                                result["id"])]
+        return lines
     body = result["record"]["body"]
     lines = [f"circuit {result['id']}  {body['consumer']}  top {body['k']} depth "
              f"{body['depth']}  ({body['count']} nodes, record {result['record']['id'][:16]})"]
     marks = {ref: name for name, refs in result.get("ablated", {}).items() for ref in refs}
-    lines += ["  " + line for line in _walk(body["root"], 0, marks, result.get("token_text"))]
+    lines += ["  " + line for line in _walk(body["root"], 0, marks, result.get("token_text"),
+                                            result["id"])]
     closure = body["closure"]
     lines.append(f"  closure {_short(closure['value'])} "
                  f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])} "

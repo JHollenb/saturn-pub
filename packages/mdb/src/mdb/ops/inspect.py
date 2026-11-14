@@ -159,7 +159,16 @@ CIRCUIT_TEST_DISABLED = ("circuit test is disabled: zero-ablating the complement
                          "on a real model (issue M4)")
 
 
-def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire name
+def _page_store(ctx, write: bool = True):
+    """The project store a circuit's child pages go to (``write``) or are read from, or None
+    (a read-only project is still read)."""
+    project = getattr(ctx.debugger, "project", None)
+    if project is None or (write and project.read_only):
+        return None
+    return project.store
+
+
+def _circuit(ctx, target, id, top, depth, tolerance, node=None):  # noqa: A002 - the wire name
     from mdb.analysis import circuits
 
     if target == "test":
@@ -172,6 +181,22 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
         if id not in ledger:
             raise Refused(f"no circuit {id} (have: {', '.join(map(str, ledger)) or 'none'})")
         circuit = ledger[id]
+        if target == "show" and node is not None:
+            try:
+                found = circuits.page(circuit, node, store=_page_store(ctx, False))
+            except _refusal() as error:
+                raise Refused(str(error)) from None
+            out = {"action": "show", "id": id, "node": node, "page": found,
+                   "record": {"id": circuit.record["id"]}}
+            if getattr(ctx.debugger, "carried_circuits", {}).get(id) is circuit:
+                out["from_previous_run"] = True
+            else:
+                texts = _source_texts(ctx, found["node"])
+                if texts:
+                    out["token_text"] = texts
+            return out
+        if node is not None:
+            raise BadArgs("node= belongs to circuit show ID")
         if target == "show":
             out = {"action": "show", "id": id, "record": record_view(circuit.record),
                    "tests": circuit.tests[-1:]}
@@ -198,7 +223,7 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
         raise BadArgs("circuit CONSUMER takes top= and depth=, not an id")
     try:
         circuit = circuits.build(run, parse_consumer(ctx, target), top=top, depth=depth,
-                                 session_id=_session_id(ctx))
+                                 session_id=_session_id(ctx), store=_page_store(ctx))
     except _refusal() as error:
         raise Refused(str(error)) from None
     out = {"action": "build", "id": circuit.id, "record": record_view(circuit.record)}
@@ -514,11 +539,14 @@ register(Op("circuit", "Circuit records: build from the exact decomposition (nod
              Arg("id", "int", minimum=1),
              Arg("top", "int", default=4, minimum=1, maximum=8, positional=False),
              Arg("depth", "int", default=2, minimum=1, maximum=3, positional=False),
+             Arg("node", "str", positional=False,
+                 help="circuit show ID: the node whose page to read (n12), for a group "
+                      "the record stores as a child page"),
              Arg("tolerance", "number", default=0.1, positional=False,
                  help="sufficient when the complement ablation moves the consumer by at most "
                       "this fraction of its size")),
             "mutate", True, _circuit,
-            usage="circuit CONSUMER [top=K] [depth=D] | circuit show ID  (circuit test ID: disabled, issue M4)"),
+            usage="circuit CONSUMER [top=K] [depth=D] | circuit show ID [node=NODEID]  (circuit test ID: disabled, issue M4)"),
          replace=True)
 register(Op("compare", "Compare branches: base, A, B and A+B measured natively, effects and "
             "the interaction",

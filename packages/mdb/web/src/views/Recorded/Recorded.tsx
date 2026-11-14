@@ -209,9 +209,19 @@ export function RecordedCircuits({ sid }: { sid: string }) {
                       <>
                         <Origin stored={stored} />
                         <StoredCircuit
-                          id={list.rows.findIndex((r) => r.id === stored.id) + 1 + s.page * 25}
+                          id={
+                            stored.ledger_id ??
+                            list.rows.findIndex((r) => r.id === stored.id) + 1 + s.page * 25
+                          }
                           body={stored.body}
+                          source={{ kind: 'stored', sid, record: stored.id }}
                         />
+                        {stored.ledger_id === null && (
+                          <div className="faint" data-testid="no-ledger-id">
+                            this record stores no ledger id: the number above is its position in
+                            this list
+                          </div>
+                        )}
                       </>
                     )}
                   </Show>

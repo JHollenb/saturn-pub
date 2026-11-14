@@ -36,6 +36,10 @@ export interface CNode {
   depth: number;
   parent: string | null;
   children: string[];
+  /** Set when the node's children were examined but are stored as a child page the record
+   *  points at (`paged`: `children` and `descendants` counts, the pointer). Not `+N more`
+   *  (members summed, never expanded) and not `unexamined`. Cleared once its page is loaded. */
+  paged: Rec | null;
   /** The raw node record (for the Inspector). */
   raw: Rec;
 }
@@ -62,6 +66,7 @@ export function flatten(body: unknown): CNode[] {
       depth,
       parent,
       children: [],
+      paged: isRec(raw.paged) ? raw.paged : null,
       raw: Object.fromEntries(Object.entries(raw).filter(([k]) => k !== 'children')),
     };
     out.push(node);
