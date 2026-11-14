@@ -182,7 +182,7 @@ for tag in ("top1pct", "median"):
                "classes": dict(defaultdict(int))}
     cc = defaultdict(int)
     for a in rows:
-        cc[tclass(a["row"], a["token"])] += 1
+        cc[tclass(a["row"], ids[a["prompt"]][a["row"]])] += 1   # rec["token"] holds the token-mean arm
     T3[tag]["classes"] = dict(cc)
 T3["pass"] = (T3["top1pct"]["pos_lt_global"][2] or 0) >= 0.7
 out["T3"] = T3
