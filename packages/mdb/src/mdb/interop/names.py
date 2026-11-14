@@ -213,6 +213,49 @@ def to_tool(layout: str, value: Any, *, head_dim: int) -> Any:
     raise ValueError(f"unknown layout {layout!r}")
 
 
+_TL_RANK = {"seq": 3, "heads_flat": 4, "heads": 4, "heads_t": 4, "rot_q": 4, "rot_k": 4,
+            "scores": 4}
+
+
+def tl_hook(port: str, fn: Any) -> Any:
+    """A TransformerLens hook function that hands ``fn`` the value in MDB's layout.
+
+    ``port`` is ``L<l>.<port>`` or a bare port (``A``, ``v``, ``q`` ...); the layout comes from the
+    name table (``tl_layout``). TL 4.4 bridge ``hook_z``/``hook_v``/``hook_q``/``hook_k`` are
+    ``(batch, pos, head, head_dim)`` while mdb keeps ``(batch, pos, head*head_dim)`` (layout
+    ``heads_flat``): indexing the TL tensor as mdb-flat patches the wrong slice silently. The
+    returned ``hook(x, hook)`` refuses an ``x`` whose rank is not the TL layout's (a wrong-rank
+    tensor means the wrong hook or a processed/fused one), converts ``x`` to mdb layout, calls
+    ``fn(mdb_tensor, hook)``, and converts the result back; a ``None`` return keeps ``x`` (TL's
+    convention; an in-place edit of the mdb tensor is an edit of ``x``, which is a view of it).
+    ``fn`` must return the same mdb shape it was given (a refusal otherwise)."""
+    address = port if _LAYER.fullmatch(port.strip()) else f"L0.{port}"
+    _, bare = _split(address)
+    name = BY_PORT.get(bare)
+    if name is None or name.tl is None or name.tl_layout is None:
+        raise NoName(f"{port!r} has no TransformerLens hook layout"
+                     + (f": {name.note}" if name else ""))
+    layout = name.tl_layout
+    rank = _TL_RANK[layout]
+
+    def hook_fn(x: Any, hook: Any = None) -> Any:
+        if x.ndim != rank:
+            raise ValueError(f"{port}: TL layout {layout} is {rank}-D, got shape "
+                             f"{tuple(x.shape)} (wrong hook, or a fused/processed bridge)")
+        head_dim = int(x.shape[-1])
+        mdb = to_tool(layout, x, head_dim=head_dim) if layout != "heads_flat" else \
+            x.reshape(*x.shape[:2], -1)
+        out = fn(mdb, hook)
+        if out is None:
+            return None
+        if tuple(out.shape) != tuple(mdb.shape):
+            raise ValueError(f"{port}: fn returned shape {tuple(out.shape)}, expected the mdb "
+                             f"layout shape {tuple(mdb.shape)}")
+        return to_tool(layout, out, head_dim=head_dim)
+
+    return hook_fn
+
+
 # --- foreign names of cells, rows and reads: ``mdb.core.foreign_names`` (re-exported here;
 # analysis attaches them to symbol-table rows and may not import this layer) ---
 from mdb.core.foreign_names import (  # noqa: E402,F401

@@ -1,0 +1,43 @@
+{
+ "above_floor": 822,
+ "gained": 141,
+ "k": 2.125,
+ "lost": 167,
+ "model": "Qwen3-0.6B-Base",
+ "n": 4752,
+ "paths": [
+  "mdb-stepped",
+  "tl-batched-unprocessed",
+  "tl-batched-processed",
+  "tl-batch1-unprocessed"
+ ],
+ "schema": "mdb-verdict-stability-calibration-v1",
+ "sign_reversed": 1,
+ "source": "results/showcase-20261114/exp6/out",
+ "table": [
+  {
+   "bin": "1-1.5",
+   "lost": 144,
+   "n": 267,
+   "sign_reversed": 1
+  },
+  {
+   "bin": "1.5-2",
+   "lost": 21,
+   "n": 96,
+   "sign_reversed": 0
+  },
+  {
+   "bin": "2-4",
+   "lost": 2,
+   "n": 129,
+   "sign_reversed": 0
+  },
+  {
+   "bin": ">4",
+   "lost": 0,
+   "n": 330,
+   "sign_reversed": 0
+  }
+ ]
+}

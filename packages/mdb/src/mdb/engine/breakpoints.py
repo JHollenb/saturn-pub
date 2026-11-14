@@ -1088,10 +1088,21 @@ def _stopped(table: Table | None, where: str, hits: list[dict]) -> None:
         table.last_stop = {"where": where, "ids": [h["id"] for h in hits if h["id"] > 0]}
 
 
+def stop_reason(kinds: set[str]) -> str:
+    """The stop ``reason`` for the set of hit kinds at one stop: ``watch`` (only watches),
+    ``advance`` (only advance items), ``watch+breakpoint`` (a watch and a break/tbreak/... hit at
+    the same stop), else ``breakpoint``. ``hits[]`` still lists every item with its ``kind``."""
+    if kinds == {"watch"}:
+        return "watch"
+    if kinds == {"advance"}:
+        return "advance"
+    if "watch" in kinds and kinds - {"watch", "advance"}:
+        return "watch+breakpoint"
+    return "breakpoint"
+
+
 def _reason(hits: list[dict]) -> str:
-    kinds = {hit["kind"] for hit in hits}
-    return "watch" if kinds == {"watch"} else ("advance" if kinds == {"advance"}
-                                               else "breakpoint")
+    return stop_reason({hit["kind"] for hit in hits})
 
 
 def _capacity(error: ValueError) -> bool:
@@ -1129,7 +1140,7 @@ def run_forward(
     ``budget`` is the number of token rows the motion may ENTER (minimum 1): it stops at the
     ``start`` of row ``cursor row + budget`` with reason ``budget``. Per-item ignore counts
     pass hits (gdb ``ignore N COUNT``). Returns ``{reason, where, hits[, error]}`` where
-    ``reason`` is ``breakpoint``, ``watch``, ``advance``, ``budget``, ``end-of-context`` (the
+    ``reason`` is ``breakpoint``, ``watch``, ``watch+breakpoint`` (both at one stop), ``advance``, ``budget``, ``end-of-context`` (the
     model's context limit: a normal stop) or ``error`` (a condition or watch could not be
     evaluated at ``where``: the motion stops there, ``error`` has the id and message).
     """

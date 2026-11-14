@@ -1,0 +1,31 @@
+mrun: job-5ce9e8d2f078 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision c67f6d3 script das.py
+[    4.1s] load mode=score
+[   19.4s] S landmark:the Great Wall 15.14s
+[   35.0s] S landmark:the Parthenon 15.67s
+[   71.4s] S landmark:the Rijksmuseum 36.36s
+[   85.5s] S landmark:the Sphinx 14.12s
+[  131.3s] S landmark:the pyramids of Giza 45.8s
+[  147.4s] S person:Akira Kurosawa 16.09s
+[  162.0s] S person:Edvard Munch 14.6s
+[  177.4s] S person:Frederic Chopin 15.45s
+[  193.0s] S person:Giuseppe Verdi 15.55s
+[  207.9s] S person:Hans Christian Andersen 14.88s
+[  222.1s] S person:Haruki Murakami 14.28s
+[  236.2s] S person:Henrik Ibsen 14.06s
+[  251.0s] S person:Hokusai 14.83s
+[  266.5s] S person:Jean Sibelius 15.49s
+[  282.0s] S person:Mao Zedong 15.49s
+[  297.0s] S person:Miguel de Cervantes 15.01s
+[  310.4s] S person:Mozart 13.36s
+[  323.9s] S person:Plato 13.49s
+[  347.4s] S person:Rembrandt 23.51s
+[  361.3s] S person:Socrates 13.87s
+[  386.1s] S person:Soren Kierkegaard 24.82s
+[  386.1s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:27.62
+	Maximum resident set size (kbytes): 4358272
+mrun: job-5ce9e8d2f078 -> succeeded
+mrun: job-5ce9e8d2f078 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 387.93, 'peak_rss_mb': 2535.7, 'peak_vram_mb': 3858.0}

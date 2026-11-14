@@ -26,6 +26,13 @@ components' shares add to the cell's (``derived-exact``); ``mass`` (``sum_h p[h,
 cell's and is reported as inherited. ``content`` reads each component's write
 ``sum_h p[h, r] W_O,h v_i`` through ``symbols.content``.
 
+Offline: ``component_binding`` needs ``h = t<r>.L<l>.h`` and the native cell, which a live run
+has only for a row it stepped. ``ResidualCapture`` saves ``h`` at declared (row, layer) pairs
+(and, optionally, the native value cache of those layers) from a run, to disk if wanted
+(``save``/``load``); ``component_binding(None, ..., capture=cap, adapter=adapter)`` then builds
+the same binding with no forward pass. K/V-only captures cannot: ``h`` is not recoverable from
+them. ``ComponentBinding.provenance`` says where ``h`` and the native cell came from.
+
 Refusals: row 0 (the first token is off a residual SAE's training distribution, Qwen-Scope
 report section 2.2; ``sae.FIRST_ROW_CAVEAT``), a prefilled row (its residual was never
 stopped at), a basis whose site does not hold ``h``, a model with a V norm.
@@ -48,6 +55,54 @@ def _torch():
     import torch
 
     return torch
+
+
+@dataclass
+class ResidualCapture:
+    """The residual ``h = t<r>.L<l>.h`` at declared (row, layer) pairs, native dtype, and
+    optionally the native value cache (``values[l]``: (1, H_KV, T, d_h)) of the captured layers.
+    ``provenance`` records where they were read (``Run.read`` / ``Run.read_cache(staged=False)``,
+    the tokens and the cursor at capture); ``adapter`` is only needed to build a binding."""
+
+    h: dict[tuple[int, int], Any] = field(default_factory=dict)
+    values: dict[int, Any] = field(default_factory=dict)
+    provenance: dict[str, Any] = field(default_factory=dict)
+    adapter: Any = None
+
+    @classmethod
+    def from_run(cls, run: Any, rows: list[int], layers: list[int], *,
+                 values: bool = True) -> "ResidualCapture":
+        """Save ``h`` of every (row, layer) in ``rows x layers`` the run has stepped, and (with
+        ``values``) the committed value cache of those layers. Refuses a row the run prefilled
+        or has not reached (its residual was never stopped at)."""
+        here = int(run.where.split(".")[0][1:])
+        cap = cls(adapter=run.adapter)
+        for row in rows:
+            if int(row) < int(run.first_row) or int(row) > here:
+                raise Refusal(f"t{row}: not stepped by this run (first stepped row "
+                              f"t{run.first_row}, cursor {run.where})")
+            for layer in layers:
+                cap.h[(int(row), int(layer))] = run.read(f"t{row}.L{layer}.h").detach().clone()
+        if values:
+            for layer in layers:
+                cap.values[int(layer)] = run.read_cache(int(layer), "v",
+                                                        staged=False).detach().clone()
+        cap.provenance = {"h": "Run.read(t<r>.L<l>.h) at capture", "rows": [int(r) for r in rows],
+                          "layers": [int(x) for x in layers], "cursor": run.where,
+                          "values": "Run.read_cache(v, staged=False)" if values else None,
+                          "tokens": [int(t) for t in run.session.read("tokens")[0].tolist()]}
+        return cap
+
+    def save(self, path: str) -> None:
+        _torch().save({"h": {f"{r}.{l}": v for (r, l), v in self.h.items()},
+                       "values": {str(l): v for l, v in self.values.items()},
+                       "provenance": self.provenance}, path)
+
+    @classmethod
+    def load(cls, path: str, adapter: Any = None) -> "ResidualCapture":
+        state = _torch().load(path, map_location="cpu", weights_only=True)
+        return cls({tuple(int(x) for x in k.split(".")): v for k, v in state["h"].items()},
+                   {int(k): v for k, v in state["values"].items()}, state["provenance"], adapter)
 
 
 @dataclass
@@ -80,6 +135,7 @@ class ComponentBinding(Binding):
     map: Any = None
     active: list[int] = field(default_factory=list)
     acts: dict[int, float] = field(default_factory=dict)
+    provenance: dict[str, Any] = field(default_factory=dict)
 
     @property
     def cell(self) -> str:
@@ -128,9 +184,16 @@ class ComponentBinding(Binding):
 
 
 def component_binding(run: Any, name: str, cell: str, basis: Any, *,
-                      features: list[int] | None = None) -> ComponentBinding:
+                      features: list[int] | None = None, capture: ResidualCapture | None = None,
+                      adapter: Any = None) -> ComponentBinding:
     """Split ``cell`` (``cache.L<l>.v[kv<g>,row=<r>]``) over ``basis``; ``features`` lists the
-    features kept as their own components (default: every active one)."""
+    features kept as their own components (default: every active one).
+
+    With ``capture`` (a ``ResidualCapture``) ``h`` is read from it, not from ``run``; ``run`` may
+    then be None and the weights come from ``adapter`` (default ``capture.adapter``). The native
+    cell comes from ``capture.values`` when held, else from ``run.read_cache``; with neither the
+    refusal says so. The result is bitwise the live binding when the capture holds the live
+    run's ``h`` and cache."""
     from .reads import layer_module
 
     torch = _torch()
@@ -139,12 +202,23 @@ def component_binding(run: Any, name: str, cell: str, basis: Any, *,
         raise Refusal(f"a component binding is over one value cell "
                       f"cache.L<l>.v[kv<g>,row=<r>], not {cell!r}")
     layer, kv, row = (int(x) for x in match.groups())
-    adapter = run.adapter
+    adapter = adapter or (run.adapter if run is not None else None) \
+        or (capture.adapter if capture is not None else None)
+    if adapter is None:
+        raise Refusal("component_binding needs a run, or a capture plus an adapter")
+    if capture is not None and run is not None and adapter is not run.adapter:
+        raise Refusal("the supplied adapter is not the run's")
     if row == 0:
         from .sae import FIRST_ROW_CAVEAT
 
         raise Refusal(f"{cell}: {FIRST_ROW_CAVEAT}")
-    if row < int(run.first_row):
+    if capture is not None:
+        if (row, layer) not in capture.h:
+            raise Refusal(f"{cell}: the capture holds no h at t{row}.L{layer} (it holds "
+                          f"{sorted(capture.h)})")
+    elif run is None:
+        raise Refusal("component_binding needs a run or a capture")
+    elif row < int(run.first_row):
         raise Refusal(f"{cell}: t{row} was prefilled (first stepped row t{run.first_row}); its "
                       f"residual was never stopped at")
     if not basis.covers(layer, "h"):
@@ -159,7 +233,8 @@ def component_binding(run: Any, name: str, cell: str, basis: Any, *,
     v_bias = None if b is None else f64(b[rows]).cpu()
     norm = module.input_layernorm
     gamma, eps = f64(norm.weight).reshape(-1).cpu(), float(norm.variance_epsilon)
-    h = run.read(f"t{row}.L{layer}.h").reshape(-1)
+    h = (capture.h[(row, layer)] if capture is not None
+         else run.read(f"t{row}.L{layer}.h")).reshape(-1)
     h64 = f64(h).cpu()
     rho = float((h64.pow(2).mean() + eps) ** -0.5)
     vmap = w_v * (rho * gamma)[None, :]
@@ -182,11 +257,21 @@ def component_binding(run: Any, name: str, cell: str, basis: Any, *,
     comps.append(Component("bdec", None, None, dec.bias, vmap @ dec.bias))
     comps.append(Component("error", None, None, dec.error, vmap @ dec.error))
     linear = vmap @ h64 + (0 if v_bias is None else v_bias)
-    native = f64(run.read_cache(layer, "v", staged=False)[0, kv, row]).cpu()
+    if capture is not None and layer in capture.values:
+        cache, cache_from = capture.values[layer], "capture.values"
+    elif run is not None:
+        cache, cache_from = run.read_cache(layer, "v", staged=False), "Run.read_cache(staged=False)"
+    else:
+        raise Refusal(f"{cell}: the capture holds no value cache of L{layer} and there is no run")
+    native = f64(cache[0, kv, row]).cpu()
+    provenance = {"h": (f"capture ({capture.provenance.get('h')}; cursor "
+                        f"{capture.provenance.get('cursor')})" if capture is not None
+                        else "live Run.read"),
+                  "native_cell": cache_from, "offline": capture is not None}
     return ComponentBinding(name, "component", [], [cell], row=row, layer=layer, kv=kv, rho=rho,
                             basis=basis.describe(), components=comps, native=native,
                             linear=linear, v_bias=v_bias, map=vmap, active=list(dec.ids),
-                            acts=acts)
+                            acts=acts, provenance=provenance)
 
 
 def _group(run: Any, binding: ComponentBinding, reader_row: int) -> tuple[Any, list[int], Any]:
@@ -268,4 +353,4 @@ def component_table(run: Any, binding: ComponentBinding, consumer: Any = None, *
     }
 
 
-__all__ = ["Component", "ComponentBinding", "component_binding", "component_table", "write_of"]
+__all__ = ["ResidualCapture", "Component", "ComponentBinding", "component_binding", "component_table", "write_of"]

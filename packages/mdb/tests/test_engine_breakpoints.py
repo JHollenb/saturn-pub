@@ -626,3 +626,22 @@ def test_print_without_an_argument_shows_the_breakpoint_selection(debugger):
     assert shown["selected_shape"][1] == 1  # one head of the (batch, head, row, src) value
     dispatch(ctx, "step", {})
     assert dispatch(ctx, "print", {})["address"] == ctx.run.where  # the selection was the stop's
+
+
+def test_watch_and_break_at_the_same_stop_report_both(debugger):
+    """SC2: a watch that fires where an unconditional break also sits reports
+    ``watch+breakpoint`` (hits[] lists both kinds); either alone keeps its old reason."""
+    ctx = _ctx(debugger)
+    dispatch(ctx, "watch", {"address": "L*.h[d=0]"})
+    alone = dispatch(ctx, "continue", {"budget": 3})
+    assert alone["reason"] == "watch"
+    where = alone["where"]
+    ctx = _ctx(debugger)
+    dispatch(ctx, "watch", {"address": "L*.h[d=0]"})
+    dispatch(ctx, "break", {"pattern": where})
+    both = dispatch(ctx, "continue", {"budget": 3})
+    assert (both["reason"], both["where"]) == ("watch+breakpoint", where)
+    assert {hit["kind"] for hit in both["hits"]} == {"watch", "break"}
+    assert bp.stop_reason({"watch", "tbreak"}) == "watch+breakpoint"
+    assert bp.stop_reason({"watch"}) == "watch" and bp.stop_reason({"break"}) == "breakpoint"
+    assert bp.stop_reason({"advance"}) == "advance"

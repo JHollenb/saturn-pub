@@ -1,0 +1,138 @@
+mrun: job-14bfa70f5ddb -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 369393d script sc1_check.py
+{
+  "release": "qwen-scope-3-1.7b-base-w32k-l50",
+  "layer": 19,
+  "file": "layer19.sae.pt",
+  "sha256_manifest": "22c8b37547657123891d681ef3241a252ee4a6c9639c4a886a50a66bb26a37cd",
+  "d_sae": 32768,
+  "k_file": 50,
+  "k_saelens_loader": 50,
+  "k_mdb_to_saelens": 50,
+  "tensors_bitwise": {
+    "W_enc": {
+      "loader_vs_basis": true,
+      "to_saelens_vs_basis": true,
+      "loader_vs_to_saelens": true
+    },
+    "W_dec": {
+      "loader_vs_basis": true,
+      "to_saelens_vs_basis": true,
+      "loader_vs_to_saelens": true
+    },
+    "b_enc": {
+      "loader_vs_basis": true,
+      "to_saelens_vs_basis": true,
+      "loader_vs_to_saelens": true
+    },
+    "b_dec": {
+      "loader_vs_basis": true,
+      "to_saelens_vs_basis": true,
+      "loader_vs_to_saelens": true
+    }
+  },
+  "active_sets_of_64": {
+    "loader_equals_basis": 64,
+    "to_saelens_equals_basis": 64,
+    "loader_acts_bitwise_equal_to_saelens": 64,
+    "input_scale_b_dec_norm": 392.5583190917969
+  },
+  "pass": true
+}
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.83
+	Maximum resident set size (kbytes): 2827800
+== revision 369393d script das.py
+[    4.1s] load mode=train
+[    4.5s] train items 87 countries 38
+[    5.0s] k=1 step 0 loss 9.579
+[    9.0s] k=1 step 25 loss 8.573
+[   13.0s] k=1 step 50 loss 9.165
+[   17.0s] k=1 step 75 loss 8.886
+[   21.0s] k=1 step 100 loss 8.978
+[   25.0s] k=1 step 125 loss 9.097
+[   29.0s] k=1 step 150 loss 8.302
+[   33.0s] k=1 step 175 loss 8.519
+[   37.0s] k=1 step 200 loss 8.899
+[   41.0s] k=1 step 225 loss 8.245
+[   44.9s] k=1 step 250 loss 8.232
+[   48.9s] k=1 step 275 loss 8.279
+[   52.8s] k=1 step 299 loss 8.806
+[   54.1s] k=1 done 49.5s probe flips 8/256
+[   54.2s] k=2 step 0 loss 9.597
+[   58.2s] k=2 step 25 loss 7.183
+[   62.2s] k=2 step 50 loss 7.191
+[   66.2s] k=2 step 75 loss 7.463
+[   70.3s] k=2 step 100 loss 7.906
+[   74.2s] k=2 step 125 loss 7.836
+[   78.3s] k=2 step 150 loss 7.016
+[   82.3s] k=2 step 175 loss 7.215
+[   86.3s] k=2 step 200 loss 7.399
+[   90.3s] k=2 step 225 loss 7.311
+[   94.3s] k=2 step 250 loss 6.970
+[   98.3s] k=2 step 275 loss 7.212
+[  102.1s] k=2 step 299 loss 7.757
+[  103.4s] k=2 done 49.3s probe flips 19/256
+[  103.6s] k=4 step 0 loss 9.635
+[  107.6s] k=4 step 25 loss 6.312
+[  111.6s] k=4 step 50 loss 6.435
+[  115.6s] k=4 step 75 loss 6.295
+[  119.6s] k=4 step 100 loss 6.730
+[  123.7s] k=4 step 125 loss 6.516
+[  127.7s] k=4 step 150 loss 5.717
+[  131.7s] k=4 step 175 loss 6.135
+[  135.7s] k=4 step 200 loss 6.287
+[  139.7s] k=4 step 225 loss 6.490
+[  143.7s] k=4 step 250 loss 5.801
+[  147.7s] k=4 step 275 loss 5.802
+[  151.6s] k=4 step 299 loss 5.688
+[  152.9s] k=4 done 49.5s probe flips 45/256
+[  153.1s] k=8 step 0 loss 9.409
+[  157.1s] k=8 step 25 loss 5.169
+[  161.1s] k=8 step 50 loss 4.217
+[  165.2s] k=8 step 75 loss 4.602
+[  169.2s] k=8 step 100 loss 4.835
+[  173.3s] k=8 step 125 loss 4.367
+[  177.3s] k=8 step 150 loss 4.332
+[  181.3s] k=8 step 175 loss 4.460
+[  185.4s] k=8 step 200 loss 4.655
+[  189.4s] k=8 step 225 loss 4.388
+[  193.5s] k=8 step 250 loss 4.027
+[  197.5s] k=8 step 275 loss 4.045
+[  201.4s] k=8 step 299 loss 4.162
+[  202.7s] k=8 done 49.8s probe flips 128/256
+[  202.8s] k=16 step 0 loss 8.935
+[  206.9s] k=16 step 25 loss 3.547
+[  211.0s] k=16 step 50 loss 2.416
+[  215.1s] k=16 step 75 loss 2.813
+[  219.2s] k=16 step 100 loss 2.762
+[  223.3s] k=16 step 125 loss 2.833
+[  227.4s] k=16 step 150 loss 2.492
+[  231.4s] k=16 step 175 loss 2.773
+[  235.5s] k=16 step 200 loss 2.955
+[  239.6s] k=16 step 225 loss 2.986
+[  243.7s] k=16 step 250 loss 2.364
+[  247.8s] k=16 step 275 loss 2.670
+[  251.7s] k=16 step 299 loss 2.347
+[  253.0s] k=16 done 50.3s probe flips 202/256
+[  253.2s] k=32 step 0 loss 8.290
+[  257.3s] k=32 step 25 loss 2.692
+[  261.5s] k=32 step 50 loss 1.993
+[  265.7s] k=32 step 75 loss 2.335
+[  269.9s] k=32 step 100 loss 2.319
+[  274.0s] k=32 step 125 loss 2.563
+[  278.2s] k=32 step 150 loss 2.049
+[  282.4s] k=32 step 175 loss 2.455
+[  286.5s] k=32 step 200 loss 2.501
+[  290.7s] k=32 step 225 loss 2.641
+[  294.9s] k=32 step 250 loss 1.860
+[  299.0s] k=32 step 275 loss 2.336
+[  303.0s] k=32 step 299 loss 2.028
+[  304.3s] k=32 done 51.4s probe flips 215/256
+[  304.4s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:05.87
+	Maximum resident set size (kbytes): 4358492
+mrun: job-14bfa70f5ddb -> succeeded
+mrun: job-14bfa70f5ddb finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 312.26, 'peak_rss_mb': 2575.3, 'peak_vram_mb': 5452.0}

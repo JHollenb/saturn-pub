@@ -146,6 +146,17 @@ class Binding:
 
         return component_binding(run, name, cell, basis, features=features)
 
+    @classmethod
+    def subspace(cls, name: str, layer: int, kv: int, basis: Any, *, authority: str = "supplied",
+                 provenance: dict[str, Any] | None = None, row: int | None = None) -> Any:
+        """A sub-cell binding: a named subspace of the value cell ``cache.L<layer>.v[kv<kv>]``
+        with its basis authority (``fitted`` / ``derived-exact`` / ``supplied``) and provenance
+        (``analysis.subspace``). It holds no cells of its own."""
+        from .subspace import subspace_binding
+
+        return subspace_binding(name, layer, kv, basis, authority=authority,
+                                provenance=provenance, row=row)
+
 
 _DECLARED: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 
@@ -672,7 +683,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
           switch: dict[str, str] | None = None, labels: dict[str, Any] | None = None,
           derive: dict[str, str] | None = None, foreign: bool = False,
           causal: bool | str = False, min_effect: float = 0.0,
-          components: list[Any] | None = None,
+          components: list[Any] | None = None, subspaces: list[Any] | None = None,
           neuronpedia: dict[str, Any] | None = None, store: Any = None) -> Table:
     """The symbol table at the cursor (see the module docstring); ``offset``/``limit`` page
     the bindings (declared symbols first, then token rows in order). ``pending``: declared
@@ -696,6 +707,10 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     * ``causal`` (``True``, ``"mask"`` or ``"zero"``): the causal-liveness column
       (``analysis.liveness``), per binding on this page; without it every binding's ``causal``
       is ``unknown``.
+    * ``subspaces``: ``subspace.SubspaceBinding`` items bound to a row: a ``subspaces`` section
+      with basis authority, provenance, digest, the native cell's mass in the subspace, the
+      direct consumer share of the in-subspace part (scalar consumer) and attached labels
+      (e.g. measured IIA).
     * ``components``: ``components.ComponentBinding`` items (feature bindings): a separate
       ``components`` section with per-feature activation, direct effect, content, SAELens ids
       and a Neuronpedia link from the supplied ``neuronpedia`` id mapping.
@@ -886,6 +901,10 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     if components:
         report["components"] = [_component_row(run, cb, consumer, sets, tokenizer, neuronpedia)
                                 for cb in components][:PAGE]
+    if subspaces:
+        from .subspace import table_row
+
+        report["subspaces"] = [table_row(run, sb, consumer) for sb in subspaces][:PAGE]
     records = _records(run, report, session_id)
     report["records"] = [r["id"] for r in records]
     tensors = {"mass": grid.mass, "effect": grid.effect, "write": grid.write, "total_mass": grid.total,
@@ -1436,7 +1455,7 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
     body = {"schema": SCHEMA, **{k: report[k] for k in ("where", "consumer", "rows", "min_mass",
                                                          "bindings", "unbound", "page",
                                                          "accounting")}}
-    for key in ("labels", "derived_labels", "candidate_sets", "components"):
+    for key in ("labels", "derived_labels", "candidate_sets", "components", "subspaces"):
         if key in report:
             body[key] = report[key]
     if "consumer_total" in report:

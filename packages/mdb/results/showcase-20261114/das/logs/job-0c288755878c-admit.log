@@ -1,0 +1,215 @@
+mrun: job-0c288755878c -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 52eed79 script das.py
+[    4.1s] load mode=admit
+[    5.3s] A train currency:lira 1.14s
+[    6.9s] A train currency:hryvnia 1.60s
+[    7.5s] A train currency:lev 0.58s
+[    8.0s] A train currency:sol 0.58s
+[    8.9s] A train currency:shilling 0.87s
+[    9.8s] A train currency:leu 0.87s
+[   10.7s] A train currency:kuna 0.87s
+[   11.5s] A train currency:dinar 0.87s
+[   12.4s] A train currency:tenge 0.87s
+[   13.3s] A train currency:cedi 0.87s
+[   14.1s] A train currency:naira 0.87s
+[   15.3s] A train currency:riyal 1.16s
+[   16.2s] A train currency:dirham 0.87s
+[   17.1s] A train currency:bolivar 0.87s
+[   17.6s] A train currency:real 0.58s
+[   18.7s] A train currency:lek 1.01s
+[   19.5s] A train currency:metical 0.88s
+[   20.4s] A train currency:birr 0.88s
+[   21.0s] A train currency:peso 0.59s
+[   22.1s] A train person:Ataturk 1.15s
+[   23.7s] A train person:Orhan Pamuk 1.53s
+[   26.8s] A train person:Taras Shevchenko 3.12s
+[   28.4s] A train person:Pablo Neruda 1.65s
+[   30.1s] A train person:Fidel Castro 1.64s
+[   32.5s] A train person:Kahlil Gibran 2.41s
+[   35.3s] A train person:Mario Vargas Llosa 2.77s
+[   37.5s] A train person:Jose Rizal 2.19s
+[   40.0s] A train person:Benazir Bhutto 2.50s
+[   41.6s] A train person:Rene Magritte 1.68s
+[   43.3s] A train person:Jacques Brel 1.70s
+[   44.6s] A train person:Saddam Hussein 1.25s
+[   47.2s] A train person:Chinua Achebe 2.65s
+[   49.3s] A train person:Kofi Annan 2.07s
+[   51.5s] A train person:Constantin Brancusi 2.17s
+[   54.1s] A train person:Novak Djokovic 2.66s
+[   57.0s] A train person:Haile Selassie 2.85s
+[   58.4s] A train person:Gabriel Garcia Marquez 1.46s
+[   59.6s] A train person:Simon Bolivar 1.16s
+[   60.8s] A train person:Margaret Atwood 1.16s
+[   62.2s] A train person:Wayne Gretzky 1.46s
+[   63.4s] A train person:Bob Marley 1.16s
+[   65.6s] A train person:Hristo Stoichkov 2.20s
+[   67.0s] A train person:Luka Modric 1.45s
+[   67.9s] A train person:Bjork 0.87s
+[   69.6s] A train person:Hafez al-Assad 1.74s
+[   71.5s] A train person:Muhammad Ali Jinnah 1.88s
+[   72.4s] A train person:Pele 0.87s
+[   73.8s] A train person:Jorge Luis Borges 1.44s
+[   75.3s] A train person:Diego Maradona 1.44s
+[   76.7s] A train person:Idi Amin 1.45s
+[   78.0s] A train person:Robert Mugabe 1.30s
+[   80.1s] A train person:Leopold Senghor 2.03s
+[   82.1s] A train person:Mahathir Mohamad 2.04s
+[   83.3s] A train landmark:Hagia Sophia 1.17s
+[   85.2s] A train landmark:Cappadocia 1.90s
+[   86.6s] A train landmark:Machu Picchu 1.47s
+[   87.5s] A train landmark:Niagara Falls 0.88s
+[   88.1s] A train landmark:Babylon 0.59s
+[   89.3s] A train landmark:Palmyra 1.17s
+[   90.4s] A train landmark:the Atomium 1.17s
+[   91.5s] A train landmark:Bran Castle 1.02s
+[   93.2s] A train landmark:the Plitvice Lakes 1.76s
+[   94.1s] A train landmark:Easter Island 0.88s
+[   95.2s] A train landmark:Chernobyl 1.17s
+[   97.0s] A train landmark:the Rila Monastery 1.76s
+[   98.6s] A train landmark:the Blue Lagoon 1.61s
+[  100.1s] A train landmark:the Hassan II Mosque 1.46s
+[  101.5s] A train landmark:the Masai Mara 1.46s
+[  103.9s] A train landmark:the Banaue Rice Terraces 2.36s
+[  105.5s] A train landmark:Christ the Redeemer 1.61s
+[  106.7s] A train landmark:Baalbek 1.17s
+[  107.8s] A train landmark:Carthage 1.17s
+[  109.6s] A train landmark:Leptis Magna 1.76s
+[  111.4s] A train landmark:the Petronas Towers 1.76s
+[  112.7s] A train landmark:Sigiriya 1.32s
+[  114.4s] A train landmark:the Perito Moreno Glacier 1.76s
+[  115.0s] A train city:Istanbul 0.59s
+[  115.9s] A train city:Izmir 0.87s
+[  117.1s] A train city:Antalya 1.17s
+[  117.9s] A train city:Odessa 0.88s
+[  119.1s] A train city:Kharkiv 1.17s
+[  120.1s] A train city:Lviv 1.02s
+[  121.3s] A train city:Plovdiv 1.17s
+[  122.2s] A train city:Varna 0.88s
+[  123.3s] A train city:Cusco 1.17s
+[  124.5s] A train city:Arequipa 1.17s
+[  126.0s] A train city:Valparaiso 1.46s
+[  126.5s] A train city:Toronto 0.59s
+[  127.1s] A train city:Vancouver 0.59s
+[  127.7s] A train city:Montreal 0.59s
+[  128.7s] A train city:Antwerp 1.01s
+[  129.6s] A train city:Ghent 0.87s
+[  130.2s] A train city:Karachi 0.59s
+[  130.8s] A train city:Lahore 0.59s
+[  131.9s] A train city:Mombasa 1.17s
+[  132.8s] A train city:Basra 0.88s
+[  133.4s] A train city:Mosul 0.59s
+[  134.0s] A train city:Aleppo 0.58s
+[  135.1s] A train city:Cebu 1.17s
+[  136.3s] A train city:Davao 1.17s
+[  137.9s] A train city:Casablanca 1.61s
+[  139.1s] A train city:Marrakesh 1.16s
+[  140.2s] A train city:Jeddah 1.16s
+[  140.8s] A train city:Lagos 0.58s
+[  141.7s] A train city:Kano 0.87s
+[  142.6s] A train city:Cluj 0.87s
+[  143.7s] A train city:Timisoara 1.16s
+[  144.9s] A train city:Novi Sad 1.16s
+[  146.0s] A train city:Dubrovnik 1.16s
+[  147.4s] A train city:Almaty 1.31s
+[  148.2s] A train city:Kumasi 0.87s
+[  149.4s] A train city:Pokhara 1.16s
+[  150.5s] A train city:Maracaibo 1.16s
+[  151.7s] A train city:Medellin 1.16s
+[  152.9s] A train city:Rio de Janeiro 1.16s
+[  153.7s] A train city:Sao Paulo 0.87s
+[  154.6s] A train city:Tartu 0.87s
+[  155.6s] A train city:Kaunas 1.02s
+[  156.5s] A train city:Sfax 0.87s
+[  157.1s] A train city:Benghazi 0.58s
+[  158.0s] A train city:Durres 0.87s
+[  158.8s] A train city:Cordoba 0.88s
+[  159.7s] A train city:Rosario 0.88s
+[  160.6s] A train city:Mendoza 0.87s
+[  161.5s] A train city:Penang 0.87s
+[  162.6s] A train city:Entebbe 1.16s
+[  163.9s] A train city:Bulawayo 1.30s
+[  165.1s] A train city:Hargeisa 1.16s
+[  166.0s] A train city:Kandy 0.87s
+[  166.8s] A train city:Galle 0.87s
+[  167.4s] A test city:Barcelona 0.58s
+[  168.0s] A test city:Porto 0.58s
+[  168.9s] A test city:Busan 0.87s
+[  169.7s] A test city:Shenzhen 0.87s
+[  170.9s] A test city:Gdansk 1.17s
+[  171.5s] A test city:Tampere 0.59s
+[  172.8s] A test city:Gothenburg 1.31s
+[  173.4s] A test city:Hamburg 0.59s
+[  174.0s] A test city:Milan 0.58s
+[  174.9s] A test city:Krakow 0.87s
+[  175.5s] A test city:Salzburg 0.59s
+[  176.0s] A test city:Kyoto 0.59s
+[  176.6s] A test city:Shanghai 0.58s
+[  177.2s] A test city:Munich 0.59s
+[  177.8s] A test city:Naples 0.58s
+[  178.4s] A test city:Rotterdam 0.59s
+[  179.0s] A test city:Bergen 0.59s
+[  179.8s] A test city:Saint Petersburg 0.87s
+[  180.7s] A test city:Seville 0.87s
+[  181.6s] A test currency:baht 0.87s
+[  182.5s] A test currency:forint 0.88s
+[  183.3s] A test currency:krona 0.87s
+[  184.4s] A test currency:koruna 1.02s
+[  185.2s] A test currency:pound sterling 0.88s
+[  186.1s] A test currency:shekel 0.87s
+[  187.0s] A test currency:rial 0.87s
+[  188.1s] A test currency:renminbi 1.16s
+[  189.3s] A test currency:zloty 1.17s
+[  190.2s] A test currency:ruble 0.87s
+[  191.1s] A test currency:rouble 0.87s
+[  192.2s] A test currency:rupiah 1.17s
+[  192.8s] A test currency:afghani 0.59s
+[  193.4s] A test currency:sterling 0.58s
+[  194.1s] A test currency:dollar 0.73s
+[  194.7s] A test currency:won 0.59s
+[  195.3s] A test currency:yuan 0.58s
+[  195.9s] A test currency:yen 0.59s
+[  197.3s] A test landmark:Borobudur 1.45s
+[  198.8s] A test landmark:Persepolis 1.46s
+[  199.7s] A test landmark:Masada 0.88s
+[  200.5s] A test landmark:Mount Fuji 0.87s
+[  201.4s] A test landmark:the Sphinx 0.87s
+[  202.6s] A test landmark:Mount Rushmore 1.17s
+[  203.9s] A test landmark:the Great Wall 1.31s
+[  205.4s] A test landmark:the Parthenon 1.46s
+[  207.1s] A test landmark:Schonbrunn Palace 1.76s
+[  208.9s] A test landmark:the Colosseum 1.76s
+[  209.8s] A test landmark:Uluru 0.88s
+[  211.1s] A test landmark:the Acropolis 1.31s
+[  213.1s] A test landmark:the Cliffs of Moher 2.06s
+[  215.2s] A test landmark:the Rijksmuseum 2.06s
+[  216.3s] A test landmark:the Forbidden City 1.17s
+[  218.6s] A test landmark:the pyramids of Giza 2.21s
+[  220.3s] A test person:Akira Kurosawa 1.74s
+[  222.0s] A test person:Miguel de Cervantes 1.74s
+[  223.6s] A test person:Edvard Munch 1.59s
+[  224.2s] A test person:August Strindberg 0.59s
+[  225.7s] A test person:Frederic Chopin 1.44s
+[  227.1s] A test person:Jean Sibelius 1.44s
+[  228.5s] A test person:Giuseppe Verdi 1.45s
+[  229.7s] A test person:Hans Christian Andersen 1.15s
+[  231.0s] A test person:Rembrandt 1.30s
+[  232.7s] A test person:Haruki Murakami 1.74s
+[  234.2s] A test person:Henrik Ibsen 1.45s
+[  235.3s] A test person:Hokusai 1.15s
+[  236.8s] A test person:Mao Zedong 1.44s
+[  237.5s] A test person:Antonin Dvorak 0.73s
+[  238.1s] A test person:Mozart 0.58s
+[  238.7s] A test person:Plato 0.58s
+[  239.3s] A test person:Franz Liszt 0.59s
+[  240.1s] A test person:Socrates 0.87s
+[  240.7s] A test person:James Joyce 0.58s
+[  242.7s] A test person:Soren Kierkegaard 2.03s
+[  243.3s] A test person:W. B. Yeats 0.60s
+[  243.3s] admitted 87/130 train
+[  243.3s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:04.80
+	Maximum resident set size (kbytes): 4358568
+mrun: job-0c288755878c -> succeeded
+mrun: job-0c288755878c finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 245.33, 'peak_rss_mb': 1988.2, 'peak_vram_mb': 3820.0}

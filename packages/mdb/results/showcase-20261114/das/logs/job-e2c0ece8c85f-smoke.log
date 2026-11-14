@@ -1,0 +1,24 @@
+mrun: job-e2c0ece8c85f -> succeeded
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 3d088c9 script das.py
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.86
+	Maximum resident set size (kbytes): 641232
+Traceback (most recent call last):
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/big/mrun-scratch/job-e2c0ece8c85f/b1_sets.json'
+Command exited with non-zero status 1
+== revision 3d088c9 script das.py
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.80
+	Maximum resident set size (kbytes): 640608
+Traceback (most recent call last):
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/big/mrun-scratch/job-e2c0ece8c85f/b1_sets.json'
+Command exited with non-zero status 1
+== revision 3d088c9 script das.py
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.81
+	Maximum resident set size (kbytes): 641788
+Traceback (most recent call last):
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/big/mrun-scratch/job-e2c0ece8c85f/b1_sets.json'
+Command exited with non-zero status 1
+mrun: job-e2c0ece8c85f finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 2.82, 'peak_rss_mb': 466.7, 'peak_vram_mb': 0.0}

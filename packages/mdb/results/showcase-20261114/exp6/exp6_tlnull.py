@@ -143,10 +143,11 @@ def mdb_donor_v(item):
 def tl_donor_v(bridge, item, crow):
     got = {}
 
-    def grab(x, hook):
-        got["v"] = (x[0, crow, KVC] if x.dim() == 4 else x[0, crow, KVC * DH:(KVC + 1) * DH]).reshape(-1).clone()
+    def grab(x, hook):                                  # x is in mdb layout (batch, pos, heads*d_head)
+        got["v"] = x[0, crow, KVC * DH:(KVC + 1) * DH].reshape(-1).clone()
         return x
-    bridge.run_with_hooks(torch.tensor([item["ids"]], device="cuda"), fwd_hooks=[(HV, grab)])
+    bridge.run_with_hooks(torch.tensor([item["ids"]], device="cuda"),
+                          fwd_hooks=[(HV, names.tl_hook(f"L{LC}.v", grab))])
     return got["v"]
 
 
@@ -164,10 +165,7 @@ def tl_arms(bridge, item, crow, donor_v, batch=True):
                 arm = j if batch else fn.arm
                 k = arm - 1 - (0 if x_layer == LC else H)
                 if 0 <= k < H and (arm - 1) // H == (0 if x_layer == LC else 1):
-                    if x.dim() == 4:                    # TL bridge: (batch, pos, heads, d_head)
-                        x[j, -1, k] = 0
-                    else:
-                        x[j, -1, k * DH:(k + 1) * DH] = 0
+                    x[j, -1, k * DH:(k + 1) * DH] = 0   # mdb layout via names.tl_hook
             return x
         return fn
 
@@ -175,23 +173,23 @@ def tl_arms(bridge, item, crow, donor_v, batch=True):
         for j in range(x.shape[0]):
             arm = j if batch else vx.arm
             if arm == n - 1:
-                if x.dim() == 4:
-                    x[j, crow, KVC] = donor_v.to(x.dtype).reshape(-1)
-                else:
-                    x[j, crow, KVC * DH:(KVC + 1) * DH] = donor_v.to(x.dtype)
+                x[j, crow, KVC * DH:(KVC + 1) * DH] = donor_v.to(x.dtype)   # mdb layout
         return x
 
     def keep_p(x, hook):
         if (batch and "p" not in pat) or (not batch and vx.arm == 0):
             pat["p"] = x[0, :, -1].float().cpu().clone()
         return x
-    hooks = [(HZ[LC], zero(LC)), (HZ[LC + 1], zero(LC + 1)), (HV, vx), (HP, keep_p)]
+    inner = [zero(LC), zero(LC + 1), vx]               # take mdb-layout tensors; .arm is set on these
+    hooks = [(HZ[LC], names.tl_hook(f"L{LC}.A", inner[0])),
+             (HZ[LC + 1], names.tl_hook(f"L{LC + 1}.A", inner[1])),
+             (HV, names.tl_hook(f"L{LC}.v", vx)), (HP, keep_p)]
     if batch:
         lg = bridge.run_with_hooks(ids.expand(n, -1), fwd_hooks=hooks)[:, -1].float().cpu()
         return lg, pat["p"]
     rows = []
     for arm in range(n):
-        for fn in (hooks[0][1], hooks[1][1], vx):
+        for fn in inner:
             fn.arm = arm
         rows.append(bridge.run_with_hooks(ids, fwd_hooks=hooks)[0, -1].float().cpu())
     return torch.stack(rows), pat["p"]

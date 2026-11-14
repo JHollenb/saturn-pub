@@ -1,0 +1,3221 @@
+[
+{
+"id": "currency:lira",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 21718,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.5
+},
+{
+"id": "currency:hryvnia",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 22878,
+"correct": false,
+"crow": 38,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 0.5
+},
+{
+"id": "currency:lev",
+"split": "train",
+"bridge": "Bulgaria",
+"answer": 78563,
+"argmax": 22415,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.5
+},
+{
+"id": "currency:sol",
+"split": "train",
+"bridge": "Peru",
+"answer": 61953,
+"argmax": 67289,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.5
+},
+{
+"id": "currency:shilling",
+"split": "train",
+"bridge": "Kenya",
+"answer": 96525,
+"argmax": 7148,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.125
+},
+{
+"id": "currency:leu",
+"split": "train",
+"bridge": "Romania",
+"answer": 33278,
+"argmax": 33278,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "currency:kuna",
+"split": "train",
+"bridge": "Croatia",
+"answer": 88618,
+"argmax": 88618,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.75
+},
+{
+"id": "currency:dinar",
+"split": "train",
+"bridge": "Serbia",
+"answer": 7828,
+"argmax": 94311,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.375
+},
+{
+"id": "currency:tenge",
+"split": "train",
+"bridge": "Kazakhstan",
+"answer": 20113,
+"argmax": 425,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.25
+},
+{
+"id": "currency:cedi",
+"split": "train",
+"bridge": "Ghana",
+"answer": 11429,
+"argmax": 3680,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.375
+},
+{
+"id": "currency:naira",
+"split": "train",
+"bridge": "Nigeria",
+"answer": 30129,
+"argmax": 30129,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "currency:riyal",
+"split": "train",
+"bridge": "Saudi Arabia",
+"answer": 89790,
+"argmax": 89790,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.375
+},
+{
+"id": "currency:dirham",
+"split": "train",
+"bridge": "Morocco",
+"answer": 35724,
+"argmax": 11054,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.625
+},
+{
+"id": "currency:bolivar",
+"split": "train",
+"bridge": "Venezuela",
+"answer": 3261,
+"argmax": 3261,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.125
+},
+{
+"id": "currency:real",
+"split": "train",
+"bridge": "Brazil",
+"answer": 61124,
+"argmax": 24081,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.375
+},
+{
+"id": "currency:lek",
+"split": "train",
+"bridge": "Albania",
+"answer": 82555,
+"argmax": 82555,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.875
+},
+{
+"id": "currency:metical",
+"split": "train",
+"bridge": "Mozambique",
+"answer": 5027,
+"argmax": 80701,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.0
+},
+{
+"id": "currency:birr",
+"split": "train",
+"bridge": "Ethiopia",
+"answer": 2691,
+"argmax": 2691,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.25
+},
+{
+"id": "currency:peso",
+"split": "train",
+"bridge": "Philippines",
+"answer": 56564,
+"argmax": 12270,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 3.375
+},
+{
+"id": "person:Ataturk",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 70244,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 1.0
+},
+{
+"id": "person:Orhan Pamuk",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 53368,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "person:Taras Shevchenko",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 22878,
+"correct": false,
+"crow": 39,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 1.5
+},
+{
+"id": "person:Pablo Neruda",
+"split": "train",
+"bridge": "Chile",
+"answer": 54578,
+"argmax": 54578,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 1.25
+},
+{
+"id": "person:Fidel Castro",
+"split": "train",
+"bridge": "Cuba",
+"answer": 85875,
+"argmax": 85875,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 3.125
+},
+{
+"id": "person:Kahlil Gibran",
+"split": "train",
+"bridge": "Lebanon",
+"answer": 94311,
+"argmax": 94311,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 1.5
+},
+{
+"id": "person:Mario Vargas Llosa",
+"split": "train",
+"bridge": "Peru",
+"answer": 61953,
+"argmax": 61953,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.875
+},
+{
+"id": "person:Jose Rizal",
+"split": "train",
+"bridge": "Philippines",
+"answer": 56564,
+"argmax": 56564,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 3.25
+},
+{
+"id": "person:Benazir Bhutto",
+"split": "train",
+"bridge": "Pakistan",
+"answer": 91432,
+"argmax": 91432,
+"correct": true,
+"crow": 36,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 0.875
+},
+{
+"id": "person:Rene Magritte",
+"split": "train",
+"bridge": "Belgium",
+"answer": 37169,
+"argmax": 37169,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 2.125
+},
+{
+"id": "person:Jacques Brel",
+"split": "train",
+"bridge": "Belgium",
+"answer": 37169,
+"argmax": 37169,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 1.375
+},
+{
+"id": "person:Saddam Hussein",
+"split": "train",
+"bridge": "Iraq",
+"answer": 55218,
+"argmax": 55218,
+"correct": true,
+"crow": 34,
+"n": 37,
+"span": [
+34,
+35
+],
+"margin_top2": 3.25
+},
+{
+"id": "person:Chinua Achebe",
+"split": "train",
+"bridge": "Nigeria",
+"answer": 30129,
+"argmax": 28158,
+"correct": false,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 0.125
+},
+{
+"id": "person:Kofi Annan",
+"split": "train",
+"bridge": "Ghana",
+"answer": 11429,
+"argmax": 11429,
+"correct": true,
+"crow": 35,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 1.125
+},
+{
+"id": "person:Constantin Brancusi",
+"split": "train",
+"bridge": "Romania",
+"answer": 33278,
+"argmax": 33278,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 0.375
+},
+{
+"id": "person:Novak Djokovic",
+"split": "train",
+"bridge": "Serbia",
+"answer": 7828,
+"argmax": 7828,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 2.5
+},
+{
+"id": "person:Haile Selassie",
+"split": "train",
+"bridge": "Ethiopia",
+"answer": 2691,
+"argmax": 2691,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 4.5
+},
+{
+"id": "person:Gabriel Garcia Marquez",
+"split": "train",
+"bridge": "Colombia",
+"answer": 41548,
+"argmax": 41548,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 0.5
+},
+{
+"id": "person:Simon Bolivar",
+"split": "train",
+"bridge": "Venezuela",
+"answer": 3261,
+"argmax": 3261,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 1.75
+},
+{
+"id": "person:Margaret Atwood",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 14632,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 2.25
+},
+{
+"id": "person:Wayne Gretzky",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 37875,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 0.125
+},
+{
+"id": "person:Bob Marley",
+"split": "train",
+"bridge": "Jamaica",
+"answer": 62469,
+"argmax": 62469,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 0.875
+},
+{
+"id": "person:Hristo Stoichkov",
+"split": "train",
+"bridge": "Bulgaria",
+"answer": 78563,
+"argmax": 78563,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.625
+},
+{
+"id": "person:Luka Modric",
+"split": "train",
+"bridge": "Croatia",
+"answer": 88618,
+"argmax": 7828,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 0.125
+},
+{
+"id": "person:Bjork",
+"split": "train",
+"bridge": "Iceland",
+"answer": 48212,
+"argmax": 52082,
+"correct": false,
+"crow": 35,
+"n": 37,
+"span": [
+34,
+35
+],
+"margin_top2": 0.875
+},
+{
+"id": "person:Hafez al-Assad",
+"split": "train",
+"bridge": "Syria",
+"answer": 57023,
+"argmax": 57023,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 2.875
+},
+{
+"id": "person:Muhammad Ali Jinnah",
+"split": "train",
+"bridge": "Pakistan",
+"answer": 91432,
+"argmax": 88608,
+"correct": false,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 1.375
+},
+{
+"id": "person:Pele",
+"split": "train",
+"bridge": "Brazil",
+"answer": 61124,
+"argmax": 26961,
+"correct": false,
+"crow": 35,
+"n": 37,
+"span": [
+34,
+35
+],
+"margin_top2": 0.875
+},
+{
+"id": "person:Jorge Luis Borges",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 68073,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "person:Diego Maradona",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 68073,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 1.375
+},
+{
+"id": "person:Idi Amin",
+"split": "train",
+"bridge": "Uganda",
+"answer": 70944,
+"argmax": 70944,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "person:Robert Mugabe",
+"split": "train",
+"bridge": "Zimbabwe",
+"answer": 5227,
+"argmax": 5227,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 3.75
+},
+{
+"id": "person:Leopold Senghor",
+"split": "train",
+"bridge": "Senegal",
+"answer": 24648,
+"argmax": 24648,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.5
+},
+{
+"id": "person:Mahathir Mohamad",
+"split": "train",
+"bridge": "Malaysia",
+"answer": 86333,
+"argmax": 86333,
+"correct": true,
+"crow": 36,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.0
+},
+{
+"id": "landmark:Hagia Sophia",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 53368,
+"correct": false,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.75
+},
+{
+"id": "landmark:Cappadocia",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 70244,
+"correct": true,
+"crow": 39,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 1.375
+},
+{
+"id": "landmark:Machu Picchu",
+"split": "train",
+"bridge": "Peru",
+"answer": 61953,
+"argmax": 356,
+"correct": false,
+"crow": 37,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 0.125
+},
+{
+"id": "landmark:Niagara Falls",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 77877,
+"correct": false,
+"crow": 36,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.125
+},
+{
+"id": "landmark:Babylon",
+"split": "train",
+"bridge": "Iraq",
+"answer": 55218,
+"argmax": 63578,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.0
+},
+{
+"id": "landmark:Palmyra",
+"split": "train",
+"bridge": "Syria",
+"answer": 57023,
+"argmax": 10925,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.25
+},
+{
+"id": "landmark:the Atomium",
+"split": "train",
+"bridge": "Belgium",
+"answer": 37169,
+"argmax": 37169,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.125
+},
+{
+"id": "landmark:Bran Castle",
+"split": "train",
+"bridge": "Romania",
+"answer": 33278,
+"argmax": 75918,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.5
+},
+{
+"id": "landmark:the Plitvice Lakes",
+"split": "train",
+"bridge": "Croatia",
+"answer": 88618,
+"argmax": 88618,
+"correct": true,
+"crow": 39,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 1.625
+},
+{
+"id": "landmark:Easter Island",
+"split": "train",
+"bridge": "Chile",
+"answer": 54578,
+"argmax": 61953,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.875
+},
+{
+"id": "landmark:Chernobyl",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 61625,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.75
+},
+{
+"id": "landmark:the Rila Monastery",
+"split": "train",
+"bridge": "Bulgaria",
+"answer": 78563,
+"argmax": 78563,
+"correct": true,
+"crow": 38,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 2.5
+},
+{
+"id": "landmark:the Blue Lagoon",
+"split": "train",
+"bridge": "Iceland",
+"answer": 48212,
+"argmax": 48212,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.5
+},
+{
+"id": "landmark:the Hassan II Mosque",
+"split": "train",
+"bridge": "Morocco",
+"answer": 35724,
+"argmax": 11054,
+"correct": false,
+"crow": 38,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 1.875
+},
+{
+"id": "landmark:the Masai Mara",
+"split": "train",
+"bridge": "Kenya",
+"answer": 96525,
+"argmax": 96525,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 3.5
+},
+{
+"id": "landmark:the Banaue Rice Terraces",
+"split": "train",
+"bridge": "Philippines",
+"answer": 56564,
+"argmax": 56564,
+"correct": true,
+"crow": 39,
+"n": 44,
+"span": [
+36,
+37,
+38,
+39,
+40,
+41,
+42
+],
+"margin_top2": 0.5
+},
+{
+"id": "landmark:Christ the Redeemer",
+"split": "train",
+"bridge": "Brazil",
+"answer": 61124,
+"argmax": 26961,
+"correct": false,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 3.0
+},
+{
+"id": "landmark:Baalbek",
+"split": "train",
+"bridge": "Lebanon",
+"answer": 94311,
+"argmax": 94311,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.125
+},
+{
+"id": "landmark:Carthage",
+"split": "train",
+"bridge": "Tunisia",
+"answer": 94677,
+"argmax": 3261,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.0
+},
+{
+"id": "landmark:Leptis Magna",
+"split": "train",
+"bridge": "Libya",
+"answer": 26754,
+"argmax": 3261,
+"correct": false,
+"crow": 38,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 0.75
+},
+{
+"id": "landmark:the Petronas Towers",
+"split": "train",
+"bridge": "Malaysia",
+"answer": 86333,
+"argmax": 86333,
+"correct": true,
+"crow": 39,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 2.875
+},
+{
+"id": "landmark:Sigiriya",
+"split": "train",
+"bridge": "Sri Lanka",
+"answer": 4254,
+"argmax": 33345,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.875
+},
+{
+"id": "landmark:the Perito Moreno Glacier",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 68073,
+"correct": true,
+"crow": 39,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 1.75
+},
+{
+"id": "city:Istanbul",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 70244,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.625
+},
+{
+"id": "city:Izmir",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 53368,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.0
+},
+{
+"id": "city:Antalya",
+"split": "train",
+"bridge": "Turkey",
+"answer": 70244,
+"argmax": 53368,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.375
+},
+{
+"id": "city:Odessa",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 61625,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.0
+},
+{
+"id": "city:Kharkiv",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 61625,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.125
+},
+{
+"id": "city:Lviv",
+"split": "train",
+"bridge": "Ukraine",
+"answer": 61625,
+"argmax": 62205,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.125
+},
+{
+"id": "city:Plovdiv",
+"split": "train",
+"bridge": "Bulgaria",
+"answer": 78563,
+"argmax": 78563,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.125
+},
+{
+"id": "city:Varna",
+"split": "train",
+"bridge": "Bulgaria",
+"answer": 78563,
+"argmax": 78563,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.75
+},
+{
+"id": "city:Cusco",
+"split": "train",
+"bridge": "Peru",
+"answer": 61953,
+"argmax": 61953,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.875
+},
+{
+"id": "city:Arequipa",
+"split": "train",
+"bridge": "Peru",
+"answer": 61953,
+"argmax": 61953,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.375
+},
+{
+"id": "city:Valparaiso",
+"split": "train",
+"bridge": "Chile",
+"answer": 54578,
+"argmax": 54578,
+"correct": true,
+"crow": 37,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Toronto",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 32166,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Vancouver",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 32166,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.0
+},
+{
+"id": "city:Montreal",
+"split": "train",
+"bridge": "Canada",
+"answer": 32166,
+"argmax": 32166,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.25
+},
+{
+"id": "city:Antwerp",
+"split": "train",
+"bridge": "Belgium",
+"answer": 37169,
+"argmax": 37169,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.875
+},
+{
+"id": "city:Ghent",
+"split": "train",
+"bridge": "Belgium",
+"answer": 37169,
+"argmax": 37169,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.25
+},
+{
+"id": "city:Karachi",
+"split": "train",
+"bridge": "Pakistan",
+"answer": 91432,
+"argmax": 91432,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Lahore",
+"split": "train",
+"bridge": "Pakistan",
+"answer": 91432,
+"argmax": 91432,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Mombasa",
+"split": "train",
+"bridge": "Kenya",
+"answer": 96525,
+"argmax": 96525,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 4.25
+},
+{
+"id": "city:Basra",
+"split": "train",
+"bridge": "Iraq",
+"answer": 55218,
+"argmax": 55218,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.5
+},
+{
+"id": "city:Mosul",
+"split": "train",
+"bridge": "Iraq",
+"answer": 55218,
+"argmax": 55218,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Aleppo",
+"split": "train",
+"bridge": "Syria",
+"answer": 57023,
+"argmax": 57023,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.75
+},
+{
+"id": "city:Cebu",
+"split": "train",
+"bridge": "Philippines",
+"answer": 56564,
+"argmax": 56564,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.25
+},
+{
+"id": "city:Davao",
+"split": "train",
+"bridge": "Philippines",
+"answer": 56564,
+"argmax": 56564,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.125
+},
+{
+"id": "city:Casablanca",
+"split": "train",
+"bridge": "Morocco",
+"answer": 35724,
+"argmax": 11054,
+"correct": false,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Marrakesh",
+"split": "train",
+"bridge": "Morocco",
+"answer": 35724,
+"argmax": 68598,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.75
+},
+{
+"id": "city:Jeddah",
+"split": "train",
+"bridge": "Saudi Arabia",
+"answer": 89790,
+"argmax": 89790,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Lagos",
+"split": "train",
+"bridge": "Nigeria",
+"answer": 30129,
+"argmax": 75996,
+"correct": false,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.75
+},
+{
+"id": "city:Kano",
+"split": "train",
+"bridge": "Nigeria",
+"answer": 30129,
+"argmax": 30129,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.375
+},
+{
+"id": "city:Cluj",
+"split": "train",
+"bridge": "Romania",
+"answer": 33278,
+"argmax": 33278,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.75
+},
+{
+"id": "city:Timisoara",
+"split": "train",
+"bridge": "Romania",
+"answer": 33278,
+"argmax": 33278,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.5
+},
+{
+"id": "city:Novi Sad",
+"split": "train",
+"bridge": "Serbia",
+"answer": 7828,
+"argmax": 7828,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.0
+},
+{
+"id": "city:Dubrovnik",
+"split": "train",
+"bridge": "Croatia",
+"answer": 88618,
+"argmax": 88618,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.25
+},
+{
+"id": "city:Almaty",
+"split": "train",
+"bridge": "Kazakhstan",
+"answer": 20113,
+"argmax": 1674,
+"correct": false,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.5
+},
+{
+"id": "city:Kumasi",
+"split": "train",
+"bridge": "Ghana",
+"answer": 11429,
+"argmax": 11429,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.5
+},
+{
+"id": "city:Pokhara",
+"split": "train",
+"bridge": "Nepal",
+"answer": 32895,
+"argmax": 32895,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 3.5
+},
+{
+"id": "city:Maracaibo",
+"split": "train",
+"bridge": "Venezuela",
+"answer": 3261,
+"argmax": 2876,
+"correct": false,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Medellin",
+"split": "train",
+"bridge": "Colombia",
+"answer": 41548,
+"argmax": 41548,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.875
+},
+{
+"id": "city:Rio de Janeiro",
+"split": "train",
+"bridge": "Brazil",
+"answer": 61124,
+"argmax": 61124,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.75
+},
+{
+"id": "city:Sao Paulo",
+"split": "train",
+"bridge": "Brazil",
+"answer": 61124,
+"argmax": 61124,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.25
+},
+{
+"id": "city:Tartu",
+"split": "train",
+"bridge": "Estonia",
+"answer": 41102,
+"argmax": 41102,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Kaunas",
+"split": "train",
+"bridge": "Lithuania",
+"answer": 63649,
+"argmax": 63649,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.0
+},
+{
+"id": "city:Sfax",
+"split": "train",
+"bridge": "Tunisia",
+"answer": 94677,
+"argmax": 94677,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "city:Benghazi",
+"split": "train",
+"bridge": "Libya",
+"answer": 26754,
+"argmax": 26754,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.875
+},
+{
+"id": "city:Durres",
+"split": "train",
+"bridge": "Albania",
+"answer": 82555,
+"argmax": 82555,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 3.75
+},
+{
+"id": "city:Cordoba",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 36887,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.125
+},
+{
+"id": "city:Rosario",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 68073,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.875
+},
+{
+"id": "city:Mendoza",
+"split": "train",
+"bridge": "Argentina",
+"answer": 68073,
+"argmax": 68073,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Penang",
+"split": "train",
+"bridge": "Malaysia",
+"answer": 86333,
+"argmax": 86333,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.75
+},
+{
+"id": "city:Entebbe",
+"split": "train",
+"bridge": "Uganda",
+"answer": 70944,
+"argmax": 70944,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.125
+},
+{
+"id": "city:Bulawayo",
+"split": "train",
+"bridge": "Zimbabwe",
+"answer": 5227,
+"argmax": 5227,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.375
+},
+{
+"id": "city:Hargeisa",
+"split": "train",
+"bridge": "Somalia",
+"answer": 59921,
+"argmax": 2691,
+"correct": false,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Kandy",
+"split": "train",
+"bridge": "Sri Lanka",
+"answer": 4254,
+"argmax": 4254,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.125
+},
+{
+"id": "city:Galle",
+"split": "train",
+"bridge": "Sri Lanka",
+"answer": 4254,
+"argmax": 4254,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.375
+},
+{
+"id": "city:Barcelona",
+"split": "test",
+"bridge": "Spain",
+"answer": 24081,
+"argmax": 24081,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Porto",
+"split": "test",
+"bridge": "Portugal",
+"answer": 80701,
+"argmax": 80701,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 2.5
+},
+{
+"id": "city:Busan",
+"split": "test",
+"bridge": "Korea",
+"answer": 50189,
+"argmax": 50189,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.0
+},
+{
+"id": "city:Shenzhen",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Gdansk",
+"split": "test",
+"bridge": "Poland",
+"answer": 72176,
+"argmax": 72176,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Tampere",
+"split": "test",
+"bridge": "Finland",
+"answer": 76334,
+"argmax": 76334,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+38
+],
+"margin_top2": 2.0
+},
+{
+"id": "city:Gothenburg",
+"split": "test",
+"bridge": "Sweden",
+"answer": 52082,
+"argmax": 52082,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 3.0
+},
+{
+"id": "city:Hamburg",
+"split": "test",
+"bridge": "Germany",
+"answer": 19846,
+"argmax": 19846,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.0
+},
+{
+"id": "city:Milan",
+"split": "test",
+"bridge": "Italy",
+"answer": 21718,
+"argmax": 21718,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Krakow",
+"split": "test",
+"bridge": "Poland",
+"answer": 72176,
+"argmax": 88443,
+"correct": false,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.0
+},
+{
+"id": "city:Salzburg",
+"split": "test",
+"bridge": "Austria",
+"answer": 46287,
+"argmax": 46287,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+37
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Kyoto",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.375
+},
+{
+"id": "city:Shanghai",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.75
+},
+{
+"id": "city:Munich",
+"split": "test",
+"bridge": "Germany",
+"answer": 19846,
+"argmax": 19846,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.0
+},
+{
+"id": "city:Naples",
+"split": "test",
+"bridge": "Italy",
+"answer": 21718,
+"argmax": 21718,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Rotterdam",
+"split": "test",
+"bridge": "Netherlands",
+"answer": 37741,
+"argmax": 37741,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 1.625
+},
+{
+"id": "city:Bergen",
+"split": "test",
+"bridge": "Norway",
+"answer": 57858,
+"argmax": 57858,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 3.125
+},
+{
+"id": "city:Saint Petersburg",
+"split": "test",
+"bridge": "Russia",
+"answer": 22415,
+"argmax": 22415,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.875
+},
+{
+"id": "city:Seville",
+"split": "test",
+"bridge": "Spain",
+"answer": 24081,
+"argmax": 24081,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.75
+},
+{
+"id": "currency:baht",
+"split": "test",
+"bridge": "Thailand",
+"answer": 59016,
+"argmax": 59016,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 4.0
+},
+{
+"id": "currency:forint",
+"split": "test",
+"bridge": "Hungary",
+"answer": 69595,
+"argmax": 69595,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 4.5
+},
+{
+"id": "currency:krona",
+"split": "test",
+"bridge": "Sweden",
+"answer": 52082,
+"argmax": 52082,
+"correct": true,
+"crow": 36,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 1.875
+},
+{
+"id": "currency:koruna",
+"split": "test",
+"bridge": "Czech",
+"answer": 67289,
+"argmax": 67289,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.875
+},
+{
+"id": "currency:pound sterling",
+"split": "test",
+"bridge": "Britain",
+"answer": 7148,
+"argmax": 7148,
+"correct": true,
+"crow": 36,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 3.875
+},
+{
+"id": "currency:shekel",
+"split": "test",
+"bridge": "Israel",
+"answer": 25445,
+"argmax": 25445,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.25
+},
+{
+"id": "currency:rial",
+"split": "test",
+"bridge": "Iran",
+"answer": 52695,
+"argmax": 52695,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.5
+},
+{
+"id": "currency:renminbi",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.5
+},
+{
+"id": "currency:zloty",
+"split": "test",
+"bridge": "Poland",
+"answer": 72176,
+"argmax": 72176,
+"correct": true,
+"crow": 37,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.25
+},
+{
+"id": "currency:ruble",
+"split": "test",
+"bridge": "Russia",
+"answer": 22415,
+"argmax": 22415,
+"correct": true,
+"crow": 36,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.875
+},
+{
+"id": "currency:rouble",
+"split": "test",
+"bridge": "Russia",
+"answer": 22415,
+"argmax": 22415,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.25
+},
+{
+"id": "currency:rupiah",
+"split": "test",
+"bridge": "Indonesia",
+"answer": 63033,
+"argmax": 63033,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 4.25
+},
+{
+"id": "currency:afghani",
+"split": "test",
+"bridge": "Afghanistan",
+"answer": 86545,
+"argmax": 86545,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+38
+],
+"margin_top2": 2.75
+},
+{
+"id": "currency:sterling",
+"split": "test",
+"bridge": "Britain",
+"answer": 7148,
+"argmax": 7148,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 2.5
+},
+{
+"id": "currency:dollar",
+"split": "test",
+"bridge": "America",
+"answer": 6515,
+"argmax": 6515,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.625
+},
+{
+"id": "currency:won",
+"split": "test",
+"bridge": "Korea",
+"answer": 50189,
+"argmax": 50189,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 3.625
+},
+{
+"id": "currency:yuan",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 2.5
+},
+{
+"id": "currency:yen",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 3.875
+},
+{
+"id": "landmark:Borobudur",
+"split": "test",
+"bridge": "Indonesia",
+"answer": 63033,
+"argmax": 63033,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 0.375
+},
+{
+"id": "landmark:Persepolis",
+"split": "test",
+"bridge": "Iran",
+"answer": 52695,
+"argmax": 52695,
+"correct": true,
+"crow": 38,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.0
+},
+{
+"id": "landmark:Masada",
+"split": "test",
+"bridge": "Israel",
+"answer": 25445,
+"argmax": 25445,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.0
+},
+{
+"id": "landmark:Mount Fuji",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 3.75
+},
+{
+"id": "landmark:the Sphinx",
+"split": "test",
+"bridge": "Egypt",
+"answer": 52550,
+"argmax": 52550,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 2.0
+},
+{
+"id": "landmark:Mount Rushmore",
+"split": "test",
+"bridge": "America",
+"answer": 6515,
+"argmax": 6515,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 1.5
+},
+{
+"id": "landmark:the Great Wall",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 2.25
+},
+{
+"id": "landmark:the Parthenon",
+"split": "test",
+"bridge": "Greece",
+"answer": 45826,
+"argmax": 45826,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+36,
+37,
+38,
+39
+],
+"margin_top2": 4.625
+},
+{
+"id": "landmark:Schonbrunn Palace",
+"split": "test",
+"bridge": "Austria",
+"answer": 46287,
+"argmax": 46287,
+"correct": true,
+"crow": 39,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 4.125
+},
+{
+"id": "landmark:the Colosseum",
+"split": "test",
+"bridge": "Italy",
+"answer": 21718,
+"argmax": 21718,
+"correct": true,
+"crow": 40,
+"n": 42,
+"span": [
+36,
+37,
+38,
+39,
+40
+],
+"margin_top2": 4.875
+},
+{
+"id": "landmark:Uluru",
+"split": "test",
+"bridge": "Australia",
+"answer": 68790,
+"argmax": 68790,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+36,
+37
+],
+"margin_top2": 0.25
+},
+{
+"id": "landmark:the Acropolis",
+"split": "test",
+"bridge": "Greece",
+"answer": 45826,
+"argmax": 45826,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 5.25
+},
+{
+"id": "landmark:the Cliffs of Moher",
+"split": "test",
+"bridge": "Ireland",
+"answer": 32877,
+"argmax": 32877,
+"correct": true,
+"crow": 41,
+"n": 43,
+"span": [
+36,
+37,
+38,
+39,
+40,
+41
+],
+"margin_top2": 1.375
+},
+{
+"id": "landmark:the Rijksmuseum",
+"split": "test",
+"bridge": "Netherlands",
+"answer": 37741,
+"argmax": 37741,
+"correct": true,
+"crow": 39,
+"n": 43,
+"span": [
+36,
+37,
+38,
+39,
+40,
+41
+],
+"margin_top2": 3.0
+},
+{
+"id": "landmark:the Forbidden City",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+36,
+37,
+38
+],
+"margin_top2": 3.5
+},
+{
+"id": "landmark:the pyramids of Giza",
+"split": "test",
+"bridge": "Egypt",
+"answer": 52550,
+"argmax": 52550,
+"correct": true,
+"crow": 38,
+"n": 43,
+"span": [
+36,
+37,
+38,
+39,
+40,
+41
+],
+"margin_top2": 4.0
+},
+{
+"id": "person:Akira Kurosawa",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 3.375
+},
+{
+"id": "person:Miguel de Cervantes",
+"split": "test",
+"bridge": "Spain",
+"answer": 24081,
+"argmax": 24081,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 1.875
+},
+{
+"id": "person:Edvard Munch",
+"split": "test",
+"bridge": "Norway",
+"answer": 57858,
+"argmax": 57858,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 3.875
+},
+{
+"id": "person:August Strindberg",
+"split": "test",
+"bridge": "Sweden",
+"answer": 52082,
+"argmax": 52082,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+37
+],
+"margin_top2": 3.125
+},
+{
+"id": "person:Frederic Chopin",
+"split": "test",
+"bridge": "Poland",
+"answer": 72176,
+"argmax": 72176,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 1.375
+},
+{
+"id": "person:Jean Sibelius",
+"split": "test",
+"bridge": "Finland",
+"answer": 76334,
+"argmax": 76334,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 3.375
+},
+{
+"id": "person:Giuseppe Verdi",
+"split": "test",
+"bridge": "Italy",
+"answer": 21718,
+"argmax": 21718,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 0.25
+},
+{
+"id": "person:Hans Christian Andersen",
+"split": "test",
+"bridge": "Denmark",
+"answer": 63061,
+"argmax": 63061,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 2.0
+},
+{
+"id": "person:Rembrandt",
+"split": "test",
+"bridge": "Netherlands",
+"answer": 37741,
+"argmax": 37741,
+"correct": true,
+"crow": 35,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 3.375
+},
+{
+"id": "person:Haruki Murakami",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+34,
+35,
+36,
+37,
+38
+],
+"margin_top2": 3.75
+},
+{
+"id": "person:Henrik Ibsen",
+"split": "test",
+"bridge": "Norway",
+"answer": 57858,
+"argmax": 57858,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 1.625
+},
+{
+"id": "person:Hokusai",
+"split": "test",
+"bridge": "Japan",
+"answer": 26194,
+"argmax": 26194,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+34,
+35,
+36
+],
+"margin_top2": 2.5
+},
+{
+"id": "person:Mao Zedong",
+"split": "test",
+"bridge": "China",
+"answer": 26549,
+"argmax": 26549,
+"correct": true,
+"crow": 37,
+"n": 39,
+"span": [
+34,
+35,
+36,
+37
+],
+"margin_top2": 3.75
+},
+{
+"id": "person:Antonin Dvorak",
+"split": "test",
+"bridge": "Czech",
+"answer": 67289,
+"argmax": 67289,
+"correct": true,
+"crow": 38,
+"n": 40,
+"span": [
+38
+],
+"margin_top2": 2.625
+},
+{
+"id": "person:Mozart",
+"split": "test",
+"bridge": "Austria",
+"answer": 46287,
+"argmax": 46287,
+"correct": true,
+"crow": 34,
+"n": 36,
+"span": [
+34
+],
+"margin_top2": 1.0
+},
+{
+"id": "person:Plato",
+"split": "test",
+"bridge": "Greece",
+"answer": 45826,
+"argmax": 45826,
+"correct": true,
+"crow": 34,
+"n": 36,
+"span": [
+34
+],
+"margin_top2": 2.875
+},
+{
+"id": "person:Franz Liszt",
+"split": "test",
+"bridge": "Hungary",
+"answer": 69595,
+"argmax": 69595,
+"correct": true,
+"crow": 36,
+"n": 38,
+"span": [
+36
+],
+"margin_top2": 0.875
+},
+{
+"id": "person:Socrates",
+"split": "test",
+"bridge": "Greece",
+"answer": 45826,
+"argmax": 45826,
+"correct": true,
+"crow": 35,
+"n": 37,
+"span": [
+34,
+35
+],
+"margin_top2": 3.75
+},
+{
+"id": "person:James Joyce",
+"split": "test",
+"bridge": "Ireland",
+"answer": 32877,
+"argmax": 32877,
+"correct": true,
+"crow": 35,
+"n": 37,
+"span": [
+35
+],
+"margin_top2": 4.0
+},
+{
+"id": "person:Soren Kierkegaard",
+"split": "test",
+"bridge": "Denmark",
+"answer": 63061,
+"argmax": 63061,
+"correct": true,
+"crow": 38,
+"n": 41,
+"span": [
+34,
+35,
+36,
+37,
+38,
+39
+],
+"margin_top2": 2.875
+},
+{
+"id": "person:W. B. Yeats",
+"split": "test",
+"bridge": "Ireland",
+"answer": 32877,
+"argmax": 32877,
+"correct": true,
+"crow": 39,
+"n": 41,
+"span": [
+39
+],
+"margin_top2": 5.0
+}
+]

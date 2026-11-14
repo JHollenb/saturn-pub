@@ -1,0 +1,77 @@
+mrun: job-7ad594cb5b00 -> killed_ram
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 3eda95c script das.py
+[    4.1s] load mode=admit
+mrun: job-7ad594cb5b00 killed_ram -> auto-retry job-c4c4834e3110 (grown reservation)
+mrun: job-c4c4834e3110 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 3eda95c script das.py
+[    4.1s] load mode=admit
+[    5.3s] A train currency:lira 1.13s
+[    6.1s] A train currency:shilling 0.87s
+[    7.1s] A train currency:tenge 1.01s
+[    8.0s] A train currency:dirham 0.87s
+[    8.9s] A train currency:metical 0.87s
+[   10.3s] A train person:Orhan Pamuk 1.43s
+[   12.0s] A train person:Kahlil Gibran 1.73s
+[   13.2s] A train person:Rene Magritte 1.15s
+[   14.7s] A train person:Kofi Annan 1.57s
+[   16.2s] A train person:Gabriel Garcia Marquez 1.43s
+[   17.3s] A train person:Bob Marley 1.15s
+[   19.1s] A train person:Hafez al-Assad 1.72s
+[   20.6s] A train person:Diego Maradona 1.59s
+[   22.7s] A train person:Mahathir Mohamad 2.02s
+[   23.5s] A train landmark:Niagara Falls 0.87s
+[   24.4s] A train landmark:Bran Castle 0.87s
+[   26.1s] A train landmark:the Rila Monastery 1.74s
+[   28.6s] A train landmark:the Banaue Rice Terraces 2.49s
+[   30.4s] A train landmark:Leptis Magna 1.75s
+[   31.0s] A train city:Istanbul 0.58s
+[   32.1s] A train city:Kharkiv 1.16s
+[   33.3s] A train city:Cusco 1.16s
+[   33.9s] A train city:Vancouver 0.58s
+[   34.6s] A train city:Karachi 0.72s
+[   35.2s] A train city:Mosul 0.58s
+[   36.6s] A train city:Casablanca 1.45s
+[   37.5s] A train city:Kano 0.87s
+[   38.6s] A train city:Dubrovnik 1.16s
+[   39.8s] A train city:Maracaibo 1.16s
+[   40.7s] A train city:Tartu 0.87s
+[   41.6s] A train city:Durres 0.87s
+[   42.4s] A train city:Penang 0.87s
+[   43.3s] A train city:Kandy 0.87s
+[   44.0s] A test city:Barcelona 0.72s
+[   44.6s] A test city:Porto 0.58s
+[   45.5s] A test city:Busan 0.87s
+[   46.3s] A test city:Shenzhen 0.87s
+[   47.5s] A test city:Gdansk 1.16s
+[   48.1s] A test city:Tampere 0.59s
+[   49.2s] A test city:Gothenburg 1.16s
+[   49.8s] A test city:Hamburg 0.58s
+[   49.8s] admitted 22/33 train
+[   49.8s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:51.23
+	Maximum resident set size (kbytes): 4357484
+== revision 3eda95c script das.py
+[    4.1s] load mode=train
+[    4.5s] train items 22 countries 21
+[    5.1s] k=4 step 0 loss 10.399
+[    9.1s] k=4 step 25 loss 5.936
+[   13.1s] k=4 step 50 loss 4.916
+[   14.5s] k=4 step 59 loss 5.649
+[   15.6s] k=4 done 11.0s probe flips 63/256
+[   15.6s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.12
+	Maximum resident set size (kbytes): 4356592
+== revision 3eda95c script das.py
+[    4.1s] load mode=score
+[    8.7s] S city:Barcelona 4.47s
+[   13.3s] S city:Busan 4.66s
+[   13.3s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:14.74
+	Maximum resident set size (kbytes): 4360312
+mrun: job-c4c4834e3110 -> succeeded
+mrun: job-c4c4834e3110 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 83.75, 'peak_rss_mb': 2516.0, 'peak_vram_mb': 5184.0}
