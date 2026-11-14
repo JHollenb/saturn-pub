@@ -1,0 +1,73 @@
+mrun: job-4898fc946910 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision a66ec512c165be77ab7ce8a5483eb812c8dcc8c8  npairs 6
+model loaded in 5s on cuda; 28 layers, d_model 2048
+mdb sae load: ok
+site L20.h_out k 50 d_sae 32768 revision ce1a79d9c5163932d65c417380e53230e1086370
+SAELens ref: {'hook_name': 'blocks.20.hook_resid_post', 'release': 'qwen-scope-3-1.7b-base-w32k-l50', 'sae_id': 'layer20', 'model': 'Qwen/Qwen3-1.7B-Base'}
+sae_lens not installed: No module named 'einops'
+19 entries; 6 pairs: ['Paris->Rome', 'Rome->Berlin', 'Berlin->Moscow', 'Moscow->Athens', 'Athens->Beijing', 'Beijing->Madrid']
+whatif cache.L20.v[row=3] <- cf:  native -8.25  state resolved
+symbol: declared: entity
+Paris->Rome            base   8.25 L*=20 cell   -8.250 Delta   -8.250 Phi   -8.000 E   0.000  [12.1s]
+Rome->Berlin           base   9.00 L*=20 cell  -14.375 Delta  -14.375 Phi  -14.125 E  -1.250  [7.1s]
+Berlin->Moscow         base  10.62 L*=20 cell  -11.500 Delta  -11.500 Phi  -12.500 E   0.750  [7.2s]
+Moscow->Athens         base  12.75 L*=20 cell  -16.500 Delta  -16.500 Phi  -14.750 E  -1.750  [7.2s]
+Athens->Beijing        base  10.25 L*=20 cell  -12.875 Delta  -12.875 Phi  -11.125 E  -0.625  [7.2s]
+Beijing->Madrid        base  15.50 L*=20 cell  -13.250 Delta  -13.250 Phi  -10.625 E  -2.000  [7.2s]
+recall margin 9.5
+largest direct feature at L22: {'id': 1077, 'direct': 6.804586985318218}
+error splice L14: native dM = -0.5
+error splice L22: native dM = -0.375
+ablate top feature at L22: {'native': -1.75, 'linear': 0.29785464134303297, 'exact': -1.7521147857025277}
+replacement model margin -3.234375 top token '-wide'
+{
+ "n_pairs": 6,
+ "median_sigma_phi": 0.9318181818181819,
+ "median_sigma_E": 0.0677501055297594,
+ "delta_matches_cell": "6/6",
+ "splice": {
+  "8": {
+   "median_abs_native": 0.25,
+   "median_abs_A": 6.37527688097866,
+   "n_A": 2
+  },
+  "14": {
+   "median_abs_native": 1.25,
+   "median_abs_A": 11.969126061092462,
+   "n_A": 3
+  },
+  "18": {
+   "median_abs_native": 0.5625,
+   "median_abs_A": 2.053713418954284,
+   "n_A": 4
+  },
+  "22": {
+   "median_abs_native": 0.9375,
+   "median_abs_A": 1.1329849453163796,
+   "n_A": 6
+  }
+ }
+}
+PASS census Paris->Rome
+PASS census Rome->Berlin
+PASS census Berlin->Moscow
+PASS census Moscow->Athens
+PASS census Athens->Beijing
+PASS census Beijing->Madrid
+PASS recall base margin 9.5
+PASS top direct feature is f1077
+PASS replacement model margin ~ -3.23 (within 0.5)
+PASS replacement model top token '-wide'
+PASS ablate f1077 native ~ -1.75 (within 0.5)
+PASS ablate f1077 linear estimate ~ +0.30 (within 0.1)
+PASS error splice L14 on recall ~ -0.5 (within 0.5)
+13/13 checks pass
+done in 199.8s; wrote out/sae_census_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "npairs": 6, "saelens_check": "sae_lens not installed: No module named 'einops'", "symbol": "declared: entity", "rows": [{"pair": "Paris->Rome", "cf_margin": -8.25, "base": 8.25, "argmax_text": " France", "cell": {"16": 0.0, "18": -0.125, "19": 0.125, "20": -8.25, "21": -0.75, "22": -0.875}, "best_layer": 20, "reader": {"delta": -8.25, "phi": -8.0, "E": 0.0}, "splice": {"8": {"native": 0.375, "error_direct": 0.039044592919675256}, "14": {"native": 1.875, "error_direct": -0.021536079873371826}, "18": {"native": -0.5, "error_direct": 0.14844147700520072}, "22": {"native": 1.0, "error_direct": 0.42391241988706896}}, "seconds": 12.1}, {"pair": "Rome->Berlin", "cf_margin": -12.125, "base": 9.0, "argmax_text": " Italy", "cell": {"16": 0.0, "18": 0.0, "19": 0.0, "20": -14.375, "21": -1.125, "22": -1.125}, "best_layer": 20, "reader": {"delta": -14.375, "phi": -14.125, "E": -1.25}, "splice": {"8": {"native": -0.5, "error_direct": 0.0732663516099409}, "14": {"native": 0.5, "error_direct": 0.09244867199836451}, "18": {"native": -0.375, "error_direct": 0.5073765575841839}, "22": {"native": 0.875, "error_direct": 0.51469256173229}}, "seconds": 7.1}, {"pair": "Berlin->Moscow", "cf_margin": -7.875, "base": 10.625, "argmax_text": " Germany", "cell": {"16": 0.25, "18": -0.5, "19": 0.0, "20": -11.5, "21": -0.75, "22": -1.125}, "best_layer": 20, "reader": {"delta": -11.5, "phi": -12.5, "E": 0.75}, "splice": {"8": {"native": 0.125, "error_direct": -0.012615124603870282}, "14": {"native": 1.375, "error_direct": 0.11487889700398887}, "18": {"native": -1.0, "error_direct": 0.04183917428377255}, "22": {"native": 0.25, "error_direct": 0.6566371998406508}}, "seconds": 7.2}, {"pair": "Moscow->Athens", "cf_margin": -11.5, "base": 12.75, "argmax_text": " Russia", "cell": {"16": 0.0, "18": -0.625, "19": 0.0, "20": -16.5, "21": -1.625, "22": -1.25}, "best_layer": 20, "reader": {"delta": -16.5, "phi": -14.75, "E": -1.75}, "splice": {"8": {"native": -0.125, "error_direct": 0.03539846303875241}, "14": {"native": 2.125, "error_direct": 0.04680962658076229}, "18": {"native": -0.625, "error_direct": -0.024508975060628088}, "22": {"native": -1.0, "error_direct": 1.7670158084038916}}, "seconds": 7.2}, {"pair": "Athens->Beijing", "cf_margin": -14.375, "base": 10.25, "argmax_text": " Greece", "cell": {"16": 0.0, "18": -0.125, "19": 0.125, "20": -12.875, "21": -0.25, "22": -0.75}, "best_layer": 20, "reader": {"delta": -12.875, "phi": -11.125, "E": -0.625}, "splice": {"8": {"native": -0.5, "error_direct": 0.08437197184223003}, "14": {"native": 1.125, "error_direct": 0.06113407833297087}, "18": {"native": -0.25, "error_direct": 0.6958846407974808}, "22": {"native": 0.0, "error_direct": 1.4619325345571217}}, "seconds": 7.2}, {"pair": "Beijing->Madrid", "cf_margin": -12.875, "base": 15.5, "argmax_text": " China", "cell": {"16": -0.125, "18": -0.75, "19": -0.375, "20": -13.25, "21": -1.0, "22": -0.375}, "best_layer": 20, "reader": {"delta": -13.25, "phi": -10.625, "E": -2.0}, "splice": {"8": {"native": 0.125, "error_direct": 0.0005681976724516164}, "14": {"native": 0.125, "error_direct": -0.03008703066308735}, "18": {"native": -1.75, "error_direct": 0.3144640926797107}, "22": {"native": 2.25, "error_direct": -0.9959599879809576}}, "seconds": 7.2}], "detail": {"base": 9.5, "splice": {"14": -0.5, "22": -0.375}, "top_feature": {"id": 1077, "direct": 6.804586985318218}, "ablate": {"native": -1.75, "linear": 0.29785464134303297, "exact": -1.7521147857025277}, "chain": {"margin": -3.234375, "top_token": "-wide"}}, "summary": {"n_pairs": 6, "median_sigma_phi": 0.9318181818181819, "median_sigma_E": 0.0677501055297594, "delta_matches_cell": "6/6", "splice": {"8": {"median_abs_native": 0.25, "median_abs_A": 6.37527688097866, "n_A": 2}, "14": {"median_abs_native": 1.25, "median_abs_A": 11.969126061092462, "n_A": 3}, "18": {"median_abs_native": 0.5625, "median_abs_A": 2.053713418954284, "n_A": 4}, "22": {"median_abs_native": 0.9375, "median_abs_A": 1.1329849453163796, "n_A": 6}}}, "checks": {"census Paris->Rome": true, "census Rome->Berlin": true, "census Berlin->Moscow": true, "census Moscow->Athens": true, "census Athens->Beijing": true, "census Beijing->Madrid": true, "recall base margin 9.5": true, "top direct feature is f1077": true, "replacement model margin ~ -3.23 (within 0.5)": true, "replacement model top token '-wide'": true, "ablate f1077 native ~ -1.75 (within 0.5)": true, "ablate f1077 linear estimate ~ +0.30 (within 0.1)": true, "error splice L14 on recall ~ -0.5 (within 0.5)": true}, "seconds": 199.8}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:21.45
+	Maximum resident set size (kbytes): 6395728
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+mrun: job-4898fc946910 -> succeeded
+mrun: job-4898fc946910 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 202.28, 'peak_rss_mb': 6263.9, 'peak_vram_mb': 3808.0}
