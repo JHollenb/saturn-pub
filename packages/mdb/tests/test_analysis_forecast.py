@@ -164,8 +164,10 @@ def test_rewind_and_replay_to_the_target_still_verifies_with_its_order(debugger)
     # 28 random layers: the worst-case bound may be infinite, which never decides the verdict:
     # the measured residual is within the dtype floor
     assert result["verdict"] == "confirmed" and result["state"] == "resolved"
-    assert result["floor"]["authority"] == "measured" and result["floor"]["proof"] == "P20"
+    assert result["floor"]["authority"] == "supplied" and result["floor"]["proof"] == "P20"
     assert result["residual_max_abs"]["value"] < 0.05
+    assert result["residual_spacings"]["authority"] == "measured"
+    assert result["residual_spacings"]["value"] <= result["floor_spacings"]["value"]
     assert result["order"]["descends"] and result["order"]["sealed_before_target"]
 
 
@@ -174,13 +176,95 @@ def test_a_wrong_prediction_is_not_confirmed_and_confirm_reads_the_floor():
 
     from mdb.analysis import verdict
 
-    # bf16 near 20: spacing 0.125, floor 0.25
-    inside = verdict.confirm(torch.tensor(0.2), 20.0, torch.bfloat16)
-    outside = verdict.confirm(torch.tensor(0.3), 20.0, torch.bfloat16)
+    # bf16 near 20: spacing 0.125; 4 rounded steps: floor 3 x sqrt(4) x 0.125 = 0.75
+    inside = verdict.confirm(torch.tensor(0.74, dtype=torch.float64), 20.0, torch.bfloat16, count=4)
+    outside = verdict.confirm(torch.tensor(0.76, dtype=torch.float64), 20.0, torch.bfloat16, count=4)
     assert (inside["verdict"], outside["verdict"]) == ("confirmed", "not confirmed")
     assert inside["state"] == outside["state"] == "resolved"
-    assert outside["floor"]["value"] == 0.25 and outside["floor"]["proof"] == "P20"
+    assert outside["floor"]["value"] == 0.75 and outside["floor"]["authority"] == "supplied"
+    assert outside["floor_spacings"]["value"] == 6.0 and outside["rounded_steps"]["value"] == 4
+    assert outside["residual_spacings"]["authority"] == "measured"
+    assert abs(outside["residual_spacings"]["value"] - 0.76 / 0.125) < 1e-12
+    assert outside["coefficient"]["authority"] == "supplied" and outside["coefficient"]["support"]
+    # a margin is a difference of two rounded values: the floor takes both spacings
+    margin = verdict.confirm(torch.tensor(0.1), 20.0, torch.bfloat16, count=1, partner=1.0)
+    assert margin["spacing"]["value"] == 0.125 + 2.0 ** -7 and margin["verdict"] == "confirmed"
     assert verdict.confirm(torch.tensor(1), 5, torch.int64)["verdict"] == "not confirmed"
+
+
+def test_the_floor_is_judged_per_element_and_the_sealed_bound_tightens_it():
+    """A wrong small element inside a vector whose largest element is big: the largest-element
+    floor (spacing of 8.0, here 0.0625 x 3) admits it; the element's own sealed bound does not."""
+    import torch
+
+    from mdb.analysis import verdict
+
+    gap = torch.zeros(8, dtype=torch.float64)
+    gap[3] = 0.1                                   # the wrong element, 1.6 spacings of 8.0
+    limit = torch.full((8,), 0.5, dtype=torch.float64)
+    limit[3] = 0.01                                # its own bound: it is a small element
+    alone = verdict.confirm(gap, 8.0, torch.bfloat16, count=1)
+    held = verdict.confirm(gap, 8.0, torch.bfloat16, count=1, limit=limit)
+    assert alone["verdict"] == "confirmed" and "element_limit" not in alone
+    assert held["verdict"] == "not confirmed" and held["index"] == 3
+    assert held["element_limit"]["value"] == 0.01 and held["element_limit"]["authority"] == "bound"
+    # a bound looser than the floor, or infinite, never loosens it
+    loose = torch.full((8,), float("inf"), dtype=torch.float64)
+    assert verdict.confirm(gap * 100, 8.0, torch.bfloat16, count=1, limit=loose)["verdict"] \
+        == "not confirmed"
+
+
+def test_a_wrong_small_element_of_a_real_vector_port_is_not_confirmed_by_its_bound():
+    """On tiny bf16 Qwen2 find a port whose sealed bound at some element is below the floor of its
+    largest element; a wrong value there of 3x the bound is below that floor, yet not confirmed."""
+    import torch
+
+    run = open_tiny("qwen2", "bf16").run(PROMPT)
+    found = None
+    for label in ("L0.a", "L0.q", "L0.k", "L0.v", "L0.p", "L0.o", "L0.r"):
+        run = open_tiny("qwen2", "bf16").run(PROMPT)
+        view = forecast.seal(run, f"t3.{label}")
+        entry = forecast.ledger(run)[view["id"]]
+        run.step()
+        [probe] = forecast.verify(run, [view["id"]])
+        flat_bound = entry.bound.reshape(-1)
+        k = int(flat_bound.argmin())
+        if float(flat_bound[k]) * 4 < probe["floor"]["value"]:
+            found = (label, k, float(flat_bound[k]), probe["floor"]["value"])
+            break
+    assert found is not None, "no port with a bound tighter than its floor"
+    label, k, bound_k, floor = found
+    run = open_tiny("qwen2", "bf16").run(PROMPT)
+    view = forecast.seal(run, f"t3.{label}")
+    entry = forecast.ledger(run)[view["id"]]
+    flat = entry.predicted.reshape(-1).clone()
+    flat[k] += 3 * bound_k
+    entry.predicted = flat.reshape(entry.predicted.shape)
+    run.step()
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["residual_max_abs"]["value"] < result["floor"]["value"]  # old rule: confirmed
+    assert result["verdict"] == "not confirmed" and result["index"] == k
+    assert result["element_limit"]["authority"] == "bound"
+
+
+@pytest.mark.parametrize("family,dtype,layers", [(f, d, n) for f in ("qwen2", "qwen3")
+                                                  for d in ("bf16", "fp32") for n in (2, 6, 12)])
+def test_correct_margin_and_vector_forecasts_are_confirmed_with_their_residual_in_spacings(
+        family, dtype, layers):
+    """Forecasts sealed at L0.h of a deep tiny model (margin and every later port, residuals up to
+    about 15 spacings of the largest logit in fp32) are confirmed; none sits above its floor."""
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    run = attach(tiny_model(family, dtype, layers=layers), None).run(PROMPT)
+    ids = [forecast.seal(run, forecast.Margin(3, 3, 7))["id"],
+           forecast.seal(run, f"t3.L{layers - 1}.m")["id"],
+           forecast.seal(run, "t3.fn")["id"], forecast.seal(run, "t3.logits")["id"]]
+    run.until("t3.logits")
+    for result in forecast.verify(run, ids):
+        assert result["verdict"] == "confirmed", result
+        assert result["residual_spacings"]["value"] <= result["floor_spacings"]["value"]
+        assert result["rounded_steps"]["value"] >= layers
 
 
 def test_a_forecast_whose_prediction_is_perturbed_is_not_confirmed(debugger):
@@ -192,6 +276,7 @@ def test_a_forecast_whose_prediction_is_perturbed_is_not_confirmed(debugger):
     [result] = forecast.verify(run, [view["id"]])
     assert result["verdict"] == "not confirmed" and result["state"] == "resolved"
     assert result["residual_max_abs"]["value"] > result["floor"]["value"]
+    assert result["residual_spacings"]["value"] > result["floor_spacings"]["value"]
 
 
 def test_a_large_weight_is_multiplied_block_by_block_and_no_float64_weight_is_kept(
@@ -255,8 +340,9 @@ def _check_deep(run, view, store):
     # 28 random layers: the worst-case bound may be infinite, which never decides the verdict:
     # the measured residual is within the dtype floor
     assert result["verdict"] == "confirmed" and result["state"] == "resolved"
-    assert result["floor"]["authority"] == "measured" and result["floor"]["proof"] == "P20"
+    assert result["floor"]["authority"] == "supplied" and result["floor"]["proof"] == "P20"
     assert result["residual_max_abs"]["value"] < 0.05
+    assert result["residual_spacings"]["value"] <= result["floor_spacings"]["value"]
     assert float(entry.predicted) == float(before[0])
     return entry, summary, result
 

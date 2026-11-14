@@ -590,9 +590,21 @@ def _forecast_lines(result: dict[str, Any]) -> list[str]:
             f"  predicted {_predicted(view['predicted'])}  {spread}"]
 
 
-def _steps(item: dict[str, Any]) -> str:
-    spacing = item["spacing"]["value"]
-    return f"{item['floor']['value'] / spacing:g}" if spacing else "0"
+def _floor_text(item: dict[str, Any]) -> str:
+    """``residual 0.0026 = 1.4 spacings <= floor 0.0625 = 6.2 spacings (3 x sqrt(14 rounded
+    ops), 3 supplied)``: the residual in dtype spacings next to the floor in spacings."""
+    text = ""
+    if "residual_spacings" in item:
+        text += f" = {item['residual_spacings']['value']:.2g} spacings"
+    text += f" {'<=' if item['verdict'] == 'confirmed' else '>'} floor {_claimed(item['floor'])}"
+    if "floor_spacings" in item:
+        text += (f" = {item['floor_spacings']['value']:.3g} {item.get('dtype', '?')} spacings "
+                 f"({item['coefficient']['value']:g} x sqrt({int(item['rounded_steps']['value'])} "
+                 f"rounded ops), {item['coefficient']['value']:g} {item['coefficient']['authority']})")
+    if "element_limit" in item:
+        limit = item["element_limit"]
+        text += f"; element {limit['index']} limited by its sealed bound {_claimed(limit)}"
+    return text
 
 
 def _verify_lines(result: dict[str, Any]) -> list[str]:
@@ -612,10 +624,7 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
             if "residual_max_abs" in item:
                 text += f"  residual {_claimed(item['residual_max_abs'])}"
             if "floor" in item:
-                text += (f" {'<=' if item['verdict'] == 'confirmed' else '>'} floor "
-                         f"{_claimed(item['floor'])} ({_steps(item)} x {item.get('dtype', '?')} "
-                         "spacing)"
-                         f"  [P20, {item.get('state', 'resolved')}]")
+                text += _floor_text(item) + f"  [P20, {item.get('state', 'resolved')}]"
             elif "reason" in item:
                 text += f"  ({item['reason']})"
             if "bound_max" in item:

@@ -959,6 +959,15 @@ def _lineage(run: Any, sealed: dict[str, Any]) -> dict[str, Any]:
             "same_cut": current == sealed["cut"]}
 
 
+def _rounded_steps(entry: Forecast) -> int:
+    """Rounded operations between the sealed operands and the target: the identities of the chain
+    up to and including the target's (a margin: through the logits). Each rounds its result to the
+    model dtype, so their errors accumulate; ``derived-exact``, a count of the chain."""
+    stops = [step["stop"] for step in entry.chain]
+    address = f"t{entry.key[0]}.{entry.label}"
+    return stops.index(address) + 1 if address in stops else max(len(stops), 1)
+
+
 def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
     """The native value as float64, its read info, and the raw native tensor (its dtype and
     magnitude set the verdict floor)."""
@@ -977,8 +986,9 @@ def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
 def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     """Compare open forecasts (or the given ids) whose target the cursor has passed with the
     native value. Each result: ``verdict`` (``confirmed | not confirmed | edited | open``),
-    decided by the measured residual (native - predicted, P20) against ``floor`` = 2 x the model
-    dtype's spacing at the magnitude of the consumer, never by the worst-case bound; ``native``,
+    decided by the measured residual (native - predicted, P20) against ``floor`` = 3 (supplied) x
+    sqrt(n rounded steps) x the model dtype's spacing at the magnitude of the consumer (a margin:
+    the sum of its two logits' spacings), judged per element; the sealed bound only tightens it; ``native``,
     ``residual_max_abs`` (``measured``), ``floor``, ``spacing``; ``bound_max`` / ``within_bound``
     only when the bound is finite (information, not the verdict); and ``order`` (sealing stop
     before the target; lineage of cuts)."""
@@ -1032,15 +1042,18 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
                 # the consumer's magnitude: the margin's two logits, else the largest element
                 size = _verdict.magnitude(entry.margin if entry.margin is not None else object(),
                                           raw)
-                # 2 spacings for a scalar; a margin (two logits, each up to 2 spacings off) and a
-                # vector port (elements round at their own magnitudes) get 4
-                steps = 2 if native.dim() == 0 and entry.margin is None else 4
-                decided = _verdict.confirm(gap, size, raw.dtype,
-                                           steps=steps)
-                verdict.update(verdict=decided["verdict"], state=decided["state"],
-                               floor=decided["floor"], spacing=decided["spacing"],
-                               dtype=decided["dtype"], criterion=decided["criterion"],
-                               basis="measured residual, P20")
+                # a margin is the difference of two rounded logits (both spacings); the sealed
+                # per-element bound can only tighten the floor at its own element
+                partner = None
+                if entry.margin is not None:
+                    flat = raw.reshape(-1).detach().abs().float()
+                    size, partner = float(flat[entry.margin.a]), float(flat[entry.margin.b])
+                decided = _verdict.confirm(gap, size, raw.dtype, count=_rounded_steps(entry),
+                                           partner=partner, limit=entry.bound)
+                verdict.update({k: decided[k] for k in (
+                    "verdict", "state", "floor", "floor_spacings", "spacing", "residual_spacings",
+                    "rounded_steps", "coefficient", "dtype", "criterion", "index", "element_limit")
+                    if k in decided}, basis="measured residual, P20")
                 bound = entry.bound
                 if bound is not None and bool(bound.isfinite().all()):
                     # information only: the worst-case propagated bound, finite here

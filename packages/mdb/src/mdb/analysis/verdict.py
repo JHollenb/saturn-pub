@@ -25,7 +25,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from .finite import EXACT, MEASURED
+from .finite import BOUND, EXACT, MEASURED, SUPPLIED
 
 EFFECT = "effect"
 NO_EFFECT = "no effect above the noise floor"
@@ -120,27 +120,63 @@ def decide(native: Any, exact: Any, residual: Any, size: float, dtype: Any,
 
 CONFIRMED = "confirmed"
 NOT_CONFIRMED = "not confirmed"
-CONFIRM_CRITERION = ("confirmed when max |native - predicted| <= floor = 2 x dtype spacing at the "
-                     "magnitude of the consumer; not confirmed otherwise; P20: residual = native "
-                     "- predicted")
+# The one supplied constant of `confirm`: the coefficient of the random-walk count. Measured on tiny
+# qwen2/qwen3 (bf16 and fp32; 2, 6, 12, 28 layers; vector ports, margins, 12264 correct forecasts):
+# the largest residual / (sqrt(n) x spacing) was 0.86 (bf16 vector), 2.18 (fp32 vector), 1.91 (bf16
+# margin), 1.80 (fp32 margin), n the rounded steps between seal and target.
+COEFFICIENT = 3.0
+COEFFICIENT_SUPPORT = ("max residual/(sqrt(n) x spacing) over 12264 correct tiny-model forecasts: "
+                       "vector 0.86 bf16, 2.18 fp32; margin 1.91 bf16, 1.80 fp32")
+CONFIRM_CRITERION = ("confirmed when every element's |native - predicted| <= min(floor, its sealed "
+                     "worst-case bound where finite); floor = 3 x sqrt(n) x dtype spacing at the "
+                     "magnitude of the consumer (a margin: the sum of its two logits' spacings), "
+                     "n the rounded steps between the sealed operands and the target, 3 supplied; "
+                     "not confirmed otherwise; P20: residual = native - predicted")
 
 
-def confirm(residual: Any, size: float, dtype: Any, steps: int = 2) -> dict[str, Any]:
-    """The verdict on one forecast: confirmed when the measured residual (native - predicted;
-    scalar or vector, the largest ``|.|`` is judged) is within ``steps x spacing`` (2; a margin of two logits, each up to 2 spacings off after a deep chain, and a vector
-    port, whose elements round at their own magnitudes, are given 4) of ``dtype`` at
-    ``size``, the consumer's magnitude. A non-floating ``dtype`` (token ids) has no spacing: the
-    floor is 0. Always ``resolved``; the worst-case propagated bound never decides this."""
+def confirm(residual: Any, size: float, dtype: Any, *, count: int = 1, partner: float | None = None,
+            limit: Any = None) -> dict[str, Any]:
+    """The verdict on one forecast: confirmed when every element's measured residual (native -
+    predicted; scalar or vector) is within ``min(floor, limit_i)``.
+
+    ``floor = COEFFICIENT x sqrt(count) x step``: ``count`` the rounded operations between the
+    sealed operands and the target (their errors add as a random walk), ``step`` the spacing of
+    ``dtype`` at ``size``, the consumer's magnitude (a margin, the difference of two rounded
+    logits: ``size`` and ``partner``, the step is the sum of the two spacings). ``limit``, the
+    sealed per-element worst-case bound (finite entries only; ``derived``, premises on the
+    forecast), can only tighten the floor at its own element, never loosen it. A non-floating
+    ``dtype`` (token ids) has no spacing: the floor is 0. Always ``resolved``. ``residual`` is the
+    largest ``|.|``; ``residual_spacings`` (``measured``) says how close to the floor it came."""
     torch = _torch()
-    worst = float(torch.as_tensor(residual, dtype=torch.float64).abs().max())
+    gap = torch.as_tensor(residual, dtype=torch.float64).abs().reshape(-1)
     floating = dtype is not None and torch.empty(0, dtype=dtype).is_floating_point()
-    step = spacing(size, dtype) if floating else 0.0
+    step = 0.0
+    if floating:
+        step = spacing(size, dtype) + (0.0 if partner is None else spacing(partner, dtype))
+    steps = COEFFICIENT * math.sqrt(max(int(count), 1))
     floor = steps * step
-    return {"verdict": CONFIRMED if worst <= floor else NOT_CONFIRMED, "state": "resolved",
-            "residual": _num(worst, MEASURED), "spacing": _num(step, MEASURED),
-            "floor": _num(floor, MEASURED), "criterion": CONFIRM_CRITERION.replace("2 x", f"{steps} x", 1),
-            "dtype": str(dtype).removeprefix("torch.")}
+    bound = torch.full_like(gap, floor)
+    if limit is not None:
+        lim = torch.as_tensor(limit, dtype=torch.float64).reshape(-1)
+        bound = torch.where(torch.isfinite(lim), torch.minimum(lim, bound), bound)
+    worst = float(gap.max())
+    k = int((gap - bound).argmax())
+    confirmed = bool((gap <= bound).all())
+    out = {"verdict": CONFIRMED if confirmed else NOT_CONFIRMED, "state": "resolved",
+           "residual": _num(worst, MEASURED), "spacing": _num(step, MEASURED),
+           "floor": _num(floor, SUPPLIED), "floor_spacings": _num(steps, SUPPLIED),
+           "rounded_steps": _num(max(int(count), 1), EXACT),
+           "coefficient": {"value": COEFFICIENT, "authority": SUPPLIED, "support": COEFFICIENT_SUPPORT},
+           "criterion": CONFIRM_CRITERION, "dtype": str(dtype).removeprefix("torch.")}
+    if step:
+        out["residual_spacings"] = _num(worst / step, MEASURED)
+    if gap.numel() > 1:
+        out["index"] = k
+    if float(bound[k]) < floor:
+        out["element_limit"] = {"value": float(bound[k]), "authority": BOUND, "proof": "P20",
+                                "index": k, "basis": "the sealed worst-case bound at this element"}
+    return out
 
 
 __all__ = ["CONFIRMED", "CONFIRM_CRITERION", "CRITERION", "EFFECT", "NATIVE_ONLY", "NOT_CONFIRMED",
-           "NO_EFFECT", "UNRESOLVED", "confirm", "decide", "magnitude", "spacing"]
+           "NO_EFFECT", "UNRESOLVED", "COEFFICIENT", "confirm", "decide", "magnitude", "spacing"]

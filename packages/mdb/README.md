@@ -364,10 +364,19 @@ print({k: t.info("L1.s")[k] for k in ("state", "authority", "kind", "replica_equ
 
 `forecast` seals a prediction from values at the cursor, before native code runs; `verify`
 compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`). The
-verdict is `confirmed` when the measured residual (native - predicted, P20) is within the floor,
-a multiple of the model dtype's spacing at the consumer's magnitude (2 for a scalar, 4 for a
-margin or a vector port), else `not confirmed`; both are `resolved`. The worst-case propagated
-bound is printed only when finite and never decides:
+verdict is `confirmed` when, at every element, the measured residual (native - predicted, P20) is
+within the floor, else `not confirmed`; both are `resolved`. The floor is
+`3 x sqrt(n) x spacing`: `spacing` is the model dtype's gap at the consumer's magnitude (a margin
+is a difference of two rounded logits: the sum of their two spacings), `n` the rounded
+operations between the sealed operands and the target (their errors add as a random walk;
+`derived-exact`, a count of the forecast's chain), and `3` is `supplied`: the largest measured
+residual / (sqrt(n) x spacing) over 12264 correct forecasts on tiny Qwen2/Qwen3 (BF16 and FP32,
+2 to 28 layers) was 2.18 (see the `coefficient.support` of the result). The residual is printed
+in spacings too, so a pass near the floor is visible. An element's sealed worst-case bound
+(`bound`, finite entries only) can tighten the floor at that element and never loosen it; it is
+named in the line when it does. Spacing at an element's own magnitude is not used: a small
+element of a sum rounds at the scale of its operands (measured up to 10^4 own spacings). The
+whole-vector worst-case bound is printed only when finite:
 
 ```
 (mdb) forecast L0.p
@@ -376,7 +385,7 @@ forecast 1  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
 (mdb) verify
-forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= floor 0.0078125 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.0026798 [bound] (holds, information)
+forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] = 0.47 spacings <= floor 0.015502 [supplied P20] = 7.94 bfloat16 spacings (3 x sqrt(7 rounded ops), 3 supplied); element 4 limited by its sealed bound 0.0026096 [bound P20]  [P20, resolved]; worst-case bound 0.0026798 [bound] (holds, information)
 ```
 
 `whatif` seals the predicted change of a consumer under one edit, measures it natively on a
