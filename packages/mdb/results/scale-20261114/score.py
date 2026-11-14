@@ -159,6 +159,11 @@ for it in items:
     above = [int(s["cells"][j, 0]) for j in torch.nonzero(sel).reshape(-1)
              if abs(float(s["dM"][j])) > sc.floor(s["la"][j], s["lb"][j])]
     rec["write_window"] = (max(above) - min(above) + 1) if above else None
+    # POST HOC (not in the prereg): the same strip restricted to the item carrier's kv
+    selk = sel & (s["cells"][:, 1] == ic["cell"][1])
+    above_k = [int(s["cells"][j, 0]) for j in torch.nonzero(selk).reshape(-1)
+               if abs(float(s["dM"][j])) > sc.floor(s["la"][j], s["lb"][j])]
+    rec["write_window_kv_posthoc"] = (max(above_k) - min(above_k) + 1) if above_k else None
     band = sw_j[iid]["band_dM"]
     order = s["dM"].argsort()
     rec["concentration"] = abs(float(s["dM"][order[0]])) / abs(band) if band else None
@@ -321,6 +326,8 @@ for fam in FAMS:
          "names_country_wrong": frac([r["names_country"] for r in bad]),
          "readable_error_share_wrong": frac([r["readable_error"] for r in bad]),
          "write_window_le5_correct": frac([r["write_window"] is not None and r["write_window"] <= 5 for r in ok]),
+         "write_window_kv_le5_correct_posthoc": frac([r["write_window_kv_posthoc"] is not None and r["write_window_kv_posthoc"] <= 5 for r in ok]),
+         "write_window_median_correct": med([r["write_window"] for r in ok]),
          "concentration_correct": {"median": med([r["concentration"] for r in ok]), "iqr": iqr([r["concentration"] for r in ok])},
          "top2_share_correct": med([r["top2_share"] for r in ok]),
          "top2_adjacent_same_row": frac([r["top2_adjacent_same_row"] for r in ok]),
