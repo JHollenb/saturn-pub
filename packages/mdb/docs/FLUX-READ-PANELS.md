@@ -112,7 +112,7 @@ This is the FLUX counterpart of the Qwen hydration path in `native_replay_recipe
 
 Klein 4B, 256 px, 4 steps, BF16, TF32 off, prompts `cat` and `car`, seeds 4242 and 9001.
 
-Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
+Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. The primary verdict report is `report/e-report-20261113.txt` with `report/e-summary-20261113.json` and `report/e-verdicts-fixed-20261113.json`: all 78 records recomputed from the saved results with the verdict logic of 2026-11-13 by `qualification/panel_verdicts_recompute_20261113.py` (no new runs). `report/d-verdicts-*.json` hold the sealed-logic verdicts and are kept as history. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
 
 The sealed plans are in `qualification/flux_read_panels_20261112/plans/`:
 
@@ -128,12 +128,12 @@ The full panel holds, per word:
 - every old arm;
 - both cut types for every set;
 - the floor arms of every cut (`/sham_recompute` and `/cut_recompute` for zero cuts, `/sham` for renormalising cuts);
-- a matched random set for cut and keep (`rand0-*`, disjoint, stratum, block and mass matched with tolerance 0.02);
+- a matched random set for cut and keep (`rand0-*`, disjoint, stratum and block matched, mass searched within an absolute tolerance of 0.02). The random-control mass is each word's own write-mass share from the seed-4242 capture only (`flux_read_panel_stage.word_masses`), applied to both contexts: whether a draw is mass-matched in the 9001 context is not measured. Re-labelled with the relative rule of 2026-11-13 (within 10% of the target's mass, absolute floor 0.001), 22 of the 78 draws are matched, 52 carry less mass and 4 more; the absolute search had flagged 24 as matched, including the `own240-minus-own60` draws of ball, rain and snow with 4.3× to 11.3× the target's mass (target 0.0015 to 0.0039, control 0.0167 to 0.0189);
 - the other-item control (`@rows-<next word>`);
 - `own240-minus-own60`;
 - prompt-level `native:<pid>` and `img<-alltext` in both types, with floors.
 
-All 78 random draws were emitted, and `panel.identity` records whether each one separates identity from mass. A test checks that the `legacy` plan equals the 224 executed (seed, arm) pairs. Another checks that every one of those arms appears in `full` with the same kind, cut type, rows, units and condition.
+All 78 random draws were emitted, and `panel.identity` records whether each one separates identity from mass. The draws did not exclude the word's other named test sets: all 78 contain at least one unit of another named set of the same word (MEASURED; the overlap is about what a uniform draw gives, median 1.4× the expected count, because the named sets of a word cover a large part of the 600 heads). A test checks that the `legacy` plan equals the 224 executed (seed, arm) pairs. Another checks that every one of those arms appears in `full` with the same kind, cut type, rows, units and condition.
 
 ### Jobs
 
@@ -184,15 +184,15 @@ The comparison was done twice, both times against the saved images:
 
 `native:<pid>` equals both the old `native.<pid>.<seed>.png` and the old `arm.<pid>.<seed>.sham.png`. The gone table computed from the legacy pass equals `runs/headfree/headfree_table.json` with a maximum absolute difference of 0 over all 6 words, 2 seeds and 15 columns.
 
-Determinism across jobs: 183 (context, arm or root) keys were computed in two or more jobs, 160 arms and 23 roots. Every one has identical latent and RGB hashes. Inside each lease, every `iso:`, `del:` and `native:` arm run through the port is bit-identical to its port-free root.
+Determinism across jobs: 188 (context, arm or root) keys were computed in two or more succeeded jobs, 160 arms and 28 roots (recount by the 2026-11-13 audit; this text said 183 with 23 roots before, and the recount was not repeated in the fix pass). Every one has identical latent and RGB hashes. Inside each lease, every `iso:`, `del:` and `native:` arm run through the port is bit-identical to its port-free root.
 
 ### (b) Gone scores at new precision against the old table
 
 The gone score is `gone = (d(arm) - d(iso)) / (d(none) - d(iso))`, with `d = 1 - MAD(arm, del) / MAD(native, del)`, as in `headfree_table.py`. The "old" row is also the legacy-precision result, which is identical.
 
-The "floor bound" row is the arm's floor in gone units: `floor_px / (MAD(native, del) × span)`. The floor in px is the larger of two distances: the recompute sham's distance from iso, and the direct delta-to-recompute twin gap. By the triangle inequality, a gone difference smaller than this bound cannot be separated from arithmetic noise.
+The "floor bound" row is the arm's floor in gone units: `floor_px / (MAD(native, del) × span)`. The floor in px is the larger of two distances: the recompute sham's distance from iso, and the direct delta-to-recompute twin gap. Within one lane (two arms sharing the same del, iso and none images), the triangle inequality makes a gone difference smaller than this bound inseparable from arithmetic noise. The inequality does not cover a comparison across lanes (old precision vs new): the span differs between lanes, and the floor measures only the new lane's sham drift. Measured directly, the cross-lane image distance of an arm exceeds this floor bound in 56 of the 180 cells (up to 1.92×; audit 2026-11-13).
 
-All 6 words × 2 seeds are complete. Over the 180 cells of the report's 15 columns, the largest |new − old| is 0.08 (red 9001 own240, floor bound 0.198), and one cell exceeds its floor bound at two-decimal rounding: black 4242 `m:own60`, 0.42 vs 0.45 against a bound of 0.025. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
+All 6 words × 2 seeds are complete. Over the 180 cells of the report's 15 columns, the largest |new − old| is 0.08 (red 9001 own240, floor bound 0.198). At full precision, 0 of the 180 gone differences exceed their floor bound; the one apparent miss, black 4242 `m:own60` (0.42 vs 0.45), is a rounding artifact: |Δ| = 0.02358 against a bound of 0.02508. That the new precision stays within this floor is an OBSERVATION (0/180 gone-table cells exceed it), not a consequence of the triangle inequality, since the direct image distance exceeds the bound in 56/180 cells. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
 
 | word | seed | source | own60 | own240 | rand240 | modI | nounI | keep-own60 | keep-nounI | m:own60 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -247,9 +247,111 @@ The job confirmed the staged shared-module bytes (`attention_port` e315da2a, `at
 
 ### (d) Verdicts: `attach_results` → `arm_effects` → `verdicts`
 
-The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. These rows are copied from `report/d-verdicts-selected.json` without editing. The picture-judgement slot is empty (`picture=None`): no picture judgement was made.
+The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. The picture-judgement slot is empty (`picture=None`): no picture judgement was made. Every count in this section is MEASURED by running the named version of `verdicts()` on the same saved results (`report/d-results-px.json`, plan `94ef887e...`); no new job ran.
 
-These verdicts were computed with the shared modules that executed (`attention_panels` 31a8595b, as sealed in the plans). Both seeds are present for every record, so no record is `control_missing`. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) are reported in the JSON but never counted, and are left out of the column below.
+**Primary: all 78 records under the verdict logic of 2026-11-13** (`report/e-report-20261113.txt`, `report/e-summary-20261113.json`, records in `report/e-verdicts-fixed-20261113.json`; written by `qualification/panel_verdicts_recompute_20261113.py`).
+
+| verdict logic | supported | set_only | not_supported | control_missing |
+|---|---|---|---|---|
+| sealed: `attention_panels` 5e09d95 (sha 31a8595b), the module the plan was sealed with | 27 | 0 | 51 | 0 |
+| pre-fix: 166b334 (sha 4a39dbaa; the same file at the audited tip 420b38e), the branch's logic before this fix pass | 2 | 13 | 63 | 0 |
+| **fixed: this fix pass (primary)** | **0** | **15** | **46** | **17** |
+| fixed, with the named-unit check reported as a flag only | 2 | 14 | 61 | 1 |
+
+The sealed logic predates the verdict fixes of 2026-11-12 (9451fc8, fde00c9) and of 2026-11-13, so its table is history, not a verdict. It counted only controls flagged `separates_identity`: every other-item control (including other-item KEEP controls, which are not sufficiency controls: on ball, `keep-own60@rows-snow` does more damage than the all-cut itself) and random controls only when mass-matched. Random or external sets of the same size that were not mass-matched were ignored even when they did equal damage (`snow own120`: `rand120` 0.1156 against the test's 0.1166, sealed `supported`). Between sealed and pre-fix logic, 25 of the 78 records change; between pre-fix and fixed, 22 change.
+
+What the fix pass changed, and its effect here:
+- **Random draws that contain a named test unit are excluded.** All 78 FLUX random draws contain at least one head of another named set of the same word (the overlap is near what a uniform draw gives, because a word's named sets cover a large part of the 600 heads). Under the rule, no FLUX random control is valid: no record can be `supported`, every keep record that is not refuted first by low recovery is `control_missing`, and set size is ruled out for no record. This is the main reason for the 17 `control_missing`. With the check reported as a flag only, `black keep-modI` and `night mod` stay `supported` (each beats a disjoint random control that is mass-matched by the relative rule, on seed-4242 mass). Whether those two survive a random draw that avoids the named sets is not yet known; it needs a new draw and a new run.
+- **Other-item controls carry a mass relation** (other word's write-mass share through the same heads over this word's, seed-4242 capture). They rule out generic damage only with a share of at least 0.10 (a choice), and a heavier one (more than 10% above) cannot refute. Shares range 0.34 to 2.07 over the named sets and up to 12.8 for `own240-minus-own60` (snow), so no FLUX other-item cut is near empty. `ball noun` and `night modI` stay `not_supported`: their other-item controls (shares 1.07 and 1.06) are matched by the relative rule, so they may refute.
+- **Relative mass labels.** `snow own240-minus-own60` was `not_supported` only because of a "matched" random control carrying 11× the target's mass; re-labelled `more`, it cannot refute, and the record is `set_only` (generic damage ruled out by the other-item control). `rain own240-minus-own60` (random control 4.3× the target's mass) is `control_missing`.
+- **Effect fraction.** Every record now carries its effect as a fraction of the all-cut effect (necessity) or its recovery (sufficiency). The smallest necessity fraction of any FLUX record is 0.056 (`black own240-minus-own60`, `not_supported` anyway); no FLUX verdict depends on the 5% minimum-fraction choice (MEASURED: re-run with the bar at 0 changes no record).
+
+**The 0.7 recovery threshold is post hoc.** `DEFAULT_RECOVERY = 0.7` is not in the sealed plan; it was added to the verdict code after the plan was sealed. Every keep verdict that is `not_supported` only because recovery is below 0.7 is marked in the last column, with the status it would have without a recovery threshold. Under the fixed logic that status is `control_missing` (no valid random keep control) for 20 records. With the named-unit check as a flag only, 18 records depend on the threshold: 15 would be at most `set_only` without it and 3 (`snow`, `night`, `rain` `keep-modI`) at most `supported`; `ball keep-own60` is one of the 15 (recovery 0.698 / 0.796 zero, 0.567 / 0.736 renorm, seeds 4242 / 9001; zero 4242 misses 0.7 by 0.0024). So `ball keep-own60` is reported as **at most `set_only`**: not_supported only via a threshold that was not sealed, and mass is open in any case.
+
+Per record (necessity fraction = effect / all-cut effect; sufficiency fraction = recovery; over both cut types and both seeds):
+
+| record | claim | sealed logic | pre-fix logic | **fixed** | fixed, named check as flag | effect fraction min–max | depends on the post-hoc 0.7 recovery threshold |
+|---|---|---|---|---|---|---|---|
+| red own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.432–0.690 | – |
+| red own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.392–0.685 | – |
+| red own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.493–0.782 | – |
+| red mod | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.541–0.819 | – |
+| red noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.315–0.366 | – |
+| red modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.273–0.551 | – |
+| red nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.220–0.242 | – |
+| red own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.145–0.187 | – |
+| red keep-own60 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.655–0.740 | flag: at most set_only without it |
+| red keep-own120 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.681–0.760 | flag: at most set_only without it |
+| red keep-own240 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.672–0.804 | flag: at most set_only without it |
+| red keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.557–0.615 | fixed: control_missing without it; flag: at most set_only without it |
+| red keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.119–0.380 | fixed: control_missing without it |
+| black own60 | necessary | supported | set_only | **set_only** | set_only | 0.345–0.488 | – |
+| black own120 | necessary | supported | set_only | **set_only** | set_only | 0.579–0.709 | – |
+| black own240 | necessary | supported | set_only | **set_only** | set_only | 0.670–0.755 | – |
+| black mod | necessary | supported | set_only | **set_only** | set_only | 0.814–0.890 | – |
+| black noun | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.115–0.182 | – |
+| black modI | necessary | not_supported | not_supported | **set_only** | not_supported | 0.141–0.296 | – |
+| black nounI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.124–0.189 | – |
+| black own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.056–0.081 | – |
+| black keep-own60 | sufficient | supported | set_only | **control_missing** | set_only | 0.878–0.920 | – |
+| black keep-own120 | sufficient | supported | set_only | **control_missing** | set_only | 0.906–0.933 | – |
+| black keep-own240 | sufficient | supported | set_only | **control_missing** | set_only | 0.923–0.951 | – |
+| black keep-modI | sufficient | supported | supported | **control_missing** | supported | 0.766–0.832 | – |
+| black keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.129–0.486 | fixed: control_missing without it |
+| ball own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.409–0.602 | – |
+| ball own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.426–0.633 | – |
+| ball own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.487–0.692 | – |
+| ball mod | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.109–0.277 | – |
+| ball noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.402–0.603 | – |
+| ball modI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.096–0.161 | – |
+| ball nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.259–0.456 | – |
+| ball own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.215–0.306 | – |
+| ball keep-own60 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.567–0.796 | flag: at most set_only without it |
+| ball keep-own120 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.654–0.837 | flag: at most set_only without it |
+| ball keep-own240 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.668–0.778 | flag: at most set_only without it |
+| ball keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | -0.004–0.206 | fixed: control_missing without it |
+| ball keep-nounI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.153–0.573 | fixed: control_missing without it; flag: at most set_only without it |
+| snow own60 | necessary | supported | set_only | **set_only** | set_only | 0.331–0.451 | – |
+| snow own120 | necessary | supported | not_supported | **not_supported** | not_supported | 0.348–0.530 | – |
+| snow own240 | necessary | supported | not_supported | **not_supported** | not_supported | 0.389–0.581 | – |
+| snow mod | necessary | supported | set_only | **set_only** | set_only | 0.336–0.536 | – |
+| snow noun | necessary | supported | set_only | **set_only** | set_only | 0.337–0.455 | – |
+| snow modI | necessary | not_supported | not_supported | **set_only** | not_supported | 0.278–0.395 | – |
+| snow nounI | necessary | supported | not_supported | **set_only** | not_supported | 0.101–0.319 | – |
+| snow own240-minus-own60 | necessary | not_supported | not_supported | **set_only** | set_only | 0.285–0.427 | – |
+| snow keep-own60 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.259–0.620 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-own120 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.399–0.664 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-own240 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.475–0.675 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.213–0.450 | fixed: control_missing without it; flag: at most supported without it |
+| snow keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.134–0.290 | fixed: control_missing without it |
+| night own60 | necessary | supported | set_only | **set_only** | set_only | 0.324–0.568 | – |
+| night own120 | necessary | supported | set_only | **set_only** | set_only | 0.446–0.646 | – |
+| night own240 | necessary | supported | set_only | **set_only** | set_only | 0.587–0.810 | – |
+| night mod | necessary | supported | supported | **set_only** | supported | 0.310–0.521 | – |
+| night noun | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.118–0.249 | – |
+| night modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.150–0.272 | – |
+| night nounI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.102–0.161 | – |
+| night own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.084–0.201 | – |
+| night keep-own60 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.307–0.526 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-own120 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.400–0.597 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-own240 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.546–0.687 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.199–0.301 | fixed: control_missing without it; flag: at most supported without it |
+| night keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.004–0.076 | fixed: control_missing without it |
+| rain own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.302–0.560 | – |
+| rain own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.423–0.715 | – |
+| rain own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.584–0.717 | – |
+| rain mod | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.483–0.538 | – |
+| rain noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.398–0.686 | – |
+| rain modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.293–0.503 | – |
+| rain nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.359–0.561 | – |
+| rain own240-minus-own60 | necessary | not_supported | not_supported | **control_missing** | control_missing | 0.388–0.578 | – |
+| rain keep-own60 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.251–0.371 | fixed: control_missing without it |
+| rain keep-own120 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.229–0.415 | fixed: control_missing without it |
+| rain keep-own240 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.376–0.542 | fixed: control_missing without it; flag: at most set_only without it |
+| rain keep-modI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.175–0.289 | fixed: control_missing without it; flag: at most supported without it |
+| rain keep-nounI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.130–0.226 | fixed: control_missing without it |
+
+**Secondary, superseded: the sealed-logic table (18 records, as first reported).** These rows are copied from `report/d-verdicts-selected.json` without editing. They were computed with `attention_panels` 31a8595b (5e09d95), the module sealed with the plan, which predates the verdict fixes; do not read them as verdicts. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) were not counted by that logic and are left out of the column below.
 
 | item | unit set | claim | status | both types agree | zero cut 4242: effect / floor | renorm 4242: effect / floor | separating controls 4242 (zero): effect, margin, beyond floor | 9001 |
 |---|---|---|---|---|---|---|---|---|
@@ -272,16 +374,7 @@ These verdicts were computed with the shared modules that executed (`attention_p
 | ball | keep-modI | sufficient | not_supported | True | not_supported: 0.0913 / 0.0026 | not_supported: 0.0681 / 0.0026 | keep-rand0-modI (random) 0.0554, -0.0359, False; keep-modI@rows-snow (other_item) 0.2117, +0.1204, True | zero not_supported, renorm not_supported |
 | ball | keep-nounI | sufficient | supported | True | supported: 0.0447 / 0.0046 | supported: 0.0367 / 0.0030 | keep-nounI@rows-snow (other_item) 0.2291, +0.1843, True | zero supported, renorm supported |
 
-**Under the branch's current verdict logic.** The branch later merged a revised `attention_panels.py` (sha 4a39dbaa: one verdict vocabulary with `set_only`, mass and set-size alternatives, `low_recovery`). Running the same results through it (`report-head-logic/`) changes 4 of the 18 records; the effects, floors and controls are the same numbers:
-
-| item | unit set | sealed logic | current logic | why (current record) |
-|---|---|---|---|---|
-| black | own60 | supported | set_only | generic damage and set size ruled out; mass remains |
-| black | keep-own60 | supported | set_only | set size ruled out; mass remains |
-| ball | keep-own60 | supported | not_supported | finding `low_recovery`; mass remains |
-| ball | keep-nounI | supported | not_supported | finding `low_recovery`; mass remains |
-
-The `report` command needed one change to run under the current logic: control entries no longer always carry `separates_identity`, so the text report reads it with `.get`.
+The 18-record comparison first reported here ("changes 4 of the 18 records", `report-head-logic/`) covered only a subset; over all 78 records the pre-fix logic changes 25 records against the sealed logic (table above). The `report` command needed one change to run under the pre-fix logic: control entries no longer always carry `separates_identity`, so the text report reads it with `.get`.
 
 ## Workarounds and gaps in the shared modules
 
