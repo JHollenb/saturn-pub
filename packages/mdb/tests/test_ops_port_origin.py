@@ -228,3 +228,51 @@ def test_refusals_say_what_to_do_and_stage_nothing(tiny):
         with pytest.raises(Refused, match=message):
             dispatch(ctx, "whatif", {"target": target, "value": value, "consumer": "M[4,9]"})
     assert run.edits == [] and run.cells == []
+
+
+# --- a model on another device (M43) -----------------------------------------------------
+
+def _other_devices():
+    found = []
+    if torch.cuda.is_available():
+        found.append("cuda")
+    if torch.backends.mps.is_available():
+        found.append("mps")
+    return found or [pytest.param("none", marks=pytest.mark.skip(
+        reason="no cuda or mps device: the head-selected cross-run patch is only device-"
+               "sensitive off the host"))]
+
+
+@pytest.mark.parametrize("device", _other_devices())
+def test_head_selected_patch_on_a_second_device(device):
+    """``set`` / ``compare`` / ``whatif`` with a head selector and a value of another run, on a
+    model that lives on ``device`` (the donor block is there, the selector's index and mask are
+    built on the host): the one-head patch equals the whole-block masked edit, then steps."""
+    from mdb.engine.models import tiny_model
+
+    debugger = mdb.attach(tiny_model("qwen3", "fp32").to(device))
+    ctx = _ctx(debugger)
+    clean = debugger.runs["clean"]
+    block = clean.read("t3.L0.A")[..., _head(debugger, 1)]
+    assert block.device.type == device
+    if device == "cuda":   # the float64 chain; on mps its baseline is NaN (not this item)
+        result = dispatch(ctx, "whatif", {"target": "L0.A[h1]", "value": "clean:L0.A[h1]",
+                                          "consumer": "M[4,9]"})
+        assert result["prediction"]["state"] == "resolved"
+    compared = dispatch(ctx, "compare", {"a": "L0.A[h1]=clean:L0.A[h1]", "b": "L1.m=clean:L1.m",
+                                         "consumer": "M[4,9]"})
+    assert compared
+    result = dispatch(ctx, "set", {"target": "L0.A[h1]", "value": "clean:L0.A[h1]"})
+    assert result["edits"][0]["mask_count"] == block.numel()
+    patched = _logits(ctx.run)
+    assert patched.device.type == device
+    full = torch.zeros_like(clean.read("t3.L0.A"))
+    full[..., _head(debugger, 1)] = block
+    mask = torch.zeros(full.shape, dtype=torch.bool)
+    mask[..., _head(debugger, 1)] = True
+    assert torch.equal(patched, _direct(debugger, CORRUPT, "t3.L0.A", full, mask))
+    # a cell edit with a selector from the other run
+    dispatch(ctx, "start", {"prompt": CORRUPT})
+    cell = "cache.L0.k[kv=0,row=1:3]"
+    done = dispatch(ctx, "set", {"target": cell, "value": f"clean:{cell}"})
+    assert done["origin"]["origin"] == "clean"

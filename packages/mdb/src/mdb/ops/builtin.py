@@ -1244,8 +1244,10 @@ def origin_port_value(ctx, text: str):
                           "in one call and holds no ports; its keys and values are the cache "
                           "cells cache.L<i>.k|v[row=N], which a cell edit takes)") from None
         block = _select(ctx, source, tensor).value
-        if block.dtype != run.adapter.dtype:
-            block = block.to(run.adapter.dtype)
+        # one move: the selected block to this run's device and dtype together (a donor of
+        # another device is moved, never mixed with this run's tensors)
+        if block.dtype != run.adapter.dtype or block.device != run.adapter.device:
+            block = block.to(device=run.adapter.device, dtype=run.adapter.dtype)
         return block.detach().clone()
 
     return ctx.debugger.origin_value(branch, label, run=run, pick=pick)
@@ -1287,8 +1289,11 @@ def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
     if index is not None and isinstance(value, torch.Tensor):
         if torch.broadcast_shapes(value.shape, chosen) != chosen:
             raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
-        full = torch.zeros(shape, dtype=run.adapter.dtype)
-        full[index] = value.to(run.adapter.dtype).expand(chosen)
+        # the block is built where the value lives (a donor's value is on the model's device;
+        # the host-built index and mask move to it, the selector's tensors are tiny)
+        where = value.device
+        full = torch.zeros(shape, dtype=run.adapter.dtype, device=where)
+        full[tuple(axis.to(where) for axis in index)] = value.to(run.adapter.dtype).expand(chosen)
         value = full
     return {"value": value, "mask": mask, "selection": selection, "source": source,
             "origin": origin}
