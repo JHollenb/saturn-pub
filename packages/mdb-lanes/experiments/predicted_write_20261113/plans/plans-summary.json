@@ -1,0 +1,30 @@
+{
+ "f3": {
+  "arms": 216,
+  "branches": 216,
+  "lease_cap": 256,
+  "leases": [
+   [
+    216,
+    230
+   ]
+  ],
+  "plan_sha256": "e05b462c2a6af74c9fd393d20e5499de46b1a7840565d9270df3aedcb11f6c96"
+ },
+ "main": {
+  "arms": 312,
+  "branches": 312,
+  "lease_cap": 244,
+  "leases": [
+   [
+    240,
+    252
+   ],
+   [
+    77,
+    82
+   ]
+  ],
+  "plan_sha256": "a0c2ec13cf9ba61d5d112934b359917aa76b6d0d96515514f28deb5bc13f753f"
+ }
+}
