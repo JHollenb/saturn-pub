@@ -5,6 +5,7 @@ re-measured natively by mdb (sealed prediction, native measurement, P20 verdict)
 Qwen2.5-1.5B, bf16, CUDA, eager. Writes one JSON to argv[2].
 """
 import json
+import os
 import sys
 import time
 import warnings
@@ -207,7 +208,10 @@ torch.cuda.empty_cache()
 
 # processed TL (HookedTransformer numerics), bf16 and fp32 copies, on the CPU (the GPU is
 # shared with another job; 18-token forwards)
+PROCESSED = os.environ.get("J1_PROCESSED", "bf16").split(",")
 for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
+    if dtype_name not in PROCESSED:
+        continue
     try:
         copy = load_local(MODEL, dtype="bf16" if dtype is torch.bfloat16 else "fp32", device="cpu")
         with torch.no_grad():

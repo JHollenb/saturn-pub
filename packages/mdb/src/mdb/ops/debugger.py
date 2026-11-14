@@ -609,6 +609,12 @@ def attach(
             f"the module tree was rewritten by a TransformerLens bridge ({len(wrapped)} wrapped "
             f"modules, e.g. {wrapped[0]!r}); port hooks would not see native attention. Attach "
             "before bridging, or bridge mdb.interop.tl.shared_clone(model) (same weights)")
+    patched = [name for name, module in model.named_modules() if _rewritten_forward(module)]
+    if patched:
+        raise Refused(
+            f"{len(patched)} module(s) run a rewritten forward (e.g. {patched[0]!r}), as "
+            "nnsight's .source leaves behind; mdb's attention interceptor would not run there. "
+            "Hand the tool mdb.interop.clone.shared_clone(model) (same weights)")
     training = [name or "<model>" for name, module in model.named_modules() if module.training]
     if training:
         raise Refused(
@@ -626,6 +632,16 @@ def attach(
             raise Refused("session= names a session of a project; pass project= too")
         return Debugger(model, tokenizer, adapter)
     return _durable(model, tokenizer, adapter, project, session)
+
+
+def _rewritten_forward(module: Any) -> bool:
+    """An instance-level forward whose body is not the class's forward (duck-typed on
+    nnsight's ``Controller``: ``forward.state.body``; plain pass-through wrappers are fine)."""
+    forward = vars(module).get("forward")
+    body = getattr(getattr(forward, "state", None), "body", None)
+    if body is None:
+        return False
+    return getattr(body, "__func__", body) is not type(module).forward
 
 
 def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: str | None):

@@ -272,3 +272,25 @@ def test_batch_whatif_per_prompt_vectors_match_import_whatif():
         [row] = verify.verify(dbg, run, [verify.Claim("L1.m", "vec:t5.L1.m", "add", "M[4,9]")])
         assert row["state"] == "resolved", row.get("reason")
         assert abs(batch["arms"]["vec"]["delta"][i] - row["native"]) < 1e-5
+
+
+def test_nnsight_source_reads_leave_mdb_model_untouched():
+    """nnsight's .source rewrites attention.forward for good; nn.read uses a shared clone for
+    the eager arguments, and attach refuses a model whose forward was rewritten."""
+    _tools()
+    import mdb
+    from mdb.interop import nn
+    from mdb.ops.errors import Refused
+
+    warnings.filterwarnings("ignore")
+    model = _model("qwen2", "bf16")
+    nn.read(nn.wrap(model), TOKENS[:1], ["L0.qr", "L0.kr", "L0.A"])
+    run = mdb.attach(model).run(TOKENS[0])
+    run.until("logits")
+    assert tuple(run.read("t5.L0.qr").shape) == (1, 2, 1, 8)
+    other = _model("qwen2", "bf16")
+    nm = nn.wrap(other)
+    with torch.no_grad(), nm.trace(torch.tensor(TOKENS[:1])):
+        nm.model.layers[0].self_attn.source.attention_interface_1.inputs.save()
+    with pytest.raises(Refused, match="rewritten forward"):
+        mdb.attach(other)

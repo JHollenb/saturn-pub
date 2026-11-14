@@ -15,26 +15,13 @@ from collections.abc import Iterable, Sequence
 from typing import Any
 
 from . import names
+from .clone import shared_clone
 
 
 def version() -> str:
     from importlib.metadata import version as _v
 
     return _v("transformer-lens")
-
-
-def shared_clone(model: Any) -> Any:
-    """A new module tree over the SAME parameter and buffer tensors (no weight copy).
-
-    ``boot_transformers(hf_model=...)`` rewrites the module tree it is given in place
-    (measured: 33 -> 155 modules, every decoder layer becomes a ``BlockBridge``, attention a
-    ``PositionEmbeddingsAttentionBridge``; ``mdb.trace`` then refuses ``p`` because native eager
-    attention no longer runs). Bridging a shared clone leaves mdb's module tree untouched while
-    both read one copy of the weights."""
-    import copy
-
-    memo = {id(t): t for t in list(model.parameters()) + list(model.buffers())}
-    return copy.deepcopy(model, memo)
 
 
 def bridge(model: Any, tokenizer: Any, *, name: str | None = None,

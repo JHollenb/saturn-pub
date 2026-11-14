@@ -73,11 +73,16 @@ def read(nm: Any, tokens: Sequence[Sequence[int]], addresses_: Sequence[str],
             saved[address] = envoy(nm, address).save()
     # the eager-attention arguments come through ``.source``, which must be requested before
     # the attention forward starts; one more trace per layer keeps the requests in order
+    # (on a weight-sharing clone: ``.source`` rewrites the attention module's forward for good)
+    if eager:
+        from .clone import shared_clone
+
+        nm_source = wrap(shared_clone(nm._module))
     for layer in sorted({names._split(a)[0] for a in eager}):
         here = sorted((a for a in eager if names._split(a)[0] == layer), key=_execution_key)
-        with torch.no_grad(), nm.trace(ids):
+        with torch.no_grad(), nm_source.trace(ids):
             for address in here:
-                saved[address] = envoy(nm, address).save()
+                saved[address] = envoy(nm_source, address).save()
     out = {}
     rows = range(ids.shape[1]) if rows is None else rows
     for address, value in saved.items():
