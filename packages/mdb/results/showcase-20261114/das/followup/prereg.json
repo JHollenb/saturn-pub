@@ -1,0 +1,39 @@
+{
+ "experiment": "11b follow-up: (Q1) country-readout-span lead = test-country identity or vocabulary size; (Q2) rank-matched SAE sweep vs the readout span",
+ "written": "2026-11-14T14:15-08:00 (from `date`; the seal is this file's commit, which precedes the scored jobs; smoke job runs on the same commit)",
+ "status": "sealed before the scored job; smoke first; single seed 20261114; no training anywhere (readout spans, SAE images and exp7's per-pair SAE set are weights + a declared token/feature set)",
+ "owner_task": "settle audit corrections 1 and 5 of das/AUDIT-DAS.md",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA (Beast, mrun); cell L20 KV6 value at the frozen R_argmax carrier row (common.CARRIER)",
+ "test_set": "exp7's 64 Run 1a pairs (recipient, different-bridge donor), consumer M[answer, donor answer]; scoring = das.py score exactly: native run prefill = first span row -> carrier row; interchange v[kv6] := v + Q Q^T (v_donor - v) on mdb branches (prefill = carrier row, checkpoint at t<crow>.L20.h), floor = 2 bf16 spacings at the larger |logit| (asserted equal to common.floor_of); margin 1 (2-spacing floor) and margin 4 (4 floors)",
+ "vocab_file": "followup/vocab.json (frozen by gen_vocab.py from the tokenizer and das/out/bases.pt meta; sha256 recorded in every score record)",
+ "arms": {
+  "whole": "donor cell value",
+  "full69_k{1,2,4,8,16,32,64}": "11b symtab: readout_subspace over the 69 tokens of das/out/bases.pt (28 test + 41 other countries); reproduction check, expected = 11b symtab arm",
+  "a69_k{8,16,32,64}": "Q1(a): readout_subspace over 69 single-token country names with NO test country: the 41 non-test tokens of the 11b vocabulary (38 training countries + 3 others) + 28 extras drawn with random.Random(20261114).sample from the name-sorted single-token sovereign-country candidates (vocab.json a69; all single-token, no multi-piece fallback needed)",
+  "aall_k{8,16,32,64}": "Q1(a'): the same without subsampling: 41 + all 50 single-token extras (91 tokens, no test country)",
+  "lto_k{8,16,32,64}": "Q1(b): per pair, the 11b 69-token vocabulary minus the recipient's and the donor's country tokens (67 tokens; the other 26 test countries stay)",
+  "saeA_k{1,2,4,8,16,32}": "Q2 rule A (test-free): top-k of the 58 census country features (exp1/census.json) ranked by the norm of the cell image W_V^g(gamma d_f) of the decoder direction (weights only; rho divides out), ties by feature id; subspace = span of the k images (the image span is rho-independent: asserted per pair)",
+  "saeB_k{...}": "Q2 rule B (TEST-INFORMED: the census items include the 64 base items): the census's own evidence order: share on its country k/n desc, off-country count asc, feature id asc",
+  "saeC_k{...}": "Q2 rule C (TEST-INFORMED, per pair): exp7's per-pair feature set (census features active at L19 at the carrier row of recipient or donor) ranked by rule A, truncated to k (equals exp7's sae arm once k >= its rank)",
+  "sae": "exp7's per-pair SAE pushforward subspace (reproduction: expected 4/64)"
+ },
+ "ks": {"Q1": [8, 16, 32, 64], "Q2": [1, 2, 4, 8, 16, 32], "readout_reference": [1, 2, 4, 8, 16, 32, 64]},
+ "baseline_11b_flips_margin1": {"full69": {"8": 2, "16": 15, "32": 35, "64": 43}, "train38_only_symtr": {"8": 0, "16": 6, "32": 16}, "DAS_heldout": {"8": 1, "16": 4, "32": 16}, "whole": 44, "sae_exp7": 4},
+ "decision_rule_Q1": "at k=32, margin 1: a69 >= 28/64 (>= 0.8 of 35) = vocabulary size explains the lead; a69 <= 20/64 = test identity explains it (38 -> 69 tokens without the test countries does not help); 21..27 = mixed. Same reading at margin 4 and at k=16.",
+ "predictions": {
+  "V1": "a69 at k=32 >= 24/64 (size is the main factor)",
+  "V1_falsifier": "a69 at k=32 <= 20/64",
+  "V2": "lto at k=32 >= 30/64 (dropping only the pair's own two countries barely hurts)",
+  "V2_falsifier": "lto at k=32 <= 25/64 (the pair's own countries' tokens carry the lead)",
+  "V3": "aall at k=32 >= a69 at k=32 - 3 (more tokens do not hurt)",
+  "V4": "reproduction: full69_k{k} M equals 11b symtab{k} M within one floor on every pair (bitwise expected), whole 44/64, sae 4/64, full69_k32 = 35/64",
+  "V5": "saeA (test-free rank-matched SAE) at k=32 flips < 18/64 and below full69 at k=16 and 32",
+  "V5_falsifier": "saeA at k=32 >= full69 at k=32 (35)",
+  "V6": "no SAE rule (A, B, C) exceeds full69 flips at k=16 or k=32 (readout span still leads at matched rank)",
+  "V6_falsifier": "any SAE rule at k=16 or k=32 flips more pairs than full69 at the same k",
+  "V7": "at k=4 the per-pair rule C moves a larger median fraction of the whole-cell margin change than full69_k4 (11b: 0.19), i.e. the SAE is the better handle per dimension at small rank",
+  "V7_falsifier": "saeC_k4 median fraction moved <= full69_k4's"
+ },
+ "labels": "all numbers MEASURED, not audited; saeB and saeC are test-informed and labelled so wherever shown; saeA, a69, aall are test-free (weights + a declared set)",
+ "not_run": "other seeds; same-bridge null pairs; DAS retraining; multi-piece first-subword country tokens (enough single-token countries exist)"
+}
