@@ -189,5 +189,14 @@ POOL = declare_kind(
                    "labels.**", "items_omitted"),
 )
 
-__all__ = ["BRANCHES", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+# ``core-file`` (gap audit P2): a run's prefix (K/V of every layer at a row start, the prompt,
+# captured values) written once; the record holds every tensor's sha256 so a reload is checked.
+CORE_FILE = declare_kind(
+    "core-file",
+    required=("schema", "split", "prompt", "shape", "source", "tensors", "custody"),
+    plain_numeric=("split.row", "split.tokens", "prompt.tokens", "prompt.length", "shape.**",
+                   "procedure.**", "path_edits.**", "tensors.count"),
+)
+
+__all__ = ["BRANCHES", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

@@ -701,6 +701,14 @@ class Run:
     def read(self, target: str | None = None) -> torch.Tensor:
         return self._read(target)[0]
 
+    def dump(self, path: Any, *, row: int | None = None,
+             capture: tuple[str, ...] | None = None) -> dict[str, Any]:
+        """Write a core file of this run split at ``t<row>.start`` (``engine.core_file.dump``):
+        reload it with ``core_file.load(path).run(adapter)`` on any device/dtype (P2)."""
+        from . import core_file
+
+        return core_file.dump(self, path, row=row, capture=capture)
+
     def ref(self, target: str) -> Any:
         """The value at ``ADDR[sel]`` (a port or stop occurrence, or ``cache.L<l>.k|v[...]``)
         with its origin pointer, as an ``engine.refs.ValueRef``: pass it to another run's

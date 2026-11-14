@@ -136,9 +136,12 @@ class ComponentBinding(Binding):
     active: list[int] = field(default_factory=list)
     acts: dict[int, float] = field(default_factory=dict)
     provenance: dict[str, Any] = field(default_factory=dict)
+    site: str = "value-cell"       # "value-cell" (a V cell) | "mlp-write" (t<r>.L<l>.m)
 
     @property
     def cell(self) -> str:
+        if self.site == "mlp-write":
+            return f"t{self.row}.L{self.layer}.m"
         return f"cache.L{self.layer}.v[kv{self.kv},row={self.row}]"
 
     def get(self, name: str) -> Component:
@@ -165,11 +168,14 @@ class ComponentBinding(Binding):
                            "against its float64 image (measured, not a component)"}
 
     def image(self, residual: Any) -> Any:
-        """The cell image ``W_V^g (rho gamma * x)`` of a residual vector at the native rho."""
+        """The cell image ``W_V^g (rho gamma * x)`` of a residual vector at the native rho (an
+        MLP-write binding's site is the residual stream itself: the identity)."""
+        if self.map is None:
+            return f64(residual).reshape(-1)
         return self.map @ f64(residual).reshape(-1)
 
     def feature_value(self, feature: int, activation: float, basis: Any) -> Any:
-        """The cell image of ``activation * d_f`` (a supplied activation, e.g. a donor's)."""
+        """The site image of ``activation * d_f`` (a supplied activation, e.g. a donor's)."""
         return self.image(basis.direction(int(feature)) * float(activation))
 
     def edited(self, *, remove: tuple[str, ...] = (), add: Any = None) -> Any:
@@ -274,6 +280,53 @@ def component_binding(run: Any, name: str, cell: str, basis: Any, *,
                             acts=acts, provenance=provenance)
 
 
+def transcoder_binding(run: Any, name: str, site: str, basis: Any, *,
+                       features: list[int] | None = None) -> ComponentBinding:
+    """The MLP write ``t<r>.L<l>.m`` split by a transcoder (``sae.TranscoderBasis``, gap audit
+    P3): one component per listed feature (default: every active one), ``other_features``,
+    ``bdec`` and ``error`` (= native ``m`` minus the reconstruction: the binding's ``Unbound``).
+    The same decomposition family as the value-cell binding and ``SubspaceBinding.decompose``:
+    ``component_table`` reads it (the write reaches a scalar consumer at row ``r`` directly, P19),
+    ``edited(remove=...)`` gives the value a ``Run.set`` at ``m`` writes, ``feature_value`` a
+    supplied activation's write. ``native`` is the measured ``m``; ``linear`` equals it (the
+    error closes the identity)."""
+    match = re.match(r"^t(\d+)\.L(\d+)\.m$", site.replace(" ", ""))
+    if not match:
+        raise Refusal(f"a transcoder binding is over one MLP write t<r>.L<l>.m, not {site!r}")
+    row, layer = (int(x) for x in match.groups())
+    if getattr(basis, "kind", None) != "transcoder":
+        raise Refusal(f"{getattr(basis, 'name', basis)} is not a transcoder (reads L<l>.n, "
+                      "writes L<l>.m)")
+    if basis.layer != layer:
+        raise Refusal(f"transcoder {basis.name} is of L{basis.layer}, not L{layer}")
+    if row < int(run.first_row):
+        raise Refusal(f"t{row} was prefilled (first stepped row t{run.first_row}): its MLP "
+                      "input was never stopped at")
+    torch = _torch()
+    n = run.read(f"t{row}.L{layer}.n")
+    m = run.read(f"t{row}.L{layer}.m")
+    dec = basis.decompose(n, m)
+    acts = {int(f): float(a) for f, a in zip(dec.ids, dec.acts.tolist())}
+    keep = list(dec.ids) if features is None else [int(f) for f in features]
+    comps: list[Component] = []
+    lumped = torch.zeros_like(dec.x)
+    for col, f in enumerate(dec.ids):
+        if f not in keep:
+            lumped = lumped + dec.parts[:, col]
+    for f in keep:
+        part = dec.parts[:, dec.ids.index(f)] if f in acts else torch.zeros_like(dec.x)
+        comps.append(Component(f"feature[{f}]", f, acts.get(f, 0.0), part, part))
+    comps.append(Component("other_features", None, None, lumped, lumped))
+    comps.append(Component("bdec", None, None, dec.bias, dec.bias))
+    comps.append(Component("error", None, None, dec.error, dec.error))
+    return ComponentBinding(name, "component", [], [site], row=row, layer=layer, kv=-1, rho=0.0,
+                            basis=basis.describe(), components=comps, native=dec.x,
+                            linear=dec.x, v_bias=None, map=None, active=list(dec.ids),
+                            acts=acts, site="mlp-write",
+                            provenance={"decomposition": "transcoder", "n": "live Run.read",
+                                        "native_write": "live Run.read", "offline": False})
+
+
 def _group(run: Any, binding: ComponentBinding, reader_row: int) -> tuple[Any, list[int], Any]:
     """``(p[h, r] for heads of the group, heads, W_O blocks (H_g, d, d_h))`` at reader row."""
     from .reads import head_mix, layer_module
@@ -292,7 +345,13 @@ def _group(run: Any, binding: ComponentBinding, reader_row: int) -> tuple[Any, l
 def write_of(run: Any, binding: ComponentBinding, value: Any, reader_row: int,
              group: tuple | None = None) -> Any:
     """``sum_h p[h, r] W_O,h value`` (d,) float64: what a cell value writes into the reader row
-    at the native attention weights."""
+    at the native attention weights. An MLP-write binding writes its value into its own row
+    (the reader row must be that row)."""
+    if getattr(binding, "site", "value-cell") == "mlp-write":
+        if reader_row != binding.row:
+            raise Refusal(f"{binding.cell} writes row {binding.row} only; a consumer at "
+                          f"t{reader_row} reads it through later layers (not a direct term)")
+        return f64(value).reshape(-1)
     p, heads, blocks = group or _group(run, binding, reader_row)
     v = f64(value).reshape(-1)
     return sum(float(p[i]) * (blocks[i] @ v) for i in range(len(heads)))
@@ -310,8 +369,12 @@ def component_table(run: Any, binding: ComponentBinding, consumer: Any = None, *
     if not reader.scalar:
         raise Refusal("component_table needs a scalar consumer (Margin or Logit)")
     j = int(reader.row)
-    group = _group(run, binding, j)
-    p = group[0]
+    mlp = getattr(binding, "site", "value-cell") == "mlp-write"
+    group = None if mlp else _group(run, binding, j)
+    if mlp and j != binding.row:
+        raise Refusal(f"{binding.cell} reaches t{j} only through later layers: use a consumer "
+                      f"at t{binding.row}")
+    p = None if mlp else group[0]
     c = f64(reader.vector).reshape(-1).cpu()
     native_effect = float(c @ write_of(run, binding, binding.native, j, group))
     linear_effect = float(c @ write_of(run, binding, binding.linear, j, group))
@@ -338,8 +401,10 @@ def component_table(run: Any, binding: ComponentBinding, consumer: Any = None, *
     return {
         "cell": binding.cell, "binding": binding.name, "consumer": reader.text,
         "reader_row": j,
-        "mass": {**num(float(p.sum()), EXACT), "inherited": "the cell's mass (sum of p over "
-                 "the KV group's heads at the reader row); a component has no mass of its own"},
+        "mass": ({"state": "not applicable", "reason": "an MLP write is added to its own row's "
+                  "residual stream (no attention weight)"} if mlp else
+                 {**num(float(p.sum()), EXACT), "inherited": "the cell's mass (sum of p over "
+                  "the KV group's heads at the reader row); a component has no mass of its own"}),
         "cell_to_consumer": num(native_effect, EXACT, "P19"),
         "linear_to_consumer": num(linear_effect, EXACT, "P19"),
         "rounding_to_consumer": num(native_effect - linear_effect, MEASURED),
@@ -353,4 +418,5 @@ def component_table(run: Any, binding: ComponentBinding, consumer: Any = None, *
     }
 
 
-__all__ = ["ResidualCapture", "Component", "ComponentBinding", "component_binding", "component_table", "write_of"]
+__all__ = ["ResidualCapture", "Component", "ComponentBinding", "component_binding", "component_table",
+           "transcoder_binding", "write_of"]

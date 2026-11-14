@@ -220,6 +220,235 @@ class FeatureBasis:
         return sae.to(device).eval()
 
 
+@dataclass
+class TranscoderBasis:
+    """A transcoder (gap audit P3): a dictionary that READS the MLP input ``L<l>.n`` and WRITES
+    the MLP output ``L<l>.m``. mwhanna layout (SAELens ``mwhanna_transcoder`` loader, verified in
+    the library review): ``acts = relu(W_enc n + b_enc)`` (every positive pre-activation is
+    active, no top-k), no ``b_dec`` subtracted from the input, and the write
+
+        m = b_dec + sum_{f active} a_f d_f + e
+
+    with ``d_f`` the rows of the stored ``W_dec (d_sae, d)`` (held as a ``(d, d_sae)`` view, as
+    ``FeatureBasis``) and ``e = m - b_dec - sum a_f d_f`` the error against the NATIVE ``m``
+    (defined as the remainder, so the identity closes to float64 roundoff; never dropped). The
+    active set is chosen in float32 (``x`` widened exactly), the activations recomputed in float64
+    from the native bits (rows sliced, then cast), as exp3/exp4 did by hand. Same interface as
+    ``FeatureBasis`` (``encode``, ``direction(s)``, ``bias``, ``describe``) plus ``decompose(n,
+    m)``; ``components.transcoder_binding`` makes it a ``ComponentBinding`` of the MLP write."""
+
+    name: str
+    layer: int
+    W_enc: Any
+    b_enc: Any
+    W_dec: Any
+    b_dec: Any
+    source: dict[str, Any] = field(default_factory=dict)
+    read_port: str = "n"
+    write_port: str = "m"
+    kind: str = "transcoder"
+
+    def __post_init__(self) -> None:
+        d_sae, d = (int(x) for x in self.W_enc.shape)
+        if tuple(self.W_dec.shape) == (d_sae, d):
+            self.W_dec = self.W_dec.T
+        if (tuple(self.W_dec.shape) != (d, d_sae) or tuple(self.b_enc.shape) != (d_sae,)
+                or tuple(self.b_dec.shape) != (d,)):
+            raise SaeError(f"transcoder {self.name} L{self.layer}: shapes W_enc "
+                           f"{tuple(self.W_enc.shape)} W_dec {tuple(self.W_dec.shape)} b_enc "
+                           f"{tuple(self.b_enc.shape)} b_dec {tuple(self.b_dec.shape)} do not "
+                           "form one dictionary")
+
+    port = property(lambda self: self.read_port)
+    d_model = property(lambda self: int(self.W_enc.shape[1]))
+    d_sae = property(lambda self: int(self.W_enc.shape[0]))
+
+    @property
+    def site(self) -> str:
+        return f"L{self.layer}.{self.read_port}->L{self.layer}.{self.write_port}"
+
+    def covers(self, layer: int, port: str) -> bool:
+        """True for the read site ``L<layer>.n`` (the value it encodes)."""
+        return (layer, port) == (self.layer, self.read_port)
+
+    _vector = FeatureBasis._vector
+    direction = FeatureBasis.direction
+    directions = FeatureBasis.directions
+    bias = FeatureBasis.bias
+
+    def select(self, x: Any) -> tuple[list[int], Any]:
+        """Every feature whose float32 pre-activation ``W_enc x + b_enc`` is positive, by
+        descending value."""
+        flat, torch = self._vector(x)
+        pre = torch.addmv(self.b_enc.to(self.W_enc.dtype), self.W_enc,
+                          flat.to(self.W_enc.dtype)).float()
+        ids = (pre > 0).nonzero().reshape(-1)
+        values = pre.index_select(0, ids)
+        order = values.argsort(descending=True)
+        return [int(i) for i in ids[order].tolist()], values[order]
+
+    def encode(self, x: Any) -> dict[str, Any]:
+        """``{ids, acts}``: active set and float64 ``relu(W_enc[ids] x + b_enc[ids])`` (a feature
+        whose float64 activation is 0 is dropped)."""
+        torch = _torch()
+        flat, _ = self._vector(x)
+        ids, _ = self.select(flat)
+        index = torch.tensor(ids, dtype=torch.long)
+        rows = self.W_enc.index_select(0, index).to(torch.float64)
+        acts = torch.relu(rows @ flat.to(torch.float64)
+                          + self.b_enc.index_select(0, index).to(torch.float64))
+        keep = acts > 0
+        return {"ids": [i for i, k in zip(ids, keep.tolist()) if k], "acts": acts[keep]}
+
+    def decompose(self, x: Any, native: Any = None) -> Decomposition:
+        """``m = b_dec + D a + e`` for MLP input ``x`` (``n``) and native output ``native``
+        (``m``; without it the error is not defined and is returned as zeros, ``x`` keeps the
+        reconstruction)."""
+        torch = _torch()
+        enc = self.encode(x)
+        D = self.directions(enc["ids"])
+        parts = D * enc["acts"]
+        bias = self.bias()
+        recon = bias + parts.sum(dim=1)
+        if native is None:
+            m64, error = recon, torch.zeros_like(recon)
+        else:
+            m64 = f64(native).reshape(-1).cpu()
+            if m64.numel() != recon.numel():
+                raise SaeError(f"native MLP write has {m64.numel()} values, the transcoder "
+                               f"writes {recon.numel()}")
+            error = m64 - recon
+        return Decomposition(self, m64, enc["ids"], enc["acts"], D, parts, bias, recon, error)
+
+    def describe(self) -> dict[str, Any]:
+        return {"name": self.name, "kind": "transcoder", "layer": self.layer, "site": self.site,
+                "reads": f"L{self.layer}.{self.read_port}",
+                "writes": f"L{self.layer}.{self.write_port}", "activation": "relu",
+                "d_model": self.d_model, "d_sae": self.d_sae, "source": dict(self.source),
+                "saelens": {"hook_name": f"blocks.{self.layer}.mlp.hook_in",
+                            "hook_name_out": f"blocks.{self.layer}.hook_mlp_out",
+                            "architecture": "transcoder (mwhanna layout)",
+                            "apply_b_dec_to_input": False},
+                "circuit_tracer": {"node_id": f"{self.layer}_<feature>_<pos>",
+                                   "error_node_id": f"0_{self.layer}_<pos>"}}
+
+    def to_saelens(self, device: str = "cpu") -> Any:
+        """The same dictionary as a SAELens ``Transcoder`` (``sae_lens`` 6.x), configured as the
+        ``mwhanna_transcoder`` loader configures it (relu, no input normalisation,
+        ``apply_b_dec_to_input`` False, ``hook_name``/``hook_name_out``), strict state-dict load
+        with ``W_enc`` transposed to SAELens's ``(d_in, d_sae)`` as that loader does."""
+        from sae_lens import SAE
+
+        cfg = {"architecture": "transcoder", "d_in": self.d_model, "d_out": self.d_model,
+               "d_sae": self.d_sae, "dtype": "float32", "device": device,
+               "activation_fn": "relu", "normalize_activations": "none",
+               "apply_b_dec_to_input": False,
+               "metadata": {"hook_name": f"blocks.{self.layer}.mlp.hook_in",
+                            "hook_name_out": f"blocks.{self.layer}.hook_mlp_out"}}
+        sae = SAE.from_dict(cfg)
+        sae.load_state_dict({"W_enc": self.W_enc.T.contiguous().float(),
+                             "W_dec": self.W_dec.T.contiguous().float(),
+                             "b_enc": self.b_enc.float(), "b_dec": self.b_dec.float()},
+                            strict=True)
+        return sae.to(device).eval()
+
+    def node(self, row: int, feature: int) -> dict[str, Any]:
+        """The circuit-tracer node of ``feature`` at ``row`` (``foreign_names.ct_node``)."""
+        from mdb.core.foreign_names import ct_node
+
+        return ct_node(self.layer, row, feature)
+
+
+@dataclass
+class TranscoderSet:
+    """Per-layer transcoders from a directory (mwhanna layout: ``layer_<L>.safetensors`` with
+    ``W_enc W_dec b_enc b_dec``; ``layer<L>.*.pt`` with the same keys also read), loaded on first
+    use, at most ``cache`` layers kept."""
+
+    name: str
+    path: str
+    files: dict[int, str]
+    cache: int = 4
+    config: dict[str, Any] = field(default_factory=dict)
+    verify: bool = False
+    _loaded: OrderedDict = field(default_factory=OrderedDict, repr=False)
+    hashes: dict[int, dict[str, Any]] = field(default_factory=dict)
+    port = "n"
+
+    @property
+    def layers(self) -> tuple[int, ...]:
+        return tuple(sorted(self.files))
+
+    def describe(self) -> dict[str, Any]:
+        return {"name": self.name, "kind": "transcoder", "path": self.path,
+                "layers": list(self.layers), "reads": "L<l>.n", "writes": "L<l>.m",
+                "model": self.config.get("model_name"), "loaded": list(self._loaded),
+                "files": {str(k): v for k, v in sorted(self.hashes.items())}}
+
+    def for_site(self, layer: int, port: str) -> TranscoderBasis | None:
+        return self.get(layer) if port == "n" and layer in self.files else None
+
+    def get(self, layer: int) -> TranscoderBasis:
+        torch = _torch()
+        if layer not in self.files:
+            raise SaeError(f"transcoder set {self.name} has no layer {layer} (has "
+                           f"{', '.join(map(str, self.layers))})")
+        if layer in self._loaded:
+            self._loaded.move_to_end(layer)
+            return self._loaded[layer]
+        path = self.files[layer]
+        try:
+            if path.endswith(".safetensors"):
+                from safetensors.torch import load_file
+
+                state = load_file(path, device="cpu")
+            else:
+                state = torch.load(path, map_location="cpu", weights_only=True)
+        except Exception as error:  # noqa: BLE001 - reported as a refusal
+            raise SaeError(f"cannot load {path}: {type(error).__name__}: {error}") from None
+        missing = [key for key in ("W_enc", "W_dec", "b_enc", "b_dec") if key not in state]
+        if missing:
+            raise SaeError(f"{path} lacks {', '.join(missing)}")
+        info: dict[str, Any] = {"file": os.path.basename(path), "bytes": os.path.getsize(path),
+                                "keys": sorted(state)}
+        if self.verify:
+            info["sha256"] = _sha256(path)
+        self.hashes[layer] = info
+        basis = TranscoderBasis(self.name, layer, state["W_enc"], state["b_enc"], state["W_dec"],
+                                state["b_dec"], {"set": self.name, "path": path, **info})
+        self._loaded[layer] = basis
+        while len(self._loaded) > max(1, self.cache):
+            self._loaded.popitem(last=False)
+        return basis
+
+
+def open_transcoders(name: str, path: str, *, layers: Sequence[int] | None = None,
+                     cache: int = 4, verify: bool = False) -> TranscoderSet:
+    """A ``TranscoderSet`` over a directory (``layer_<L>.safetensors`` or ``layer<L>*.pt``;
+    ``config.json`` read when present). Nothing is loaded until a layer is used."""
+    path = os.path.abspath(os.path.expanduser(path))
+    if not os.path.isdir(path):
+        raise SaeError(f"no transcoder directory at {path}")
+    files: dict[int, str] = {}
+    for entry in os.listdir(path):
+        match = re.fullmatch(r"layer_?(\d+)(?:\.[\w-]+)*\.(safetensors|pt)", entry)
+        if match:
+            files[int(match[1])] = os.path.join(path, entry)
+    if not files:
+        raise SaeError(f"{path} holds no layer_<L>.safetensors / layer<L>.pt files")
+    if layers is not None:
+        wanted = {int(x) for x in layers}
+        absent = sorted(wanted - set(files))
+        if absent:
+            raise SaeError(f"{path} has no layer(s) {', '.join(map(str, absent))}")
+        files = {k: v for k, v in files.items() if k in wanted}
+    config: dict[str, Any] = {}
+    cfg = os.path.join(path, "config.json")
+    if os.path.isfile(cfg):
+        config = json.load(open(cfg, encoding="utf-8"))
+    return TranscoderSet(name, path, files, cache=int(cache), config=config, verify=verify)
+
+
 # SAELens 6.55.5 ``pretrained_saes.yaml`` releases of the Qwen-Scope residual suites
 # (``conversion_func: qwen_scope``; sae ids ``layer<L>``; hook ``blocks.<L>.hook_resid_post``).
 _SAELENS_RELEASES = {
@@ -794,5 +1023,6 @@ def trace_feature(run: Any, basis: FeatureBasis, feature: int, row: int, *,
             "neurons": neurons}
 
 
-__all__ = ["Decomposition", "FIRST_ROW_CAVEAT", "FeatureBasis", "circuit", "saelens_ref", "match_unit", "trace_feature", "unit_vector", "SaeError", "SaeSet", "edit_vector", "is_expression",
+__all__ = ["Decomposition", "FIRST_ROW_CAVEAT", "FeatureBasis", "TranscoderBasis", "TranscoderSet",
+           "open_transcoders", "circuit", "saelens_ref", "match_unit", "trace_feature", "unit_vector", "SaeError", "SaeSet", "edit_vector", "is_expression",
            "logit_lens", "margin_split", "open_set", "parse_terms", "SCHEMA", "SUPPLIED", "LOCAL"]

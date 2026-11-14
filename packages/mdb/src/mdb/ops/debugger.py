@@ -486,6 +486,20 @@ class Debugger:
 
         return collect(self, items, address, **options)
 
+    def run_from(self, core: Any, *, name: str | None = None, check: bool = True,
+                 lookahead: str = "none") -> Run:
+        """A run of this debugger's model (its device and dtype) from a core file (a path or an
+        ``engine.core_file.CoreFile``), rooted at the dump's split, with the null check on load
+        as ``run.core_check`` (P2)."""
+        from mdb.engine import core_file
+
+        loaded = core if isinstance(core, core_file.CoreFile) else core_file.load(core)
+        run = loaded.run(self.adapter, lookahead=lookahead, check=check,
+                         name=run_name(name or "core"))
+        self.runs[run.name] = run
+        self.live = run
+        return run
+
     @staticmethod
     def custody(*, script: Any = None, prereg: Any = None, kernel_path: str | None = None,
                 note: str | None = None) -> dict[str, Any]:

@@ -67,14 +67,16 @@ def parse_feature_address(text: str) -> FeatureAddress:
 
 
 def activations(run: Any, basis: Any, row: int, layer: int) -> dict[int, float]:
-    """``{feature: a_f}`` of the active set at ``t<row>.L<layer>.h`` (float64)."""
-    if not basis.covers(layer, "h"):
-        raise Refusal(f"basis {basis.name} at {basis.site} does not hold L{layer}.h")
-    if row == 0:
+    """``{feature: a_f}`` of the active set at ``t<row>.L<layer>.h`` (float64); for a transcoder
+    (``read_port`` ``n``) at its read site ``t<row>.L<layer>.n``."""
+    port = getattr(basis, "read_port", "h")
+    if not basis.covers(layer, port):
+        raise Refusal(f"basis {basis.name} at {basis.site} does not hold L{layer}.{port}")
+    if row == 0 and port == "h":
         from .sae import FIRST_ROW_CAVEAT
 
         raise Refusal(f"t0: {FIRST_ROW_CAVEAT}")
-    enc = basis.encode(run.read(f"t{row}.L{layer}.h"))
+    enc = basis.encode(run.read(f"t{row}.L{layer}.{port}"))
     return {int(f): float(a) for f, a in zip(enc["ids"], enc["acts"].tolist())}
 
 
