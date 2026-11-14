@@ -42,7 +42,7 @@ Built-in nulls (each derived from an arm ``like`` and recorded with its rule):
 
 ``batched(recheck=k)`` measures state-cell arms in one batched forward per chunk
 (``sweep.cell_sweep``; kernel path ``batched``, with its measured null-vs-stepped delta added to
-the floor of those arms) and re-measures the ``k`` largest on the stepped path (the exp5 pattern).
+the floor of those arms; twice the delta: a margin is a difference of two logits) and re-measures the ``k`` largest on the stepped path (the exp5 pattern).
 
 ``interchange`` (subspace.py) builds on this object.
 """
@@ -127,6 +127,18 @@ def _safe(value: Any, authority: str) -> Any:
     return str(value)
 
 
+_KEEP = ("port", "op", "value", "selection", "mask_count", "origin", "row", "layer",
+         "realised_exact", "realised_max_abs_error", "cell")
+
+
+def _keep(entry: dict[str, Any]) -> dict[str, Any]:
+    """The fields of a committed edit/cell record a branches record keeps."""
+    entry = {k: v for k, v in entry.items() if k in _KEEP}
+    if isinstance(entry.get("realised_max_abs_error"), float):
+        entry["realised_max_abs_error"] = num(entry["realised_max_abs_error"], MEASURED)
+    return entry
+
+
 class Branches:
     """Named native branches of ``run`` from one checkpoint (module docstring)."""
 
@@ -147,6 +159,10 @@ class Branches:
                 run.rewind(at)
         self.at = run.where
         self.checkpoint = run.checkpoint(f"{name}:at")
+        # edits and cells committed on the path BEFORE the branch point (an arm's own edits are
+        # those fired from here on): recorded once under ``at``, never in an arm row
+        self.path = {"edits": [_keep(e) for e in run.committed_edits()],
+                     "cells": [_keep(c) for c in run.committed_cells()]}
         self.calibration, self.stable_floors = calibration, stable_floors
         self.kernel_path = kernel_path
         self.arms: dict[str, Arm] = {}
@@ -210,6 +226,11 @@ class Branches:
             ref.name = f"{self.name}:reference"
             ref.hold(run.edit_tensors())
             ref.restore(self.checkpoint)
+            # the debuggee's active holds are part of its base: the reference runs under them
+            # too, so ``reference == M0`` and the self-patch null reads 0 on a held run
+            for held in run._holds:
+                if not held.cells:
+                    ref.hold(held.text, source=held.source, name=held.name)
             ref.until(f"t{self.row}.logits")
             self._reference = ref
         return self._reference
@@ -343,7 +364,8 @@ class Branches:
         row, label = found["row"], found["label"]
         first = f"t{row}.{label.split('.')[0]}.{run.program.names[0]}"
         here, there = run.parse(run.where), run.parse(first)
-        if there < run.parse(self.at):
+        own = run.parse(found["address"].partition("[")[0])
+        if own < run.parse(self.at):
             raise Refusal(f"{e.target} is before the branch point {self.at}")
         if there > here:
             run.until(first)
@@ -371,13 +393,20 @@ class Branches:
                          name=hold_name)
                 names.append(hold_name)
             cells_first = sorted(arm.edits, key=lambda e: not e.cell)
-            for e in cells_first:
+            from mdb.engine import refs
+
+            def order(e: Edit) -> Any:
+                return run.parse(refs.resolve(run, e.target)["address"].partition("[")[0])
+
+            ports = sorted((e for e in cells_first if not e.cell), key=order)
+            for e in [*(c for c in cells_first if c.cell), *ports]:
                 self._stage(e)
             logits = self._to_consumer(arm.final_scale)
-            committed = run.committed_edits()
+            start = int(self.checkpoint["transitions"])
+            committed = [c for c in run.committed_edits() if c["transition"] >= start]
             hold_edits = [c for c in committed if c.get("origin", {}).get("kind") == "hold"]
             user = [c for c in committed if c.get("origin", {}).get("kind") != "hold"]
-            cells = run.committed_cells()
+            cells = [c for c in run.committed_cells() if c["transition"] >= start]
             holds = [h for h in run.holds if h["name"] in names]
         finally:
             for hold_name in names:
@@ -391,16 +420,8 @@ class Branches:
              seconds: float, kernel_path: str, extra: float = 0.0) -> dict[str, Any]:
         M = self._value(logits)
         dM = M - self.M0
-        keep = ("port", "op", "value", "selection", "mask_count", "origin", "row", "layer",
-                "realised_exact", "realised_max_abs_error", "cell")
-        def measured_fields(entry: dict[str, Any]) -> dict[str, Any]:
-            entry = {k: v for k, v in entry.items() if k in keep}
-            if isinstance(entry.get("realised_max_abs_error"), float):
-                entry["realised_max_abs_error"] = num(entry["realised_max_abs_error"], MEASURED)
-            return entry
-
-        edits = [measured_fields(e) for e in edits]
-        cells = [measured_fields(c) for c in cells]
+        edits = [_keep(e) for e in edits]
+        cells = [_keep(c) for c in cells]
         out: dict[str, Any] = {
             "name": arm.name, "kind": arm.kind, "like": arm.like, "rule": arm.rule,
             "M": num(M, MEASURED), "dM": num(dM, MEASURED),
@@ -475,6 +496,9 @@ class Branches:
                 if not isinstance(kv, int) or not isinstance(row, int) or "d" in keys:
                     raise Refusal(f"{e.target}: one kv head and one row, all of head_dim")
                 value = e.value.value if isinstance(e.value, refs.ValueRef) else e.value
+                if not isinstance(value, torch.Tensor):
+                    raise Refusal(f"arm {arm.name}: batched cell {e.target} needs a tensor "
+                                  "value, not a number")
                 cells.append(Cell(found["layer"], found["tensor"], row, kv, value))
             cells_of.append(cells)
         logits_all = self.base_logits
@@ -552,7 +576,9 @@ class Branches:
         body = {
             "schema": SCHEMA, "name": self.name,
             "at": {"where": self.at, "row": int(row), "cut": self.checkpoint["cut"],
-                   "transitions": int(self.checkpoint["transitions"])},
+                   "transitions": int(self.checkpoint["transitions"]),
+                   "path_edits": _safe(self.path["edits"], SUPPLIED),
+                   "path_cells": _safe(self.path["cells"], SUPPLIED)},
             "consumer": consumer,
             "base": {"M": num(self.M0, MEASURED), "argmax": self.base_argmax},
             "floor": ({"value": num(self.floor, MEASURED), "rule": self.floor_rule,

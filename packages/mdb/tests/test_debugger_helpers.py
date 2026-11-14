@@ -34,16 +34,16 @@ def test_margin_floor_equals_showcase_floor_of():
     assert verdict.floors(0.5, 0.25) == 2.0 and verdict.floors(0.0, 0.0) == 0.0
 
 
-def test_group_writer_cached_and_exact():
+def test_group_writer_exact_and_fresh():
     dbg = open_tiny("qwen3", "fp32")
     ad = dbg.adapter
     w = ad.model.model.layers[1].self_attn.o_proj.weight
     want = circuit_map.group_writers(w, ad.num_heads, ad.num_kv_heads)
     got = circuit_map.group_writer(ad, 1)
-    assert torch.equal(got, want) and circuit_map.group_writer(ad, 1) is got
+    assert torch.equal(got, want) and torch.equal(circuit_map.group_writer(ad, 1), got)
     assert torch.equal(circuit_map.group_writer(ad, 1, 1), want[1])
     with torch.no_grad():
-        w.mul_(2.0)                                       # an in-place edit invalidates it
+        w.mul_(2.0)                                       # an in-place edit is seen (no cache)
     try:
         assert torch.equal(circuit_map.group_writer(ad, 1), 2 * want)
     finally:

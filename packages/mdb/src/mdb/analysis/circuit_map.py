@@ -534,27 +534,17 @@ def group_writers(o_weight: Any, heads: int, kv: int) -> Any:
     return torch.stack([per_head[group == g].sum(0) for g in range(kv)])
 
 
-_WRITERS: dict[int, Any] = {}
-
-
 def group_writer(adapter: Any, layer: int, kv: int | None = None) -> Any:
-    """``group_writers`` of ``layer``'s ``o_proj`` for an attached model, cached per weight
-    tensor (keyed by the tensor's identity and its in-place version counter, so an edited weight
-    is recomputed): ``(kv, d_model, head_dim)`` float64, or one group's ``(d_model, head_dim)``
-    when ``kv`` is given. Replaces the per-script ``W_O`` sums (gap audit P11)."""
-    import weakref
-
+    """``group_writers`` of ``layer``'s ``o_proj`` for an attached model, computed from the
+    weight as it is NOW on every call (no cache: ``.data`` edits do not bump a parameter's
+    version counter, so no cache key can see them, and the sum is one reshape): ``(kv, d_model,
+    head_dim)`` float64, or one group's ``(d_model, head_dim)`` when ``kv`` is given. Replaces
+    the per-script ``W_O`` sums (gap audit P11)."""
     from .reads import layer_module
 
     weight = layer_module(adapter, layer).self_attn.o_proj.weight
-    entry = _WRITERS.get(id(weight))
-    if entry is None or entry[0]() is not weight or entry[1] != weight._version:
-        for key in [k for k, e in _WRITERS.items() if e[0]() is None]:
-            del _WRITERS[key]                          # tensors that are gone
-        entry = (weakref.ref(weight), weight._version,
-                 group_writers(weight, adapter.num_heads, adapter.num_kv_heads))
-        _WRITERS[id(weight)] = entry
-    return entry[2] if kv is None else entry[2][kv]
+    writers = group_writers(weight, adapter.num_heads, adapter.num_kv_heads)
+    return writers if kv is None else writers[kv]
 
 
 def cell_census(values: dict[int, Any], writers: dict[int, Any], rows: list[int],

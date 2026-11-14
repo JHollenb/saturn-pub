@@ -147,7 +147,7 @@ class FeatureBasis:
         (``x`` widened to float32 exactly from bf16/fp16); entries whose float32 value is 0 are
         not active. Returns ``(ids, pre32 of those ids)`` in descending order."""
         flat, torch = self._vector(x)
-        pre = torch.addmv(self.b_enc, self.W_enc, flat.to(self.W_enc.dtype))
+        pre = torch.addmv(self.b_enc.float(), self.W_enc.float(), flat.float())
         values, ids = torch.topk(torch.relu(pre), self.k)
         keep = values > 0
         return [int(i) for i in ids[keep].tolist()], values[keep]
@@ -278,10 +278,10 @@ class TranscoderBasis:
 
     def select(self, x: Any) -> tuple[list[int], Any]:
         """Every feature whose float32 pre-activation ``W_enc x + b_enc`` is positive, by
-        descending value."""
+        descending value (``W_enc``, ``b_enc`` and ``x`` widened exactly to float32, so a bf16
+        file's rounding is not in the active set)."""
         flat, torch = self._vector(x)
-        pre = torch.addmv(self.b_enc.to(self.W_enc.dtype), self.W_enc,
-                          flat.to(self.W_enc.dtype)).float()
+        pre = torch.addmv(self.b_enc.float(), self.W_enc.float(), flat.float())
         ids = (pre > 0).nonzero().reshape(-1)
         values = pre.index_select(0, ids)
         order = values.argsort(descending=True)
@@ -409,6 +409,11 @@ class TranscoderSet:
         missing = [key for key in ("W_enc", "W_dec", "b_enc", "b_dec") if key not in state]
         if missing:
             raise SaeError(f"{path} lacks {', '.join(missing)}")
+        unsupported = [key for key in state if key == "W_skip" or "threshold" in key]
+        if unsupported:
+            raise SaeError(f"{path} has {', '.join(sorted(unsupported))}: a skip connection or a "
+                           "JumpReLU threshold is not modelled here (ReLU, no skip), so its "
+                           "features and error would be wrong; refused")
         info: dict[str, Any] = {"file": os.path.basename(path), "bytes": os.path.getsize(path),
                                 "keys": sorted(state)}
         if self.verify:
@@ -444,8 +449,19 @@ def open_transcoders(name: str, path: str, *, layers: Sequence[int] | None = Non
         files = {k: v for k, v in files.items() if k in wanted}
     config: dict[str, Any] = {}
     cfg = os.path.join(path, "config.json")
+    yml = [os.path.join(path, n) for n in ("config.yaml", "config.yml")
+           if os.path.isfile(os.path.join(path, n))]
     if os.path.isfile(cfg):
         config = json.load(open(cfg, encoding="utf-8"))
+    elif yml:
+        try:
+            import yaml
+
+            config = yaml.safe_load(open(yml[0], encoding="utf-8")) or {}
+        except ImportError:
+            config = {"unparsed_config": yml[0]}
+        if not isinstance(config, dict):
+            raise SaeError(f"{yml[0]} is not a mapping")
     return TranscoderSet(name, path, files, cache=int(cache), config=config, verify=verify)
 
 
