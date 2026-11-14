@@ -137,6 +137,55 @@ def summarize(results: list[dict[str, Any]]) -> dict[str, Any]:
             "partial": (len(every) - len(common)) + (len(every_text) - len(shared))}
 
 
+def leaf(result: Any, path: str) -> Any:
+    """The value at a dotted path (list items by index); ``KeyError`` when absent. A labelled
+    number gives its ``value``."""
+    node = result
+    for key in path.split("."):
+        if isinstance(node, (list, tuple)):
+            node = node[int(key)]
+        else:
+            node = node[key]
+    return node["value"] if _is_claim(node) else node
+
+
+def modes(results: list[dict[str, Any]], paths: list[str]) -> list[dict[str, Any]]:
+    """The most common value of each dotted path over the results that have it (categorical
+    fields: a layer, a KV head, a best token): ``mode``, its ``count``, ``n`` (results with the
+    path) and every value's count (ties broken by first appearance)."""
+    out = []
+    for path in paths:
+        counts: dict[Any, int] = {}
+        order: list[Any] = []
+        for result in results:
+            try:
+                value = leaf(result, path)
+            except (KeyError, IndexError, ValueError, TypeError):
+                continue
+            key = json_key(value)
+            if key not in counts:
+                order.append(key)
+            counts[key] = counts.get(key, 0) + 1
+        if not counts:
+            out.append({"path": path, "n": 0, "mode": None, "count": 0, "counts": []})
+            continue
+        mode = max(order, key=lambda k: (counts[k], -order.index(k)))
+        out.append({"path": path, "n": sum(counts.values()), "mode": mode,
+                    "count": counts[mode],
+                    "counts": [{"value": k, "count": counts[k]} for k in
+                               sorted(order, key=lambda k: (-counts[k], order.index(k)))]})
+    return out
+
+
+def json_key(value: Any) -> Any:
+    """A hashable form of a JSON leaf (lists become tuples)."""
+    if isinstance(value, list):
+        return tuple(json_key(v) for v in value)
+    if isinstance(value, dict):
+        return tuple(sorted((k, json_key(v)) for k, v in value.items()))
+    return value
+
+
 def key_columns(verb: str, result: dict[str, Any]) -> dict[str, Any]:
     """The table cells of one item: ``columns`` (name -> labelled number, or the field's state
     and reason), ``verdict`` and ``label`` texts when the verb has them."""

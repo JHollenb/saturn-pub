@@ -249,10 +249,82 @@ def _rfft_parts(weight_rows: Any, delta: Any, gw: Any = None) -> Any:
     return (gw.conj() * dn[None, :]).real * (scale / d)[None, :]
 
 
+@dataclass(frozen=True)
+class CellTarget:
+    """The content of one value cell (row ``row``, layer ``layer``, KV head ``kv``) as a scalar:
+    ``C(v) = d . W_g v`` with ``W_g = sum_{h in kappa^-1(g)} W_O,h`` and
+    ``d = gamma_F * (W_U[a] - W_U[b])`` (the cell's write at unit mass through the final-norm
+    readout, per unit final rho; P06/P07, P19)."""
+
+    row: int
+    layer: int
+    kv: int
+    a: int
+    b: int
+
+    @property
+    def text(self) -> str:
+        return f"cell t{self.row}.L{self.layer}.v[kv{self.kv}] M[{self.a},{self.b}]"
+
+
+def _cell_direction(run: Any, target: CellTarget) -> Any:
+    """``W_g^T d`` (head_dim, float64)."""
+    from .circuit_map import group_writers
+
+    adapter = run.adapter
+    final = getattr(adapter.backbone, adapter.spec.final_norm)
+    w_u = adapter.model.lm_head.weight
+    d = f64(final.weight).reshape(-1) * (f64(w_u[target.a]) - f64(w_u[target.b])).cpu()
+    from .reads import layer_module
+    o_weight = layer_module(adapter, target.layer).self_attn.o_proj.weight
+    w_g = group_writers(o_weight, adapter.num_heads, adapter.num_kv_heads)[target.kv]
+    return w_g.T @ d
+
+
+def cell_value(run: Any, target: CellTarget, direction: Any = None) -> float:
+    """``C(v)`` of the cell as the run's cache holds it (float64)."""
+    direction = _cell_direction(run, target) if direction is None else direction
+    v = f64(run.read_cache(target.layer, "v", staged=False))[0, target.kv, target.row]
+    return float(direction @ v.reshape(-1))
+
+
+def cell_readout(run: Any, target: CellTarget) -> Any:
+    """A ``Readout`` (kind ``cell``) of ``C`` as a linear functional of the residual entering
+    the cell's layer at its row: Qwen3 has no V bias and no v norm, so
+    ``v_g = W_V^g (rho gamma_l * h)`` with ``h = t<row>.L<layer>.h`` and ``rho`` its input-norm
+    scale; ``c = rho_0 gamma_l * (W_V^g)^T W_g^T d`` at the native rho_0 (derived-exact).
+    ``native`` is ``C`` read from the cache cell."""
+    from .reads import Readout, layer_module
+
+    module = layer_module(run.adapter, target.layer)
+    if getattr(module.self_attn.v_proj, "bias", None) is not None:
+        raise Refusal("cell readout: the V projection has a bias (not a linear functional)")
+    if getattr(module.self_attn, "v_norm", None) is not None:
+        raise Refusal("cell readout: the model normalises V (not a linear functional)")
+    dh = run.adapter.head_dim
+    direction = _cell_direction(run, target)
+    w_v = f64(module.self_attn.v_proj.weight)[target.kv * dh:(target.kv + 1) * dh]   # (dh, d)
+    norm = module.input_layernorm
+    gamma, eps = f64(norm.weight).reshape(-1), float(norm.variance_epsilon)
+    h = f64(run.read(f"t{target.row}.L{target.layer}.h")).reshape(-1)
+    rho = float((h.pow(2).mean() + eps) ** -0.5)
+    vector = rho * gamma * (w_v.T @ direction)
+    return Readout("cell", target.text, target.row, target, layer=target.layer, port="h",
+                   vector=vector, rho=rho, native=cell_value(run, target, direction),
+                   native_authority=MEASURED,
+                   premises=["v = W_V^g n with n = rho gamma h: no V bias, no v norm (checked)",
+                             "rho of the cell layer's input norm at the native state"])
+
+
 def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons: int = 8,
              spectral: bool = False, top_bins: int = 32, seed: int = 0,
              cache: dict | None = None) -> dict[str, Any]:
     """The exact hop ladder of a finite cell edit at the consumer's row (advisor memo 4.2).
+
+    With a ``cell`` reader (``cell_readout``) the consumer is a value cell's content at an
+    intermediate row and layer: the ladder runs over layers ``cell_layer .. reader.layer - 1``
+    at that row, the native delta is the change of ``C`` read from the two caches, and the
+    norm term uses the cell layer's input norm (advisor memo 2026-11-14 §1.6).
 
     ``run`` is the native run and ``edited`` the same prompt with the cell edit staged and run
     natively to the consumer's logits; ``reader`` the native scalar ``Readout`` (``c``, native
@@ -274,15 +346,21 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     torch = _torch()
     from .reads import layer_module
 
-    if reader is None or not reader.scalar:
-        raise Refusal("hop_edge needs a scalar consumer (a margin or a logit)")
+    if reader is None or not (reader.scalar or reader.kind == "cell"):
+        raise Refusal("hop_edge needs a scalar consumer (a margin, a logit or a cell)")
     j, layers = reader.row, run.adapter.layers
+    top_layer = reader.layer if reader.kind == "cell" else None
+    end = layers if top_layer is None else top_layer
+    if not 0 <= cell_layer < end:
+        raise Refusal(f"cell layer {cell_layer} is not below the consumer's layer {end}")
     c = f64(reader.vector).reshape(-1)
 
     def port(r, layer, name):
         return f64(r.read(f"t{j}.L{layer}.{name}")).reshape(-1)
 
     def margin(r):
+        if top_layer is not None:
+            return cell_value(r, reader.target)
         logits = r.read(f"t{j}.logits").reshape(-1)
         t = reader.target
         return float(f64(logits[t.a]) - f64(logits[t.b])) if isinstance(t, Margin) else \
@@ -308,7 +386,7 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
             cache[key] = (torch.fft.rfft(gate, dim=1), perm, torch.fft.rfft(gate[:, perm], dim=1))
         return cache[key]
     mlp, reread, closure_sum = [], [], direct + upstream
-    for layer in range(cell_layer, layers):
+    for layer in range(cell_layer, end):
         module = layer_module(run.adapter, layer)
         if layer > cell_layer:
             d_o = float(c @ (port(edited, layer, "o") - port(run, layer, "o")))
@@ -398,9 +476,13 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                            "Delta n, weighted by |effect|; permuted = same with a random channel "
                            "order; neuron share = top neurons at the same unit fraction"}
         mlp.append(entry)
-    last = layers - 1
-    h1, h0 = port(edited, last, "h_out"), port(run, last, "h_out")
-    final = getattr(run.adapter.backbone, run.adapter.spec.final_norm)
+    if top_layer is None:
+        last = layers - 1
+        h1, h0 = port(edited, last, "h_out"), port(run, last, "h_out")
+        final = getattr(run.adapter.backbone, run.adapter.spec.final_norm)
+    else:
+        h1, h0 = port(edited, top_layer, "h"), port(run, top_layer, "h")
+        final = layer_module(run.adapter, top_layer).input_layernorm
     eps_f = float(final.variance_epsilon)
     rho_0 = float((h0.pow(2).mean() + eps_f) ** -0.5)
     rho_1 = float((h1.pow(2).mean() + eps_f) ** -0.5)
@@ -415,7 +497,8 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
             return {"state": "unresolved", "reason": "native delta 0"}
         return num(x / native_delta, MEASURED)
     return {
-        "consumer": {"native_delta": num(native_delta, MEASURED)},
+        "consumer": {"native_delta": num(native_delta, MEASURED), "kind": reader.kind,
+                     "text": reader.text},
         "direct": num(direct, EXACT, "P19"),
         "upstream": num(upstream, EXACT, "P07"),
         "mlp": mlp, "reread": reread,
