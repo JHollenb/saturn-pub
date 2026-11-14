@@ -284,6 +284,72 @@ def overlap(a, b):
     return len(set(a) & set(b))
 
 
+# ===================================================================================== unit scores
+# Promoted from experiments/predicted_write_20261113 (pw_worker.py ``score_reduce`` and
+# followup2/select2.py ``scores`` / the rand60c-d draws). Same arithmetic; see the experiment's
+# FINDINGS.md for what each ranking did (single seed 4242, FLUX.2 Klein 4B).
+
+def receiver_write_scores(p, v, m, groups, a=None):
+    """Predicted write of cutting source set ``m`` from every head, per receiver group.
+
+    ``p`` [H, R, Sk] attention weights, ``v`` [H, Sk, D] head values, ``m`` [Sk] 0/1 source
+    indicator, ``groups`` ``{name: (receiver_index, maps, gate)}`` with ``maps`` the [H, D, C]
+    output maps (:func:`head_maps`) and ``gate`` the outer gate of those receivers' writes (1 when
+    there is none, e.g. Qwen). Returns ``{f"{kind}_{name}": [H]}`` for ``kind`` in ``zero`` (the
+    no-renormalisation cut) and ``mask`` (the renormalising cut): the summed norm over that
+    group's receivers of each head's gated write change. In the FLUX experiment the groups were
+    ``img`` (image receivers, ``maps``/``gate`` of ``to_out``) and ``oth`` (text receivers other
+    than the word's own rows, ``to_add_out``)."""
+    if a is None:
+        a = p @ v
+    deltas = {"zero": zero_cut_delta(p, v, m), "mask": mask_cut_delta(p, v, m, a)}
+    out = {}
+    for kind, d in deltas.items():
+        for name, (index, maps, gate) in groups.items():
+            out[f"{kind}_{name}"] = write_norms(d[:, index], maps, gate).sum(-1)
+    return out
+
+
+def pw_shares(zero_img, zero_oth, mask_img, mask_oth):
+    """Per-unit predicted-write rankings from per-(step, block, head) scores (arrays
+    ``[steps, blocks, heads]``, summed over steps, flattened ``block * heads + head``):
+
+    * ``pw_both``: zero-cut share + mask-cut share over image and text receivers (sums to 2);
+    * ``pw_img`` / ``pw_txt``: its image-receiver / text-receiver parts (in ``pw_both`` units);
+    * ``pw_img_only``: image receivers only, renormalised (sums to 2).
+    """
+    import numpy as np
+    zi, mi = (np.asarray(x).sum(0).ravel().astype(np.float64) for x in (zero_img, mask_img))
+    zo, mo = (np.asarray(x).sum(0).ravel().astype(np.float64) for x in (zero_oth, mask_oth))
+    zt, mt = zi + zo, mi + mo
+    return {"pw_both": zt / zt.sum() + mt / mt.sum(),
+            "pw_img": zi / zt.sum() + mi / mt.sum(),
+            "pw_txt": zo / zt.sum() + mo / mt.sum(),
+            "pw_img_only": zi / zi.sum() + mi / mi.sum()}
+
+
+def clean_random_draws(reference, n_units, *, named, seed, item, names, strata=None, blocks=None,
+                       previous=(), kind="cut"):
+    """Random control sets matched to ``reference`` (stratum counts and, with ``blocks``, distinct
+    blocks), disjoint from it and drawn clean: no unit of any ``named`` set, of any ``previous``
+    draw, or of an earlier draw of this call. One draw per name; seed per draw
+    ``attention_panels.draw_seed(seed, item, name, kind)``. Returns ``({name: units}, {name:
+    report})``. This is the selector of the experiment's rand60c / rand60d sets."""
+    from .attention_panels import draw_seed
+    from .attention_ranking import matched_control_sets
+    base = set()
+    for units in (*named, *previous):
+        base |= {int(u) for u in units}
+    draws, reports = {}, {}
+    for name in names:
+        exclude = sorted(base.union(*(set(d) for d in draws.values())))
+        d = matched_control_sets(reference, n_units, strata=strata, blocks=blocks, disjoint=True,
+                                 seed=draw_seed(seed, item, name, kind), n_sets=1, exclude=exclude)[0]
+        draws[name] = sorted(int(i) for i in d["units"])
+        reports[name] = {k: v for k, v in d["report"].items() if k != "units"}
+    return draws, reports
+
+
 # ===================================================================================== statistics
 
 def ranks(x):
