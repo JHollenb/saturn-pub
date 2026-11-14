@@ -1,6 +1,6 @@
 """Run 1 (next/prereg_run1.json): capture once, native arms by checkpoint/restore and cell_sweep.
 
-python r1.py MODEL MODE OUTDIR [PICK]     MODE = 1a (base + depth capture) | 1b (hard)
+python r1.py MODEL MODE OUTDIR [PICK]     MODE = 1a (base) | 1b (hard) | 1c (depth capture only)
 
 Writes OUTDIR/cap/<group>/<id>.pt (native captures + pre-edit operands; the offline forecast
 reads only these), OUTDIR/arm/<id>.pt (edited-run captures) and ./arms-<MODE>.jsonl (native arm
@@ -28,7 +28,7 @@ ad = dbg.adapter
 L, H, KV = ad.layers, ad.num_heads, ad.num_kv_heads
 LAYER, GROUP, NEG = 20, 6, -1e4
 spec = json.load(open("r1_items.json"))
-groups = ("base", "depth") if MODE == "1a" else ("hard",)
+groups = {"1a": ("base",), "1b": ("hard",), "1c": ("depth",)}[MODE]
 items = [i for i in spec["items"] if i["group"] in groups]
 if PICK:
     items = [items[int(k)] for k in PICK.split(",")]
