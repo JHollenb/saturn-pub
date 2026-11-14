@@ -46,8 +46,12 @@ def main():
     import mdb_lanes.attention_port as ap
     import mdb_lanes.qwen_engine as QE
     import mdb_lanes.qwen_panels as Q
+    import saturn_pub
+    import saturn_pub.numerics as numerics
+    import mdb.engine.trace as engine_trace
     from mdb.analysis.forecast import Margin
-    modules = {m.__name__: {"file": m.__file__, "sha256": sha(m.__file__)} for m in (mdb, P, ap, QE, Q)}
+    modules = {m.__name__: {"file": m.__file__, "sha256": sha(m.__file__)}
+               for m in (mdb, engine_trace, saturn_pub, numerics, P, ap, QE, Q)}
     event("modules", modules=modules)
 
     torch.set_num_threads(4)
