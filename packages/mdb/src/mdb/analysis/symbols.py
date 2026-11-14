@@ -529,8 +529,8 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     label = SUPPLIED if supplied else EXACT
     view: dict[str, Any] = {
         "symbol": binding.name, "kind": binding.kind,
-        "rows": sorted({c.row for c in binding.cells}),
-        "definitions": binding.addresses,
+        "rows": _compact_rows(sorted({c.row for c in binding.cells})),
+        "definitions": _compact_list(binding.addresses),
         "lifetime": {"strip": " ".join(strips), "first": first, "last": last},
         "mass": num(total_mass, label),
         "count": count,
@@ -559,6 +559,31 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     if len(reads) > readers:
         view["omitted"] = len(reads) - readers
     return {"view": view, "contribution": contribution}
+
+
+_LIST_CAP = 64     # records hold lists of at most 64 items (core.pointers)
+
+
+def _compact_rows(rows: list[int]) -> list[Any]:
+    """The rows as given when there are at most ``_LIST_CAP``; else half-open ranges ``"a:b"``
+    (a long span such as a whole chain of thought is a few ranges, not thousands of ids)."""
+    if len(rows) <= _LIST_CAP:
+        return rows
+    ranges, start = [], rows[0]
+    for prev, cur in zip(rows, rows[1:] + [None]):
+        if cur != prev + 1 if cur is not None else True:
+            ranges.append(f"{start}:{prev + 1}")
+            start = cur
+    if len(ranges) > _LIST_CAP:
+        ranges = ranges[:_LIST_CAP - 1] + [f"... +{len(ranges) - _LIST_CAP + 1} more ranges"]
+    return ranges
+
+
+def _compact_list(items: list[str]) -> list[str]:
+    """At most ``_LIST_CAP`` items: the first ones and a count of the rest."""
+    if len(items) <= _LIST_CAP:
+        return items
+    return items[:_LIST_CAP - 1] + [f"... +{len(items) - _LIST_CAP + 1} more"]
 
 
 def _token_at(run: Any, row: int) -> int | None:

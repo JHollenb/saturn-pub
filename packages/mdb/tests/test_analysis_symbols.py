@@ -233,3 +233,18 @@ def test_scalar_parts_equal_o_parts_through_the_readout(debugger):
         full = head_mix(run, 3, layer).o_parts() @ reader.vector
         assert torch.allclose(fast, full, rtol=0, atol=1e-13)
         assert torch.equal(lazy.o_parts(), head_mix(run, 3, layer).o_parts())
+
+
+def test_a_long_symbol_seals_with_row_ranges(debugger):
+    """A declared symbol over more rows than a record list holds (a chain of thought) is
+    listed as row ranges, and the table still seals (records cap lists at 64 items)."""
+    prompt = [(i * 7) % 31 + 1 for i in range(90)]
+    run = debugger.run(prompt)
+    run.until("logits")
+    symbols.declare(run, "chain", [f"t{s}" for s in range(3, 80)] + [f"t{s}" for s in range(82, 86)])
+    table = symbols.table(run, consumer=Margin(89, 4, 9), limit=4)
+    chain = next(b for b in table.report["bindings"] if b["symbol"] == "chain")
+    assert chain["rows"] == ["3:80", "82:86"]
+    assert len(chain["definitions"]) == 64 and chain["definitions"][-1] == "... +18 more"
+    assert table.records and check_bounded(table.report)
+    assert symbols._compact_rows(list(range(5))) == [0, 1, 2, 3, 4]
