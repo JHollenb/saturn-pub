@@ -854,10 +854,10 @@ def _circuit_lines(result: dict[str, Any]) -> list[str]:
                  f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])} "
                  f"(zero by construction: float64 summation only)")
     within = body["remainders_within"]
-    state = ("all within" if within else "NOT all within" if within is not None
-             else "not all bounded (a bound was refused)")
-    lines.append(f"  remainders {state}"
-                 f" their rounding bounds; {body['edits']['count']} edit node(s)")
+    state = ("all within their rounding bounds" if within
+             else "NOT all within their rounding bounds" if within is not None
+             else "not all bounded (a rounding bound was refused)")
+    lines.append(f"  remainders {state}; {body['edits']['count']} edit node(s)")
     for test in result.get("tests", ()):
         lines += ["  " + line for line in _circuit_test_lines(test)]
     if result.get("stored"):
