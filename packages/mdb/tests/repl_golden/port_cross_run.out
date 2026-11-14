@@ -19,11 +19,13 @@ compare A: L0.A[h1]=clean:L0.A[h1]  B: L1.h=clean:L1.h  -> t3.M[6,7]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.L0.h
 (mdb) whatif L1.m = clean:L1.m --consumer M[6,7]
-whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode ahead, record f2246e16399b9d3b)
-  sealed  linear ΔM = -8.7269e-05 [derived-local P14]   exact ΔM = -8.7152e-05 [derived-exact]  bound 15.914 [bound] (worst case, >= |exact|: no sign)  (operands forecast from t3.L0.h)   emulated ΔM = 0 [derived-exact]
+whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode ahead, record 90184799b21c99dd)
+  sealed  linear ΔM = -8.7269e-05 [derived-local P14]   exact ΔM = -8.7152e-05 [derived-exact]  (worst-case rounding interval not informative from t3.L0.m (interval 0.00118 >= |x| 0.000373))  (operands forecast from t3.L0.h)   emulated ΔM = 0 [derived-exact]
   native  ΔM = 0 [measured]   (base -0.013672 [measured] -> edited -0.013672 [measured])
   error split (P20): linear -8.7269e-05 [derived-local P14] + nonlinear 1.1679e-07 [derived-exact P20] + operands -8.7764e-06 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect 9.5929e-05 [derived-exact P20] (within bound 0.015396 [bound]) + residual 0 [measured P20]
-  verdict (P20): no effect  native ΔM 0 [measured P20], emulated ΔM 0 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -9.5929e-05 [derived-exact P20]; floor 0.00097656 [supplied P20] = 1 bfloat16 spacing (supplied)  [no change at bfloat16 resolution (spacing 0.000976562); exact Δ -9.5929e-05, which the dtype cannot show]
+  verdict (P20): no effect  native ΔM 0 [measured P20] = 0 spacings, emulated ΔM 0 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -9.5929e-05 [derived-exact P20]; floor 0.00097656 [supplied P20] = 1 bfloat16 spacing (supplied)  [no change at bfloat16 resolution (spacing 0.000976562); exact Δ -9.5929e-05, which the dtype cannot show]
+  edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 38/38 (worst |native - identity|/bound 0.946 at t3.L0.sg); 1 not checked
+  base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 39/39 (worst |native - identity|/bound 0.946 at t3.L0.sg)
   session unchanged at t3.L0.h  (6 moves, restored)
 (mdb) set L0.A[h1] = clean:L0.A[h1]
 staged at t3.L0.A[h1]: A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 from clean:t3.L0.A[h1] (live) on [h1] (8 elements) (not fired yet)  (1 staged)

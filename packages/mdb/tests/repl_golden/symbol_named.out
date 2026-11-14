@@ -22,7 +22,9 @@ whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[
   sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
   native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
   error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
-  verdict (P20): effect  native ΔM -0.014526 [measured P20], emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  verdict (P20): effect  native ΔM -0.014526 [measured P20] = 60 spacings, emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.729 at t5.L1.sg); 1 not checked
+  base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 13/13 (worst |native - identity|/bound 0.898 at t5.L1.r)
   session unchanged at t5.logits  (5 moves, restored)
 (mdb) symbol subj = whatif
 symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
@@ -54,7 +56,9 @@ whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[
   sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
   native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
   error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
-  verdict (P20): effect  native ΔM -0.014526 [measured P20], emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  verdict (P20): effect  native ΔM -0.014526 [measured P20] = 60 spacings, emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.729 at t5.L1.sg); 1 not checked
+  base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 13/13 (worst |native - identity|/bound 0.898 at t5.L1.r)
   session unchanged at t5.logits  (5 moves, restored)
   symbol subj = t1.L1.v[kv0]  (row 1: its declaring prompt)
   symbol subj = clean:t1.L1.v[kv0]  (row 1: role @subject of pairs/b)
@@ -73,7 +77,7 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   prediction.exact.value  [derived-exact]
     n 3  mean 0.0016475  min -0.014033  max 0.014417  sign + 2/3
   effect.verdict: effect 3
-  +39 more in the record (promptset result each1 [ITEM])
+  +49 more in the record (promptset result each1 [ITEM])
 (mdb) symbols consumer=M[4,9] limit=1
 symbols at t5.logits  consumer t5.M[4,9] = -0.038208 [measured]  min_mass 0.1 [supplied]
   mass: a sum over the heads and layers that read the binding (n reads, mean per read)

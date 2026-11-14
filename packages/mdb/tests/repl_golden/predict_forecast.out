@@ -1,26 +1,31 @@
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) forecast
-forecast 1  t3.L0.a  sealed at t3.L0.h  record c3adeb335916fb06
+forecast 1  t3.L0.a  sealed at t3.L0.h  record a31f87eb1d221d5a
   method rms_norm P02: a = RMSNorm(h) * w_in; chain not stored (no project)
-  predicted max_abs 2.0572 [derived-exact] norm 3.9958 [derived-exact]  sha256 96ed261df6498277  bound 0.016106 [bound] per element
+  predicted exact max_abs 2.0572 [derived-exact] norm 3.9958 [derived-exact]  sha256 96ed261df6498277   emulated max_abs 2.0625 [derived-exact] norm 4.0011 [derived-exact]  sha256 c5ae7225bc641a07
+  worst-case rounding interval 0.016106 [bound] per element (information, not the verdict)
 (mdb) forecast L0.p
-forecast 2  t3.L0.p  sealed at t3.L0.h  record 96acb5fd3797bace
+forecast 2  t3.L0.p  sealed at t3.L0.h  record bccbba297ab0377c
   method 7 identities t3.L0.a .. t3.L0.p (last softmax P05); chain not stored (no project)
-  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 a8cee3618668d88c  bound 0.0026798 [bound] per element
+  predicted exact max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 a8cee3618668d88c   emulated max_abs 0.25195 [derived-exact] norm 0.70781 [derived-exact]  sha256 936e3888bea07b92
+  worst-case rounding interval 0.0026798 [bound] per element (information, not the verdict)
 (mdb) forecast M[4,9]
-forecast 3  t3.M[4,9]  sealed at t3.L0.h  record 6d61cae9d3fa30fb
+forecast 3  t3.M[4,9]  sealed at t3.L0.h  record 4a51f67796de8765
   method 39 identities t3.L0.a .. t3.logits (last readout_logits P19); chain not stored (no project)
-  predicted -0.11452 [derived-exact P19]  bound 16.825 [bound]
+  predicted exact -0.11452 [derived-exact P19]   emulated -0.11401 [derived-exact P19]
+  worst-case rounding interval not informative from t3.L0.m (interval 0.00118 >= |x| 0.000373)
 (mdb) forecast L1.m
-forecast 4  t3.L1.m  sealed at t3.L0.h  record ee14f9fe963829f6
+forecast 4  t3.L1.m  sealed at t3.L0.h  record 4d99c3b65a17a05e
   method 36 identities t3.L0.a .. t3.L1.m (last affine P10); chain not stored (no project)
-  predicted max_abs 0.00051965 [derived-exact] norm 0.00078825 [derived-exact]  sha256 23c1870bf3e8e7a1  bound 0.021312 [bound] per element
+  predicted exact max_abs 0.00051965 [derived-exact] norm 0.00078825 [derived-exact]  sha256 23c1870bf3e8e7a1   emulated max_abs 0.0005188 [derived-exact] norm 0.00079085 [derived-exact]  sha256 b88eff59a6cdb0d5
+  worst-case rounding interval not informative from t3.L0.m (interval 0.00118 >= |x| 0.000373)
 (mdb) step
 t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}
 (mdb) verify
 forecast 1 t3.L0.a: confirmed  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.015625 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
   rounding effect native - exact 0.0052992 [measured] = 0.339 spacings; worst-case bound 0.016106 [bound] (holds, information)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 1/1 (worst |native - identity|/bound 0.338 at t3.L0.a)
   rounding origin (sealed): exact and emulated agree within one spacing at every stop of the chain
   order: sealed at t3.L0.h (stop 2) before the target (stop 3); same cut (the target is a later port of the sealed layer)
 forecast 2 t3.L0.p: open (target not reached (cursor t3.L0.a))
@@ -31,19 +36,23 @@ t3.logits  logits = lm_head(fn)
 (mdb) verify
 forecast 2 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.0019531 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
   rounding effect native - exact 0.00091062 [measured] = 0.466 spacings; worst-case bound 0.0026798 [bound] (holds, information)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 7/7 (worst |native - identity|/bound 0.926 at t3.L0.p)
   rounding origin (sealed): exact and emulated agree within one spacing at every stop of the chain
   order: sealed at t3.L0.h (stop 2) before the target (stop 10); cut descends through 4 receipts
 forecast 3 t3.M[4,9]: confirmed  native -0.11401 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.00073242 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
-  rounding effect native - exact 0.00050802 [measured] = 0.694 spacings; worst-case bound 16.825 [bound] (holds, information)
+  rounding effect native - exact 0.00050802 [measured] = 0.694 spacings; worst-case rounding interval not informative from t3.L0.m (interval 0.00118 >= |x| 0.000373)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 39/39 (worst |native - identity|/bound 0.946 at t3.L0.sg)
   rounding origin (sealed): t3.L0.f: exact and emulated part by 1.83 spacings at |x| 0.00723
   order: sealed at t3.L0.h (stop 2) before the target (stop 41); cut descends through 4 receipts
 forecast 4 t3.L1.m: confirmed  native max_abs 0.0005188 [measured] norm 0.00079085 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 3.8147e-06 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
-  rounding effect native - exact 4.8987e-06 [measured] = 1.28 spacings; worst-case bound 0.021312 [bound] (holds, information)
+  rounding effect native - exact 4.8987e-06 [measured] = 1.28 spacings; worst-case rounding interval not informative from t3.L0.m (interval 0.00118 >= |x| 0.000373)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 36/36 (worst |native - identity|/bound 0.946 at t3.L0.sg)
   rounding origin (sealed): t3.L0.f: exact and emulated part by 1.83 spacings at |x| 0.00723
   order: sealed at t3.L0.h (stop 2) before the target (stop 38); cut descends through 4 receipts
 (mdb) verify 1
 forecast 1 t3.L0.a: confirmed  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.015625 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
   rounding effect native - exact 0.0052992 [measured] = 0.339 spacings; worst-case bound 0.016106 [bound] (holds, information)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 1/1 (worst |native - identity|/bound 0.338 at t3.L0.a)
   rounding origin (sealed): exact and emulated agree within one spacing at every stop of the chain
   order: sealed at t3.L0.h (stop 2) before the target (stop 3); same cut (the target is a later port of the sealed layer)
 (mdb) explain M[4,9]

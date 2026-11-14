@@ -120,12 +120,10 @@ def test_whatif_measures_a_fresh_committed_run_bitwise_and_leaves_the_session(de
     exact, at_realised = tensors["exact"], tensors["at_realised"]
     native = tensors["native_delta"].reshape(exact.shape)
     if staged is not None:
-        # a staged edit ahead of the cursor: the emulated chains are refused, native decides
-        assert prediction["emulated"]["state"] == "refused"
-        assert "staged edit(s) at t3.L0.q" in prediction["emulated"]["reason"]
-        assert report["effect"]["basis"].startswith("native only")
-        assert report["split"]["terms"][-1]["name"] == "rounding"
-        return
+        # M55: a staged edit ahead of the cursor, off the edit's path but feeding it, is applied
+        # where the chains compute its port: the emulated chains are not refused any more
+        assert "state" not in prediction["emulated"]
+        assert prediction["other_edits"]["applied"] == ["t3.L0.q add"]
     rounding, residual = report["split"]["terms"][-2:]
 
     def label(claim):       # a scalar's claim, or a vector's {max_abs, norm}
@@ -185,18 +183,25 @@ def test_rewind_with_staged_edits_is_refused_before_anything_native(debugger):
     assert state_digest(run) == before and len(run.session.receipts) == receipts
 
 
-def test_an_edit_on_the_path_refuses_the_prediction_but_still_measures(debugger):
+@pytest.mark.parametrize("port", ["o", "r"])
+def test_an_edit_on_the_path_is_applied_by_the_chains(debugger, port):
+    """M55: a committed edit on the path of the what-if's edit (``o``, and ``r``, which the
+    engine realises as an ``o`` edit) is applied where the chains recompute its port, so the
+    prediction is made and the emulated change is the native one bit for bit (it was refused)."""
     run = debugger.run(PROMPT)
-    run.set("t3.L0.o", 0.2, "add")
-    run.until("t3.L1.h")                       # commits layer 0 with the o edit
+    run.set(f"t3.L0.{port}", 0.2, "add")
+    run.until("t3.L1.h")                       # commits layer 0 with the edit
     result = whatif(run, Edit("t3.L0.v", 0.3, "add"), Margin(3, 4, 9))
     report = result.report
-    assert report["prediction"]["state"] == "refused"
-    assert "t3.L0.o" in report["prediction"]["reason"]
-    assert report["split"]["state"] == "refused"
+    assert report["prediction"]["state"] == "resolved"
+    assert report["prediction"]["other_edits"]["applied"] == [f"t3.L0.{port} add"]
     assert unlabelled(report) == []
-    edited = _fresh(debugger, [("t3.L0.v", 0.3, "add"), ("t3.L0.o", 0.2, "add")], "t3.logits")
+    edited = _fresh(debugger, [("t3.L0.v", 0.3, "add"), (f"t3.L0.{port}", 0.2, "add")],
+                    "t3.logits")
     assert torch.equal(result.tensors["native_edited"], edited)
+    effect = report["effect"]
+    assert effect["residual_spacings"]["value"] == 0.0, effect
+    assert effect["state"] == "resolved"
 
 
 def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger):

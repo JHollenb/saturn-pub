@@ -251,8 +251,12 @@ def validate(op: Op, args: dict[str, Any] | None) -> dict[str, Any]:
 
 
 def has_unresolved(node: Any) -> bool:
-    """Whether any field of a result is ``{"state": "unresolved", ...}``."""
+    """Whether any field of a result is ``{"state": "unresolved", ...}``. A field marked
+    ``"information": True`` (a forecast's worst-case interval, M56) is information beside the
+    result and never makes it unresolved."""
     if isinstance(node, dict):
+        if node.get("information") is True:
+            return False
         if node.get("state") == "unresolved":
             return True
         return any(has_unresolved(item) for item in node.values())

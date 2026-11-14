@@ -609,14 +609,32 @@ def _forecast_lines(result: dict[str, Any]) -> list[str]:
     pointer = summary["chain_pointer"]
     method += (f"; chain blob {pointer['ref'][:16]}" if pointer["state"] == "stored"
                else "; chain not stored (no project)")
-    bound = view["bound"]
     vector = "sha256" in view["predicted"]
-    spread = (f"bound {_claimed(bound['max'])}{' per element' if vector else ''}"
-              if "max" in bound else f"bound {num(bound)}")
+    emulated = view.get("emulated") or {}
+    if "margin" in emulated:
+        second = _claimed(emulated["margin"])
+    elif "token" in emulated:
+        second = f"token {emulated['token']}"
+    elif "max_abs" in emulated:
+        second = f"{_claimed(emulated)}  sha256 {emulated['sha256'][:16]}"
+    else:
+        second = "none"
     return [f"forecast {view['id']}  {view['target']}  sealed at {view['sealed_at']}  "
             f"record {view['record'][:16]}",
             f"  method {method}",
-            f"  predicted {_predicted(view['predicted'])}  {spread}"]
+            f"  predicted exact {_predicted(view['predicted'])}   emulated {second}",
+            f"  {bound_text(view['bound'], vector)}"]
+
+
+def bound_text(bound: dict[str, Any], vector: bool = False) -> str:
+    """The sealed worst-case interval as information (M56): its largest value, or the stop where
+    it stopped being informative and why, or why there is none."""
+    if "max" in bound:
+        return (f"worst-case rounding interval {_claimed(bound['max'])}"
+                f"{' per element' if vector else ''} (information, not the verdict)")
+    if "note" in bound:
+        return bound["note"]
+    return f"worst-case rounding interval {bound.get('state', 'absent')} ({bound.get('reason')})"
 
 
 def _floor_text(item: dict[str, Any]) -> str:
@@ -664,7 +682,11 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
                              f"({'holds' if item['within_bound'] else 'exceeded'}, information)")
                     if "worst_excess" in item:
                         text += f" (worst excess {_claimed(item['worst_excess'])})"
+                elif "bound_note" in item:
+                    text += f"; {item['bound_note']}"
                 lines.append(text)
+            if "stages" in item:
+                lines.append(f"  {stages_text(item['stages'])}")
             if "rounding_origin" in item:
                 lines.append(f"  rounding origin (sealed): {item['rounding_origin']['text']}")
         order = item["order"]
@@ -676,6 +698,13 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
                      f"{'before' if order['sealed_before_target'] else 'NOT before'} the target "
                      f"(stop {order['target']['index']}); {lineage}")
     return lines
+
+
+def stages_text(stages: dict[str, Any]) -> str:
+    """The per-stage containment on native operands (M56), labelled as a per-stage bound."""
+    if stages.get("state") in ("refused", "unresolved"):
+        return f"stages: {stages['state']} ({stages['reason']})"
+    return f"stages [per-stage bound, not a chain bound]: {stages['text']}"
 
 
 def _delta_name(consumer: dict[str, Any]) -> str:
@@ -698,6 +727,8 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         linear = prediction["linear"]
         exact = prediction["exact"]
         bound = f"  bound {_claimed(exact['bound'])}" if "bound" in exact else ""
+        if "bound_note" in exact:
+            bound = f"  ({exact['bound_note']})"
         if exact.get("wider_than_value"):
             bound += " (worst case, >= |exact|: no sign)"
         operands = exact.get("operands", {})
@@ -721,11 +752,18 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
             if term.get("within_bound") is not None:
                 state = term["within_bound"]
                 text += f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
+            elif term.get("bound_note"):
+                text += f" ({term['bound_note']})"
             parts.append(text)
         lines.append(f"  error split ({split['proof']}): " + " + ".join(parts))
     if "effect" in result:
         lines.append("  " + effect_line(result["effect"], delta,
                                         exact_note=" (written value, measured operands)"))
+    for side, stages in result.get("stages", {}).items():
+        lines.append(f"  {side} run {stages_text(stages)}")
+    other = (result.get("prediction") or {}).get("other_edits")
+    if other:
+        lines.append(f"  other edits in the chains: {', '.join(other['applied'])}")
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")

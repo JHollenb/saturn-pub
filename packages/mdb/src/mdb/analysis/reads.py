@@ -612,7 +612,9 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
     if requests:    # one excursion for all the listed reads (the rewinds and the restore shared)
         from .propagate import whatif_many
 
-        for entry, result in zip(measured, whatif_many(run, requests), strict=True):
+        # the per-stage containment is not part of a read's verdict: not computed (M56c)
+        for entry, result in zip(measured, whatif_many(run, requests, stages=False),
+                                 strict=True):
             entry["causal"] = _verdict(result, min_effect)
     report: dict[str, Any] = {
         "source": {"row": source.row, "address": source.text or f"t{source.row}",

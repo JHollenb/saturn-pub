@@ -30,6 +30,8 @@ of counting it as a failure. A forecast whose target was never reached stays ope
 
 from __future__ import annotations
 
+import math
+import time
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -40,15 +42,18 @@ from mdb.core.pointers import occurrence_pointer, seal_digest
 from mdb.core.kinds import FORECAST, procedure
 from mdb.core.records import num, seal_record
 
-from .accumulation import accumulation, bound_state
+from .accumulation import PREMISE_FAILS, accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
 from . import verdict as _verdict
-from .finite import BOUND, EXACT, f64
+from .finite import BOUND, EXACT, MEASURED, f64
 
 SCHEMA = "mdb-forecast-v1"
 U32 = 2.0 ** -24          # unit roundoff of float32, the accumulation precision
+F32_SUBNORMAL = 2.0 ** -149   # spacing of float32 below its smallest normal (absolute underflow)
+EXP_LIMIT = math.log(1.7976931348623157e308)   # exp() of more overflows float64 (709.78)
 LIBRARY_ULPS = 4          # premise: float32 exp, rsqrt, sin, cos within 4 ulp
 SILU_LIPSCHITZ = 1.1      # sup |silu'(g)| = 1.0998 (attained near g = 2.4)
+NOT_INFORMATIVE = "worst-case rounding interval not informative from"
 NO_IDENTITY = {"start": "the token list is an input of the row, not a computed value"}
 
 # (function, proof) of the identity that computes each port from its producers
@@ -155,12 +160,26 @@ class RowModel:
     needs, and ``get`` runs them from one explicit stack, in the order a recursive evaluation
     would. A chain of row models (``propagate``: each row reads the earlier rows' cache and
     sampled token) therefore has no depth limit.
+
+    ``edits`` maps a stop to ``fn(model, label, value, bound) -> (value, bound)``: an edit that
+    fired (or will fire) at that port natively, applied only when this model computes the stop
+    (a captured value already carries it). ``propagate`` builds them from the run's staged and
+    committed edits (M55).
+
+    The worst-case bound (M56) assumes every rounding error aligns. ``broken`` records the first
+    stop where it stops being informative (not finite, or ``cut`` and at least the value's
+    magnitude): ``{stage, cause, text}``, the cause with its numbers. The bound is not
+    propagated past that stop (its descendants carry the reason); no inf or nan ever leaves the
+    bound code. ``cut=False`` (the per-stage bounds on native operands, ``stage_checks``) keeps a
+    finite bound however wide.
     """
 
     def __init__(self, run: Any, row: int, known: Callable[[str], Any], *, bounds: bool = True,
                  overrides: dict[str, Callable[[Any, Any], tuple[Any, Any]]] | None = None,
                  past: Callable[[int, str], tuple[Any, Any]] | None = None,
-                 token: Callable[[], tuple[int, str | None]] | None = None):
+                 token: Callable[[], tuple[int, str | None]] | None = None,
+                 edits: dict[str, Callable[..., tuple[Any, Any]]] | None = None,
+                 cut: bool = True):
         torch = _torch()
         adapter = run.adapter
         self.run, self.row, self.known = run, row, known
@@ -175,8 +194,12 @@ class RowModel:
         self.u = float(torch.finfo(dtype).eps) / 2.0
         self.acc = accumulation(run)   # matmul accumulation premise, from the numeric scope
         self._failed: str | None = None
+        self._vague: str | None = None      # a step's numbers, named if its bound is uninformative
+        self.broken: dict[str, str] | None = None
+        self.cut = cut
         self.bounds = bounds
         self.overrides = dict(overrides or {})
+        self.edits = dict(edits or {})
         self.past, self.token = past, token
         self.values: dict[str, Any] = {}
         self.bnds: dict[str, Any] = {}
@@ -245,13 +268,19 @@ class RowModel:
                 raise Refusal(NO_IDENTITY["start"])
             value, bound = yield from self._step(label)
             self.computed.append(label)
+            edit = self.edits.get(label)
+            if edit is not None:
+                value, bound = edit(self, label, value, bound)
             if bound is None and self._failed is not None:
                 self.unbounded[label] = self._failed     # a premise of this step's bound fails
-            self._failed = None
-            if bound is not None and not bool((torch.isfinite(bound) & (bound >= 0)).all()):
-                bound = None
-                self.unbounded[label] = ("the propagated bound is not finite: the operands' "
-                                         "bounds are too wide for this identity")
+            elif self.bounds and (bound is not None or self._vague is not None):
+                broken = self._uninformative(label, value, bound)
+                if broken is not None:
+                    bound = None
+                    self.unbounded[label] = broken["text"]
+                    if self.broken is None:
+                        self.broken = broken
+            self._failed = self._vague = None
         override = self.overrides.get(label)
         if override is not None:
             value, bound = override(value, bound)
@@ -264,6 +293,24 @@ class RowModel:
             self.unbounded[label] = next(
                 (self.unbounded[p] for p in self.producers(label) if p in self.unbounded),
                 "no rounding bound for this step")
+
+    def _uninformative(self, label: str, value: Any, bound: Any) -> dict[str, str] | None:
+        """``{stage, cause, text}`` when the worst-case bound of a computed stop says nothing:
+        none with the step's numbers (``_vague``), not finite, or (``cut``) at least the largest
+        ``|value|`` (it does not fix any element's sign); None while it is informative."""
+        torch = _torch()
+        stage = f"t{self.row}.{label}"
+        size = float(value.abs().max()) if value.numel() else 0.0
+        if bound is None:
+            cause = self._vague or "no interval"
+        elif not bool((torch.isfinite(bound) & (bound >= 0)).all()):
+            cause = self._vague or "the propagated interval is not finite"
+        else:
+            worst = float(bound.max()) if bound.numel() else 0.0
+            if not self.cut or worst == 0.0 or worst < size:
+                return None
+            cause = self._vague or f"interval {worst:.3g} >= |x| {size:.3g}"
+        return {"stage": stage, "cause": cause, "text": f"{NOT_INFORMATIVE} {stage} ({cause})"}
 
     def _weight(self, module: Any, name: str = "weight") -> Any:
         """A float64 copy of one weight, for the caller's one use. Nothing is kept: every stop
@@ -553,16 +600,42 @@ class RowModel:
         value = torch.softmax(s, dim=-1)
         if not self.bounds or bs is None:
             return value, None
+        self.premises.add("softmax in float32: exp(s - max) / sum, cast to the model dtype; "
+                          "float32 underflow and the cast's underflow bounded absolutely")
         spread = bs.max(dim=-1, keepdim=True).values
+        top, size = float(spread.max()), float(s.abs().max())
+        if not 2 * top <= EXP_LIMIT:        # exp(2 x interval) overflows float64 (or nan)
+            self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
+                           f"exp(2*{top:.3g}) = 1e{2 * top / math.log(10):.0f}, beyond float64")
+            return value, None
+        self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
+                       f"exp(2*{top:.3g}) = {math.exp(2 * top):.2g}")
         prop = value * torch.expm1(2 * spread)
         shift = (s - s.max(dim=-1, keepdim=True).values).abs() + 2 * spread
         each = torch.expm1(U32 * shift) + LIBRARY_ULPS * U32 * (1 + torch.expm1(U32 * shift))
         worst = each.max(dim=-1, keepdim=True).values
-        gamma = _gamma(s.shape[-1], U32)
-        rel = ((1 + each) * (1 + gamma) * (1 + U32) ** 2 / (1 - worst - gamma)
-               * (1 + self._out_round()) - 1)
-        self.premises.add("softmax in float32: exp(s - max) / sum, cast to the model dtype")
-        return value, prop + rel * value * torch.exp(2 * spread)
+        n = s.shape[-1]
+        gamma = _gamma(n, U32)
+        # exp of a shifted score below float32's normal range is off by up to LIBRARY_ULPS
+        # subnormal spacings (0 where the exact value is 1e-56); the n such errors in the sum
+        # count against its lower end (the sum is >= 1: the top score contributes exp(0))
+        under = LIBRARY_ULPS * F32_SUBNORMAL
+        denominator = 1 - worst - gamma - n * under
+        lowest = float(denominator.min())
+        if not lowest > 0:
+            self._failed = (f"{PREMISE_FAILS}softmax bound: 1 - worst - gamma = {lowest:.3g} <= 0 "
+                            f"(score shift up to {float(shift.max()):.3g} over {n} sources)")
+            return value, None
+        out = self._out_round()
+        rel = (1 + each) * (1 + gamma) * (1 + U32) ** 2 / denominator * (1 + out) - 1
+        # absolute: exp underflow over the sum, the quotient's underflow (half a float32
+        # subnormal spacing) and the cast's (half the model dtype's subnormal spacing)
+        cast = 0.0
+        if self.out16:
+            info = torch.finfo(self.adapter.dtype)
+            cast = float(info.tiny) * float(info.eps) / 2
+        absolute = (under / denominator * (1 + U32) + F32_SUBNORMAL / 2) * (1 + out) + cast
+        return value, prop + rel * value * torch.exp(2 * spread) + absolute
 
     def _transport(self, p: Any, bp: Any, values: Any, bv: Any) -> tuple[Any, Any]:
         torch = _torch()
@@ -606,7 +679,7 @@ class RowModel:
         rest = torch.cat((logits[:index] + bl[:index], logits[index + 1:] + bl[index + 1:]))
         if float(logits[index] - bl[index]) > float(rest.max()):
             return value, torch.zeros_like(value)
-        self.unbounded["sample"] = "argmax not certified: the top logit's bound overlaps another"
+        self._vague = "argmax not certified: the top logit's bound overlaps another"
         return value, None
 
 
@@ -1099,15 +1172,7 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
     else:
         predicted = {"shape": list(value.shape), "dtype": "float64",
                      "sha256": tensor_digest(value.contiguous()), **_summary(value, EXACT)}
-    if bound is None:
-        reason = model.unbounded.get(label, "no rounding bound for this step")
-        bound_view: dict[str, Any] = {"state": bound_state(reason), "reason": reason}
-    else:
-        bound_view = {"max": num(float(bound.reshape(-1).max()), BOUND), "elementwise": True,
-                      "premises": sorted(model.premises | {
-                          "round to nearest, no overflow or underflow",
-                          f"float32 library functions within {LIBRARY_ULPS} ulp",
-                          f"model dtype {str(run.adapter.dtype).removeprefix('torch.')}"})}
+    bound_view = bound_view_of(model, label, bound, run.adapter.dtype)
     return {
         "schema": SCHEMA,
         "target": {"address": address, "stop": f"t{row}.{label}", "row": key[0],
@@ -1130,6 +1195,32 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
         "bound": bound_view,
         "edits_at_seal": _labelled_edits(run),
     }
+
+
+BOUND_ROLE = ("information: the worst-case interval (every rounding error aligned) beside the "
+              "prediction; it never decides a verdict or a result's state")
+
+
+def bound_view_of(model: RowModel, label: str, bound: Any, dtype: Any) -> dict[str, Any]:
+    """The sealed ``bound`` sub-dict of a forecast (M56): the worst-case interval with its
+    premises; or, where it stopped being informative, the stop and the cause with its numbers
+    (``informative: False``, no state: an uninformative worst case is information, not an
+    unresolved result); or the refused premise; else unresolved with the reason. Always marked
+    ``information`` (``ops.registry.has_unresolved`` does not count it)."""
+    if bound is None:
+        reason = model.unbounded.get(label, "no rounding bound for this step")
+        if model.broken is not None and bound_state(reason) != "refused":
+            return {"informative": False, "from": model.broken["stage"],
+                    "cause": model.broken["cause"], "note": model.broken["text"],
+                    "information": True, "role": BOUND_ROLE}
+        return {"state": bound_state(reason), "reason": reason, "information": True,
+                "role": BOUND_ROLE}
+    return {"max": num(float(bound.reshape(-1).max()), BOUND), "elementwise": True,
+            "information": True, "role": BOUND_ROLE,
+            "premises": sorted(model.premises | {
+                "round to nearest; underflow bounded absolutely where stated, no overflow",
+                f"float32 library functions within {LIBRARY_ULPS} ulp",
+                f"model dtype {str(dtype).removeprefix('torch.')}"})}
 
 
 def view(entry: Forecast) -> dict[str, Any]:
@@ -1281,9 +1372,14 @@ def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dic
         out["rounding_effect"]["spacings"] = num(effect / step, label)
     out["rounding_origin"] = entry.record["body"]["emulated"]["rounding_origin"]
     out["rounded_steps"] = num(_rounded_steps(entry), EXACT)
+    row = entry.key[0]
+    started = time.perf_counter()
+    checks = stage_checks(run, [(row, step["stop"].split(".", 1)[1]) for step in entry.chain])
+    out["stages"] = containment(checks, label, seconds=time.perf_counter() - started)
     if decided["verdict"] != _verdict.CONFIRMED:
-        out.update(_parting(run, entry, label))
+        out.update(_parting(run, entry, label, checks))
     bound = entry.bound
+    sealed = entry.record["body"]["bound"]
     if bound is not None and bool(bound.isfinite().all()):
         # information only: the worst-case propagated bound of the exact prediction
         exact_gap = (native - entry.predicted).abs()
@@ -1291,23 +1387,127 @@ def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dic
         out.update(within_bound=within, bound_max=num(float(bound.max()), BOUND))
         if not within:
             out["worst_excess"] = num(float((exact_gap - bound).max()), label)
+    elif "note" in sealed:
+        out["bound_note"] = sealed["note"]
+    else:
+        out["bound_note"] = f"no worst-case interval ({sealed['state']}: {sealed['reason']})"
     return out
 
 
 MAX_TIES = 3
+PER_STAGE = ("per stage: the rounding bound of each stage's own identity evaluated on that "
+             "stage's native operands (read after the native run), against |native - identity|; "
+             "it says each native step is its identity up to its own rounding, not how far a "
+             "target can sit from the exact chain (that is a chain bound)")
 
 
-def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
+def stage_checks(run: Any, stages: list[tuple[int, str]],
+                 skip: dict[tuple[int, str], str] | None = None) -> list[dict[str, Any]]:
+    """Each stage ``(row, stop)`` of a walked chain evaluated by its identity on its native
+    operands (``RowModel`` with bounds, ``cut=False``: one identity, every producer read
+    natively), the cursor at or past every stage: ``{stop, row, name, ratio, excess, within}``
+    with ``ratio`` the largest ``|native - identity| / bound`` over elements with a positive
+    bound and ``excess`` the largest ``|native - identity| - bound``; or ``{.., unchecked}``
+    with why (``skip``, a port an edit wrote, no bound). Costs one float64 identity per stage
+    (about one exact chain evaluation with bounds) and the native reads."""
+    skip = skip or {}
+    out: list[dict[str, Any]] = []
+    for row, name in stages:
+        stop = f"t{row}.{name}"
+        item: dict[str, Any] = {"stop": stop, "row": row, "name": name}
+        out.append(item)
+        if (row, name) in skip:
+            item["unchecked"] = skip[row, name]
+            continue
+        info = run.read_info(stop)
+        if info["edited"] or info["kind"] in ("edit", "realisation"):
+            item["unchecked"] = f"written by an edit ({info['by']})"
+            continue
+        if info["authority"] is None:
+            item["unchecked"] = info.get("reason") or "no native label"
+            continue
+        model = RowModel(run, row, lambda n, at=name, r=row: None if n == at else run.read(
+            f"t{r}.{n}"), cut=False)
+        try:
+            value, bound = model.get(name), model.bound(name)
+        except Refusal as error:
+            item["unchecked"] = str(error)
+            continue
+        if bound is None:
+            item["unchecked"] = model.unbounded.get(name, "no bound")
+            continue
+        native = f64(run.read(stop)).reshape(value.shape)
+        gap = (native - value).abs()
+        positive = bound > 0
+        ratio = (gap[positive] / bound[positive]) if bool(positive.any()) else gap.new_zeros(1)
+        item.update(ratio=float(ratio.max()), excess=float((gap - bound).max()),
+                    premises=model.premises)
+        item["within"] = item["excess"] <= 0
+        if bool(((~positive) & (gap > 0)).any()):
+            item["zero_bound_exceeded"] = True
+        del model, value, bound, native, gap
+    return out
+
+
+def containment(checks: list[dict[str, Any]], label: str,
+                seconds: float | None = None) -> dict[str, Any]:
+    """The summary of ``stage_checks`` (M56): ``each stage within its own rounding bound on
+    native operands: 77/77`` with the worst ratio and its stage, the failing stages and the
+    unchecked ones (each list capped at ``MAX_TIES``, with its count). A finite statement about
+    every native step walked; labelled as a per-stage bound (``PER_STAGE``), not a chain bound."""
+    done = [c for c in checks if "ratio" in c]
+    failing = [c for c in done if not c["within"]]
+    unchecked = [c for c in checks if "unchecked" in c]
+    premises: set[str] = set()
+    for c in done:
+        premises |= c["premises"]
+    out: dict[str, Any] = {"checked": num(len(done), EXACT),
+                           "within": num(len(done) - len(failing), EXACT),
+                           "walked": num(len(checks), EXACT),
+                           "kind": "per-stage bound on native operands",
+                           "authority": BOUND, "premise": PER_STAGE,
+                           "premises": sorted(premises | {
+                               "round to nearest; underflow bounded absolutely where stated",
+                               f"float32 library functions within {LIBRARY_ULPS} ulp"}),
+                           "cost": f"{len(done)} float64 identity evaluations on native operands"}
+    text = (f"each stage within its own rounding bound on native operands: "
+            f"{len(done) - len(failing)}/{len(done)}")
+    if done:
+        worst = max(done, key=lambda c: c["ratio"])
+        out["worst_ratio"] = num(worst["ratio"], label)
+        out["worst_stage"] = worst["stop"]
+        text += f" (worst |native - identity|/bound {worst['ratio']:.3g} at {worst['stop']})"
+    if failing:
+        out["failing"] = [{"stop": c["stop"], "ratio": num(c["ratio"], label),
+                           "excess": num(c["excess"], label),
+                           **({"zero_bound_exceeded": True} if c.get("zero_bound_exceeded")
+                              else {})} for c in failing[:MAX_TIES]]
+        out["failing_count"] = num(len(failing), EXACT)
+        text += "; outside: " + ", ".join(
+            f"{c['stop']} by {c['excess']:.3g}" for c in failing[:MAX_TIES]) + (
+            f" (+{len(failing) - MAX_TIES} more)" if len(failing) > MAX_TIES else "")
+    if unchecked:
+        out["not_checked"] = [f"{c['stop']} ({c['unchecked']})" for c in unchecked[:MAX_TIES]]
+        out["not_checked_count"] = num(len(unchecked), EXACT)
+        text += f"; {len(unchecked)} not checked"
+    if seconds is not None:
+        out["seconds"] = num(seconds, MEASURED)
+    out["text"] = text
+    return out
+
+
+def _parting(run: Any, entry: Forecast, label: str,
+             checks: list[dict[str, Any]]) -> dict[str, Any]:
     """Where emulation and native part, for a residual above the floor.
 
     ``not confirmed`` when the prediction is not the emulated chain of the sealed operands (the
     held prediction or an operand read now differs from its sealed digest) or when a stage of
     the chain, from the first stop where emulated and native part by more than the floor to the
     target, does not reproduce its native value from its native operands within the rounding
-    bound of its identity (``bound``, premises as for a forecast): the identity does not
-    describe that native step. Otherwise ``unresolved``: every such stage is the native step,
-    and the residual is rounding drift between stages (one-spacing differences of the sums
-    carried forward); native top-score ties where the emulated softmax parts are named."""
+    bound of its identity (``checks``, ``stage_checks``): the identity does not describe that
+    native step. Otherwise ``unresolved``: every such stage is the native step, and the residual
+    is rounding drift between stages (one-spacing differences of the sums carried forward);
+    native top-score ties where the emulated softmax parts are named."""
     body = entry.record["body"]
     sealed_digest = body["digests"]["emulated"]
     row = entry.key[0]
@@ -1320,71 +1520,62 @@ def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
         return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
                 "reason": "the emulated chain of the operands read now differs from the sealed "
                           "prediction: an operand is not the one sealed"}
-    return stage_parting(run, row, emulator, entry.label, label)
+    return stage_parting(run, [emulator], label, checks)
 
 
-def stage_parting(run: Any, row: int, emulator: EmulatedRowModel, target: str, label: str,
-                  skip: dict[str, str] | None = None) -> dict[str, Any]:
-    """Where an emulated row model of ``row`` (evaluated through ``target``) and the native
-    values of that row part, the cursor being at or past ``target`` in it (``_parting``; the
-    whatif checks of ``propagate`` use it inside the edited excursion). The first stop where they
-    part by more than ``verdict.FLOOR_SPACINGS`` spacings; from there to the target each stage
-    is evaluated by its identity on its native operands (``RowModel`` with bounds): a native
-    value outside that bound is ``not confirmed`` (the identity does not describe the native
-    step), else ``unresolved`` (rounding drift), naming native top-score ties where the emulated
-    softmax parts. ``skip``: stops that no identity writes (an edited port, a cell read), with
-    why; they are listed as not checked. ``label``: the authority of the native values."""
+def stage_parting(run: Any, emulators: list[EmulatedRowModel], label: str,
+                  checks: list[dict[str, Any]]) -> dict[str, Any]:
+    """Where emulated row models (one per row of a chain, in row order, each evaluated through
+    what the chain needed) and the native values part, the cursor at or past every stop they
+    computed (``_parting``; the whatif checks of ``propagate`` use it inside the edited
+    excursion, over several rows too: M55). The first stop, in row order, where they part by
+    more than ``verdict.FLOOR_SPACINGS`` spacings; from there on, each stage's check on its
+    native operands (``checks``, ``stage_checks`` over the same walk): a native value outside
+    its identity's bound is ``not confirmed`` (the identity does not describe the native step),
+    else ``unresolved`` (rounding drift), naming native top-score ties where the emulated softmax
+    parts. ``label``: the authority of the native values."""
     dtype = run.adapter.dtype
     floor = _verdict.FLOOR_SPACINGS
-    skip = skip or {}
-
-    def read(name: str) -> Any:
-        return f64(run.read(f"t{row}.{name}")).reshape(emulator.shape(name))
-
-    chain = [name for name in emulator.computed if name != "sample"]
     first, parts, step = None, 0.0, 0.0
-    for name in chain:
-        native = read(name)
+    walk = [(m, name) for m in emulators for name in m.computed if name != "sample"]
+    for model, name in walk:
+        native = f64(run.read(f"t{model.row}.{name}")).reshape(model.shape(name))
         step = _verdict.spacing(float(native.abs().max()), dtype)
-        parts = float((emulator.values[name] - native).abs().max()) / step
+        parts = float((model.values[name] - native).abs().max()) / step
         if parts > floor:
-            first = name
+            first = (model.row, name)
             break
     if first is None:       # every stop within the floor; the target (margin, token) is not
-        first = chain[-1] if chain else target
+        first = (walk[-1][0].row, walk[-1][1]) if walk else None
+    order = [(c["row"], c["name"]) for c in checks]
+    start = order.index(first) if first in order else 0
+    first_text = f"t{first[0]}.{first[1]}" if first is not None else "the target"
     unchecked, ties = [], []
-    stages = (emulator.computed[emulator.computed.index(first):] if first in emulator.computed
-              else [target])
-    for name in stages:
-        if name in skip:
-            unchecked.append(f"t{row}.{name} ({skip[name]})")
+    by_row = {m.row: m for m in emulators}
+    for item in checks[start:]:
+        if "unchecked" in item:
+            unchecked.append(f"{item['stop']} ({item['unchecked']})")
             continue
-        stage = RowModel(run, row, lambda n, at=name: None if n == at else run.read(
-            f"t{row}.{n}"))
-        value, bound = stage.get(name), stage.bound(name)
-        native = (f64(run.read(f"t{row}.sample")).reshape(()) if name == "sample"
-                  else read(name))
-        if bound is None:
-            unchecked.append(f"t{row}.{name} ({stage.unbounded.get(name, 'no bound')})")
-            continue
-        excess = float(((native - value).abs() - bound).max())
-        if excess > 0:
+        if not item["within"]:
             return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
-                    "parting": {"stop": f"t{row}.{first}", "spacings": num(parts, label),
-                                "stage": f"t{row}.{name}", "excess": num(excess, label)},
-                    "reason": f"t{row}.{name}: the native value lies {excess:.3g} outside the "
-                              "rounding bound of its identity on the native operands"}
-        if name.endswith(".p"):
-            scores, emulated = read(name[:-1] + "s"), emulator.values[name]
+                    "parting": {"stop": first_text, "spacings": num(parts, label),
+                                "stage": item["stop"], "excess": num(item["excess"], label)},
+                    "reason": f"{item['stop']}: the native value lies {item['excess']:.3g} "
+                              "outside the rounding bound of its identity on the native operands"}
+        name, row = item["name"], item["row"]
+        model = by_row.get(row)
+        if name.endswith(".p") and model is not None and name in model.values:
+            scores = f64(run.read(f"t{row}.{name[:-1]}s")).reshape(model.shape(name))
+            native = f64(run.read(item["stop"])).reshape(model.shape(name))
             top = scores.topk(min(2, scores.shape[-1]), dim=-1).values
-            apart = (emulated != native).any(-1)
+            apart = (model.values[name] != native).any(-1)
             for head in range(scores.shape[0]):
                 if top.shape[-1] == 2 and top[head, 0] == top[head, 1] and bool(apart[head]):
                     size = float(top[head, 0].abs())
-                    ties.append(f"t{row}.{name}[h{head}]: native top scores tie at "
+                    ties.append(f"{item['stop']}[h{head}]: native top scores tie at "
                                 f"{float(top[head, 0]):g} (score spacing "
                                 f"{_verdict.spacing(size, dtype):g})")
-    reason = (f"rounding drift: emulated and native part first at t{row}.{first} by "
+    reason = (f"rounding drift: emulated and native part first at {first_text} by "
               f"{parts:.3g} spacings; every stage from there to the target reproduces its native "
               "value from its native operands within its rounding bound")
     if ties:
@@ -1394,12 +1585,13 @@ def stage_parting(run: Any, row: int, emulator: EmulatedRowModel, target: str, l
         reason += "; not checked: " + ", ".join(unchecked[:MAX_TIES]) + (
             f" (+{len(unchecked) - MAX_TIES} more)" if len(unchecked) > MAX_TIES else "")
     return {"verdict": _verdict.UNRESOLVED, "state": "unresolved", "reason": reason,
-            "parting": {"stop": f"t{row}.{first}", "spacings": num(parts, label),
+            "parting": {"stop": first_text, "spacings": num(parts, label),
                         "spacing": num(step, label), "ties": ties[:MAX_ITEMS],
-                        "stages_checked": {"count": len(stages) - len(unchecked)}}}
+                        "stages_checked": {"count": len(checks) - start - len(unchecked)}}}
 
 
 _session_id = run_session_id  # old private name, kept for one commit
 
-__all__ = ["FORECAST", "IDENTITY", "Logit", "Margin", "NO_IDENTITY", "Refusal", "RowModel",
-           "ledger", "run_session_id", "seal", "verify", "view"]
+__all__ = ["FORECAST", "IDENTITY", "Logit", "Margin", "NOT_INFORMATIVE", "NO_IDENTITY",
+           "PER_STAGE", "Refusal", "RowModel", "bound_view_of", "containment", "ledger",
+           "run_session_id", "seal", "stage_checks", "verify", "view"]

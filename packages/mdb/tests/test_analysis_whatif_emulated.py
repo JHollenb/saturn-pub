@@ -140,14 +140,24 @@ def test_a_sub_resolution_edit_reports_the_exact_change_the_dtype_cannot_show(de
     assert "exact" in effect["note"]
 
 
-def test_a_refused_emulation_decides_on_the_native_change_alone(debugger):
-    """A staged edit ahead of the cursor rewrites an operand the chains recompute: the emulated
-    chains are refused and the verdict is native only (edited against base)."""
+def test_a_staged_edit_ahead_and_off_the_path_is_honoured_by_every_chain(debugger):
+    """M55: a staged edit ahead of the cursor, off the edit's path but feeding it (``L0.q``
+    for an edit at ``L1.m``), rewrites an operand the chains recompute. The exact, linear and
+    emulated chains apply it where they compute ``L0.q``: the emulated change is the native one
+    bit for bit (it was refused) and the sealed exact change, built on operands forecast from
+    the cursor, agrees with the exact change on measured operands to rounding (it differed by
+    the staged edit's whole effect)."""
     run = debugger.run(MAIN)
     run.until(f"t{ROW}.L0.h")
-    run.set(f"t{ROW}.L0.q", 0.01, "add")
-    report = whatif(run, Edit(f"t{ROW}.L4.m", 0.5, "add"), CONSUMER).report
-    assert report["prediction"]["emulated"]["state"] == "refused"
-    effect = report["effect"]
-    assert effect["basis"].startswith("native only") and "emulated" not in effect
-    assert effect["verdict"] == (EFFECT if effect["native"]["value"] != 0 else NO_EFFECT)
+    run.set(f"t{ROW}.L0.q", 4.0, "add")
+    result = whatif(run, Edit(f"t{ROW}.L1.m", 0.5, "add"), CONSUMER)
+    report = result.report
+    assert report["prediction"]["other_edits"]["applied"] == [f"t{ROW}.L0.q add"]
+    _emulated_equals_native(report, result)
+    sealed, measured = result.tensors["exact"], result.tensors["exact_measured"]
+    clean = debugger.run(MAIN)
+    clean.until(f"t{ROW}.L0.h")
+    ignored = whatif(clean, Edit(f"t{ROW}.L1.m", 0.5, "add"), CONSUMER).tensors["exact"]
+    spacing = report["effect"]["spacing"]["value"]
+    assert float((sealed - measured).abs()) <= 4 * spacing
+    assert float((ignored - measured).abs()) > 4 * float((sealed - measured).abs())
