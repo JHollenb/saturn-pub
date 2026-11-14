@@ -1,0 +1,195 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 48becc689d6ff23a21683d1fb034a2a9b9f96ffa model /mnt/big/llm-models/Qwen3-1.7B-Base fams para,dist
+load 3.9s; 152 candidates; heads 16 kv 8 layers 28
+ACC {"id": "para-currency:yen", "argmax_text": " The", "correct": false, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "dist-currency:yen", "argmax_text": " Tokyo", "correct": true, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "para-currency:won", "argmax_text": " The", "correct": false, "hop1_argmax": " South", "hop1_correct": true, "hop2_argmax": " Seoul", "hop2_correct": true}
+ACC {"id": "dist-currency:won", "argmax_text": " Seoul", "correct": true, "hop1_argmax": " South", "hop1_correct": true, "hop2_argmax": " Seoul", "hop2_correct": true}
+ACC {"id": "para-currency:ruble", "argmax_text": " The", "correct": false, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "dist-currency:ruble", "argmax_text": " Moscow", "correct": true, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "para-currency:rouble", "argmax_text": " The", "correct": false, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "dist-currency:rouble", "argmax_text": " Moscow", "correct": true, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "para-currency:yuan", "argmax_text": " The", "correct": false, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "dist-currency:yuan", "argmax_text": " Beijing", "correct": true, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "para-currency:renminbi", "argmax_text": " The", "correct": false, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "dist-currency:renminbi", "argmax_text": " Beijing", "correct": true, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "para-currency:baht", "argmax_text": " The", "correct": false, "hop1_argmax": " Thailand", "hop1_correct": true, "hop2_argmax": " Bangkok", "hop2_correct": true}
+ACC {"id": "dist-currency:baht", "argmax_text": " Bangkok", "correct": true, "hop1_argmax": " Thailand", "hop1_correct": true, "hop2_argmax": " Bangkok", "hop2_correct": true}
+ACC {"id": "para-currency:lira", "argmax_text": " The", "correct": false, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "dist-currency:lira", "argmax_text": " Tir", "correct": false, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "para-currency:zloty", "argmax_text": " The", "correct": false, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "dist-currency:zloty", "argmax_text": " Warsaw", "correct": true, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "para-currency:forint", "argmax_text": " The", "correct": false, "hop1_argmax": " Hungary", "hop1_correct": true, "hop2_argmax": " Budapest", "hop2_correct": true}
+ACC {"id": "dist-currency:forint", "argmax_text": " Budapest", "correct": true, "hop1_argmax": " Hungary", "hop1_correct": true, "hop2_argmax": " Budapest", "hop2_correct": true}
+ACC {"id": "para-currency:krona", "argmax_text": " The", "correct": false, "hop1_argmax": " Sweden", "hop1_correct": true, "hop2_argmax": " Stockholm", "hop2_correct": true}
+ACC {"id": "dist-currency:krona", "argmax_text": " Stockholm", "correct": true, "hop1_argmax": " Sweden", "hop1_correct": true, "hop2_argmax": " Stockholm", "hop2_correct": true}
+ACC {"id": "para-currency:rupiah", "argmax_text": " The", "correct": false, "hop1_argmax": " Indonesia", "hop1_correct": true, "hop2_argmax": " Jakarta", "hop2_correct": true}
+ACC {"id": "dist-currency:rupiah", "argmax_text": " Jakarta", "correct": true, "hop1_argmax": " Indonesia", "hop1_correct": true, "hop2_argmax": " Jakarta", "hop2_correct": true}
+ACC {"id": "para-currency:shekel", "argmax_text": " The", "correct": false, "hop1_argmax": " Israel", "hop1_correct": true, "hop2_argmax": " Jerusalem", "hop2_correct": true}
+ACC {"id": "dist-currency:shekel", "argmax_text": " Jerusalem", "correct": true, "hop1_argmax": " Israel", "hop1_correct": true, "hop2_argmax": " Jerusalem", "hop2_correct": true}
+ACC {"id": "para-currency:hryvnia", "argmax_text": " The", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "dist-currency:hryvnia", "argmax_text": " Ky", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "para-currency:lev", "argmax_text": " The", "correct": false, "hop1_argmax": " Armenia", "hop1_correct": false, "hop2_argmax": " Sofia", "hop2_correct": true}
+ACC {"id": "dist-currency:lev", "argmax_text": " Kiev", "correct": false, "hop1_argmax": " Armenia", "hop1_correct": false, "hop2_argmax": " Sofia", "hop2_correct": true}
+ACC {"id": "para-currency:koruna", "argmax_text": " The", "correct": false, "hop1_argmax": " Croatia", "hop1_correct": false, "hop2_argmax": " Prague", "hop2_correct": true}
+ACC {"id": "dist-currency:koruna", "argmax_text": " Prague", "correct": true, "hop1_argmax": " Croatia", "hop1_correct": false, "hop2_argmax": " Prague", "hop2_correct": true}
+ACC {"id": "para-currency:sol", "argmax_text": " The", "correct": false, "hop1_argmax": " Albania", "hop1_correct": false, "hop2_argmax": " Lima", "hop2_correct": true}
+ACC {"id": "dist-currency:sol", "argmax_text": " the", "correct": false, "hop1_argmax": " Albania", "hop1_correct": false, "hop2_argmax": " Lima", "hop2_correct": true}
+ACC {"id": "para-currency:pound sterling", "argmax_text": " London", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "dist-currency:pound sterling", "argmax_text": " London", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "para-currency:sterling", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "dist-currency:sterling", "argmax_text": " London", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "para-currency:rial", "argmax_text": " The", "correct": false, "hop1_argmax": " Iran", "hop1_correct": true, "hop2_argmax": " Tehran", "hop2_correct": true}
+ACC {"id": "dist-currency:rial", "argmax_text": " Tehran", "correct": true, "hop1_argmax": " Iran", "hop1_correct": true, "hop2_argmax": " Tehran", "hop2_correct": true}
+ACC {"id": "para-currency:afghani", "argmax_text": " The", "correct": false, "hop1_argmax": " Afghanistan", "hop1_correct": true, "hop2_argmax": " Kabul", "hop2_correct": true}
+ACC {"id": "dist-currency:afghani", "argmax_text": " Kabul", "correct": true, "hop1_argmax": " Afghanistan", "hop1_correct": true, "hop2_argmax": " Kabul", "hop2_correct": true}
+ACC {"id": "para-currency:dollar", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Washington", "hop2_correct": true}
+ACC {"id": "dist-currency:dollar", "argmax_text": " Washington", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Washington", "hop2_correct": true}
+ACC {"id": "para-currency:peso", "argmax_text": " The", "correct": false, "hop1_argmax": " Mexico", "hop1_correct": false, "hop2_argmax": " Manila", "hop2_correct": true}
+ACC {"id": "dist-currency:peso", "argmax_text": " Manila", "correct": true, "hop1_argmax": " Mexico", "hop1_correct": false, "hop2_argmax": " Manila", "hop2_correct": true}
+ACC {"id": "para-currency:shilling", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": false, "hop2_argmax": " Nairobi", "hop2_correct": true}
+ACC {"id": "dist-currency:shilling", "argmax_text": " London", "correct": false, "hop1_argmax": " the", "hop1_correct": false, "hop2_argmax": " Nairobi", "hop2_correct": true}
+ACC {"id": "para-city:Osaka", "argmax_text": " The", "correct": false, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "dist-city:Osaka", "argmax_text": " Osaka", "correct": false, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "para-city:Kyoto", "argmax_text": " The", "correct": false, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "dist-city:Kyoto", "argmax_text": " Tokyo", "correct": true, "hop1_argmax": " Japan", "hop1_correct": true, "hop2_argmax": " Tokyo", "hop2_correct": true}
+ACC {"id": "para-city:Busan", "argmax_text": " The", "correct": false, "hop1_argmax": " South", "hop1_correct": true, "hop2_argmax": " Seoul", "hop2_correct": true}
+ACC {"id": "dist-city:Busan", "argmax_text": " Seoul", "correct": true, "hop1_argmax": " South", "hop1_correct": true, "hop2_argmax": " Seoul", "hop2_correct": true}
+ACC {"id": "para-city:Shanghai", "argmax_text": " The", "correct": false, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "dist-city:Shanghai", "argmax_text": " Beijing", "correct": true, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "para-city:Shenzhen", "argmax_text": " The", "correct": false, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "dist-city:Shenzhen", "argmax_text": " Moscow", "correct": false, "hop1_argmax": " China", "hop1_correct": true, "hop2_argmax": " Beijing", "hop2_correct": true}
+ACC {"id": "para-city:Novosibirsk", "argmax_text": " The", "correct": false, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "dist-city:Novosibirsk", "argmax_text": " Moscow", "correct": true, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "para-city:Saint Petersburg", "argmax_text": " Saint", "correct": false, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "dist-city:Saint Petersburg", "argmax_text": " Moscow", "correct": true, "hop1_argmax": " Russia", "hop1_correct": true, "hop2_argmax": " Moscow", "hop2_correct": true}
+ACC {"id": "para-city:Munich", "argmax_text": " The", "correct": false, "hop1_argmax": " Germany", "hop1_correct": true, "hop2_argmax": " Berlin", "hop2_correct": true}
+ACC {"id": "dist-city:Munich", "argmax_text": " Berlin", "correct": true, "hop1_argmax": " Germany", "hop1_correct": true, "hop2_argmax": " Berlin", "hop2_correct": true}
+ACC {"id": "para-city:Hamburg", "argmax_text": " The", "correct": false, "hop1_argmax": " Germany", "hop1_correct": true, "hop2_argmax": " Berlin", "hop2_correct": true}
+ACC {"id": "dist-city:Hamburg", "argmax_text": " Berlin", "correct": true, "hop1_argmax": " Germany", "hop1_correct": true, "hop2_argmax": " Berlin", "hop2_correct": true}
+ACC {"id": "para-city:Milan", "argmax_text": " The", "correct": false, "hop1_argmax": " Italy", "hop1_correct": true, "hop2_argmax": " Rome", "hop2_correct": true}
+ACC {"id": "dist-city:Milan", "argmax_text": " Rome", "correct": true, "hop1_argmax": " Italy", "hop1_correct": true, "hop2_argmax": " Rome", "hop2_correct": true}
+ACC {"id": "para-city:Naples", "argmax_text": " The", "correct": false, "hop1_argmax": " Italy", "hop1_correct": true, "hop2_argmax": " Rome", "hop2_correct": true}
+ACC {"id": "dist-city:Naples", "argmax_text": " Rome", "correct": true, "hop1_argmax": " Italy", "hop1_correct": true, "hop2_argmax": " Rome", "hop2_correct": true}
+ACC {"id": "para-city:Barcelona", "argmax_text": " The", "correct": false, "hop1_argmax": " Spain", "hop1_correct": true, "hop2_argmax": " Madrid", "hop2_correct": true}
+ACC {"id": "dist-city:Barcelona", "argmax_text": " Madrid", "correct": true, "hop1_argmax": " Spain", "hop1_correct": true, "hop2_argmax": " Madrid", "hop2_correct": true}
+ACC {"id": "para-city:Seville", "argmax_text": " The", "correct": false, "hop1_argmax": " Spain", "hop1_correct": true, "hop2_argmax": " Madrid", "hop2_correct": true}
+ACC {"id": "dist-city:Seville", "argmax_text": " Madrid", "correct": true, "hop1_argmax": " Spain", "hop1_correct": true, "hop2_argmax": " Madrid", "hop2_correct": true}
+ACC {"id": "para-city:Porto", "argmax_text": " The", "correct": false, "hop1_argmax": " Portugal", "hop1_correct": true, "hop2_argmax": " Lisbon", "hop2_correct": true}
+ACC {"id": "dist-city:Porto", "argmax_text": " Lisbon", "correct": true, "hop1_argmax": " Portugal", "hop1_correct": true, "hop2_argmax": " Lisbon", "hop2_correct": true}
+ACC {"id": "para-city:Rotterdam", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Amsterdam", "hop2_correct": true}
+ACC {"id": "dist-city:Rotterdam", "argmax_text": " Stockholm", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Amsterdam", "hop2_correct": true}
+ACC {"id": "para-city:Gothenburg", "argmax_text": " The", "correct": false, "hop1_argmax": " Sweden", "hop1_correct": true, "hop2_argmax": " Stockholm", "hop2_correct": true}
+ACC {"id": "dist-city:Gothenburg", "argmax_text": " Stockholm", "correct": true, "hop1_argmax": " Sweden", "hop1_correct": true, "hop2_argmax": " Stockholm", "hop2_correct": true}
+ACC {"id": "para-city:Krakow", "argmax_text": " The", "correct": false, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "dist-city:Krakow", "argmax_text": " Krak", "correct": false, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "para-city:Gdansk", "argmax_text": " The", "correct": false, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "dist-city:Gdansk", "argmax_text": " Warsaw", "correct": true, "hop1_argmax": " Poland", "hop1_correct": true, "hop2_argmax": " Warsaw", "hop2_correct": true}
+ACC {"id": "para-city:Bergen", "argmax_text": " The", "correct": false, "hop1_argmax": " Norway", "hop1_correct": true, "hop2_argmax": " Oslo", "hop2_correct": true}
+ACC {"id": "dist-city:Bergen", "argmax_text": " Oslo", "correct": true, "hop1_argmax": " Norway", "hop1_correct": true, "hop2_argmax": " Oslo", "hop2_correct": true}
+ACC {"id": "para-city:Istanbul", "argmax_text": " The", "correct": false, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "dist-city:Istanbul", "argmax_text": " Ankara", "correct": true, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "para-city:Izmir", "argmax_text": " The", "correct": false, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "dist-city:Izmir", "argmax_text": " Istanbul", "correct": false, "hop1_argmax": " Turkey", "hop1_correct": true, "hop2_argmax": " Ankara", "hop2_correct": true}
+ACC {"id": "para-city:Alexandria", "argmax_text": " The", "correct": false, "hop1_argmax": " Egypt", "hop1_correct": true, "hop2_argmax": " Cairo", "hop2_correct": true}
+ACC {"id": "dist-city:Alexandria", "argmax_text": " Cairo", "correct": true, "hop1_argmax": " Egypt", "hop1_correct": true, "hop2_argmax": " Cairo", "hop2_correct": true}
+ACC {"id": "para-city:Toronto", "argmax_text": " The", "correct": false, "hop1_argmax": " Canada", "hop1_correct": true, "hop2_argmax": " Ottawa", "hop2_correct": true}
+ACC {"id": "dist-city:Toronto", "argmax_text": " Ottawa", "correct": true, "hop1_argmax": " Canada", "hop1_correct": true, "hop2_argmax": " Ottawa", "hop2_correct": true}
+ACC {"id": "para-city:Vancouver", "argmax_text": " The", "correct": false, "hop1_argmax": " Canada", "hop1_correct": true, "hop2_argmax": " Ottawa", "hop2_correct": true}
+ACC {"id": "dist-city:Vancouver", "argmax_text": " Sydney", "correct": false, "hop1_argmax": " Canada", "hop1_correct": true, "hop2_argmax": " Ottawa", "hop2_correct": true}
+ACC {"id": "para-city:Sydney", "argmax_text": " The", "correct": false, "hop1_argmax": " Australia", "hop1_correct": true, "hop2_argmax": " Canberra", "hop2_correct": true}
+ACC {"id": "dist-city:Sydney", "argmax_text": " Canberra", "correct": true, "hop1_argmax": " Australia", "hop1_correct": true, "hop2_argmax": " Canberra", "hop2_correct": true}
+ACC {"id": "para-city:Melbourne", "argmax_text": " The", "correct": false, "hop1_argmax": " Australia", "hop1_correct": true, "hop2_argmax": " Canberra", "hop2_correct": true}
+ACC {"id": "dist-city:Melbourne", "argmax_text": " Canberra", "correct": true, "hop1_argmax": " Australia", "hop1_correct": true, "hop2_argmax": " Canberra", "hop2_correct": true}
+ACC {"id": "para-city:Chicago", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Washington", "hop2_correct": true}
+ACC {"id": "dist-city:Chicago", "argmax_text": " Washington", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Washington", "hop2_correct": true}
+ACC {"id": "para-city:Manchester", "argmax_text": " The", "correct": false, "hop1_argmax": " England", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "dist-city:Manchester", "argmax_text": " London", "correct": true, "hop1_argmax": " England", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "para-city:Liverpool", "argmax_text": " The", "correct": false, "hop1_argmax": " England", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "dist-city:Liverpool", "argmax_text": " London", "correct": true, "hop1_argmax": " England", "hop1_correct": true, "hop2_argmax": " London", "hop2_correct": true}
+ACC {"id": "para-city:Thessaloniki", "argmax_text": " The", "correct": false, "hop1_argmax": " Greece", "hop1_correct": true, "hop2_argmax": " Athens", "hop2_correct": true}
+ACC {"id": "dist-city:Thessaloniki", "argmax_text": " Th", "correct": false, "hop1_argmax": " Greece", "hop1_correct": true, "hop2_argmax": " Athens", "hop2_correct": true}
+ACC {"id": "para-city:Salzburg", "argmax_text": " The", "correct": false, "hop1_argmax": " Austria", "hop1_correct": true, "hop2_argmax": " Vienna", "hop2_correct": true}
+ACC {"id": "dist-city:Salzburg", "argmax_text": " Vienna", "correct": true, "hop1_argmax": " Austria", "hop1_correct": true, "hop2_argmax": " Vienna", "hop2_correct": true}
+ACC {"id": "para-city:Antwerp", "argmax_text": " The", "correct": false, "hop1_argmax": " Belgium", "hop1_correct": true, "hop2_argmax": " Brussels", "hop2_correct": true}
+ACC {"id": "dist-city:Antwerp", "argmax_text": " Ant", "correct": false, "hop1_argmax": " Belgium", "hop1_correct": true, "hop2_argmax": " Brussels", "hop2_correct": true}
+ACC {"id": "para-city:Aarhus", "argmax_text": " The", "correct": false, "hop1_argmax": " Denmark", "hop1_correct": true, "hop2_argmax": " Copenhagen", "hop2_correct": true}
+ACC {"id": "dist-city:Aarhus", "argmax_text": " Helsinki", "correct": false, "hop1_argmax": " Denmark", "hop1_correct": true, "hop2_argmax": " Copenhagen", "hop2_correct": true}
+ACC {"id": "para-city:Tampere", "argmax_text": " The", "correct": false, "hop1_argmax": " Finland", "hop1_correct": true, "hop2_argmax": " Helsinki", "hop2_correct": true}
+ACC {"id": "dist-city:Tampere", "argmax_text": " Helsinki", "correct": true, "hop1_argmax": " Finland", "hop1_correct": true, "hop2_argmax": " Helsinki", "hop2_correct": true}
+ACC {"id": "para-city:Cork", "argmax_text": " The", "correct": false, "hop1_argmax": " Ireland", "hop1_correct": true, "hop2_argmax": " Dublin", "hop2_correct": true}
+ACC {"id": "dist-city:Cork", "argmax_text": " Dublin", "correct": true, "hop1_argmax": " Ireland", "hop1_correct": true, "hop2_argmax": " Dublin", "hop2_correct": true}
+ACC {"id": "para-city:Haifa", "argmax_text": " The", "correct": false, "hop1_argmax": " Israel", "hop1_correct": true, "hop2_argmax": " Jerusalem", "hop2_correct": true}
+ACC {"id": "dist-city:Haifa", "argmax_text": " Tel", "correct": false, "hop1_argmax": " Israel", "hop1_correct": true, "hop2_argmax": " Jerusalem", "hop2_correct": true}
+ACC {"id": "para-city:Karachi", "argmax_text": " The", "correct": false, "hop1_argmax": " Pakistan", "hop1_correct": true, "hop2_argmax": " Islamabad", "hop2_correct": true}
+ACC {"id": "dist-city:Karachi", "argmax_text": " Karachi", "correct": false, "hop1_argmax": " Pakistan", "hop1_correct": true, "hop2_argmax": " Islamabad", "hop2_correct": true}
+ACC {"id": "para-city:Lahore", "argmax_text": " The", "correct": false, "hop1_argmax": " Pakistan", "hop1_correct": true, "hop2_argmax": " Islamabad", "hop2_correct": true}
+ACC {"id": "dist-city:Lahore", "argmax_text": " Islamabad", "correct": true, "hop1_argmax": " Pakistan", "hop1_correct": true, "hop2_argmax": " Islamabad", "hop2_correct": true}
+ACC {"id": "para-city:Brno", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": false, "hop2_argmax": " Prague", "hop2_correct": true}
+ACC {"id": "dist-city:Brno", "argmax_text": " Br", "correct": false, "hop1_argmax": " the", "hop1_correct": false, "hop2_argmax": " Prague", "hop2_correct": true}
+ACC {"id": "para-city:Odessa", "argmax_text": " The", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "dist-city:Odessa", "argmax_text": " Is", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "para-city:Kharkiv", "argmax_text": " The", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "dist-city:Kharkiv", "argmax_text": " Is", "correct": false, "hop1_argmax": " Ukraine", "hop1_correct": true, "hop2_argmax": " Ky", "hop2_correct": false}
+ACC {"id": "para-city:Isfahan", "argmax_text": " The", "correct": false, "hop1_argmax": " Iran", "hop1_correct": true, "hop2_argmax": " Tehran", "hop2_correct": true}
+ACC {"id": "dist-city:Isfahan", "argmax_text": " Tehran", "correct": true, "hop1_argmax": " Iran", "hop1_correct": true, "hop2_argmax": " Tehran", "hop2_correct": true}
+ACC {"id": "para-city:Basra", "argmax_text": " The", "correct": false, "hop1_argmax": " Iraq", "hop1_correct": true, "hop2_argmax": " Baghdad", "hop2_correct": true}
+ACC {"id": "dist-city:Basra", "argmax_text": " Baghdad", "correct": true, "hop1_argmax": " Iraq", "hop1_correct": true, "hop2_argmax": " Baghdad", "hop2_correct": true}
+ACC {"id": "para-city:Aleppo", "argmax_text": " The", "correct": false, "hop1_argmax": " Syria", "hop1_correct": true, "hop2_argmax": " Damascus", "hop2_correct": true}
+ACC {"id": "dist-city:Aleppo", "argmax_text": " Damascus", "correct": true, "hop1_argmax": " Syria", "hop1_correct": true, "hop2_argmax": " Damascus", "hop2_correct": true}
+ACC {"id": "para-city:Valparaiso", "argmax_text": " The", "correct": false, "hop1_argmax": " Chile", "hop1_correct": true, "hop2_argmax": " Santiago", "hop2_correct": true}
+ACC {"id": "dist-city:Valparaiso", "argmax_text": " Santiago", "correct": true, "hop1_argmax": " Chile", "hop1_correct": true, "hop2_argmax": " Santiago", "hop2_correct": true}
+ACC {"id": "para-city:Cusco", "argmax_text": " The", "correct": false, "hop1_argmax": " Peru", "hop1_correct": true, "hop2_argmax": " Lima", "hop2_correct": true}
+ACC {"id": "dist-city:Cusco", "argmax_text": " Lima", "correct": true, "hop1_argmax": " Peru", "hop1_correct": true, "hop2_argmax": " Lima", "hop2_correct": true}
+ACC {"id": "para-city:Mombasa", "argmax_text": " The", "correct": false, "hop1_argmax": " Kenya", "hop1_correct": true, "hop2_argmax": " Nairobi", "hop2_correct": true}
+ACC {"id": "dist-city:Mombasa", "argmax_text": " Nairobi", "correct": true, "hop1_argmax": " Kenya", "hop1_correct": true, "hop2_argmax": " Nairobi", "hop2_correct": true}
+ACC {"id": "para-city:Cebu", "argmax_text": " The", "correct": false, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Manila", "hop2_correct": true}
+ACC {"id": "dist-city:Cebu", "argmax_text": " Manila", "correct": true, "hop1_argmax": " the", "hop1_correct": true, "hop2_argmax": " Manila", "hop2_correct": true}
+ACC {"id": "para-city:Surabaya", "argmax_text": " The", "correct": false, "hop1_argmax": " Indonesia", "hop1_correct": true, "hop2_argmax": " Jakarta", "hop2_correct": true}
+ACC {"id": "dist-city:Surabaya", "argmax_text": " Bangkok", "correct": false, "hop1_argmax": " Indonesia", "hop1_correct": true, "hop2_argmax": " Jakarta", "hop2_correct": true}
+ACC {"id": "para-city:Chiang Mai", "argmax_text": " The", "correct": false, "hop1_argmax": " Thailand", "hop1_correct": true, "hop2_argmax": " Bangkok", "hop2_correct": true}
+ACC {"id": "dist-city:Chiang Mai", "argmax_text": " Bangkok", "correct": true, "hop1_argmax": " Thailand", "hop1_correct": true, "hop2_argmax": " Bangkok", "hop2_correct": true}
+ACC {"id": "para-city:Plovdiv", "argmax_text": " The", "correct": false, "hop1_argmax": " Bulgaria", "hop1_correct": true, "hop2_argmax": " Sofia", "hop2_correct": true}
+ACC {"id": "dist-city:Plovdiv", "argmax_text": " Budapest", "correct": false, "hop1_argmax": " Bulgaria", "hop1_correct": true, "hop2_argmax": " Sofia", "hop2_correct": true}
+ACC {"id": "para-city:Debrecen", "argmax_text": " The", "correct": false, "hop1_argmax": " Hungary", "hop1_correct": true, "hop2_argmax": " Budapest", "hop2_correct": true}
+ACC {"id": "dist-city:Debrecen", "argmax_text": " Budapest", "correct": true, "hop1_argmax": " Hungary", "hop1_correct": true, "hop2_argmax": " Budapest", "hop2_correct": true}
+ACCURACY 0.368 (56/152) T 167.8s
+PANEL 32 recipients of 56 admitted
+FORECAST {"id": "dist-currency:yen", "F1": {"row": 45, "layer": 20, "kv": 6, "value": 2.002366269731382}, "F2": {"row": 45, "layer": 20, "kv": 6, "value": 2.1470446161463337}, "F3": {"row": 45, "layer": 2, "kv": 6, "value": 1.265625}, "reads_check_max_abs": 1.5265566588595902e-16, "seconds": 1.8040081480066874}
+FORECAST {"id": "dist-currency:won", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.320437697372069}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 2.1650371616413593}, "F3": {"row": 46, "layer": 20, "kv": 6, "value": 1.39453125}, "reads_check_max_abs": 8.881784197001252e-16, "seconds": 1.7642736510024406}
+FORECAST {"id": "dist-currency:ruble", "F1": {"row": 45, "layer": 20, "kv": 6, "value": 1.6470824548170335}, "F2": {"row": 45, "layer": 20, "kv": 6, "value": 1.5773983700928023}, "F3": {"row": 45, "layer": 20, "kv": 6, "value": 1.015625}, "reads_check_max_abs": 1.1102230246251565e-16, "seconds": 1.8829738610002096}
+FORECAST {"id": "dist-currency:rouble", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.436047266995485}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 2.384674071924054}, "F3": {"row": 46, "layer": 20, "kv": 6, "value": 1.173828125}, "reads_check_max_abs": 1.3322676295501878e-15, "seconds": 1.819197727003484}
+FORECAST {"id": "dist-currency:yuan", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.6984582519022786}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 3.1353979038725903}, "F3": {"row": 46, "layer": 2, "kv": 6, "value": 1.23046875}, "reads_check_max_abs": 8.881784197001252e-16, "seconds": 1.8412884589997702}
+FORECAST {"id": "dist-currency:renminbi", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 1.363757976301936}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.4493998640243024}, "F3": {"row": 48, "layer": 2, "kv": 6, "value": 0.9560546875}, "reads_check_max_abs": 4.440892098500626e-16, "seconds": 1.862555211999279}
+FORECAST {"id": "dist-currency:baht", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 2.680342891114946}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 2.8340073729604347}, "F3": {"row": 47, "layer": 20, "kv": 6, "value": 1.42578125}, "reads_check_max_abs": 9.71445146547012e-17, "seconds": 1.8830116210010601}
+FORECAST {"id": "dist-currency:zloty", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 1.6115055894525827}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.9893255500857387}, "F3": {"row": 47, "layer": 20, "kv": 6, "value": 1.29296875}, "reads_check_max_abs": 4.5102810375396984e-17, "seconds": 1.8769386650019442}
+FORECAST {"id": "dist-currency:forint", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 2.3099964960230643}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 2.4344152937482852}, "F3": {"row": 47, "layer": 20, "kv": 6, "value": 1.083984375}, "reads_check_max_abs": 1.3877787807814457e-16, "seconds": 1.4772220699960599}
+FORECAST {"id": "dist-currency:krona", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 1.0818627654043684}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 1.3039173414246394}, "F3": {"row": 48, "layer": 2, "kv": 6, "value": 0.7685546875}, "reads_check_max_abs": 2.220446049250313e-16, "seconds": 1.470000938999874}
+FORECAST {"id": "dist-currency:rupiah", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 1.9292957275632356}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 2.0884931847538986}, "F3": {"row": 48, "layer": 20, "kv": 6, "value": 1.10546875}, "reads_check_max_abs": 9.540979117872439e-17, "seconds": 1.4821731300035026}
+FORECAST {"id": "dist-currency:koruna", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.467820368426695}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 2.6278680383043658}, "F3": {"row": 46, "layer": 20, "kv": 6, "value": 1.197265625}, "reads_check_max_abs": 4.440892098500626e-16, "seconds": 1.5647653479973087}
+FORECAST {"id": "dist-currency:pound sterling", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 1.4754423776366807}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 1.488038123209239}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.990234375}, "reads_check_max_abs": 2.220446049250313e-16, "seconds": 1.4603129390015965}
+FORECAST {"id": "dist-currency:sterling", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.398418405253394}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 2.5451814412892806}, "F3": {"row": 46, "layer": 2, "kv": 6, "value": 1.27734375}, "reads_check_max_abs": 1.3322676295501878e-15, "seconds": 1.4414729389973218}
+FORECAST {"id": "dist-currency:rial", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 3.406356075737027}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 3.5521807401803427}, "F3": {"row": 48, "layer": 20, "kv": 6, "value": 1.26171875}, "reads_check_max_abs": 4.440892098500626e-16, "seconds": 1.638874226999178}
+FORECAST {"id": "dist-currency:afghani", "F1": {"row": 46, "layer": 20, "kv": 6, "value": 2.104116587887449}, "F2": {"row": 46, "layer": 20, "kv": 6, "value": 1.8841889152089133}, "F3": {"row": 46, "layer": 20, "kv": 6, "value": 1.1328125}, "reads_check_max_abs": 8.326672684688674e-17, "seconds": 1.5162297790011507}
+FORECAST {"id": "dist-city:Kyoto", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 0.9918056592938364}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 1.1757426995442535}, "F3": {"row": 48, "layer": 2, "kv": 6, "value": 0.9013671875}, "reads_check_max_abs": 7.771561172376096e-16, "seconds": 1.4864958670004853}
+FORECAST {"id": "dist-city:Busan", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 1.1505772825652127}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 1.0591479408883187}, "F3": {"row": 48, "layer": 2, "kv": 6, "value": 0.765625}, "reads_check_max_abs": 3.3306690738754696e-16, "seconds": 1.5127728899969952}
+FORECAST {"id": "dist-city:Shanghai", "F1": {"row": 50, "layer": 20, "kv": 6, "value": 1.0005095697507802}, "F2": {"row": 50, "layer": 20, "kv": 6, "value": 1.2721521256380792}, "F3": {"row": 50, "layer": 2, "kv": 6, "value": 0.859375}, "reads_check_max_abs": 3.3306690738754696e-16, "seconds": 1.4935141890018713}
+FORECAST {"id": "dist-city:Novosibirsk", "F1": {"row": 49, "layer": 20, "kv": 6, "value": 0.5586589957787798}, "F2": {"row": 49, "layer": 20, "kv": 6, "value": 0.5138283627366979}, "F3": {"row": 49, "layer": 21, "kv": 2, "value": 0.6676025390625}, "reads_check_max_abs": 1.6653345369377348e-16, "seconds": 1.4905432379964623}
+FORECAST {"id": "dist-city:Saint Petersburg", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 1.6156894521765057}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 1.7415139428785003}, "F3": {"row": 48, "layer": 2, "kv": 6, "value": 0.7763671875}, "reads_check_max_abs": 8.881784197001252e-16, "seconds": 1.5054239609962679}
+FORECAST {"id": "dist-city:Munich", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 0.8691436048339836}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.1931527313488581}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.8876953125}, "reads_check_max_abs": 3.3306690738754696e-16, "seconds": 1.4978679930063663}
+FORECAST {"id": "dist-city:Hamburg", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 1.010571825868129}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.1621956108083726}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.892578125}, "reads_check_max_abs": 4.163336342344337e-16, "seconds": 1.5270271410045098}
+FORECAST {"id": "dist-city:Milan", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 0.4363609775930899}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 0.9837729582989873}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.91015625}, "reads_check_max_abs": 3.3306690738754696e-16, "seconds": 1.4846296699979575}
+FORECAST {"id": "dist-city:Naples", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 0.3284111852010405}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 0.609652899006048}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.8369140625}, "reads_check_max_abs": 3.2612801348363973e-16, "seconds": 1.4657855129989912}
+FORECAST {"id": "dist-city:Barcelona", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 0.5900026468993121}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 0.7759039274273861}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.78369140625}, "reads_check_max_abs": 4.440892098500626e-16, "seconds": 1.468983157996263}
+FORECAST {"id": "dist-city:Seville", "F1": {"row": 48, "layer": 20, "kv": 6, "value": 1.08652335497054}, "F2": {"row": 48, "layer": 20, "kv": 6, "value": 1.2767278050708228}, "F3": {"row": 48, "layer": 15, "kv": 1, "value": 0.6875}, "reads_check_max_abs": 1.8735013540549517e-16, "seconds": 1.5081927130013355}
+FORECAST {"id": "dist-city:Porto", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 0.9968617083355638}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.1697262594011613}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 1.048828125}, "reads_check_max_abs": 4.996003610813204e-16, "seconds": 1.4642206790013006}
+FORECAST {"id": "dist-city:Gothenburg", "F1": {"row": 49, "layer": 20, "kv": 6, "value": 1.0561378412898996}, "F2": {"row": 49, "layer": 20, "kv": 6, "value": 1.1413613029499106}, "F3": {"row": 50, "layer": 15, "kv": 1, "value": 0.66259765625}, "reads_check_max_abs": 1.3877787807814457e-16, "seconds": 1.4967673770006513}
+FORECAST {"id": "dist-city:Gdansk", "F1": {"row": 49, "layer": 20, "kv": 6, "value": 0.6554308279928271}, "F2": {"row": 49, "layer": 20, "kv": 6, "value": 0.7642448144243624}, "F3": {"row": 49, "layer": 2, "kv": 6, "value": 0.8115234375}, "reads_check_max_abs": 5.551115123125783e-16, "seconds": 1.502341580002394}
+FORECAST {"id": "dist-city:Bergen", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 1.386585653170287}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.4548470724361744}, "F3": {"row": 47, "layer": 2, "kv": 6, "value": 0.9873046875}, "reads_check_max_abs": 1.1102230246251565e-15, "seconds": 1.5057559499982744}
+FORECAST {"id": "dist-city:Istanbul", "F1": {"row": 47, "layer": 20, "kv": 6, "value": 1.2009418601091901}, "F2": {"row": 47, "layer": 20, "kv": 6, "value": 1.5033169996136153}, "F3": {"row": 47, "layer": 15, "kv": 4, "value": 0.814453125}, "reads_check_max_abs": 4.718447854656915e-16, "seconds": 1.4668161480003619}
+TOTAL 218.6s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:40.04
+	Maximum resident set size (kbytes): 4348732
+-rw-rw-r-- 1 beast beast 1602633 Nov 13 22:25 x1-17-pd-forecast.json
+-rw-rw-r-- 1 beast beast  563548 Nov 13 22:24 x1-17-pd-panel.json
