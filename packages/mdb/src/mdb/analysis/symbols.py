@@ -673,7 +673,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
           derive: dict[str, str] | None = None, foreign: bool = False,
           causal: bool | str = False, min_effect: float = 0.0,
           components: list[Any] | None = None,
-          neuronpedia: dict[str, Any] | None = None) -> Table:
+          neuronpedia: dict[str, Any] | None = None, store: Any = None) -> Table:
     """The symbol table at the cursor (see the module docstring); ``offset``/``limit`` page
     the bindings (declared symbols first, then token rows in order). ``pending``: declared
     symbols that cannot be bound on this run yet (name -> ``addresses``, ``reason``), listed
@@ -699,6 +699,9 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     * ``components``: ``components.ComponentBinding`` items (feature bindings): a separate
       ``components`` section with per-feature activation, direct effect, content, SAELens ids
       and a Neuronpedia link from the supplied ``neuronpedia`` id mapping.
+    * A binding with more than 64 rows or definitions keeps the compact form for display and
+      its full lists behind ``full`` (a sha256-checked JSON blob in ``store``, else held in
+      memory on the run; ``core.bounded.load_json`` reads it).
     """
     from .reads import reader_rows
 
@@ -731,6 +734,13 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
             if bindings[b].kind == "token" and bindings[b].cells[0].row == 0:
                 entries[b]["view"]["sink_ratio"] = _sink_ratio(run, here_key[0])
     flagged = any(getattr(c, "info", None) is not None for c in (sets or ()))
+    if flagged:
+        for b in range(offset, min(offset + limit, n)):
+            view = entries[b]["view"]
+            if "token" in view:
+                view["first_subword_of"] = sorted(
+                    c.name for c in sets if getattr(c, "info", None) is not None
+                    and c.info.multi_piece(view["token"]))
     if sets:
         basis = readout_basis(run, here_key[0])
         subspaces = _subspaces(run, sets, co or (), basis)
@@ -780,6 +790,13 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
                 continue
             view.setdefault("labels", {})[name] = label_claim(value, "derived")
     page_bindings = [bindings[b] for b in range(offset, min(offset + limit, n))]
+    for binding, b in zip(page_bindings, range(offset, min(offset + limit, n))):
+        rows_all = sorted({c.row for c in binding.cells})
+        if len(rows_all) > _LIST_CAP or len(binding.addresses) > _LIST_CAP:
+            from mdb.core.bounded import put_json
+
+            entries[b]["view"]["full"] = put_json(
+                {"rows": rows_all, "definitions": list(binding.addresses)}, store=store, run=run)
     if causal:
         from .liveness import liveness
 
@@ -1262,10 +1279,13 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     if binding.kind == "token":
         row = binding.cells[0].row
         token = _token_at(run, row)
+        view["position"] = row
+        view["is_sink"] = row in grid.sink
         if token is not None:
             view["token"] = token
             if tokenizer is not None:
                 view["text"] = tokenizer.decode([token])
+            view.update(token_meta(run, row, tokenizer))
     if blocked_by is not None:
         contribution = None
         view["to_consumer"] = refused(blocked_by)
@@ -1307,6 +1327,59 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     if len(reads) > readers:
         view["omitted"] = len(reads) - readers
     return {"view": view, "contribution": contribution}
+
+
+_SPECIAL = ("<|", "<s>", "</s>", "<pad>", "<unk>")
+
+
+def token_meta(run: Any, row: int, tokenizer: Any) -> dict[str, Any]:
+    """Per-row token metadata (review 2.6, structural from the tokenizer): ``token_class``
+    (``special``, ``bos_or_t0``, ``whitespace``, ``punct``, ``digit``, ``word_initial`` or
+    ``continuation``) and ``pieces_of_word`` (index of this piece within its whitespace-delimited
+    word, and the word's piece count). Without a tokenizer only ``bos_or_t0`` is known."""
+    if row == 0:
+        cls = "bos_or_t0"
+    elif tokenizer is None:
+        return {}
+    else:
+        cls = _token_class(tokenizer.decode([_token_at(run, row)]))
+    out: dict[str, Any] = {"token_class": cls}
+    if tokenizer is None:
+        return out
+    texts = [tokenizer.decode([_token_at(run, r)]) for r in range(max(0, row - 32),
+                                                                     row + 1)]
+    start = len(texts) - 1
+    while start > 0 and not texts[start][:1].isspace() and _word_piece(texts[start]):
+        start -= 1
+    index = len(texts) - 1 - start
+    end, pieces = row, index + 1
+    while True:
+        nxt = _token_at(run, end + 1) if end + 1 < len(run.tokens) else None
+        if nxt is None:
+            break
+        text = tokenizer.decode([nxt])
+        if text[:1].isspace() or not _word_piece(text):
+            break
+        end, pieces = end + 1, pieces + 1
+    out["pieces_of_word"] = {"index": index, "count": pieces}
+    return out
+
+
+def _word_piece(text: str) -> bool:
+    return bool(text) and any(ch.isalnum() for ch in text)
+
+
+def _token_class(text: str) -> str:
+    if any(text.startswith(p) for p in _SPECIAL):
+        return "special"
+    if not text.strip():
+        return "whitespace"
+    body = text.strip()
+    if body.isdigit():
+        return "digit"
+    if not any(ch.isalnum() for ch in body):
+        return "punct"
+    return "word_initial" if text[:1].isspace() else "continuation"
 
 
 def label_claim(value: Any, authority: str = SUPPLIED) -> dict[str, Any]:

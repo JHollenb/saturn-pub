@@ -124,15 +124,129 @@ def _bind_declared(ctx) -> dict[str, dict[str, Any]]:
     return pending
 
 
-def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit):
+_CANDIDATES: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
+
+
+def candidate_store(ctx) -> dict[str, Any]:
+    """The candidate sets declared through this debugger (name -> ``CandidateSet``)."""
+    if ctx.debugger not in _CANDIDATES:
+        _CANDIDATES[ctx.debugger] = {}
+    return _CANDIDATES[ctx.debugger]
+
+
+def _pairs(text: str | None, what: str) -> list[tuple[str, str]]:
+    """``a:b,c:d`` -> ``[(a, b), (c, d)]``."""
+    out = []
+    for part in (p.strip() for p in (text or "").split(",")):
+        if not part:
+            continue
+        key, colon, value = part.partition(":")
+        if not colon or not key or not value:
+            raise BadArgs(f"{what} is NAME:VALUE[,NAME:VALUE...], not {part!r}")
+        out.append((key.strip(), value.strip()))
+    return out
+
+
+def _table_options(ctx, sets, truth, content_layers, hops, sink, co, lexical_null, switch,
+                   labels, derive, foreign, causal, min_effect) -> dict[str, Any]:
+    """The ``symbols`` op line's options as ``symbols.table`` arguments."""
+    from mdb.analysis import candidates as cands
+
+    out: dict[str, Any] = {}
+    store = candidate_store(ctx)
+    truths = dict(_pairs(truth, "truth"))
+    if sets:
+        chosen = []
+        for name in (n.strip() for n in sets.split(",") if n.strip()):
+            if name not in store:
+                known = ", ".join(sorted(store)) or "none; candidates NAME = W1,W2,..."
+                raise Refused(f"no candidate set {name!r} (sets: {known})")
+            chosen.append(store[name])
+        chosen = cands.cross(chosen)
+        built = []
+        for c in chosen:
+            value = truths.get(c.name)
+            if value is not None and re.fullmatch(r"\d+", value):
+                value = int(value)
+            try:
+                built.append(c.candidates(value))
+            except _refusal() as error:
+                raise Refused(str(error)) from None
+        out["sets"] = built
+        out["content_layers"] = bool(content_layers)
+    elif truth or content_layers or co or switch or lexical_null:
+        raise BadArgs("truth=, content_layers=, co=, switch= and lexical_null= need sets=")
+    if hops:
+        found = {}
+        for part in hops.split(","):
+            fields = part.strip().split(":")
+            if len(fields) != 3:
+                raise BadArgs("hops is NAME:NATIVE:DIRECT[,...] (the measured native delta and "
+                              "the direct-path delta of a replacement of NAME)")
+            try:
+                found[fields[0]] = {"native_delta": float(fields[1]),
+                                    "direct_delta": float(fields[2]),
+                                    "replacement": "supplied on the op line"}
+            except ValueError:
+                raise BadArgs(f"hops {part!r}: NATIVE and DIRECT are numbers") from None
+        out["hops"] = found
+    if sink is not None:
+        text = str(sink).strip()
+        if text in ("none", "off", ""):
+            out["sink"] = ()
+        else:
+            try:
+                out["sink"] = tuple(int(r.strip().lstrip("t")) for r in text.split(","))
+            except ValueError:
+                raise BadArgs(f"sink is R[,R...] or none, not {text!r}") from None
+    if co:
+        specs = []
+        for part in (p.strip() for p in co.split(",") if p.strip()):
+            target, slash, rest = part.partition("/")
+            if not slash:
+                raise BadArgs("co is TARGET/PROJECT_OUT[:K][,...] (read TARGET with the span "
+                              "of PROJECT_OUT removed)")
+            other, colon, k = rest.partition(":")
+            specs.append(cands.CoReadout(target, other, k=int(k) if colon else None))
+        out["co"] = specs
+    if lexical_null:
+        out["lexical_null"] = True
+    if switch:
+        out["switch"] = dict(_pairs(switch, "switch"))
+    if labels:
+        parsed = {}
+        for key, value in _pairs(labels, "labels"):
+            try:
+                parsed[key] = int(value) if re.fullmatch(r"-?\d+", value) else float(value) \
+                    if re.fullmatch(r"-?\d*\.\d+", value) else value
+            except ValueError:
+                parsed[key] = value
+        out["labels"] = parsed
+    if derive:
+        out["derive"] = dict(_pairs(derive, "derive"))
+    if foreign:
+        out["foreign"] = True
+    if causal not in (None, False, "false", "off"):
+        out["causal"] = True if causal in (True, "true", "on") else str(causal)
+        out["min_effect"] = float(min_effect or 0.0)
+    return out
+
+
+def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit, sets=None, truth=None,
+             content_layers=False, hops=None, sink=None, co=None, lexical_null=False,
+             switch=None, labels=None, derive=None, foreign=False, causal=None,
+             min_effect=0.0):
     from mdb.analysis import symbols
 
     pending = _bind_declared(ctx)
+    options = _table_options(ctx, sets, truth, content_layers, hops, sink, co, lexical_null,
+                             switch, labels, derive, foreign, causal, min_effect)
     try:
         found = symbols.table(ctx.run, consumer=_declared_consumer(ctx, consumer), rows=rows,
                               min_mass=float(min_mass), readers=readers, offset=offset,
                               limit=limit, session_id=_session_id(ctx),
-                              tokenizer=ctx.tokenizer, pending=pending)
+                              tokenizer=ctx.tokenizer, pending=pending,
+                              store=_page_store(ctx), **options)
     except _refusal() as error:
         raise Refused(str(error)) from None
     stored = _store(ctx, found.records)
@@ -143,6 +257,53 @@ def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit):
     if listed:
         report["named"] = listed     # transplant symbols (M23); not part of the table record
     return report
+
+
+def _candidates(ctx, name, source=None, action="declare", rule="first", paired=None):
+    """``candidates NAME = FILE|W1,W2,...|#ID,#ID [rule=first|single] [paired=SET]`` declares a
+    candidate set (``analysis.candidates``); ``candidates show|delete NAME``; ``candidates
+    list``. The truth is given per table (``symbols sets=NAME truth=NAME:$var``), never here."""
+    from mdb.analysis import candidates as cands
+
+    store = candidate_store(ctx)
+    if action == "list":
+        return {"action": "list", "sets": [c.describe() for _, c in sorted(store.items())][:64]}
+    if not name:
+        raise BadArgs("candidates needs a name")
+    if action in ("show", "delete"):
+        if name not in store:
+            raise Refused(f"no candidate set {name!r}")
+        found = store.pop(name) if action == "delete" else store[name]
+        out = {"action": action, **found.describe()}
+        if action == "show":
+            out["words"] = [{"word": w, "pieces": list(p)} for w, p in
+                            zip(found.words[:64], found.pieces[:64])]
+        return out
+    if not source:
+        raise BadArgs("write candidates NAME = FILE|W1,W2,...|#ID,#ID")
+    text = source.strip()
+    try:
+        if "," not in text and ("/" in text or text.endswith((".json", ".txt", ".jsonl"))):
+            found = cands.load(text, name, ctx.tokenizer, rule=rule)
+        else:
+            parts = [p.strip() for p in text.split(",") if p.strip()]
+            if all(re.fullmatch(r"#?\d+", p) for p in parts):
+                found = cands.from_tokens(name, [int(p.lstrip("#")) for p in parts])
+            else:
+                found = cands.build(name, parts, ctx.tokenizer, rule=rule)
+        if paired:
+            if paired not in store:
+                raise Refused(f"paired= names no candidate set {paired!r}")
+            found = cands.pair(found, store[paired])
+    except OSError as error:
+        raise BadArgs(f"cannot read {text}: {error.strerror or type(error).__name__}") from None
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    store[name] = found
+    others = cands.cross(list(store.values()))
+    store.update({c.name: c for c in others})
+    return {"action": "declare", **store[name].describe(),
+            "declared": sorted(store)}
 
 
 def _symbol(ctx, name, addresses=None, result=None, action="declare", role=None, readers=6,
@@ -601,10 +762,57 @@ register(Op("symbols", "Symbol table at the cursor: bindings with definition sit
                  help="a read above this mass marks the lifetime"),
              Arg("readers", "int", default=3, minimum=1, maximum=8, positional=False),
              Arg("offset", "int", default=0, minimum=0, positional=False),
-             Arg("limit", "int", default=16, minimum=1, maximum=16, positional=False)),
+             Arg("limit", "int", default=16, minimum=1, maximum=16, positional=False),
+             Arg("sets", "str", positional=False,
+                 help="candidate sets for content readouts: NAME[,NAME...] (candidates op)"),
+             Arg("truth", "str", positional=False,
+                 help="SET:TOKEN|WORD[,...]: each set's true token ($var in each)"),
+             Arg("content_layers", "bool", default=False, positional=False,
+                 help="a per-layer content strip per set"),
+             Arg("hops", "str", positional=False,
+                 help="NAME:NATIVE:DIRECT[,...]: measured hop deltas -> indirect share"),
+             Arg("sink", "str", positional=False,
+                 help="sink rows for mass_nonsink: R[,R...] or none (default 0)"),
+             Arg("co", "str", positional=False,
+                 help="TARGET/OTHER[:K][,...]: read TARGET with OTHER's whole span removed"),
+             Arg("lexical_null", "bool", default=False, positional=False,
+                 help="the truth token's own readout per set"),
+             Arg("switch", "str", positional=False,
+                 help="TARGET:ON[,...]: TARGET's truth = the word paired with ON's decoded "
+                      "word"),
+             Arg("labels", "str", positional=False, help="KEY:VALUE[,...] item labels"),
+             Arg("derive", "str", positional=False,
+                 help="KEY:PATH[,...] derived labels (e.g. dec:content.countries.best)"),
+             Arg("foreign", "bool", default=False, positional=False,
+                 help="TransformerLens / nnsight / pyvene names per binding and read"),
+             Arg("causal", "str", positional=False,
+                 help="true|mask|zero: measure each listed binding's causal liveness"),
+             Arg("min_effect", "number", default=0.0, positional=False,
+                 help="causal: a change above this (and the floor) is an effect")),
             "mutate", True, _symbols,
-            usage="symbols [consumer=C] [rows=R|A:B|all] [min_mass=X] [offset=N] [limit=N]"),
+            usage="symbols [consumer=C] [rows=R|A:B|all] [min_mass=X] [offset=N] [limit=N] "
+                  "[sets=A,B truth=A:$x content_layers=true lexical_null=true co=B/A[:K] "
+                  "switch=B:A] [hops=N:NAT:DIR] [sink=0|none] [labels=K:V derive=K:PATH] "
+                  "[foreign=true] [causal=true|mask|zero min_effect=X]"),
          replace=True)
+register(Op("candidates", "Declare a candidate set for content readouts (candidates NAME = "
+            "FILE|W1,W2,...|#ID,... [rule=first|single] [paired=SET]): token pieces, "
+            "first-subword and collision flags, sha256 provenance; candidates show|delete NAME, "
+            "candidates list",
+            (Arg("name", "str"),
+             Arg("source", "str", positional=False,
+                 help="a file (JSON words / {words, pairs} / one per line), words, or #ids"),
+             Arg("action", "choice", default="declare",
+                 choices=("declare", "show", "delete", "list"), positional=False),
+             Arg("rule", "choice", default="first", choices=("first", "single"),
+                 positional=False, help="first: rank the first piece; single: refuse "
+                                        "multi-piece words"),
+             Arg("paired", "str", positional=False,
+                 help="a declared set whose words pair with these (parallel lists), for "
+                      "switch=")),
+            "mutate", False, _candidates,
+            usage="candidates NAME = FILE|W1,W2,...|#ID,... [rule=first|single] [paired=SET] | "
+                  "candidates show|delete NAME | candidates list"))
 register(Op("symbol", "Declare a user symbol over cache rows (symbol NAME = ADDR[,ADDR...]), or a "
             "named symbol from a transplant result (symbol NAME = whatif|compare.a|compare.b|"
             "EACH:ITEM): its role, source row, readers and measured effect, usable as an "

@@ -52,6 +52,15 @@ COLUMNS: list[tuple[str, str, str, str]] = [
     ("status", "string", "derived", "edited, read, live, unread (unresolved: pending symbol)"),
     ("token", "integer", "structural", "token rows: the token id"),
     ("text", "string", "structural", "token rows: the decoded text (with a tokenizer)"),
+    ("position", "integer", "structural", "token rows: the row index"),
+    ("is_sink", "boolean", "structural", "token rows: the row is a declared sink row"),
+    ("token_class", "string", "structural (tokenizer)", "special, bos_or_t0, whitespace, "
+     "punct, digit, word_initial or continuation"),
+    ("pieces_of_word.index", "integer", "structural (tokenizer)",
+     "index of the piece within its whitespace-delimited word"),
+    ("pieces_of_word.count", "integer", "structural (tokenizer)", "pieces in that word"),
+    ("first_subword_of", "array", "derived-exact (tokenizer)",
+     "candidate sets in which this row's token is the first piece of a multi-piece word"),
     ("to_consumer", "claim", "derived-exact P19",
      "exact direct contribution to the scalar consumer (share form: sum p c.W_O v_s)"),
     ("contrast", "claim", "derived-exact P19",
@@ -341,6 +350,15 @@ def loo_position_mean(frame: Any, value: str, by: str = "position") -> Any:
     return (frame[value] - others).where(count > 1)
 
 
+def token_constancy(frame: Any, by: str = "position", token: str = "token") -> Any:
+    """Per ``by`` value: whether every item has the same ``token`` there (a template row), the
+    number of items and of distinct tokens (derived across items; review 2.6)."""
+    groups = frame.dropna(subset=[token]).groupby(by)[token]
+    out = groups.agg(n="count", distinct="nunique").reset_index()
+    out["constant"] = out["distinct"] == 1
+    return out
+
+
 _CLAIM_SCHEMA = {"type": "object", "required": ["value", "authority"],
                  "properties": {"value": {"type": "number"}, "authority": {"type": "string"},
                                 "proof": {"type": "string"}}}
@@ -413,5 +431,5 @@ def schema_markdown() -> str:
 
 
 __all__ = ["COLUMNS", "HEAD_COLUMNS", "READ_COLUMNS", "SCHEMAS", "flatten", "from_frame",
-           "json_schema", "loo_position_mean", "map_frame", "schema_markdown", "to_arrow",
+           "json_schema", "loo_position_mean", "token_constancy", "map_frame", "schema_markdown", "to_arrow",
            "to_frame", "to_parquet", "trace_frame"]

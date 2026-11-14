@@ -899,6 +899,37 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
         lines.append(f"    readers {readers or 'none'}{more}")
         if item.get("edited_by"):
             lines.append(f"    edited by {', '.join(item['edited_by'])}")
+        if item.get("slot"):
+            lines.append(f"    slot {item['slot']} (role {item.get('role')})")
+        if item.get("labels"):
+            lines.append("    labels " + ", ".join(
+                f"{k}={v.get('label', v.get('value'))}" for k, v in item["labels"].items()))
+        if isinstance(item.get("content"), dict):
+            parts = []
+            for name, found in item["content"].items():
+                if not isinstance(found, dict) or "best" not in found or name == "vocab_top":
+                    continue
+                text = f"{name}: {found.get('text', found['best'])}"
+                if "names_truth" in found:
+                    text += " (truth)" if found["names_truth"] else \
+                        f" (truth rank {found['truth_rank']})"
+                flags = found.get("flags") or {}
+                marks = [m for m in ("collision", "first_subword") if flags.get(m)]
+                if flags.get("kind"):
+                    marks.append("also " + "/".join(flags["kind"]))
+                if marks:
+                    text += " [" + ", ".join(marks) + "]"
+                for other, co in (found.get("co") or {}).items():
+                    if "counts" in co:
+                        text += f" co-{other} {'counts' if co['counts'] else 'no'}"
+                parts.append(text)
+            if parts:
+                lines.append("    content " + "; ".join(parts))
+        causal = item.get("causal") or {}
+        if causal.get("status") == "intervened":
+            lines.append(f"    causal {causal['verdict']} Δ {_short(causal['delta'])} (floor "
+                         f"{_short(causal.get('floor', {'state': 'n/a', 'reason': 'none'}))}) "
+                         f"contrast {_short(item.get('contrast', {'state': 'n/a', 'reason': 'none'}))}")
     for item in result.get("unresolved_symbols", ()):
         lines.append(f"  {_pad(item['symbol'], width)}unresolved  defined {', '.join(item['definitions'])}"
                      f"  ({item['reason']})")

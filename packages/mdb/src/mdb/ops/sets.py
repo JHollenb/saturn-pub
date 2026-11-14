@@ -67,7 +67,8 @@ from .context import Context
 from .errors import BadArgs, OpError, Refused
 from .registry import Arg, Op, dispatch, register, registry, validate
 
-MAX_ITEMS = 64          # one summary row per item: a record list holds at most 64 items
+MAX_ITEMS = 64          # summary rows kept inline (a record list holds at most 64 items); a set
+                        # may be any size: past 64 the full rows are a blob (``items_blob``)
 MAX_NUMERIC = 40        # statistics listed in the summary record (the rest are counted)
 MAX_VERDICTS = 16
 MAX_RESULTS = 16        # summaries (with their item results) kept in memory per debugger
@@ -161,8 +162,6 @@ def make_set(name: str, rows: list[Any], source: str = "inline") -> PromptSet:
         raise BadArgs(f"set name {name!r} must be a word ([A-Za-z_][A-Za-z0-9_]*)")
     if not isinstance(rows, list) or not rows:
         raise BadArgs(f"set {name}: no items")
-    if len(rows) > MAX_ITEMS:
-        raise BadArgs(f"set {name}: {len(rows)} items (at most {MAX_ITEMS}; split the set)")
     items = tuple(_item(raw, f"item {i + 1}") for i, raw in enumerate(rows))
     names = [item.name for item in items]
     repeated = sorted({n for n in names if names.count(n) > 1})
@@ -465,11 +464,32 @@ def _check_names(debugger: Any, ctx: Any, names: list[str]) -> None:
                           "set or that run")
 
 
+def parse_shard(text: str | None) -> tuple[int, int] | None:
+    """``shard=K/N`` -> ``(K, N)`` (1-based K): the K-th of N contiguous parts of the set."""
+    if text is None:
+        return None
+    match = re.fullmatch(r"\s*(\d+)\s*/\s*(\d+)\s*", str(text))
+    if not match or not 1 <= int(match[1]) <= int(match[2]):
+        raise BadArgs(f"shard is K/N with 1 <= K <= N, not {text!r}")
+    return int(match[1]), int(match[2])
+
+
+def shard_items(items: tuple[Item, ...], shard: tuple[int, int] | None) -> tuple[Item, ...]:
+    if shard is None:
+        return items
+    k, n = shard
+    size = -(-len(items) // n)
+    return items[(k - 1) * size:k * size]
+
+
 def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
-             keep: bool = False, prefill: str | None = None) -> EachResult:
+             keep: bool = False, prefill: str | None = None,
+             shard: str | None = None) -> EachResult:
     """Run ``line`` on every item of the set ``set_name`` (see the module docstring).
     ``prefill`` (``K`` or ``@ROLE``): each item's run, and its pair's clean run, is started
-    with that split, bound per item (``bind_prefill``); None is the default split."""
+    with that split, bound per item (``bind_prefill``); None is the default split. ``shard``
+    (``K/N``): only the K-th of N contiguous parts of the set (so an mrun shard stays short);
+    the summary says which."""
     from mdb.analysis import summary as stats
 
     debugger = getattr(ctx, "debugger", None)
@@ -487,8 +507,10 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     at = (at or DEFAULT_AT).strip()
     steps = template(line)
     uses_pair = "@pair:" in line
-    names = [_run_name(found.name, item.name) for item in found.items]
-    donors_needed = sorted({item.pair for item in found.items if item.pair} if uses_pair
+    part = parse_shard(shard)
+    chosen = shard_items(found.items, part)
+    names = [_run_name(found.name, item.name) for item in chosen]
+    donors_needed = sorted({item.pair for item in chosen if item.pair} if uses_pair
                            else set())
     _check_names(debugger, ctx, names + [_pair_name(found.name, p) for p in donors_needed])
     saved = _snapshot(ctx, debugger)
@@ -496,7 +518,7 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     donors: dict[str, tuple[Any, str | None]] = {}
     rows, results = [], {}
     try:
-        for item in found.items:
+        for item in chosen:
             row, result = _one(debugger, saved, found, item, steps, at, uses_pair, made,
                                donors, prefill)
             if keep and _run_name(found.name, item.name) in made:
@@ -521,6 +543,17 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     _put_blobs(debugger, rows, results)
     full = stats.summarize([results[name] for name in results])
     summary = _summary(found, line, steps, at, keep, rows, full, saved["digest"])
+    if part is not None:
+        summary["shard"] = {"k": part[0], "n": part[1], "items": len(chosen),
+                            "set_total": len(found.items)}
+    if len(rows) > MAX_ITEMS:
+        from mdb.core.bounded import put_json
+
+        project = _writable(debugger)
+        summary["items_blob"] = put_json(rows, store=None if project is None else project.store,
+                                         run=debugger)
+        summary["items"] = rows[:MAX_ITEMS]
+        summary["items_omitted"] = len(rows) - MAX_ITEMS
     if prefill is not None:
         summary["prefill"] = prefill    # the template; each item's row holds its bound split
     entry_id = _remember(debugger, summary, results)
@@ -711,6 +744,15 @@ def load_item_result(debugger: Any, summary: dict[str, Any], item: str) -> dict[
     from mdb.core.pointers import Unresolved
 
     row = next((r for r in summary["items"] if r["name"] == item), None)
+    if row is None and "items_blob" in summary:
+        from mdb.core.bounded import load_json
+
+        try:
+            rows = load_json(summary["items_blob"], store=debugger.project.store
+                             if getattr(debugger, "project", None) else None, run=debugger)
+        except ValueError:
+            rows = []
+        row = next((r for r in rows if r["name"] == item), None)
     blob = None if row is None else row.get("blob")
     if blob is None or blob.get("state") != "stored":
         raise Refused(f"{item!r} has no stored result: "
@@ -739,6 +781,9 @@ def _store(debugger: Any, summary: dict[str, Any]) -> None:
 
     declare_kind("prompt-set", required=("set", "line", "items", "statistics"),
                  plain_numeric=("items.*.bytes", "items.*.prefill", "items.*.blob.bytes", "items.*.blob.tensor.shape.*", "total", "statistics.n",
+                                "items_blob.bytes", "items_blob.tensor.shape.*",
+                                "items_omitted", "shard.k", "shard.n", "shard.items",
+                                "shard.set_total",
                                 "statistics.numeric.*.n", "statistics.numeric.*.agree.count",
                                 "statistics.numeric.*.by_authority.*.n",
                                 "statistics.numeric.*.by_authority.*.agree.count",
@@ -758,8 +803,8 @@ def _store(debugger: Any, summary: dict[str, Any]) -> None:
 # --------------------------------------------------------------------------- ops
 
 
-def _op_each(ctx, set, line, at, keep, prefill=None):  # noqa: A002 - the wire name
-    return run_each(ctx, set, line, at=at, keep=keep, prefill=prefill).summary
+def _op_each(ctx, set, line, at, keep, prefill=None, shard=None):  # noqa: A002 - wire name
+    return run_each(ctx, set, line, at=at, keep=keep, prefill=prefill, shard=shard).summary
 
 
 def _item_view(item: Item) -> dict[str, Any]:
@@ -818,8 +863,12 @@ def _op_promptset(ctx, action, name, arg):
             raise Refused(f"{name} holds no result for item {arg!r} (refused, or not in the "
                           "set)")
         return {"action": "result", "id": name, "item": arg, "result": entry["results"][arg]}
-    return {"action": action, "set": found.name, "source": found.source,
-            "total": len(found.items), "items": [_item_view(item) for item in found.items]}
+    out = {"action": action, "set": found.name, "source": found.source,
+           "total": len(found.items),
+           "items": [_item_view(item) for item in found.items[:MAX_ITEMS]]}
+    if len(found.items) > MAX_ITEMS:
+        out["items_omitted"] = len(found.items) - MAX_ITEMS
+    return out
 
 
 register(Op("each", "Run one op line on every prompt of a set (one run per prompt): one result "
@@ -833,9 +882,12 @@ register(Op("each", "Run one op line on every prompt of a set (one run per promp
                  help="keep the item runs as named runs SET-ITEM"),
              Arg("prefill", "str", positional=False,
                  help="each item's prefill split: K, or @ROLE (that role's row of each item; "
-                      "the pair's clean run takes its own role row); default all but the last")),
+                      "the pair's clean run takes its own role row); default all but the last"),
+             Arg("shard", "str", positional=False,
+                 help="K/N: run only the K-th of N contiguous parts of the set")),
             "native", False, _op_each,
-            usage="each SET [at=ADDR] [prefill=K|@ROLE] [keep]: OP LINE [; OP LINE ...]"))
+            usage="each SET [at=ADDR] [prefill=K|@ROLE] [shard=K/N] [keep]: OP LINE "
+                  "[; OP LINE ...]"))
 register(Op("promptset", "Prompt sets: load a JSONL file, show or list sets, read a stored each "
             "result (the REPL's set load / set show)",
             (Arg("action", "choice", required=True, choices=("load", "define", "show", "list", "result")),

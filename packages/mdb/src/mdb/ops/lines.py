@@ -361,6 +361,26 @@ def _symbol_args(text: str) -> dict[str, Any]:
     return {"name": name.strip(), "addresses": addresses.strip()}
 
 
+def _candidates_args(text: str) -> dict[str, Any]:
+    """``candidates NAME = SOURCE [rule=R] [paired=SET]``; ``candidates show|delete NAME``;
+    ``candidates list``."""
+    words = text.split()
+    if words == ["list"]:
+        return {"action": "list"}
+    if len(words) == 2 and words[0] in ("show", "delete"):
+        return {"action": words[0], "name": words[1]}
+    name, equals, rest = text.partition("=")
+    if not equals or not name.strip() or not rest.strip():
+        raise BadArgs("write candidates NAME = FILE|W1,W2,...|#ID,... [rule=first|single] "
+                      "[paired=SET], candidates show|delete NAME or candidates list")
+    parts = rest.split()
+    options = {}
+    while parts and re.fullmatch(r"(rule|paired)=\S+", parts[-1]):
+        key, _, value = parts.pop().partition("=")
+        options[key] = value
+    return {"name": name.strip(), "source": " ".join(parts), **options}
+
+
 SPECIAL = {
     "start": _prompt_args,
     "run": _prompt_args,
@@ -377,6 +397,7 @@ SPECIAL = {
     "features": _with_consumer("features"),
     "compare": _compare_args,
     "symbol": _symbol_args,
+    "candidates": _candidates_args,
 }
 
 
@@ -417,7 +438,8 @@ def route(name: str, rest: str) -> tuple[str, str]:
     return name, rest
 
 
-_EACH_USAGE = "write each SET [at=ADDR] [prefill=K|@ROLE] [keep]: OP LINE [; OP LINE ...]"
+_EACH_USAGE = ("write each SET [at=ADDR] [prefill=K|@ROLE] [shard=K/N] [keep]: OP LINE "
+               "[; OP LINE ...]")
 
 
 def _each_args(text: str) -> dict[str, Any]:
@@ -436,6 +458,8 @@ def _each_args(text: str) -> dict[str, Any]:
             args["at"] = word[3:]
         elif word.startswith("prefill=") and len(word) > 8:
             args["prefill"] = word[8:]
+        elif word.startswith("shard=") and len(word) > 6:
+            args["shard"] = word[6:]
         else:
             raise BadArgs(_EACH_USAGE)
     return args

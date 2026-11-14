@@ -387,3 +387,30 @@ def test_map_table_rows_baselines_and_permutation_null(debugger):
     verify_record(rec)
     frozen = cm.freeze(m, reports, [], switch="labels.family.label")
     assert {g["value"] for g in frozen.constants["by_switch"]["groups"]} == {"city", "river"}
+
+
+class Texts:
+    def __init__(self, texts):
+        self.texts = texts
+
+    def decode(self, ids):
+        return "".join(self.texts.get(int(i), "?") for i in ids)
+
+
+def test_token_metadata_classes_pieces_and_constancy(debugger):
+    import pandas as pd
+
+    run = debugger.run(PROMPT)
+    run.until("t5.logits")
+    tok = Texts({1: "The", 5: " Pa", 9: "ris", 3: " is", 7: ",", 2: " 4"})
+    tab = symbols.table(run, consumer=Margin(5, 4, 9), tokenizer=tok)
+    verify_record(tab.records[0])
+    views = tab.report["bindings"]
+    assert [v["token_class"] for v in views] == ["bos_or_t0", "word_initial", "continuation",
+                                                 "word_initial", "punct", "digit"]
+    assert views[1]["pieces_of_word"] == {"index": 0, "count": 2}
+    assert views[2]["pieces_of_word"] == {"index": 1, "count": 2}
+    assert views[0]["is_sink"] is True and views[3]["position"] == 3
+    frame = pd.DataFrame({"position": [0, 1, 0, 1], "token": [7, 8, 7, 9]})
+    const = fr.token_constancy(frame)
+    assert list(const["constant"]) == [True, False]

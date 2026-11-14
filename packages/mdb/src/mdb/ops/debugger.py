@@ -454,11 +454,13 @@ class Debugger:
         return Context(self, run)
 
     def each(self, prompts: Any, line: str, *, at: str | None = None, keep: bool = False,
-             ctx: Context | None = None, prefill: int | str | None = None) -> Any:
+             ctx: Context | None = None, prefill: int | str | None = None,
+             shard: str | None = None) -> Any:
         """Run one op line on every prompt of a set (``mdb.ops.sets``): ``prompts`` is the name
         of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
         (kept as the set ``inline``). ``prefill``: each item's split (``K`` or ``"@ROLE"``,
-        bound per item). Returns ``EachResult(summary, results, statistics)``; the live run
+        bound per item); ``shard``: ``"K/N"``, the K-th of N contiguous parts of the set.
+        Returns ``EachResult(summary, results, statistics)``; the live run
         and its cursor are left as they were."""
         from .sets import define, load, run_each
 
@@ -467,7 +469,8 @@ class Debugger:
         elif not isinstance(prompts, str):
             prompts = define(self, "inline", list(prompts)).name
         return run_each(ctx if ctx is not None else self.ops(self.live), prompts, line, at=at,
-                        keep=keep, prefill=None if prefill is None else str(prefill))
+                        keep=keep, prefill=None if prefill is None else str(prefill),
+                        shard=shard)
 
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""
