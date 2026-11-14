@@ -309,7 +309,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
 | `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
-| `promptset` | `set load NAME FILE \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file, show or list sets, read a stored each result (the REPL's set load / set show) |
+| `promptset` | `set load NAME FILE \| promptset define NAME ITEMS \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file (not from the web), define a set inline, show or list sets, read a stored each result (the REPL's set load / set show) |
 | `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
 | `reverse-continue` | `reverse-continue` | navigate | Run backwards to the previous breakpoint or watch hit |
@@ -574,7 +574,13 @@ held) and statistics for every labelled number found at the same result path in 
 ran: n, mean, min, max and how many share the most common sign, plus a count per value of every
 verdict and state field. A statistic keeps its inputs' label when all share it; inputs with
 different labels are summarised per label, never merged. The statistics are arithmetic on these
-items only. Each item's full result is kept in memory: `promptset result each2 a` prints it. A
+items only. Each item's full result is kept in memory: `promptset result each2 a` prints it. With
+a writable project it is also a sha256-checked JSON blob in the project store (the item's row
+has its `blob` pointer; without a project the row says the result is held in memory only), so
+`promptset result RECORD a`, with RECORD the summary's `stored` id, reads it back in a new
+process and refuses a changed blob. `promptset load` reads a file on the server, so the web
+console and the `/op` route refuse it; send the set inline with `promptset define NAME ITEMS`
+(items as a JSON list or JSONL). A
 path such as `reads.0.mass` is "the first listed read", which can be a different head in each
 item. With a project attached the summary is also stored as a `prompt-set` record. After `each`
 the current run, its cursor, the run table and the session digest are what they were. From

@@ -221,6 +221,31 @@ def test_the_console_refuses_file_commands(live):
         assert "not available from the web console" in text, line
 
 
+def test_promptset_load_is_refused_on_the_console_and_the_op_route_but_inline_works(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    for line in ("promptset load s /etc/hosts", "set load s /etc/hosts"):
+        text = c.post(f"/api/v1/s/{sid}/console", json={"line": line}).json()["data"]["text"]
+        assert "send the set inline" in text and "No such file" not in text, line
+    response = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "promptset", "request_id": "r1",
+        "args": {"action": "load", "name": "s", "arg": "/nonexistent/x.jsonl"}})
+    body = response.json()
+    assert response.status_code == 409 and "send the set inline" in json.dumps(body)
+    assert "No such file" not in json.dumps(body)
+    items = json.dumps([{"name": "a", "tokens": PROMPT}, {"name": "b", "tokens": [2, 6, 10]}])
+    response = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "promptset", "request_id": "r2",
+        "args": {"action": "define", "name": "s", "arg": items}})
+    assert response.status_code == 200 and response.json()["data"]["result"]["total"] == 2
+    for args in ({"action": "show", "name": "s"}, {"action": "list"}):
+        assert c.post(f"/api/v1/s/{sid}/op", json={"op": "promptset", "request_id": "r3",
+                                                   "args": args}).status_code == 200
+    each = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "each", "request_id": "r4", "args": {"set": "s", "line": "print"}})
+    assert each.status_code == 200, each.text
+
+
 # --------------------------------------------------------------------------- one thread
 
 

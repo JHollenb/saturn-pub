@@ -9,6 +9,7 @@ summary stays under the record bound with 40 items; the REPL grammar (``each SET
 ``set load``/``set show``).
 """
 
+import json
 from pathlib import Path
 
 import pytest
@@ -260,3 +261,73 @@ def test_with_a_project_the_summary_is_stored_and_without_one_nothing(tmp_path):
     assert isinstance(stored, str)
     record = index.get_record(debugger.project, debugger.session_id, stored)
     assert record["kind"] == "prompt-set" and record["body"]["set"] == "file"
+
+
+# --------------------------------------------------------------------------- durable results (M48)
+
+
+def _tamper(project_root, ref):
+    path = Path(project_root) / "store" / "tensors" / f"{ref}.safetensors"
+    raw = bytearray(path.read_bytes())
+    raw[-3] ^= 0x01
+    path.write_bytes(bytes(raw))
+
+
+def test_item_results_are_blobs_read_back_in_a_new_debugger_and_a_tampered_one_is_refused(
+        tmp_path):
+    pytest.importorskip("torch")
+    from mdb.ops.debugger import open_tiny
+
+    debugger = open_tiny("qwen2", "bf16", project=tmp_path / "p")
+    out = debugger.each(str(FIXTURE), WHATIF)
+    stored = out.summary["stored"]
+    assert out.results
+    for row in out.summary["items"]:
+        if row["state"] != "refused":
+            assert row["blob"]["state"] == "stored" and row["blob"]["sha256"]
+    # a new debugger on the same project (a new process): memory is empty, the blob answers
+    fresh = open_tiny("qwen2", "bf16", project=tmp_path / "p")
+    assert fresh.session_id == debugger.session_id
+    name = next(iter(out.results))
+    read = dispatch(fresh.ops(), "promptset", {"action": "result", "name": stored, "arg": name})
+    assert read["result"] == out.results[name] and read["from"] == "stored blob"
+    # the old process-local id is gone with the process
+    with pytest.raises(Refused, match="no each result"):
+        dispatch(fresh.ops(), "promptset", {"action": "result", "name": "each1", "arg": name})
+    ref = next(r for r in out.summary["items"] if r["name"] == name)["blob"]["ref"]
+    _tamper(tmp_path / "p", ref)
+    with pytest.raises(Refused, match="refused"):
+        dispatch(open_tiny("qwen2", "bf16", project=tmp_path / "p").ops(), "promptset",
+                 {"action": "result", "name": stored, "arg": name})
+
+
+def test_without_a_project_the_row_says_held_in_memory_only(tiny):
+    out = tiny.each("recall", PRINT)
+    blobs = [row["blob"] for row in out.summary["items"] if row["state"] != "refused"]
+    assert blobs and all(b["state"] == "absent" and "memory only" in b["reason"] for b in blobs)
+
+
+def test_the_summary_with_blob_pointers_stays_under_64_kib_at_40_items(tmp_path):
+    pytest.importorskip("torch")
+    import json
+
+    from mdb.core import index
+    from mdb.ops.debugger import open_tiny
+
+    rows = [{"name": f"p{i}", "tokens": [1 + i % 7, 5, 9 + i % 3, 3], "roles": {"subject": 1},
+             "vars": {"answer": 4, "foil": 9}} for i in range(40)]
+    debugger = open_tiny("qwen2", "bf16", project=tmp_path / "p")
+    out = debugger.each(rows, READS)
+    assert len(json.dumps(out.summary, sort_keys=True, separators=(",", ":"))) <= MAX_RECORD_BYTES
+    assert all(r["blob"]["state"] == "stored" for r in out.summary["items"])
+    assert isinstance(out.summary["stored"], str)      # the sealed record accepted the pointers
+    index.get_record(debugger.project, debugger.session_id, out.summary["stored"])
+
+
+def test_promptset_define_takes_items_inline(tiny):
+    items = [{"name": "a", "tokens": [1, 5, 9, 3]}, {"name": "b", "tokens": [2, 6, 10]}]
+    for text in (json.dumps(items), "\n".join(json.dumps(i) for i in items)):
+        out = dispatch(tiny.ops(), "promptset", {"action": "define", "name": "inl", "arg": text})
+        assert out["total"] == 2 and out["source"] == "inline"
+    with pytest.raises(BadArgs, match="ITEMS is a JSON list"):
+        dispatch(tiny.ops(), "promptset", {"action": "define", "name": "inl"})

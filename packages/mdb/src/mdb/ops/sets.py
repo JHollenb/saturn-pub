@@ -28,11 +28,14 @@ every per-item result holds ordinary canonical addresses:
 An item whose template does not bind (an undefined role or variable, a role past its prompt,
 no pair) or whose op is refused is a per-item refusal with its reason; the other items run.
 
-Output: the ``each`` op returns ONE summary record (bounded: per-item rows hold key numbers and
-the item result's digest, never the result itself); the per-item results are the ops' ordinary
-results, kept in memory under the summary id (``promptset result ID ITEM``); with a writable
-project attached the summary is stored as a ``prompt-set`` record (the ops store their own
-records as usual).
+Output: the ``each`` op returns ONE summary record (bounded: per-item rows hold key numbers, the
+item result's digest and a pointer to it, never the result itself); the per-item results are the
+ops' ordinary results, kept in memory under the summary id (``promptset result ID ITEM``). With
+a writable project attached each result is also a sha256-checked JSON blob in the project store
+(``core.bounded.put_json``; the row's ``blob`` is its pointer) and the summary is stored as a
+``prompt-set`` record, so ``promptset result RECORD ITEM`` (RECORD = the summary's ``stored``
+id) reads the result back in a new process, verifying the blob; without a project the row says
+the result is held in memory only.
 Statistics: ``mdb.analysis.summary``.
 
 State: the caller's context (run, cursor, focus, tables, checkpoints) and the debugger's live
@@ -180,6 +183,23 @@ def read_jsonl(path: str) -> list[Any]:
         except json.JSONDecodeError as error:
             raise BadArgs(f"{path} line {number}: not JSON ({error.msg})") from None
     return rows
+
+
+def _inline_rows(text: str) -> list[Any]:
+    """Items given inline: a JSON list of item objects, or JSONL (one object per line)."""
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError:
+        rows = []
+        for number, line in enumerate(text.splitlines(), 1):
+            if not line.strip():
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError as error:
+                raise BadArgs(f"inline items line {number}: not JSON ({error.msg})") from None
+        return rows
+    return value if isinstance(value, list) else [value]
 
 
 def sets_of(debugger: Any) -> dict[str, PromptSet]:
@@ -440,6 +460,7 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
 
         if getattr(ctx, "run", None) is not saved["run"] or session_digest(ctx) != saved["digest"]:
             raise RuntimeError("each changed the caller's session")
+    _put_blobs(debugger, rows, results)
     full = stats.summarize([results[name] for name in results])
     summary = _summary(found, line, steps, at, keep, rows, full, saved["digest"])
     entry_id = _remember(debugger, summary, results)
@@ -571,19 +592,78 @@ def _remember(debugger: Any, summary: dict[str, Any], results: dict[str, Any]) -
     return key
 
 
+def _writable(debugger: Any) -> Any:
+    project = getattr(debugger, "project", None)
+    return None if project is None or project.read_only else project
+
+
+def _put_blobs(debugger: Any, rows: list[dict[str, Any]], results: dict[str, Any]) -> None:
+    """Each item's result as a sha256-checked JSON blob (an op result is not a valid record
+    body, so it cannot be a record); the row's ``blob`` is the pointer. No writable project:
+    the row says the result is held in memory only."""
+    from mdb.core.bounded import put_json
+
+    project = _writable(debugger)
+    for row in rows:
+        if row["name"] not in results:
+            continue
+        if project is None:
+            row["blob"] = {"state": "absent",
+                           "reason": "held in memory only (no writable project)"}
+        else:
+            row["blob"] = put_json(results[row["name"]], store=project.store)
+
+
+def _stored_entry(debugger: Any, record_id: str) -> dict[str, Any] | None:
+    """The stored ``prompt-set`` summary named ``record_id`` (a summary's ``stored``), or None."""
+    project = getattr(debugger, "project", None)
+    if project is None:
+        return None
+    from mdb.core import index
+    from mdb.core.pointers import RecordError
+
+    try:
+        record = index.get_record(project, debugger.session_id, record_id)
+    except (RecordError, LookupError, KeyError, OSError):
+        return None
+    return record["body"] if record.get("kind") == "prompt-set" else None
+
+
+def load_item_result(debugger: Any, summary: dict[str, Any], item: str) -> dict[str, Any]:
+    """The item's result from its blob (checked against the blob's sha256 and the row's result
+    digest); ``Refused`` when the row has no stored blob or the blob fails a check."""
+    from mdb.core.bounded import load_json
+    from mdb.core.pointers import Unresolved
+
+    row = next((r for r in summary["items"] if r["name"] == item), None)
+    blob = None if row is None else row.get("blob")
+    if blob is None or blob.get("state") != "stored":
+        raise Refused(f"{item!r} has no stored result: "
+                      + ("not in the set or refused" if row is None or "result" not in row
+                         else (blob or {}).get("reason", "held in memory only")))
+    try:
+        result = load_json(blob, store=debugger.project.store)
+    except (ValueError, Unresolved) as error:
+        raise Refused(f"stored result of {item!r} refused: "
+                      f"{getattr(error, 'reason', None) or error}") from None
+    if seal_digest(result) != row["result"]:
+        raise Refused(f"stored result of {item!r} refused: it differs from the row's digest")
+    return result
+
+
 def _store(debugger: Any, summary: dict[str, Any]) -> None:
     """With a writable project: the summary as one ``prompt-set`` record. Item results are
-    referenced by digest (and by the op's own record id where the op seals one, as ``whatif``
-    does); an op result is not a record body (its pointers and bounds are not ``num`` claims),
-    so the item results themselves stay in memory (``promptset result ID ITEM``)."""
-    project = getattr(debugger, "project", None)
-    if project is None or project.read_only:
+    referenced by digest and by blob pointer (and by the op's own record id where the op seals
+    one, as ``whatif`` does); an op result is not a record body (its pointers and bounds are not
+    ``num`` claims), so the results themselves are the blobs ``_put_blobs`` stored."""
+    project = _writable(debugger)
+    if project is None:
         return
     from mdb.core import index
     from mdb.core.records import declare_kind, seal_record
 
     declare_kind("prompt-set", required=("set", "line", "items", "statistics"),
-                 plain_numeric=("items.*.bytes", "total", "statistics.n",
+                 plain_numeric=("items.*.bytes", "items.*.blob.bytes", "items.*.blob.tensor.shape.*", "total", "statistics.n",
                                 "statistics.numeric.*.n", "statistics.numeric.*.agree.count",
                                 "statistics.numeric.*.by_authority.*.n",
                                 "statistics.numeric.*.by_authority.*.agree.count",
@@ -636,6 +716,11 @@ def _op_promptset(ctx, action, name, arg):
         if not arg:
             raise BadArgs("write set load NAME FILE")
         found = load(debugger, name, arg)
+    elif action == "define":
+        if not arg:
+            raise BadArgs("promptset define NAME ITEMS: ITEMS is a JSON list of items (or "
+                          "JSONL, one item per line)")
+        found = define(debugger, name, _inline_rows(arg))
     elif action == "show":
         if name not in known:
             raise Refused(f"no prompt set {name!r} (sets: {', '.join(sorted(known)) or 'none'})")
@@ -643,8 +728,15 @@ def _op_promptset(ctx, action, name, arg):
     else:  # result
         entry = _RESULTS.get(debugger, {}).get(name)
         if entry is None:
-            held = ", ".join(_RESULTS.get(debugger, {})) or "none"
-            raise Refused(f"no each result {name!r} in memory (held: {held})")
+            stored = _stored_entry(debugger, name)
+            if stored is None:
+                held = ", ".join(_RESULTS.get(debugger, {})) or "none"
+                raise Refused(f"no each result {name!r} in memory (held: {held}) and no stored "
+                              "summary of that record id in the project")
+            if not arg:
+                return {"action": "result", "id": name, "summary": stored}
+            return {"action": "result", "id": name, "item": arg,
+                    "result": load_item_result(debugger, stored, arg), "from": "stored blob"}
         if not arg:
             return {"action": "result", "id": name, "summary": entry["summary"]}
         if arg not in entry["results"]:
@@ -668,11 +760,13 @@ register(Op("each", "Run one op line on every prompt of a set (one run per promp
             usage="each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]"))
 register(Op("promptset", "Prompt sets: load a JSONL file, show or list sets, read a stored each "
             "result (the REPL's set load / set show)",
-            (Arg("action", "choice", required=True, choices=("load", "show", "list", "result")),
+            (Arg("action", "choice", required=True, choices=("load", "define", "show", "list", "result")),
              Arg("name", "str", help="the set (load, show) or the each result id (result)"),
-             Arg("arg", "str", help="load: the JSONL file; result: an item name")),
+             Arg("arg", "str", help="load: the JSONL file (not served: send the set inline); "
+                                    "define: the items as JSON; result: an item name")),
             "mutate", False, _op_promptset,
-            usage="set load NAME FILE | set show NAME | promptset list | "
+            usage="set load NAME FILE | promptset define NAME ITEMS | set show NAME | "
+                  "promptset list | "
                   "promptset result ID [ITEM]"))
 
 
