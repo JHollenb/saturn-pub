@@ -1,0 +1,14 @@
+{
+ "experiment": "11b exploratory addendum (NOT part of the sealed prereg; written after shard 0 of the scored run had been seen: held-out-country DAS flipped 6/22 at k=32, the symbol-table readout subspace 13/22, whole 17/22)",
+ "written": "see the commit time of this file (after job-70dfc80ed3c4; before the exploratory jobs)",
+ "question": "Is the held-out-country DAS failure a generalisation failure (the code of unseen countries lies outside a subspace learnt on other countries) or a rank failure (no low-rank subspace carries the code at all)? And does the readout span keep rising past k=32?",
+ "arms": {
+  "dasin{k}": "pyvene DAS with the same hyperparameters (Adam 1e-2, batch 32, 300 steps), trained on all ordered pairs of the 74 test-country items (the 64 exp7 recipients + their donors) with different answers, EXCLUDING the 64 exp7 (recipient, donor) pairs; k in 4,8,16,32,64. In-distribution: the scored cells themselves are seen in training (in other pairings), so this is an existence/upper-bound measure, labelled fitted-in-sample, never compared to the held-out arms as if it were held out",
+  "meanin{k}": "PCA of centred per-answer class means of the test-country cell values (in-sample, <= 28 directions)",
+  "symtab64, symcap64": "the readout spans at k=64 (training-free)",
+  "random64": "a fresh Gaussian draw, k=64",
+  "symtr{k}": "added after the dasin/meanin/symtab64 results: the readout span built from the TRAINING countries' tokens only (42 tokens, no test-country vocabulary), k in 1..32; asks whether the symbol-table span's lead over held-out DAS comes from containing the test countries' token directions"
+ },
+ "expectations_not_sealed": "dasin reaches whole-cell IIA at modest k (<= 16) if the failure is generalisation; symtab64 approaches whole",
+ "scoring": "as prereg.json (mdb stepped, margins 1 and 4)"
+}

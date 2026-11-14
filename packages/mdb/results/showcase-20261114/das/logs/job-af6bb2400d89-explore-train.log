@@ -1,0 +1,82 @@
+mrun: job-af6bb2400d89 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 52926a6 script das.py
+[    4.1s] load mode=train
+[    4.5s] train items 87 countries 38
+[    4.5s] INDIST items 74 pairs 5164 (exp7 pairs excluded)
+[    5.0s] k=4 step 0 loss 8.302
+[    9.0s] k=4 step 25 loss 4.715
+[   13.1s] k=4 step 50 loss 6.556
+[   17.1s] k=4 step 75 loss 5.527
+[   21.1s] k=4 step 100 loss 5.407
+[   25.2s] k=4 step 125 loss 5.199
+[   29.2s] k=4 step 150 loss 5.107
+[   33.2s] k=4 step 175 loss 4.984
+[   37.2s] k=4 step 200 loss 5.419
+[   41.3s] k=4 step 225 loss 5.282
+[   45.3s] k=4 step 250 loss 4.800
+[   49.4s] k=4 step 275 loss 5.284
+[   53.2s] k=4 step 299 loss 4.868
+[   54.5s] k=4 done 50.0s probe flips 29/256
+[   54.7s] k=8 step 0 loss 8.119
+[   58.7s] k=8 step 25 loss 3.293
+[   62.8s] k=8 step 50 loss 3.771
+[   66.8s] k=8 step 75 loss 3.643
+[   70.9s] k=8 step 100 loss 3.581
+[   75.0s] k=8 step 125 loss 3.680
+[   79.0s] k=8 step 150 loss 3.501
+[   83.1s] k=8 step 175 loss 3.398
+[   87.1s] k=8 step 200 loss 3.370
+[   91.2s] k=8 step 225 loss 3.312
+[   95.2s] k=8 step 250 loss 2.864
+[   99.3s] k=8 step 275 loss 3.476
+[  103.2s] k=8 step 299 loss 3.004
+[  104.5s] k=8 done 50.0s probe flips 81/256
+[  104.7s] k=16 step 0 loss 7.745
+[  108.7s] k=16 step 25 loss 1.798
+[  112.8s] k=16 step 50 loss 2.051
+[  116.9s] k=16 step 75 loss 2.200
+[  121.0s] k=16 step 100 loss 2.157
+[  125.1s] k=16 step 125 loss 1.869
+[  129.2s] k=16 step 150 loss 2.020
+[  133.3s] k=16 step 175 loss 1.831
+[  137.4s] k=16 step 200 loss 1.837
+[  141.5s] k=16 step 225 loss 1.360
+[  145.6s] k=16 step 250 loss 1.544
+[  149.7s] k=16 step 275 loss 1.985
+[  153.6s] k=16 step 299 loss 1.463
+[  154.9s] k=16 done 50.4s probe flips 168/256
+[  155.1s] k=32 step 0 loss 7.200
+[  159.3s] k=32 step 25 loss 1.422
+[  163.4s] k=32 step 50 loss 1.638
+[  167.6s] k=32 step 75 loss 1.867
+[  171.8s] k=32 step 100 loss 1.735
+[  176.0s] k=32 step 125 loss 1.631
+[  180.2s] k=32 step 150 loss 1.518
+[  184.3s] k=32 step 175 loss 1.376
+[  188.5s] k=32 step 200 loss 1.509
+[  192.7s] k=32 step 225 loss 1.026
+[  196.9s] k=32 step 250 loss 1.310
+[  201.1s] k=32 step 275 loss 1.588
+[  205.1s] k=32 step 299 loss 1.093
+[  206.4s] k=32 done 51.5s probe flips 194/256
+[  206.6s] k=64 step 0 loss 4.928
+[  210.9s] k=64 step 25 loss 1.267
+[  215.3s] k=64 step 50 loss 1.541
+[  219.6s] k=64 step 75 loss 1.866
+[  224.0s] k=64 step 100 loss 1.758
+[  228.4s] k=64 step 125 loss 1.558
+[  232.7s] k=64 step 150 loss 1.548
+[  237.1s] k=64 step 175 loss 1.375
+[  241.4s] k=64 step 200 loss 1.540
+[  245.8s] k=64 step 225 loss 1.014
+[  250.2s] k=64 step 250 loss 1.323
+[  254.5s] k=64 step 275 loss 1.572
+[  258.7s] k=64 step 299 loss 1.111
+[  260.0s] k=64 done 53.6s probe flips 194/256
+[  260.0s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:21.63
+	Maximum resident set size (kbytes): 4358532
+mrun: job-af6bb2400d89 -> succeeded
+mrun: job-af6bb2400d89 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 261.94, 'peak_rss_mb': 2418.7, 'peak_vram_mb': 5524.0}

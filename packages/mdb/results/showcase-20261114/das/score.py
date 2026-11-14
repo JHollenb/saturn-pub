@@ -14,7 +14,7 @@ from pathlib import Path
 
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
 from mdb.analysis.subspace import principal_angles  # noqa: E402
 
 OUT = Path(sys.argv[1])
@@ -65,7 +65,7 @@ for k in KS:
                            "n": len(sae)}
     if k > 1:
         prev = B[f"das{KS[KS.index(k) - 1]}"].double()
-        row["das_prev_nested_min_deg"] = max(principal_angles(prev, d))       # prev inside k?
+        row["das_prev_in_k_max_deg"] = max(principal_angles(prev, d))   # largest angle: is das_{k/2} inside das_k?
     angles[f"k{k}"] = row
 dasinfo = {}
 mdb_by = {r["id"]: r for r in R}

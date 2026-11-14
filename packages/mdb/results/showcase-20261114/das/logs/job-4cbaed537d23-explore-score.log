@@ -1,0 +1,74 @@
+mrun: job-4cbaed537d23 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 156a23e script das.py
+[    4.2s] load mode=score
+[   11.3s] S city:Barcelona 7.1s
+[   18.6s] S city:Busan 7.29s
+[   26.1s] S city:Gdansk 7.52s
+[   38.3s] S city:Gothenburg 12.14s
+[   45.0s] S city:Hamburg 6.71s
+[   52.2s] S city:Krakow 7.18s
+[   58.9s] S city:Kyoto 6.7s
+[   65.7s] S city:Milan 6.85s
+[   71.8s] S city:Munich 6.11s
+[   77.9s] S city:Naples 6.11s
+[   84.8s] S city:Porto 6.86s
+[   91.5s] S city:Rotterdam 6.71s
+[   99.0s] S city:Saint Petersburg 7.47s
+[  106.3s] S city:Seville 7.33s
+[  113.0s] S city:Shanghai 6.71s
+[  120.5s] S city:Shenzhen 7.47s
+[  127.8s] S currency:baht 7.33s
+[  135.3s] S currency:forint 7.46s
+[  142.6s] S currency:koruna 7.32s
+[  154.1s] S currency:krona 11.5s
+[  165.6s] S currency:pound sterling 11.5s
+[  173.7s] S currency:renminbi 8.09s
+[  181.0s] S currency:rial 7.31s
+[  188.5s] S currency:rouble 7.47s
+[  199.1s] S currency:ruble 10.61s
+[  206.4s] S currency:rupiah 7.35s
+[  213.9s] S currency:shekel 7.45s
+[  220.6s] S currency:sterling 6.69s
+[  227.4s] S currency:won 6.84s
+[  234.1s] S currency:yen 6.69s
+[  240.8s] S currency:yuan 6.69s
+[  253.1s] S currency:zloty 12.3s
+[  261.6s] S landmark:Borobudur 8.54s
+[  269.1s] S landmark:Masada 7.45s
+[  276.4s] S landmark:Mount Fuji 7.29s
+[  284.4s] S landmark:Mount Rushmore 8.07s
+[  297.2s] S landmark:Persepolis 12.78s
+[  310.8s] S landmark:Schonbrunn Palace 13.61s
+[  318.1s] S landmark:Uluru 7.3s
+[  326.2s] S landmark:the Acropolis 8.09s
+[  336.2s] S landmark:the Cliffs of Moher 9.98s
+[  345.5s] S landmark:the Colosseum 9.34s
+[  353.5s] S landmark:the Forbidden City 7.92s
+[  360.4s] S landmark:the Great Wall 6.92s
+[  368.9s] S landmark:the Parthenon 8.54s
+[  387.4s] S landmark:the Rijksmuseum 18.51s
+[  394.7s] S landmark:the Sphinx 7.31s
+[  417.3s] S landmark:the pyramids of Giza 22.61s
+[  426.6s] S person:Akira Kurosawa 9.23s
+[  434.2s] S person:Edvard Munch 7.58s
+[  442.7s] S person:Frederic Chopin 8.59s
+[  451.3s] S person:Giuseppe Verdi 8.6s
+[  459.3s] S person:Hans Christian Andersen 7.99s
+[  466.6s] S person:Haruki Murakami 7.31s
+[  473.8s] S person:Henrik Ibsen 7.16s
+[  481.6s] S person:Hokusai 7.83s
+[  490.2s] S person:Jean Sibelius 8.59s
+[  498.8s] S person:Mao Zedong 8.6s
+[  506.7s] S person:Miguel de Cervantes 7.91s
+[  513.5s] S person:Mozart 6.76s
+[  520.1s] S person:Plato 6.59s
+[  531.5s] S person:Rembrandt 11.4s
+[  538.6s] S person:Socrates 7.08s
+[  551.0s] S person:Soren Kierkegaard 12.46s
+[  551.0s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:12.53
+	Maximum resident set size (kbytes): 4359620
+mrun: job-4cbaed537d23 -> succeeded
+mrun: job-4cbaed537d23 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 553.2, 'peak_rss_mb': 2012.3, 'peak_vram_mb': 3862.0}

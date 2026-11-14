@@ -1,0 +1,32 @@
+mrun: job-70dfc80ed3c4 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision c67f6d3 script das.py
+[    4.1s] load mode=score
+[   18.2s] S city:Barcelona 14.01s
+[   32.6s] S city:Busan 14.36s
+[   47.0s] S city:Gdansk 14.46s
+[   71.5s] S city:Gothenburg 24.49s
+[   85.1s] S city:Hamburg 13.56s
+[   99.3s] S city:Krakow 14.17s
+[  112.9s] S city:Kyoto 13.65s
+[  126.7s] S city:Milan 13.74s
+[  139.9s] S city:Munich 13.19s
+[  152.8s] S city:Naples 12.99s
+[  166.6s] S city:Porto 13.73s
+[  180.2s] S city:Rotterdam 13.6s
+[  194.6s] S city:Saint Petersburg 14.4s
+[  209.0s] S city:Seville 14.41s
+[  222.7s] S city:Shanghai 13.72s
+[  236.9s] S city:Shenzhen 14.24s
+[  251.3s] S currency:baht 14.4s
+[  265.8s] S currency:forint 14.47s
+[  280.1s] S currency:koruna 14.26s
+[  304.0s] S currency:krona 23.95s
+[  327.9s] S currency:pound sterling 23.86s
+[  343.0s] S currency:renminbi 15.13s
+[  343.0s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:44.50
+	Maximum resident set size (kbytes): 4357972
+mrun: job-70dfc80ed3c4 -> succeeded
+mrun: job-70dfc80ed3c4 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 345.53, 'peak_rss_mb': 2521.4, 'peak_vram_mb': 3850.0}

@@ -129,7 +129,18 @@ if MODE == "train":
     qwen3_shim()
     tr = train_items()
     log(f"train items {len(tr)} countries {len({i['bridge'] for i in tr})}")
-    pairs = [(b, s) for b in tr for s in tr if b["answer"] != s["answer"]]
+    INDIST = os.environ.get("INDIST") == "1"          # exploratory (post-prereg, labelled): fit on the
+    if INDIST:                                        # TEST countries' items, the 64 exp7 pairs excluded
+        held = {(i["id"], d["id"]) for i, d in test_pairs()}
+        seen = {}
+        for i, d in test_pairs():
+            for x in (i, d):
+                seen[x["id"]] = dict(x, crow=ADMIT[x["id"]]["crow"], bridge=x.get("bridge"))
+        tr = list(seen.values())
+        pairs = [(b, s) for b in tr for s in tr if b["answer"] != s["answer"] and (b["id"], s["id"]) not in held]
+        log(f"INDIST items {len(tr)} pairs {len(pairs)} (exp7 pairs excluded)")
+    else:
+        pairs = [(b, s) for b in tr for s in tr if b["answer"] != s["answer"]]
     rng = random.Random(SEED)
     rng.shuffle(pairs)
     probe = pairs[:256]                                     # train-fit probe (in training set)
@@ -166,6 +177,7 @@ if MODE == "train":
                     out.append(float(lg[j, ans_b(b)] - lg[j, ans_s(s)]))
         return out
 
+    PFX = "dasin" if INDIST else "das"
     bases_out = {"meta": {"KS": KS, "steps": STEPS, "bs": BS, "lr": LR, "seed": SEED,
                           "train_items": [i["id"] for i in tr], "pairs": len(pairs)}}
     t_rows = lambda x: ADMIT[x["id"]]["crow"]  # noqa: E731
@@ -196,8 +208,8 @@ if MODE == "train":
         W = iv.rotate_layer.weight.detach().double().cpu()                  # (DH, k), orthonormal cols
         fit = evaluate(im, probe, lambda x: x["crow"], lambda x: x["crow"], lambda x: x["answer"], lambda x: x["answer"])
         pv_test = evaluate(im, tests, t_rows, t_rows, lambda x: x["answer"], lambda x: x["answer"])
-        bases_out[f"das{k}"] = W
-        bases_out[f"das{k}_info"] = {"loss_curve": curve, "train_probe_M": fit, "pyvene_test_M": pv_test,
+        bases_out[f"{PFX}{k}"] = W
+        bases_out[f"{PFX}{k}_info"] = {"loss_curve": curve, "train_probe_M": fit, "pyvene_test_M": pv_test,
                                      "orth_err": float((W.T @ W - torch.eye(k, dtype=W.dtype)).abs().max()),
                                      "seconds": round(time.monotonic() - t0, 1)}
         log(f"k={k} done {time.monotonic() - t0:.1f}s probe flips {sum(m < 0 for m in fit)}/{len(fit)}")
@@ -208,6 +220,24 @@ if MODE == "train":
                        | {i["country_token"] for i in full if i.get("country_token")}
                        | {i["donor"]["country_token"] for i in full if i.get("donor", {}).get("country_token")})
     capitals = sorted({i["answer"] for i in TRAIN["items"]} | {i["answer"] for i, _ in tests} | {d["answer"] for _, d in tests})
+    if INDIST:
+        byc = {}
+        for i in tr:
+            byc.setdefault(i["answer"], []).append(CELLS[i["id"]].double())
+        Mi, mi_sv = pca(torch.stack([torch.stack(v).mean(0) for v in byc.values()]), max(KS))
+        for k in KS:
+            bases_out[f"meanin{k}"] = Mi[:, :min(k, Mi.shape[1])]
+        S, _ = pca(symtab_rows(countries), max(KS))
+        C, _ = pca(symtab_rows(capitals), max(KS))
+        g = torch.Generator().manual_seed(SEED)
+        Rr = torch.linalg.qr(torch.randn(DH, max(KS), generator=g, dtype=torch.float64))[0]
+        bases_out[f"symtab{max(KS)}"] = S
+        bases_out[f"symcap{max(KS)}"] = C
+        bases_out[f"random{max(KS)}"] = Rr        # a fresh Gaussian draw (not an extension of random32)
+        bases_out["meta"].update({"indist": True, "meanin_sv": mi_sv.tolist()})
+        torch.save(bases_out, f"{OUT}/bases-indist.pt")
+        log("TOTAL")
+        sys.exit(0)
     S, s_sv = pca(symtab_rows(countries), max(KS))
     C, c_sv = pca(symtab_rows(capitals), max(KS))
     # supervised mean-difference: PCA of per-country class means of TRAIN cell values (fp64)
@@ -243,10 +273,18 @@ if MODE == "score":
     pick = sys.argv[4] if len(sys.argv) > 4 else ""
     tag = sys.argv[5] if len(sys.argv) > 5 else ("smoke" if pick else "full")
     BASES = torch.load(f"{OUT}/bases.pt")
+    if os.path.exists(f"{OUT}/bases-indist.pt"):
+        BASES.update({k: v for k, v in torch.load(f"{OUT}/bases-indist.pt").items() if k != "meta"})
     KS = BASES["meta"]["KS"]
     tests = test_pairs()
     if pick:
         tests = [tests[int(k)] for k in pick.split(",")]
+    if "symtr" in ARMS:   # exploratory: readout span of the TRAINING countries' tokens only (no test vocabulary)
+        tr_tokens = sorted({i["country_token"] for i in TRAIN["items"] if i.get("country_token")})
+        St, _ = pca(symtab_rows(tr_tokens), max(KS))
+        for k in KS:
+            BASES[f"symtr{k}"] = St[:, :k]
+        log(f"symtr from {len(tr_tokens)} training-country tokens")
     if "sae" in ARMS:
         B19 = sae.open_set("qwen-scope", SAE_DIR, layers=[19], cache=2).get(19)
         COUNTRY = {int(f) for f in json.load(open("census.json"))["features"]}
@@ -279,11 +317,14 @@ if MODE == "score":
         arms_v = {}
         if "whole" in ARMS:
             arms_v["whole"] = dv
-        for fam in ("das", "symtab", "symcap", "meandiff", "random"):
-            if fam in ARMS:
-                for k in KS:
-                    Q = BASES[f"{fam}{k}"].double()
-                    arms_v[f"{fam}{k}"] = v + Q @ (Q.T @ (dv - v))
+        for tok in ARMS:                     # a family (all its ks) or an exact key like symtab64
+            if tok in ("whole", "sae"):
+                continue
+            keys = [tok] if tok[-1].isdigit() else sorted(
+                (x for x in BASES if x.startswith(tok) and x[len(tok):].isdigit()), key=lambda x: int(x[len(tok):]))
+            for key in keys:
+                Q = BASES[key].double()
+                arms_v[key] = v + Q @ (Q.T @ (dv - v))
         if "sae" in ARMS:
             feats = sorted((acts_r | acts_d) & COUNTRY)
             if feats:
