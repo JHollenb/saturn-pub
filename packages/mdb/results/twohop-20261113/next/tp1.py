@@ -53,6 +53,8 @@ dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
 tok, model = dbg.tokenizer, dbg.adapter.model
 cfg = model.config
 L, H, KV, DH = cfg.num_hidden_layers, cfg.num_attention_heads, cfg.num_key_value_heads, cfg.head_dim
+for prm in model.parameters():  # only input grads are needed; weight grads cost +3.4 GB (job-b3bc03382981)
+    prm.requires_grad_(False)
 nm = inn.wrap(shared_clone(model))
 prompts = json.load(open("tp1_prompts.json"))["prompts"]
 import os  # noqa: E402
