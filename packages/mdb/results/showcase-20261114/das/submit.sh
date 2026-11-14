@@ -13,7 +13,7 @@ git -C $W archive HEAD src packages/mdb/src $SC/common.py $SC/run.sh $SC/das $SC
   packages/mdb/results/twohop-20261113/next/r1_items.json \
   packages/mdb/results/twohop-20261113/next/b1_sets.json packages/mdb/results/twohop-20261113/next/b1-score.json | tar -x -C $P
 git -C $W rev-parse --short HEAD > $P/REVISION
-cp $P/$SC/common.py $P/$SC/run.sh $P/$SC/das/*.py $P/$SC/das/*.sh $P/$SC/das/train_candidates.json $P/$SC/exp1/census.json \
+cp $P/$SC/common.py $P/$SC/run.sh $P/$SC/das/*.py $P/$SC/das/*.sh $P/$SC/das/train_candidates.json $P/$SC/das/prereg.json $P/$SC/exp1/census.json \
    $P/packages/mdb/results/twohop-20261113/next/{r1_items.json,b1_sets.json,b1-score.json} $P/
 SHA=$(shasum -a 256 $P/das.py | cut -c1-16)
 echo "payload $P rev $(cat $P/REVISION) das.py sha256:$SHA"

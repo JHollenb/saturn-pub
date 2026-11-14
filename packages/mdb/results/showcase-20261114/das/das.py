@@ -231,7 +231,12 @@ if MODE == "train":
     sys.exit(0)
 
 if MODE == "score":
+    import hashlib
+
     from mdb.analysis import sae
+    from mdb.analysis.verdict import spacing
+
+    SHAS = {f: hashlib.sha256(open(f, "rb").read()).hexdigest() for f in ("das.py", "prereg.json")}
     from mdb.analysis.components import component_binding
 
     ARMS = sys.argv[3].split(",")                 # families: whole, das, symtab, symcap, meandiff, random, sae
@@ -305,9 +310,14 @@ if MODE == "score":
             out[name] = {"M": float(lg[a] - lg[b]), "argmax": int(lg.argmax())}
             run.restore(ck)
         del run
+        fl = 2 * spacing(max(abs(float(lg0[a])), abs(float(lg0[b]))), torch.bfloat16)   # = common.floor_of
+        assert fl == floor_of(lg0, a, b)
+        for arm in out.values():
+            arm["effect_floors"] = arm["M"] / fl                     # numeric column (gap audit)
         rec = {"id": item["id"], "donor": did, "crow": crow, "donor_crow": dcrow, "M0": float(lg0[a] - lg0[b]),
-               "floor": floor_of(lg0, a, b), "arms": out, "delta_norm": float((dv - v).norm()),
-               "seconds": round(time.monotonic() - t0, 2)}
+               "floor": fl, "M0_floors": float(lg0[a] - lg0[b]) / fl, "arms": out,
+               "delta_norm": float((dv - v).norm()), "script_sha256": SHAS["das.py"],
+               "prereg_sha256": SHAS["prereg.json"], "seconds": round(time.monotonic() - t0, 2)}
         if Qsae is not None:
             rec["sae_rank"] = int(Qsae.shape[1])
             rec["sae_basis"] = Qsae.tolist()
