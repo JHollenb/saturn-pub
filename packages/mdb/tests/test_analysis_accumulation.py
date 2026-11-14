@@ -136,3 +136,95 @@ def test_symbols_renders_a_refused_remainder_bound(debugger, no_gamma):
     remainder = result["unbound"]["parts"]["remainder"]
     assert remainder["within"] is None and remainder["bound"]["state"] == "refused"
     assert "bound refused" in render(result)
+
+
+# --- M50: the accumulation premise is measured per run, not assumed from the flag -------------
+
+def _measured(dev, premise="fp32-then-round", by_type=None):
+    return {"premise": premise, "device": "cuda", "dtype": str(torch.bfloat16), "batch": 1,
+            "rows": [1, 16], "stages": 42, "max_deviation_milli": int(dev * 1000),
+            "max_ulp_index": 3,
+            "by_type_milli": by_type or {"gate_proj": int(dev * 1000), "q_proj": 0}}
+
+
+def test_measured_fp32_then_round_resolves_a_long_sum_the_flag_premise_refused():
+    scope = dict(bf16_reduced_precision_reduction=True, accumulation=_measured(1.0))
+    acc = accumulation(_adapter("cuda", torch.bfloat16, **scope))
+    assert acc.u == U32 and "measured on this device" in acc.premise
+    assert "max deviation 1 eps sum|terms|" in acc.premise and "gate_proj" in acc.premise
+    exact = U32 * 1536 / (1 - U32 * 1536)
+    assert acc.gamma(1536) is not None and acc.gamma(1536) > exact     # widened by 1 ulp
+    assert acc.gamma(1536) < exact + 2.0 ** -7 * 1.01     # d = 1 eps sum|terms|
+    clean = accumulation(_adapter("cuda", torch.bfloat16, bf16_reduced_precision_reduction=True,
+                                  accumulation=_measured(0.0)))
+    assert clean.gamma(1536) == pytest.approx(exact)                   # no deviation, no widening
+    old = accumulation(_adapter("cuda", torch.bfloat16, bf16_reduced_precision_reduction=True))
+    assert old.gamma(1536) is None                                     # nothing measured: refused
+
+
+def test_measurement_that_does_not_support_fp32_then_round_stays_refused():
+    scope = dict(bf16_reduced_precision_reduction=True,
+                 accumulation=_measured(7.0, premise="unsupported"))
+    acc = accumulation(_adapter("cuda", torch.bfloat16, **scope))
+    assert acc.gamma(1536) is None and acc.refusal(1536).startswith(PREMISE_FAILS)
+    assert "does not support fp32-then-round" in acc.refusal(1536)
+    assert "max deviation 7 eps" in acc.refusal(1536)
+
+
+def test_measure_accumulation_records_per_stage_type_and_flags_a_bad_measurement(monkeypatch):
+    from saturn_pub import numerics
+    from mdb.engine.models import tiny_model
+
+    model = tiny_model("qwen2", dtype="bf16")
+    record = numerics.measure_accumulation(model.model.layers, model.lm_head)
+    assert record["premise"] == "fp32-then-round" and record["batch"] == 1
+    assert record["max_deviation_milli"] == max(record["by_type_milli"].values())
+    assert record["max_deviation_milli"] <= 2000 and "max_ulp_index" in record
+    assert {"q_proj", "gate_proj", "down_proj", "lm_head"} <= set(record["by_type"])
+    monkeypatch.setattr(numerics, "_stage_deviation", lambda *a: (9, 9.0))
+    bad = numerics.measure_accumulation(model.model.layers, model.lm_head)
+    assert bad["premise"] == "unsupported" and bad["max_deviation_milli"] == 9000
+
+
+def test_adapter_records_the_measurement_in_its_numeric_scope(monkeypatch):
+    import saturn_pub.adapters.decoder as decoder
+    from mdb.engine.models import tiny_model
+
+    monkeypatch.setattr(decoder, "needs_accumulation_measurement", lambda *a: True)
+    adapter = decoder.DecoderAdapter(tiny_model("qwen2", dtype="bf16"), granularity="operation")
+    record = adapter.execution["numeric_scope"]["accumulation"]
+    assert record["premise"] == "fp32-then-round" and record["max_deviation_milli"] == 0
+    from mdb.core import records
+    records._scan_claims(adapter.execution, "execution", (), records._PROFILE)   # no bare float
+    adapter.validate_execution()          # the extra field is not a drift-checked live flag
+    monkeypatch.undo()
+    cpu = decoder.DecoderAdapter(tiny_model("qwen2", dtype="bf16"), granularity="operation")
+    assert "accumulation" not in cpu.execution["numeric_scope"]
+
+
+def test_whatif_bound_prints_the_measured_premise(debugger, monkeypatch):
+    from mdb.analysis import forecast
+
+    run = debugger.run(PROMPT)
+    run.until("t3.L0.h")
+
+    def view(owner):
+        scope = dict(owner.adapter.execution["numeric_scope"], accumulation=_measured(1.0))
+        execution = dict(owner.adapter.execution, device={"type": "cuda", "index": 0},
+                         numeric_scope=scope)
+        return accumulation(SimpleNamespace(dtype=owner.adapter.dtype, execution=execution))
+
+    monkeypatch.setattr(forecast, "accumulation", view)
+    exact = whatif(run, Edit("t3.L1.m", 1.5, "scale"), Margin(3, 4, 9)).report["prediction"]["exact"]
+    assert "bound" in exact
+    assert any("measured on this device" in p for p in exact["premises"])
+
+
+def test_truncated_layer_types_names_the_expected_length():
+    from saturn_pub.adapters.decoder import DecoderAdapter
+    from mdb.engine.models import tiny_model
+
+    model = tiny_model("qwen2", dtype="bf16", layers=2)
+    model.config.layer_types = ["full_attention"] * 5
+    with pytest.raises(ValueError, match=r"layer_types has 5 entries.*2 decoder layers.*exactly 2"):
+        DecoderAdapter(model, granularity="operation")

@@ -24,7 +24,12 @@ from transformers import DynamicCache
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session, seal_append
-from ..numerics import check_numeric_environment, live_numeric_environment
+from ..numerics import (
+    check_numeric_environment,
+    live_numeric_environment,
+    measure_accumulation,
+    needs_accumulation_measurement,
+)
 from ..values import clone, digest, identity
 from ._residency import BlockResidency
 
@@ -559,6 +564,14 @@ class DecoderAdapter(Adapter):
         self.backbone = getattr(model, spec.backbone)
         self._layer_modules = getattr(self.backbone, spec.layers)
         self.layers = len(self._layer_modules)
+        layer_types = getattr(config, "layer_types", None)
+        if layer_types is not None and len(layer_types) != self.layers:
+            raise ValueError(
+                f"config.layer_types has {len(layer_types)} entries but the model has "
+                f"{self.layers} decoder layers (num_hidden_layers = {config.num_hidden_layers}); "
+                f"layer_types must have exactly {self.layers} entries, so trim it together with "
+                "num_hidden_layers when truncating a config"
+            )
         self.hidden_size = config.hidden_size
         self.vocab_size = config.vocab_size
         self.max_positions = config.max_position_embeddings
@@ -627,6 +640,14 @@ class DecoderAdapter(Adapter):
             "sampler": "greedy",
             "parity": parity,
         }
+        if self._residency.mode == "resident" and needs_accumulation_measurement(
+            self.device.type, self.dtype
+        ):
+            # the accumulation precision of native 16-bit matmuls, measured on this device
+            # (a handful of linear stages, no forward); bounds read it from the scope
+            self.execution["numeric_scope"]["accumulation"] = measure_accumulation(
+                self._layer_modules, getattr(model, "lm_head", None)
+            )
         # Resident execution keeps the historical contract verbatim; only streamed residency
         # adds a field, so existing resident receipts stay byte-identical.
         if self._residency.mode == "streamed":
