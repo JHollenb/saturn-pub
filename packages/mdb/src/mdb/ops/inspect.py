@@ -9,8 +9,10 @@ torch-free; each op imports the analysis layer when it runs.
   contribution and a native causal verdict (``analysis.reads``).
 - ``symbols``: the symbol table at the cursor (``analysis.symbols``); ``symbol NAME =
   ADDR[,ADDR...]`` declares a user symbol over cache rows.
-- ``circuit CONSUMER [top=K] [depth=D]`` builds a circuit record; ``circuit test ID`` ablates
-  it natively; ``circuit show ID`` prints it as a walk (``analysis.circuits``).
+- ``circuit CONSUMER [top=K] [depth=D]`` builds a circuit record; ``circuit test ID ref=NAME``
+  patches it natively from a reference run (``ref=set:NAME``: a prompt set's per-component
+  mean) and seals a ``circuit-test`` record; ``circuit show ID`` prints it as a walk
+  (``analysis.circuits``, ``analysis.circuit_test``).
 - ``compare A B [consumer=C]``: base, A, B and A+B measured natively, effects and the
   interaction (``analysis.compare``). A side is an edit ``ADDR=VALUE [op]`` or a checkpoint
   name (in memory, else durable).
@@ -155,8 +157,13 @@ def _symbol(ctx, name, addresses):
 # --------------------------------------------------------------------------- circuit
 
 
-CIRCUIT_TEST_DISABLED = ("circuit test is disabled: zero-ablating the complement says nothing "
-                         "on a real model (issue M4)")
+CIRCUIT_TEST_NEEDS_REF = (
+    "circuit test needs a reference: circuit test ID ref=NAME, where NAME is another run of "
+    "this debugger (e.g. the opposite-answer prompt: `run name=NAME \"...\"` then `until "
+    "logits`), or ref=set:NAME for the per-component mean over a prompt set. Zero-ablation is "
+    "not offered: zeroing components is off-distribution, and on Qwen2.5-1.5B zeroing the "
+    "complement moved the margin by 27.75 against a circuit effect of 1.81, so it said nothing "
+    "(issue M4)")
 
 
 def _page_store(ctx, write: bool = True):
@@ -168,11 +175,40 @@ def _page_store(ctx, write: bool = True):
     return project.store
 
 
-def _circuit(ctx, target, id, top, depth, tolerance, node=None):  # noqa: A002 - the wire name
+def _reference(ctx, ref: str):
+    """``(run, name, prompts)`` for ``ref=``: a named run of the debugger, or ``set:NAME`` (the
+    set's items as ``(item, token ids)``)."""
+    debugger = ctx.debugger
+    if debugger is None:
+        raise Refused("circuit test ref= names a run of the debugger; there is none here")
+    if ref.startswith("set:"):
+        from . import sets
+
+        name = ref[4:]
+        found = sets.sets_of(debugger).get(name)
+        if found is None:
+            raise Refused(f"no prompt set {name!r} (have: "
+                          f"{', '.join(sets.sets_of(debugger)) or 'none'}; promptset load NAME "
+                          "FILE)")
+        prompts = []
+        for item in found.items:
+            try:
+                prompts.append((item.name, debugger.tokens(item.prompt)))
+            except Refused as error:
+                raise Refused(f"set {name} item {item.name}: {error}") from None
+        return None, name, prompts
+    runs = getattr(debugger, "runs", None) or {}
+    if ref not in runs:
+        raise Refused(f"no run {ref!r} to take reference values from (runs: "
+                      f"{', '.join(runs) or 'none'}; or ref=set:NAME)")
+    if runs[ref] is ctx.run:
+        raise Refused(f"ref={ref} is the current run: name another run (info runs)")
+    return runs[ref], ref, None
+
+
+def _circuit(ctx, target, id, top, depth, ref=None, node=None):  # noqa: A002 - the wire name
     from mdb.analysis import circuits
 
-    if target == "test":
-        raise Refused(CIRCUIT_TEST_DISABLED)
     run = ctx.run
     ledger = circuits.ledger(run)
     if target in ("test", "show"):
@@ -197,14 +233,17 @@ def _circuit(ctx, target, id, top, depth, tolerance, node=None):  # noqa: A002 -
             return out
         if node is not None:
             raise BadArgs("node= belongs to circuit show ID")
+        if ref is not None and target == "show":
+            raise BadArgs("ref= belongs to circuit test ID")
         if target == "show":
             out = {"action": "show", "id": id, "record": record_view(circuit.record),
                    "tests": circuit.tests[-1:]}
             if circuit.tests:
-                last = circuit.tests[-1]
-                out["ablated"] = {name: last[name]["nodes"] for name in ("retained",
-                                                                        "complement")
-                                  if "nodes" in last.get(name, {})}
+                nodes = circuit.tests[-1].get("nodes", {})
+                # patched from the reference: the circuit's nodes in the knock-out, the
+                # `+N more` groups in the keep-only
+                out["ablated"] = {"retained": nodes.get("circuit", {}).get("refs", []),
+                                  "complement": nodes.get("group", {}).get("refs", [])}
             if getattr(ctx.debugger, "carried_circuits", {}).get(id) is circuit:
                 out["from_previous_run"] = True   # built by an earlier run: its tokens are not
                 return out                         # this run's, so no token text is attached
@@ -212,13 +251,26 @@ def _circuit(ctx, target, id, top, depth, tolerance, node=None):  # noqa: A002 -
             if texts:
                 out["token_text"] = texts
             return out
+        if ref is None:
+            raise Refused(CIRCUIT_TEST_NEEDS_REF)
+        if getattr(ctx.debugger, "carried_circuits", {}).get(id) is circuit:
+            raise Refused(f"circuit {id} was built by an earlier run: its nodes are that run's "
+                          "rows; build it again on this run to test it")
+        other, name, prompts = _reference(ctx, ref)
         before = session_digest(ctx)
         try:
-            result = circuits.test(run, circuit, tolerance=float(tolerance))
+            found = circuits.test(run, circuit, other, name=name, prompts=prompts,
+                                  session_id=_session_id(ctx), store=_page_store(ctx))
         except _refusal() as error:
             raise Refused(str(error)) from None
         _unchanged(ctx, before, "circuit test")
-        return {"action": "test", "id": id, "test": result, "where": run.where}
+        out = {"action": "test", "id": id, "test": found["result"], "where": run.where}
+        stored = _store(ctx, [found["record"]])
+        if stored:
+            out["stored"] = stored
+        return out
+    if ref is not None:
+        raise BadArgs("ref= belongs to circuit test ID")
     if id is not None:
         raise BadArgs("circuit CONSUMER takes top= and depth=, not an id")
     try:
@@ -534,7 +586,7 @@ register(Op("symbol", "Declare a user symbol over cache rows: symbol NAME = ADDR
             (Arg("name", "str", required=True), Arg("addresses", "str", required=True)),
             "mutate", True, _symbol, usage="symbol NAME = ADDR[,ADDR...]"), replace=True)
 register(Op("circuit", "Circuit records: build from the exact decomposition (nodes, edges, "
-            "remainder), test by native ablation, show as a walk",
+            "remainder), test by native patching from a reference run, show as a walk",
             (Arg("target", "str", required=True, help="a consumer, or test / show"),
              Arg("id", "int", minimum=1),
              Arg("top", "int", default=4, minimum=1, maximum=8, positional=False),
@@ -542,11 +594,12 @@ register(Op("circuit", "Circuit records: build from the exact decomposition (nod
              Arg("node", "str", positional=False,
                  help="circuit show ID: the node whose page to read (n12), for a group "
                       "the record stores as a child page"),
-             Arg("tolerance", "number", default=0.1, positional=False,
-                 help="sufficient when the complement ablation moves the consumer by at most "
-                      "this fraction of its size")),
+             Arg("ref", "str", positional=False,
+                 help="circuit test ID: the reference run whose values are patched in (a run "
+                      "name, or set:NAME for a prompt set's per-component mean)")),
             "mutate", True, _circuit,
-            usage="circuit CONSUMER [top=K] [depth=D] | circuit show ID [node=NODEID]  (circuit test ID: disabled, issue M4)"),
+            usage="circuit CONSUMER [top=K] [depth=D] | circuit test ID ref=NAME|set:NAME | "
+                  "circuit show ID [node=NODEID]"),
          replace=True)
 register(Op("compare", "Compare branches: base, A, B and A+B measured natively, effects and "
             "the interaction",

@@ -41,6 +41,14 @@ CIRCUIT = declare_kind(
     plain_numeric=("k", "depth", "count", "edits.count"),
 )
 
+# ``circuit test ID ref=NAME``: a circuit patched natively from a reference run (or a prompt
+# set's mean). Every number is labelled; the component list is a sha256-checked blob.
+CIRCUIT_TEST = declare_kind(
+    "circuit-test",
+    required=("schema", "circuit", "consumer", "where", "reference", "components", "margins",
+              "resolution", "ratios"),
+)
+
 SYMBOL_TABLE = declare_kind(
     "symbol-table",
     required=("schema", "where", "consumer", "bindings", "unbound", "page"),
@@ -49,4 +57,4 @@ SYMBOL_TABLE = declare_kind(
                    "accounting.heads"),
 )
 
-__all__ = ["CIRCUIT", "FORECAST", "SYMBOL_TABLE", "WHATIF"]
+__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "SYMBOL_TABLE", "WHATIF"]

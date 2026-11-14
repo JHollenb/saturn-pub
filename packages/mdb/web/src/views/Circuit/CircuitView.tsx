@@ -1,7 +1,8 @@
 // The circuit walk (the `circuit` op): build a circuit for a consumer, draw it as a layered
 // graph (consumer left, then layer components, heads, source rows), walk it with the keyboard
 // (up/down siblings, left/right along an edge, Enter asks to seek to the node), test it by
-// native ablation, and list the circuits this run already built. Pure: actions go through `act`.
+// native patching from a reference run (`circuit test ID ref=NAME`), and list the circuits this
+// run already built. Pure: actions go through `act`.
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { LiveCircuit } from '../../api/types.gen';
 import { EvidenceMark } from '../../chrome/EvidenceMark';
@@ -32,7 +33,8 @@ export interface CircuitActions {
   build(consumer: string, top: number, depth: number): void;
   /** Select a circuit; one this page has not seen is fetched with `circuit show ID`. */
   select(id: number): void;
-  test(id: number): void;
+  /** `circuit test ID ref=REF`: a run name of the debugger, or `set:NAME`. */
+  test(id: number, ref: string): void;
   node(id: string | null): void;
   seek(target: string, from: string): void;
   overlay(on: boolean): void;
@@ -41,6 +43,8 @@ export interface CircuitActions {
 
 export interface CircuitViewProps {
   ledger: LiveCircuit[];
+  /** The debugger's other named runs: the references a test can take (`ledger.runs`). */
+  runs?: string[];
   circuits: ReadonlyMap<number, CircuitEntry>;
   selected: number | null;
   node: string | null;
@@ -777,7 +781,7 @@ function GraphLegend({ readOnly = false }: { readOnly?: boolean }) {
       a page (fetched on expand; not +N more, which is a sum never expanded) · square: consumer
       {readOnly
         ? ' · arrows walk (recorded: no seek, no test)'
-        : ' · after a test: ✕R ablated with the retained set, ✕C with the complement · arrows walk, Enter asks to seek'}
+        : ' · after a test: ✕R patched from the reference in the knock-out (circuit), ✕C in the keep-only (complement) · arrows walk, Enter asks to seek'}
     </div>
   );
 }
@@ -855,40 +859,84 @@ function NodeLine({
 
 // --------------------------------------------------------------------------- test
 
-const SETS = ['retained', 'complement'] as const;
+const MARGINS = ['base', 'ref', 'ko', 'keep', 'full'] as const;
+const RATIOS = [
+  ['faithfulness', 'faithfulness'],
+  ['knockout_share', 'knock-out share'],
+] as const;
+const COUNTS = ['total', 'circuit', 'complement', 'from_groups', 'unexamined'] as const;
 const TEST_KNOWN = new Set([
-  'excluded',
-  'base',
-  'retained',
-  'complement',
-  'consumer',
+  'schema',
   'id',
+  'circuit',
+  'consumer',
+  'where',
+  'reference',
+  'components',
+  'nodes',
+  'margins',
+  'meaning',
+  'resolution',
+  'ratios',
+  'reading',
+  'full_equals_ref',
+  'full_meaning',
+  'cost',
+  'session',
   'record',
-  'rule',
-  'tolerance',
-  'verdict',
 ]);
 
-const CIRCUIT_TEST_DISABLED =
-  'circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)';
+export const NEEDS_REF =
+  'circuit test patches the circuit from a reference run (zero-ablation is not offered, issue M4): pick another run of this debugger, or type set:NAME for a prompt set mean';
 
-function TestPanel({ entry, testSlot, act }: { entry: CircuitEntry } & CircuitViewProps) {
+function TestPanel({ entry, testSlot, act, busy, runs = [] }: { entry: CircuitEntry } & CircuitViewProps) {
   const running = testSlot.state === 'running';
   const test = entry.test;
+  const [ref, setRef] = useState<string>(runs[0] ?? '');
+  useEffect(() => {
+    if (!ref && runs.length) setRef(runs[0] ?? '');
+  }, [ref, runs]);
+  const listed = new Set(runs);
   return (
     <section className="circuit-test" aria-label="circuit test">
       <div>
+        <label>
+          reference{' '}
+          <select
+            value={listed.has(ref) ? ref : ''}
+            onChange={(e) => setRef(e.target.value)}
+            data-testid="test-ref-picker"
+            aria-label="reference run"
+          >
+            <option value="">{runs.length ? '(pick a run)' : '(no other run)'}</option>
+            {runs.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>{' '}
+        <input
+          type="text"
+          value={ref}
+          placeholder="run name or set:NAME"
+          onChange={(e) => setRef(e.target.value.trim())}
+          aria-label="reference (run name or set:NAME)"
+          size={14}
+        />{' '}
         <button
           type="button"
-          disabled
-          onClick={() => act.test(entry.id)}
-          title={CIRCUIT_TEST_DISABLED}
+          disabled={busy || !ref}
+          onClick={() => act.test(entry.id, ref)}
+          title={ref ? `circuit test ${entry.id} ref=${ref}` : NEEDS_REF}
         >
           circuit test {entry.id}
         </button>{' '}
-        <span className="faint" data-testid="test-disabled">
-          {CIRCUIT_TEST_DISABLED}
-        </span>
+        {!ref && (
+          <span className="faint" data-testid="test-needs-ref">
+            {NEEDS_REF}
+          </span>
+        )}
       </div>
       {(testSlot.state !== 'idle' || running) && (
         <SlotState slot={testSlot} what="test" onInterrupt={act.interrupt} idle="" />
@@ -898,82 +946,88 @@ function TestPanel({ entry, testSlot, act }: { entry: CircuitEntry } & CircuitVi
   );
 }
 
+/** One `circuit test` result: the reference, the component counts, the five measured margins
+ *  with what each patched, the two ratios (or why they are refused) and the one-spacing
+ *  readings. No pass/fail: the op gives none. */
 export function TestResult({ test }: { test: Rec }) {
   const notes = Object.entries(test).filter(
     ([k, v]) => !TEST_KNOWN.has(k) && (typeof v === 'string' || isRec(v)),
   );
+  const ref = isRec(test.reference) ? test.reference : {};
+  const comp = isRec(test.components) ? test.components : {};
+  const margins = isRec(test.margins) ? test.margins : {};
+  const meaning = isRec(test.meaning) ? test.meaning : {};
+  const ratios = isRec(test.ratios) ? test.ratios : {};
+  const reading = isRec(test.reading) ? test.reading : {};
+  const count = (k: string) => int(at(comp, k, 'value'));
   return (
     <div className="test-result" data-testid="test-result">
-      <div>
-        base <OpValue value={test.base} what="base" /> · tolerance{' '}
-        <OpValue value={test.tolerance} what="tolerance" />
+      <div data-testid="test-reference">
+        reference <code>{str(ref.name) ?? '?'}</code>{' '}
+        <span className="faint">
+          {str(ref.kind) === 'set-mean'
+            ? `(per-component mean over ${int(at(ref, 'items', 'value')) ?? '?'} items at their @last)`
+            : `(run, row t${int(at(ref, 'row', 'value')) ?? '?'})`}
+        </span>
+      </div>
+      <div data-testid="test-components">
+        components{' '}
+        {COUNTS.map((k) => (
+          <span key={k} data-count={k}>
+            {k.replace('_', ' ')} {count(k) !== null ? <Count n={count(k)!} /> : '?'}{' '}
+          </span>
+        ))}
+        <span className="faint">[derived-exact]</span>
+        {str(comp.definition) && <div className="faint">{str(comp.definition)}</div>}
+        {str(comp.rows) && <div className="faint">{str(comp.rows)}</div>}
       </div>
       <div className="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>ablate</th>
-              <th className="n">nodes</th>
-              <th className="n">predicted Δ</th>
-              <th className="n">measured Δ</th>
-              <th className="n">consumer after</th>
-              <th>edits</th>
+              <th>margin</th>
+              <th className="n">value</th>
+              <th>what was patched</th>
             </tr>
           </thead>
           <tbody>
-            {SETS.map((set) => {
-              const s = isRec(test[set]) ? (test[set] as Rec) : null;
-              if (!s) {
-                return (
-                  <tr key={set}>
-                    <td>{set}</td>
-                    <td colSpan={5}>
-                      <OpValue value={undefined} what={`${set} ablation`} />
-                    </td>
-                  </tr>
-                );
-              }
-              return (
-                <tr key={set} data-set={set}>
-                  <td>{set}</td>
-                  <td className="n">{int(s.count) !== null ? <Count n={int(s.count)!} /> : '?'}</td>
-                  <td className="n" title={str(s.prediction) ?? undefined}>
-                    <OpValue value={s.predicted_delta} what="predicted_delta" />
-                  </td>
-                  <td className="n">
-                    <OpValue value={s.delta} what="delta" />
-                  </td>
-                  <td className="n">
-                    <OpValue value={s.measured} what="measured" />
-                  </td>
-                  <td className="mono faint edits">{strs(s.edits).join(', ')}</td>
-                </tr>
-              );
-            })}
+            {MARGINS.map((k) => (
+              <tr key={k} data-margin={k}>
+                <td>{k}</td>
+                <td className="n">
+                  <OpValue value={margins[k]} what={k} />
+                </td>
+                <td className="faint">
+                  {str(meaning[k]) ?? ''}
+                  {k === 'full' && typeof test.full_equals_ref === 'boolean'
+                    ? test.full_equals_ref
+                      ? ' (= ref bit for bit)'
+                      : ' (differs from ref)'
+                    : ''}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      {[
-        ...new Set(SETS.map((set) => str(at(test, set, 'prediction'))).filter((p) => p !== null)),
-      ].map((p) => (
-        <div key={p} className="faint" data-testid="test-prediction">
-          predicted Δ: {p}
+      {str(ratios.state) ? (
+        <div data-testid="test-ratios-refused">
+          ratios {str(ratios.state)}: {str(ratios.reason) ?? ''}
         </div>
-      ))}
-      {isRec(test.excluded) && (
-        <div data-testid="test-excluded">
-          excluded from both sets: {strs(test.excluded.nodes).join(', ') || 'none'}
-          {str(test.excluded.reason) && (
-            <span className="faint"> — {str(test.excluded.reason)}</span>
-          )}
-        </div>
+      ) : (
+        RATIOS.map(([k, label]) => (
+          <div key={k} data-ratio={k}>
+            {label} <code>{str(at(ratios, 'formulas', k)) ?? ''}</code> ={' '}
+            <OpValue value={ratios[k]} what={k} />{' '}
+            <span className="faint">{str(at(ratios, 'meaning', k)) ?? ''}</span>
+          </div>
+        ))
       )}
-      <div>
-        verdict:{' '}
-        <span className="chip verdict-chip" data-testid="test-verdict">
-          {str(test.verdict) ?? 'no verdict given'}
-        </span>{' '}
-        {str(test.rule) && <span className="faint">({str(test.rule)})</span>}
+      <div data-testid="test-reading">
+        reading: knock-out {str(reading.knockout) ?? '?'}; {str(reading.keep_vs_base) ?? '?'};{' '}
+        {str(reading.keep_vs_ref) ?? '?'} <span className="faint">(one spacing{' '}
+        <OpValue value={at(test, 'resolution', 'spacing')} what="spacing" />{' '}
+        {str(at(test, 'resolution', 'dtype')) ?? ''}; {str(reading.rule) ?? ''})</span>
       </div>
       {notes.map(([k, v]) => (
         <div key={k} className="faint" data-field={k}>

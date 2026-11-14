@@ -210,21 +210,6 @@ def test_a_circuit_builds_nothing_for_a_folded_child_and_keeps_no_mask(run, cons
     assert widest <= run.adapter.model.config.hidden_size
 
 
-def test_circuit_test_builds_one_mask_per_port(run, monkeypatch):
-    circuit = circuits.build(run, MARGIN, top=1, depth=2)
-    masks = []
-    real = circuits._mask
-
-    def spy(run_, port, kind, indices):
-        masks.append(port)
-        return real(run_, port, kind, indices)
-
-    monkeypatch.setattr(circuits, "_mask", spy)
-    result = circuits.test(run, circuit)
-    assert len(masks) == len(set(masks))
-    assert result["complement"]["count"] > len(masks)
-
-
 def test_whatif_keeps_one_chain_of_row_models_alive_at_a_time(debugger, monkeypatch):
     live: weakref.WeakSet = weakref.WeakSet()
     peak, at_measure = [0], []
@@ -248,7 +233,7 @@ def test_whatif_keeps_one_chain_of_row_models_alive_at_a_time(debugger, monkeypa
     run.until("t3.L0.a")
     whatif(run, Edit("t3.L0.o", 0.5, "add"), Margin(6, 4, 9))    # rows t3..t6
     assert at_measure == [0]       # the prediction's chains are gone before anything native
-    assert peak[0] == 4            # base, edited, first-order and realised chains in turn
+    assert peak[0] == 4            # base, edited, emulated base and edited, first-order, realised: in turn
 
 
 def test_a_whatif_chain_far_past_the_cursor_has_no_depth_limit():

@@ -849,7 +849,8 @@ class LiveTimeline(Model):
 class LiveCircuit(Model):
     """One circuit of the run's ledger (the ``circuit`` op): its id, consumer, ``k`` (top) and
     ``depth``, node ``count``, the cursor it was built at, its sealed record id, how many times
-    it was tested and the verdict text of the last test (None: never tested).
+    it was tested and ``verdict``: the last ``circuit test`` in one line, its two measured ratios
+    against the reference or why they were refused (None: never tested; there is no pass/fail).
     ``from_previous_run``: built by an earlier run that ``start``/``restart`` replaced (the ledger
     is kept across runs; its ``where`` and source rows are that run's, not this one's)."""
     id: int
@@ -898,6 +899,8 @@ class LiveLedger(Model):
     forecasts: list[LiveForecast]
     symbols: list[LiveSymbol]
     more: list[Omitted]
+    runs: list[str] = []
+    """The debugger's other named runs: the references ``circuit test ID ref=NAME`` can take."""
 
 
 class Event(Model):

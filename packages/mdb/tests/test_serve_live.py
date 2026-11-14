@@ -955,24 +955,32 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     empty = _ledger(c, sid)["data"]
     assert (empty["where"], empty["circuits"], empty["forecasts"], empty["symbols"]) == (
         None, [], [], [])
+    _op(c, sid, "start", {"prompt": [1, 7, 9, 3], "name": "clean"})
+    _op(c, sid, "until", {"target": "t3.logits"})
     _op(c, sid, "start", {"prompt": PROMPT})
     _op(c, sid, "forecast", {"target": "L0.p"})
     _op(c, sid, "until", {"target": "t3.logits"})
     _op(c, sid, "verify", {})
-    built = _op(c, sid, "circuit", {"target": "L1.o", "top": 1, "depth": 2}).json()
-    refused = _op(c, sid, "circuit", {"target": "test", "id": built["data"]["result"]["id"]}).json()
-    assert "circuit test is disabled" in json.dumps(refused) and "issue M4" in json.dumps(refused)
+    built = _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 2}).json()
+    ident = built["data"]["result"]["id"]
+    refused = _op(c, sid, "circuit", {"target": "test", "id": ident}).json()
+    assert "needs a reference" in json.dumps(refused) and "issue M4" in json.dumps(refused)
+    tested = _op(c, sid, "circuit", {"target": "test", "id": ident, "ref": "clean"}).json()
+    ratios = tested["data"]["result"]["test"]["ratios"]
     _op(c, sid, "symbol", {"name": "ctx", "addresses": "t1"})
     data = _ledger(c, sid)["data"]
     run = live.ctx.run
     assert data["where"] == run.where and data["seq"] == live.seq and data["more"] == []
+    assert data["runs"] == ["clean"]       # the references a circuit test can take
     (circuit,) = data["circuits"]
     entry = circuits.ledger(run)[circuit["id"]]
     body = entry.record["body"]
+    summary = (f"ref clean: faithfulness {ratios['faithfulness']['value']:.4g}, knock-out share "
+               f"{ratios['knockout_share']['value']:.4g} [measured]")
     assert circuit == {"id": entry.id, "consumer": body["consumer"], "k": 1, "depth": 2,
                        "count": body["count"], "where": body["where"],
-                       "record": entry.record["id"], "tests": 0,
-                       "verdict": None, "from_previous_run": False}
+                       "record": entry.record["id"], "tests": 1,
+                       "verdict": summary, "from_previous_run": False}
     (sealed,) = data["forecasts"]
     view = forecast.view(forecast.ledger(run)[sealed["id"]])
     assert sealed["target"] == view["target"] == "t3.L0.p"

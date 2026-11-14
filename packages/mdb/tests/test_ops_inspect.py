@@ -56,7 +56,7 @@ def test_every_verb_returns_labelled_bounded_results(debugger):
     table = _clean(dispatch(ctx, "symbols", {"consumer": "M[4,9]"}))
     assert table["bindings"][0]["symbol"] == "ctx" and "stored" not in table
     built = _clean(dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 2}))
-    with pytest.raises(Refused, match="circuit test is disabled.*issue M4"):
+    with pytest.raises(Refused, match="circuit test needs a reference.*issue M4"):
         dispatch(ctx, "circuit", {"target": "test", "id": built["id"]})
     shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
     assert shown["record"]["body"]["root"]["name"] == built["record"]["body"]["root"]["name"]
@@ -274,14 +274,13 @@ def test_declared_symbols_and_circuits_outlive_the_run(tmp_path):
     assert table["bindings"][0]["symbol"] == "ctx"
 
 
-def test_circuit_test_op_is_refused_before_any_work(debugger):
+def test_circuit_test_without_ref_is_refused_before_any_work(debugger):
     ctx = _ctx(debugger)
     built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 3})
     before = _session_digest(ctx)
-    for ident in (built["id"], 999, None):  # refused first, even for an unknown id
-        with pytest.raises(Refused, match=r"circuit test is disabled: zero-ablating the "
-                                          r"complement says nothing on a real model \(issue M4\)"):
-            dispatch(ctx, "circuit", {"target": "test", "id": ident})
+    with pytest.raises(Refused, match=r"circuit test needs a reference: circuit test ID "
+                                      r"ref=NAME.*Zero-ablation is not offered"):
+        dispatch(ctx, "circuit", {"target": "test", "id": built["id"]})
     assert _session_digest(ctx) == before
     assert not circuits_tests(ctx, built["id"])
 
@@ -292,15 +291,17 @@ def circuits_tests(ctx, ident):
     return circuits.ledger(ctx.run)[ident].tests
 
 
-def test_circuit_show_marks_what_the_last_test_ablated(debugger):
+def test_circuit_show_marks_what_the_last_test_patched(debugger):
+    clean = debugger.run([1, 7, 9, 3], name="clean")
+    clean.until("t3.logits")
     ctx = _ctx(debugger)
-    from mdb.analysis import circuits
-
     built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 3})
-    # the op is disabled (M4); the analysis function still records tests that show reads back
-    tested = {"test": circuits.test(ctx.run, circuits.ledger(ctx.run)[built["id"]])}
+    tested = _clean(dispatch(ctx, "circuit", {"target": "test", "id": built["id"],
+                                              "ref": "clean"}))
     shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
-    assert shown["ablated"]["retained"] == tested["test"]["retained"]["nodes"]
+    assert shown["ablated"]["retained"] == tested["test"]["nodes"]["circuit"]["refs"]
+    assert shown["ablated"]["complement"] == tested["test"]["nodes"]["group"]["refs"]
+    assert shown["tests"][0]["record"] == tested["test"]["record"]
     ids = set()
     stack = [shown["record"]["body"]["root"]]
     while stack:
@@ -308,6 +309,7 @@ def test_circuit_show_marks_what_the_last_test_ablated(debugger):
         ids.add(node["id"])
         stack += node.get("children", [])
     assert set(shown["ablated"]["retained"]) | set(shown["ablated"]["complement"]) <= ids
+    del debugger.runs["clean"]
 
 
 def test_circuits_survive_start_and_are_marked_as_from_a_previous_run():

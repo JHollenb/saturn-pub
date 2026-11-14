@@ -185,6 +185,7 @@ export function Live({ sid }: { sid: string }) {
             graph: (
               <CircuitView
                 ledger={ledger?.circuits ?? []}
+                runs={ledger?.runs ?? []}
                 circuits={ins.circuits}
                 selected={ins.selected}
                 node={ins.node}
@@ -199,7 +200,7 @@ export function Live({ sid }: { sid: string }) {
                     if (ins.circuits.has(id)) ins.set({ selected: id, node: null });
                     else void ins.show(id);
                   },
-                  test: (id) => void ins.test(id),
+                  test: (id, ref) => void ins.test(id, ref),
                   node: (id) => ins.set({ node: id }),
                   seek,
                   overlay: (on) => ins.set({ overlay: on }),

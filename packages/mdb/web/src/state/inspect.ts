@@ -67,8 +67,9 @@ export interface CircuitEntry {
   body: Rec;
   /** The last `circuit test` result for it, when one ran in this page or `show` carried it. */
   test: Rec | null;
-  /** Node ids the last test ablated, by set (`circuit show`'s `ablated`, or the test's own
-   *  `retained.nodes` / `complement.nodes`). */
+  /** Node ids the last test patched from its reference, by set: `retained` (the circuit's
+   *  nodes, patched in the knock-out) and `complement` (the `+N more` groups, patched in the
+   *  keep-only). From `circuit show`'s `ablated`, or the test's `nodes.circuit` / `nodes.group`. */
   ablated: Rec | null;
 }
 
@@ -110,7 +111,8 @@ interface InspectStore {
   symbols(args: Record<string, unknown>): Promise<void>;
   build(consumer: string, top: number, depth: number): Promise<void>;
   show(id: number): Promise<void>;
-  test(id: number): Promise<void>;
+  /** `circuit test ID ref=REF`: patch circuit `id` from reference run `ref` (or `set:NAME`). */
+  test(id: number, ref: string): Promise<void>;
   confirmSeek(): Promise<void>;
   /** Forget everything (another live session). */
   reset(): void;
@@ -129,11 +131,11 @@ function circuitEntry(result: Rec, previous: CircuitEntry | undefined): CircuitE
   };
 }
 
-/** `{retained: [ids], complement: [ids]}` from a test result's sets. */
+/** `{retained: [ids], complement: [ids]}` from a test result's node refs. */
 function ablatedOf(test: Rec): Rec {
   return {
-    retained: at(test, 'retained', 'nodes') ?? [],
-    complement: at(test, 'complement', 'nodes') ?? [],
+    retained: at(test, 'nodes', 'circuit', 'refs') ?? [],
+    complement: at(test, 'nodes', 'group', 'refs') ?? [],
   };
 }
 
@@ -197,8 +199,13 @@ export const useInspect = create<InspectStore>((set, get) => ({
     circuits.set(entry.id, entry);
     set({ circuits, selected: entry.id });
   },
-  async test(id) {
-    const slot = await get().exec('test', 'circuit', { target: 'test', id }, `circuit test ${id}`);
+  async test(id, ref) {
+    const slot = await get().exec(
+      'test',
+      'circuit',
+      { target: 'test', id, ref },
+      `circuit test ${id} ref=${ref}`,
+    );
     if (slot.state !== 'done' || !isRec(slot.result.test)) return;
     const have = get().circuits.get(id);
     if (!have) return;

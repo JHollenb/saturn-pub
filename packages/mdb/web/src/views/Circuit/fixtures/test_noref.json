@@ -1,0 +1,23 @@
+{
+  "bytes": 1513,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "error": {
+        "message": "circuit test needs a reference: circuit test ID ref=NAME, where NAME is another run of this debugger (e.g. the opposite-answer prompt: `run name=NAME \"...\"` then `until logits`), or ref=set:NAME for the per-component mean over a prompt set. Zero-ablation is not offered: zeroing components is off-distribution, and on Qwen2.5-1.5B zeroing the complement moved the margin by 27.75 against a circuit effect of 1.81, so it said nothing (issue M4)",
+        "reason": "circuit test needs a reference: circuit test ID ref=NAME, where NAME is another run of this debugger (e.g. the opposite-answer prompt: `run name=NAME \"...\"` then `until logits`), or ref=set:NAME for the per-component mean over a prompt set. Zero-ablation is not offered: zeroing components is off-distribution, and on Qwen2.5-1.5B zeroing the complement moved the margin by 27.75 against a circuit effect of 1.81, so it said nothing (issue M4)",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "circuit test needs a reference: circuit test ID ref=NAME, where NAME is another run of this debugger (e.g. the opposite-answer prompt: `run name=NAME \"...\"` then `until logits`), or ref=set:NAME for the per-component mean over a prompt set. Zero-ablation is not offered: zeroing components is off-distribution, and on Qwen2.5-1.5B zeroing the complement moved the margin by 27.75 against a circuit effect of 1.81, so it said nothing (issue M4)",
+      "state": "refused"
+    },
+    "seq": 7,
+    "where": "t3.logits"
+  },
+  "digest": "148d961015ebf7d94ec6bdadd2f84e3796367b1ff8653fd0fe0a5002ede7eed6",
+  "reason": "circuit test needs a reference: circuit test ID ref=NAME, where NAME is another run of this debugger (e.g. the opposite-answer prompt: `run name=NAME \"...\"` then `until logits`), or ref=set:NAME for the per-component mean over a prompt set. Zero-ablation is not offered: zeroing components is off-distribution, and on Qwen2.5-1.5B zeroing the complement moved the margin by 27.75 against a circuit effect of 1.81, so it said nothing (issue M4)",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

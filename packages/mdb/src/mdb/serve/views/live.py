@@ -294,6 +294,18 @@ def frame(session) -> tuple[LiveFrame, list[Omitted]]:
         scale /= 2
 
 
+def _test_summary(test: dict | None) -> str | None:
+    """The last ``circuit test`` in one line: its two measured ratios against the reference, or
+    why they were refused (there is no pass/fail verdict)."""
+    if test is None:
+        return None
+    ref, ratios = test.get("reference", {}), test.get("ratios", {})
+    if ratios.get("state"):
+        return f"ref {ref.get('name')}: ratios {ratios['state']}"
+    return (f"ref {ref.get('name')}: faithfulness {ratios['faithfulness']['value']:.4g}, "
+            f"knock-out share {ratios['knockout_share']['value']:.4g} [measured]")
+
+
 def _circuit_row(circuit, carried=None) -> LiveCircuit:
     """A ledger row; ``carried`` is the debugger's ``carried_circuits`` (id -> circuit built by
     an earlier run), the test ``circuit show`` uses for ``from_previous_run``."""
@@ -304,7 +316,7 @@ def _circuit_row(circuit, carried=None) -> LiveCircuit:
                        depth=int(body["depth"]), count=int(body["count"]),
                        where=str(body["where"]), record=str(circuit.record["id"]),
                        tests=len(circuit.tests),
-                       verdict=None if last is None else str(last.get("verdict")),
+                       verdict=_test_summary(last),
                        from_previous_run=previous)
 
 
@@ -347,8 +359,11 @@ def ledger(session, limit: int = LEDGER_LIMIT) -> tuple[LiveLedger, list[Omitted
         if len(shown[name]) < len(items):
             more.append(Omitted(field=name, count=len(items) - len(shown[name]),
                                 reason="the earliest entries (lower ids)"))
+    names = [name for name, other in (getattr(session.debugger, "runs", None) or {}).items()
+             if other is not run]
     return LiveLedger(session=session.sid, seq=session.seq,
-                      where=None if run is None else run.where, more=more, **shown), more
+                      where=None if run is None else run.where, more=more,
+                      runs=names[:LEDGER_LIMIT], **shown), more
 
 
 def timeline(session) -> tuple[LiveTimeline, int]:

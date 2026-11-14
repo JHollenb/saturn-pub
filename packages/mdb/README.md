@@ -358,7 +358,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit show ID [node=NODEID]` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), show as a walk (`node=` opens one stored page of a circuit that did not fit one record); `circuit test ID` is disabled and refuses (issue M4) |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID ref=NAME\|set:NAME \| circuit show ID [node=NODEID]` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native patching from a reference run (knock-out and keep-only margins, two measured ratios; a `circuit-test` record), show as a walk (`node=` opens one stored page of a circuit that did not fit one record) |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
 | `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |
@@ -583,11 +583,38 @@ verdicts follow the rule in [Verdicts](#verdicts-p20).
 `circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
 whatever is not listed stays in the record as `+N more` and `remainder` nodes; a subtree that was
 dropped without expanding is recorded as not examined, and one that does not fit one record is a
-`paged` pointer to a sha256-checked child page (`circuit show ID node=NODEID`). `circuit test` is
-disabled (M4): it tested sufficiency by zero-ablating every node outside the circuit, which on the
-real model is 26,924 nodes, moves the margin by 27.75 and always says "not sufficient"; the op
-refuses with `circuit test is disabled: zero-ablating the complement says nothing on a real model
-(issue M4)`. `compare` measures two edits separately and together:
+`paged` pointer to a sha256-checked child page (`circuit show ID node=NODEID`).
+
+`circuit test ID ref=NAME` checks a circuit against a reference run NAME (another run of the
+debugger, e.g. the opposite-answer prompt; `ref=set:NAME` uses the per-component mean over a
+prompt set's items at their `@last` rows). Components are what the engine patches at the
+consumer's row: the row input `L0.h`, each head's block of `L<l>.A` and each layer's `m` (or each
+neuron of `f` where the circuit expanded that MLP); a source-row node counts as its head;
+`+N more` groups and their unexamined members are the complement. Earlier rows stay this run's.
+Each of these is one native pass from layer 0 with every edit staged, the session restored:
+`ko` patches only the circuit's components from the reference, `keep` every other component,
+`full` all of them (equal to the reference's own margin bit for bit). The result prints the
+margins `base`, `ref`, `ko`, `keep`, `full` and `faithfulness = (keep - ref) / (base - ref)`,
+`knock-out share = (base - ko) / (base - ref)`, all `measured`; the ratios are refused when
+`|base - ref|` is under one spacing of the consumer's dtype. There is no pass/fail bar; the only
+words are one-spacing comparisons. Zero-ablation is not offered (M4: on Qwen2.5-1.5B zeroing the
+26,924-node complement moved the margin by 27.75 against a circuit effect of 1.81). The result
+is a `circuit-test` record (stored with a project; the component list is a sha256-checked blob):
+
+```
+(mdb) circuit test 1 ref=clean
+circuit 1 test  t3.M[4,9]  ref clean (run, row t3)
+  components [derived-exact] 7: circuit 3, complement 4 (4 from +N more groups, 4 of them never expanded); 4 source node(s) counted as their head
+  base  -0.11401 [measured]  this run, nothing patched
+  ref   -0.13965 [measured]  the consumer read in the reference run at its @last row
+  ko    -0.14478 [measured]  knock-out: only the circuit's components patched from the reference
+  keep  -0.10986 [measured]  keep-only: every component outside the circuit patched from the reference; the circuit's components computed natively
+  full  -0.13965 [measured]  every component patched from the reference  (= ref bit for bit)
+  faithfulness (keep - ref) / (base - ref) = 1.1619 [measured]: ...
+  knock-out share (base - ko) / (base - ref) = 1.2 [measured]: ...
+```
+
+`compare` measures two edits separately and together:
 
 ```
 (mdb) circuit M[4,9] top=2 depth=3
@@ -726,7 +753,8 @@ that project. The page gets a Live view with four tabs and an architecture strip
 - Symbols: one row per binding (definition sites, lifetime strip, readers with mass and exact
   effect, verdicts on request), an Unbound row, a consumer selector and a declare form.
 - Circuits: build, list and show circuits as a layered graph with `+N more` and remainder
-  nodes, a keyboard walk and seek on Enter (the `circuit test` control follows the op: disabled).
+  nodes, a keyboard walk and seek on Enter; `circuit test` with a reference-run picker (the
+  debugger's other runs, or `set:NAME`) shows the five margins and the two ratios with labels.
 - Predict: a forecast column (hollow until verified), `whatif` with the sealed prediction and
   error split, and `compare`. Nothing stages an edit except an explicit button.
 - Arch strip (above the tabs): layers as rows with the current layer's ports, computed ports,
@@ -881,10 +909,9 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   makes 26, but native code then has computed ports past the cursor
   (`run.status()["computed_past_cursor"]`).
 - A stepped run equals Hugging Face's incremental program, not one full forward (M10).
-- `circuit test` is disabled and refuses (M4): zero-ablating the complement of a circuit
-  (26,924 nodes on the real model, job-eb4248434df4: retained delta 1.8125, complement delta
-  27.75) always says "not sufficient". It comes back when a reference-run ablation (mean or donor
-  run, now possible with `NAME:ADDR` values) is built.
+- `circuit test` (M4) patches components at the consumer's row only: earlier rows (the cache)
+  stay this run's, there is no `rows=all`, a source-row node counts as its head (`p` is not
+  patched), and a vector consumer is refused (the ratios need a scalar).
 - Running on mrun's native kernels is not supported; Hugging Face models are the supported
   path (M7, deferred; the proxy over the store seam was measured feasible, see the ledger).
 - A port edit acts on the cursor's row only, and prompt rows prefilled in one call have no
@@ -922,4 +949,4 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
 - `mdb serve --model` as an mrun job with the REPL connected through a tunnel (no remote parity
   run on the GPU machine yet), port programs for Qwen3 at real size and FLUX.2
   Klein (M14).
-- gemma and gemma2 port programs (M32); the circuit-test replacement (M4); named units (M23).
+- gemma and gemma2 port programs (M32); named units (M23).

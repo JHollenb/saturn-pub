@@ -2,8 +2,7 @@
 
 Closure: at every node the children (retained, ``+N more`` and remainder) sum to the node, and
 the depth-1 nodes sum to the native consumer, to float64 roundoff, for a margin, a logit, a
-residual port and ``o``. ``test`` measures exactly what a fresh run with the same ablation
-edits committed gives, bit for bit, and leaves the session where it was.
+residual port and ``o``. ``test`` (patching from a reference run) is ``test_circuit_test.py``.
 """
 
 import pytest
@@ -58,41 +57,6 @@ def test_every_node_closes_on_its_children_and_the_root_on_the_consumer(debugger
     assert {"head", "source"} <= kinds
 
 
-def _fresh(debugger, edits, consumer):
-    run = debugger.run(PROMPT)
-    for edit in sorted(edits, key=lambda e: run.parse(e.address)):
-        entry = edit.address.rsplit(".", 1)[0] + ".h"
-        if run.parse(run.where) < run.parse(entry):
-            run.until(entry)
-        run.set(edit.address, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
-    run.until("t3.logits")
-    logits = run.read("t3.logits").double().reshape(-1)
-    return logits[consumer.a] - logits[consumer.b]
-
-
-def test_native_ablation_equals_a_fresh_committed_run_and_restores(debugger):
-    run = debugger.run(PROMPT)
-    run.until("t3.logits")
-    margin = Margin(3, 4, 9)
-    circuit = circuits.build(run, margin, top=2, depth=2)
-    before = state_digest(run)
-    result = circuits.test(run, circuit)
-    assert state_digest(run) == before
-    base = _fresh(debugger, [], margin)
-    assert result["base"]["value"] == float(base)
-    retained = circuits._leaves(circuit.root)
-    others = [m for g in circuits._groups(circuit.root) for m in g.members]
-    for name, nodes in (("retained", retained), ("complement", others)):
-        edits = circuits._ablations(run, nodes)
-        assert result[name]["measured"]["value"] == float(_fresh(debugger, edits, margin))
-        assert result[name]["delta"]["authority"] == "measured"
-        assert result[name]["predicted_delta"]["authority"] == "derived-local"
-    limit = 0.1 * abs(float(base))
-    sufficient = abs(result["complement"]["delta"]["value"]) <= limit
-    assert result["verdict"] == ("sufficient at this dose" if sufficient
-                                 else "not sufficient at this dose")
-
-
 def test_refusals(debugger):
     run = debugger.run(PROMPT)
     run.until("t3.L1.n")
@@ -102,10 +66,15 @@ def test_refusals(debugger):
         circuits.build(run, "t3.L1.q")
     with pytest.raises(Refusal, match="top must be"):
         circuits.build(run, "t3.L0.h_out", top=9)
-    built = circuits.build(run, "t3.L0.h_out", top=1, depth=1)
-    run.until("t3.L1.m")
-    with pytest.raises(Refusal, match="was built at"):
+    run.until("t3.logits")
+    built = circuits.build(run, Margin(3, 4, 9), top=1, depth=1)
+    other = debugger.run([1, 7, 9, 3], name="other")
+    other.until("t3.logits")
+    with pytest.raises(Refusal, match="needs a reference"):
         circuits.test(run, built)
+    run.reverse_step("layer")
+    with pytest.raises(Refusal, match="was built at"):
+        circuits.test(run, built, other, name="other")
 
 
 def _nodes(node):
@@ -147,21 +116,6 @@ def test_a_committed_edit_is_its_own_node_never_a_remainder(debugger, edit):
     remainders = [n for n in _nodes(body["root"]) if n["kind"] == "remainder"]
     assert all(n["within"] is True for n in remainders), [
         (n["name"], n["value"], n["bound"]) for n in remainders if not n["within"]]
-
-
-def test_the_embedding_is_ablated_in_neither_set(debugger):
-    run = debugger.run(PROMPT)
-    run.until("t3.logits")
-    circuit = circuits.build(run, Margin(3, 4, 9), top=1, depth=1)
-    result = circuits.test(run, circuit)
-    named = {n.name: n.ref for n in circuits._walk(circuit.root)}
-    assert "embedding" in result["excluded"]["reason"]
-    for name in ("retained", "complement"):
-        part = result[name]
-        if "edits" in part:
-            assert not any(e.startswith("t3.L0.h") for e in part["edits"])
-    marked = set(result["retained"].get("nodes", [])) | set(result["complement"]["nodes"])
-    assert named.get("embedding") not in marked
 
 
 def test_dropped_subtrees_are_recorded_as_unexamined_and_claim_nothing(debugger):

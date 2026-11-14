@@ -30,6 +30,7 @@ import ledgerFx from './fixtures/ledger.json';
 import showK2 from './fixtures/show_k2.json';
 import testInterrupted from './fixtures/test_interrupted.json';
 import testK2 from './fixtures/test_k2.json';
+import testNoRef from './fixtures/test_noref.json';
 import testRefused from './fixtures/test_refused.json';
 
 function bodyOf(fx: unknown): Rec {
@@ -275,35 +276,58 @@ describe('CircuitView', () => {
     expect(html).toContain('data-testid="test-result"');
   });
 
-  it('a circuit test shows measured beside predicted, the exclusions, and a verdict quoting the op', () => {
+  it('a circuit test shows the reference, the counts, five labelled margins and two ratios', () => {
     const test = (resultOf(testK2) as { test: Rec }).test;
     const html = renderToStaticMarkup(<TestResult test={test} />);
-    expect(html).toContain('data-set="retained"');
-    expect(html).toContain('data-set="complement"');
-    expect(html).toContain('data-ev="derived-local"'); // predicted Δ
-    expect(html).toContain('data-ev="measured"'); // measured Δ
-    expect(html).toContain('data-ev="supplied"'); // the tolerance
-    expect(html).toContain('data-testid="test-excluded"');
-    expect(html).toContain('the embedding is ablated in neither set');
-    expect(html).toContain(`>${String(test.verdict)}</span>`);
-    expect(html).toContain(String(test.rule).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+    expect(html).toContain('data-testid="test-reference"');
+    expect(html).toContain('<code>clean</code>');
+    for (const k of ['base', 'ref', 'ko', 'keep', 'full']) {
+      expect(html).toContain(`data-margin="${k}"`);
+    }
+    expect(html).toContain('data-ratio="faithfulness"');
+    expect(html).toContain('data-ratio="knockout_share"');
+    expect(html).toContain('(keep - ref) / (base - ref)');
+    expect(html).toContain('(base - ko) / (base - ref)');
+    expect(html).toContain('data-ev="measured"');
+    expect(html).toContain('data-ev="derived-exact"'); // the one-spacing resolution
+    expect(html).toContain('(= ref bit for bit)');
+    expect(html).toContain('data-count="complement"');
+    expect(html).not.toContain('verdict');
+    expect(html).not.toMatch(/data-field=/); // every field of the result is drawn
   });
 
-  it('a test result missing a set says so instead of a blank row', () => {
-    const html = renderToStaticMarkup(<TestResult test={{ verdict: 'x' }} />);
-    expect(html).toMatch(/unresolved/);
-    expect(html).toContain('retained');
-  });
-
-  it('the Test control is disabled with the M4 reason as its title', () => {
-    const e = entryOf(buildK2);
-    const html = render({ circuits: new Map([[e.id, e]]), selected: e.id, busy: false });
-    const button = html.match(/<button[^>]*>circuit test \d+<\/button>/)?.[0] ?? '';
-    expect(button).toContain('disabled');
-    expect(button).toContain(
-      'title="circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)"',
+  it('ratios the op refused are stated with the reason, not drawn', () => {
+    const html = renderToStaticMarkup(
+      <TestResult
+        test={{ ratios: { state: 'refused', reason: 'the reference does not change the consumer' } }}
+      />,
     );
-    expect(html).toContain('data-testid="test-disabled"');
+    expect(html).toContain('data-testid="test-ratios-refused"');
+    expect(html).toContain('the reference does not change the consumer');
+    expect(html).not.toContain('data-ratio=');
+  });
+
+  it('the Test control takes a reference from the run list and is off without one', () => {
+    const e = entryOf(buildK2);
+    const none = render({ circuits: new Map([[e.id, e]]), selected: e.id, runs: [] });
+    const off = none.match(/<button[^>]*>circuit test \d+<\/button>/)?.[0] ?? '';
+    expect(off).toContain('disabled');
+    expect(none).toContain('data-testid="test-needs-ref"');
+    expect(none).toContain('zero-ablation is not offered, issue M4');
+    const picked = render({ circuits: new Map([[e.id, e]]), selected: e.id, runs: ['clean'] });
+    const on = picked.match(/<button[^>]*>circuit test \d+<\/button>/)?.[0] ?? '';
+    expect(on).not.toContain('disabled');
+    expect(on).toContain(`title="circuit test ${e.id} ref=clean"`);
+    expect(picked).toContain('data-testid="test-ref-picker"');
+    expect(picked).toMatch(/<option value="clean" selected="">clean<\/option>/);
+  });
+
+  it('a test without ref= is refused by the op with the reason', () => {
+    const e = entryOf(buildK2);
+    const refused = slotFrom(testNoRef, 'circuit test 2');
+    expect(refused.state).toBe('refused');
+    const html = render({ circuits: new Map([[e.id, e]]), selected: e.id, testSlot: refused });
+    expect(html).toContain('needs a reference');
   });
 
   it('refused, running and interrupted states are stated with their reason', () => {
@@ -328,7 +352,7 @@ describe('CircuitView', () => {
       testSlot: interrupted,
     });
     expect(stopped).toContain('data-testid="test-interrupted"');
-    const missing = slotFrom(testRefused, 'circuit test 9');
+    const missing = slotFrom(testRefused, 'circuit test 9 ref=clean');
     expect(missing.state).toBe('refused');
     const html = render({ circuits: new Map([[e.id, e]]), selected: e.id, testSlot: missing });
     expect(html).toContain('no circuit 9');

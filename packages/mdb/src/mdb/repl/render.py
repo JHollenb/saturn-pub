@@ -895,7 +895,7 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
         line += (f"  (not examined, {int(node['unexamined_count']['value'])} subtree(s) "
                  "not expanded)")
     if node["id"] in marks:
-        line += f"  [ablated: {marks[node['id']]}]"
+        line += f"  [patched in: {'ko' if marks[node['id']] == 'retained' else 'keep'}]"
     lines = [line]
     for child in node.get("children", ()):
         lines += _walk(child, depth + 1, marks, texts, circuit)
@@ -908,27 +908,61 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
     return lines
 
 
+def _count(item: Any) -> str:
+    """A labelled count's value (its label is derived-exact or measured; the caller says which)."""
+    return str(int(item["value"]))
+
+
 def _circuit_test_lines(test: dict[str, Any]) -> list[str]:
-    lines = [f"circuit {test['id']} test  {test['consumer']}  base "
-             f"{_short(test['base'])}  tolerance {_claimed(test['tolerance'])}"]
-    if "excluded" in test:
-        lines.append(f"  not ablated: {', '.join(test['excluded']['nodes'])} "
-                     f"({test['excluded']['reason']})")
-    for name in ("retained", "complement"):
-        part = test[name]
-        if part.get("state"):
-            lines.append(f"  ablate {name}: {num(part)}")
-            continue
-        lines.append(f"  ablate {name} ({part['count']} nodes): Δ {_short(part['delta'])}"
-                     f"  predicted {_short(part['predicted_delta'])}")
-        lines.append(f"    edits {', '.join(part['edits'])}")
-    lines.append(f"  verdict: {test['verdict']}  ({test['rule']})")
+    """``circuit test ID ref=NAME``: the reference, the component counts, the four measured
+    margins, the two ratios (or why they are refused), the one-spacing readings and the native
+    layer calls per pass (wall time is in the result, not printed)."""
+    ref = test["reference"]
+    where = (f"run, row t{_count(ref['row'])}" if ref["kind"] == "run"
+             else f"mean over {_count(ref['items'])} items at their @last")
+    lines = [f"circuit {_count(test['id'])} test  {test['consumer']}  "
+             f"ref {ref['name']} ({where})"]
+    comp = test["components"]
+    count = {key: _count(comp[key]) for key in
+             ("total", "circuit", "complement", "from_groups", "unexamined")}
+    coarse = _count(comp["coarsened"]["source_nodes"])
+    lines.append(f"  components [derived-exact] {count['total']}: circuit {count['circuit']}, "
+                 f"complement {count['complement']} ({count['from_groups']} from +N more groups, "
+                 f"{count['unexamined']} of them never expanded); {coarse} source node(s) "
+                 "counted as their head")
+    lines.append(f"  {test['components']['rows']}")
+    margins = test["margins"]
+    for key in ("base", "ref", "ko", "keep", "full"):
+        extra = ""
+        if key == "full" and "full_equals_ref" in test:
+            extra = "  (= ref bit for bit)" if test["full_equals_ref"] else "  (differs from ref)"
+        lines.append(f"  {key:<5} {_claimed(margins[key])}  {test['meaning'][key]}{extra}")
+    ratios = test["ratios"]
+    if ratios.get("state"):
+        lines.append(f"  ratios {num(ratios)}")
+    else:
+        for key, label in (("faithfulness", "faithfulness"), ("knockout_share",
+                                                               "knock-out share")):
+            lines.append(f"  {label} {ratios['formulas'][key]} = {_claimed(ratios[key])}: "
+                         f"{ratios['meaning'][key]}")
+    reading, res = test["reading"], test["resolution"]
+    lines.append(f"  reading: knock-out {reading['knockout']}; {reading['keep_vs_base']}; "
+                 f"{reading['keep_vs_ref']} (one spacing {_claimed(res['spacing'])} "
+                 f"{res['dtype']})")
+    passes = test["cost"]["per_pass"]
+    lines.append("  layer calls completed [measured] " + "  ".join(
+        f"{key} {_count(passes[key]['calls']['completed'])}"
+        for key in ("ko", "keep", "full")) + "; edits [derived-exact] " + "  ".join(
+        f"{key} {_count(passes[key]['edits'])}" for key in ("ko", "keep", "full")))
     return lines
 
 
 def _circuit_lines(result: dict[str, Any]) -> list[str]:
     if result["action"] == "test":
-        return _circuit_test_lines(result["test"])
+        lines = _circuit_test_lines(result["test"])
+        if result.get("stored"):
+            lines.append(f"  stored record {result['stored'][0][:16]}")
+        return lines
     if "page" in result:
         page = result["page"]
         lines = [f"circuit {result['id']} node {result['node']}  "
