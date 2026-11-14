@@ -300,7 +300,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `each` | `each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]` | native | Run one op line on every prompt of a set (one run per prompt): one result per prompt and a summary (n, mean, min, max, sign agreement, verdict counts) |
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
 | `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
-| `export` | `export` | not built yet (B1) | Export a walkthrough bundle of records and pointers |
+| `export` | `export` | not built yet | Export a walkthrough bundle of records and pointers |
 | `finish` | `finish` | navigate | From a port inside a layer: run to that layer's h_out. From h_out or a token-level stop: run to this row's sample |
 | `forecast` | `forecast [ADDR\|M[a,b]]` | mutate | Seal a prediction of the next stop (or a later stop of this row, or a margin M[a,b]) from values at the cursor, before native code runs |
 | `frame` | `frame [ADDR \| cursor \| NAME:]` | navigate | Show or set the focus address (print/list/backtrace default to it); NAME: switches to the named run |
@@ -718,6 +718,6 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
 ## Not built yet
 
 - `trace(project=)`.
-- `export` (B1), an engine-native recorded fixture for `mdb serve`, and `mdb serve --model` as
-  an mrun job with the REPL on a tunnel (B5); port programs for Qwen3 at real size and
-  FLUX.2 Klein (all M14).
+- `export` (a walkthrough bundle of records and pointers) and `mdb serve --model` as an mrun
+  job with the REPL on a tunnel; port programs for Qwen3 at real size and FLUX.2 Klein (all
+  M14).

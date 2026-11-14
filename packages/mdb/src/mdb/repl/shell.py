@@ -220,8 +220,9 @@ class Shell:
                             usage = ""
                         lines.append(f"  {usage:<44}{item.summary}")
             slots = sorted(name for name, item in ops.items() if item.milestone is not None)
-            lines.append("not built yet: " + " ".join(
-                f"{name}({ops[name].milestone})" for name in slots))
+            if slots:
+                lines.append("not built yet: " + "; ".join(
+                    f"{name}: {ops[name].milestone}" for name in slots))
             lines.append("local: help [VERB] | source [-k] FILE | record [append] FILE|stop "
                          "| quit")
             lines.append("aliases: " + " ".join(f"{k}={v}" for k, v in sorted(ALIASES.items())
