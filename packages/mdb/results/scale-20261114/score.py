@@ -298,10 +298,15 @@ for fam in FAMS:
 # projected-language chance (derangement of countries over depth items)
 dep = [i for i in items if i["block"] == "depth"]
 perm = list(range(len(dep)))
+tries = 0
 while any(p == q for p, q in enumerate(perm)) or any(dep[p]["bridge"] == dep[q]["bridge"] for p, q in enumerate(perm)):
     rng.shuffle(perm)
+    tries += 1
+    if tries > 5000:      # no derangement across bridges exists: keep the last shuffle, pairs with a shared bridge dropped
+        break
+pairs_ok = [(p, q) for p, q in enumerate(perm) if dep[p]["bridge"] != dep[q]["bridge"]]
 lang_shuf = 0
-for p, q in enumerate(perm):
+for p, q in pairs_ok:
     it, ot = dep[p], dep[q]
     w = write(caps[it["id"]], LC, KC, per[it["id"]]["row_at_item"])
     po = proj_out(gamma * W_U[ot["country_token"]].double())
@@ -399,6 +404,6 @@ model = {"model": Path(MODEL).name, "layers": L, "heads": H, "kv": KV, "L_c": LC
                                         if per[i]["split"]["1.0"]["mlp"] is not None and per[i]["split"]["0.5"]["mlp"] is not None]),
          "B2_auc_slack_d3d4": auc, "B6": b6,
          "projected_language_hits": frac([per[i["id"]]["co"].get("languages", {}).get("projected") for i in dep]),
-         "projected_language_shuffled_hits": [lang_shuf, len(dep)]}
+         "projected_language_shuffled_hits": [lang_shuf, len(pairs_ok)]}
 json.dump({"model": model, "families": fam_tab, "per_item": per, "carriers": car}, open(OUT, "w"), indent=1, default=str)
 print(json.dumps(model, indent=1, default=str))
