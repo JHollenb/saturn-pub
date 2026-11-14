@@ -396,10 +396,11 @@ def resolve_verb(word: str, local: tuple[str, ...] = ()) -> str:
 
 
 def route(name: str, rest: str) -> tuple[str, str]:
-    """``set load NAME FILE`` and ``set show NAME`` are the ``promptset`` op (no address is
-    named ``load`` or ``show``); every other line keeps its verb."""
+    """``set load NAME FILE``, ``set define NAME JSON`` and ``set show NAME`` are the
+    ``promptset`` op (no address is named ``load``, ``define`` or ``show``); every other line
+    keeps its verb."""
     words = rest.split(None, 1)
-    if name == "set" and words and words[0] in ("load", "show"):
+    if name == "set" and words and words[0] in ("load", "define", "show"):
         return "promptset", rest
     return name, rest
 

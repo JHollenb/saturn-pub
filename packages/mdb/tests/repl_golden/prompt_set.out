@@ -9,11 +9,11 @@ set recall: 4 items  (tests/fixtures/prompt_set_tiny.jsonl)
 (mdb) each recall: print t@last.logits[i=$answer]
 each recall: print t@last.logits[i=$answer]
   4 items at t@last.logits; runs released; result each1
-  item  mean        abs_max
-  a     -0.079102   0.079102
-  b     -0.097168   0.097168
-  c     -0.056152   0.056152
-  d     0.025879    0.025879
+  item  mean       abs_max
+  a     -0.079102  0.079102
+  b     -0.097168  0.097168
+  c     -0.056152  0.056152
+  d     0.025879   0.025879
   labels: mean measured, abs_max measured
 summary: none refused; statistics over all 4 items
   stats.mean  [measured]
@@ -40,10 +40,10 @@ summary: none refused; statistics over all 4 items
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 each recall: reads t@subject --consumer M[$answer,$foil] top=2
   4 items at t@last.logits; runs released; result each3
-  item  read      mass        effect      causal      verdict
-  a     t3.L1.h0  0.24902     0.011455    -0.015137   causal
-  b     t3.L1.h1  0.25195     -0.0082406  0.012207    causal
-  c     t4.L1.h1  0.19922     -0.0073077  0.0064697   causal
+  item  read      mass     effect      causal     verdict
+  a     t3.L1.h0  0.24902  0.011455    -0.015137  causal
+  b     t3.L1.h1  0.25195  -0.0082406  0.012207   causal
+  c     t4.L1.h1  0.19922  -0.0073077  0.0064697  causal
   d     refused: no role 'subject' (roles: last)
   labels: mass measured, effect derived-exact, causal measured
 summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others

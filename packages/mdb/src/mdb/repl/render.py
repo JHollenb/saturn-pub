@@ -992,10 +992,59 @@ def render_error(error: Any) -> str:
 # --------------------------------------------------------------------------- each / prompt sets
 
 
-def _cell(item: Any, labelled: bool) -> str:
+def _cell(item: Any, labelled: bool, digits: int = 5) -> str:
     if isinstance(item, dict) and item.get("state") in ("unresolved", "refused"):
         return item["state"]
+    if digits != 5 and isinstance(item["value"], float) and not isinstance(item["value"], bool):
+        text = f"{item['value']:.{digits}g}"
+        value = "0" if text in ("-0", "0") else text
+        return f"{value} {tag(item.get('authority', '?'))}" if labelled else value
     return num(item) if labelled else fmt(item["value"])
+
+
+def _each_table(rows: list[dict[str, Any]], columns: list[str], uniform: dict[str, str],
+                digits: int) -> list[tuple[list[str], str | None]]:
+    """The table as (cells, refusal text) rows, header first; a refused row has its name only
+    and the refusal text, which does not size any column."""
+    has_label = any("label" in row.get("key", {}) for row in rows)
+    has_verdict = any("verdict" in row.get("key", {}) for row in rows)
+    table: list[tuple[list[str], str | None]] = [
+        (["item"] + (["read"] if has_label else []) + columns
+         + (["verdict"] if has_verdict else []), None)]
+    for row in rows:
+        if row["state"] == "refused":
+            table.append(([row["name"]], f"refused: {row['reason']}"))
+            continue
+        key = row.get("key", {})
+        cells = [row["name"]] + ([key.get("label", "-")] if has_label else [])
+        for name in columns:
+            item = key.get("columns", {}).get(name)
+            cells.append("-" if item is None else _cell(item, name not in uniform, digits))
+        if has_verdict:
+            verdict = key.get("verdict", "")
+            if row["state"] != "resolved":
+                verdict = f"{verdict} ({row['state']})".strip()
+            cells.append(verdict)
+        table.append((cells, None))
+    return table
+
+
+def _table_lines(table: list[tuple[list[str], str | None]]) -> tuple[list[str], int]:
+    """Aligned lines (every column as wide as its widest cell by display width, two spaces
+    between, the last column unpadded) and the width of the widest line."""
+    count = len(table[0][0])
+    widths = [max(_display_width(cells[i]) for cells, refusal in table
+                  if refusal is None or i == 0) for i in range(count)]
+    out, widest = [], 0
+    for cells, refusal in table:
+        if refusal is not None:
+            line = "  " + _pad(cells[0], widths[0]) + "  " + refusal
+        else:
+            line = "  " + "  ".join(_pad(c, widths[i]) if i < count - 1 else c
+                                    for i, c in enumerate(cells)).rstrip()
+            widest = max(widest, _display_width(line))
+        out.append(line)
+    return out, widest
 
 
 def _stat_lines(stat: dict[str, Any]) -> list[str]:
@@ -1029,29 +1078,11 @@ def _each_lines(result: dict[str, Any]) -> list[str]:
         for name, item in row.get("key", {}).get("columns", {}).items():
             labels[name].add(item.get("authority", item.get("state", "?")))
     uniform = {name: next(iter(found)) for name, found in labels.items() if len(found) == 1}
-    width = max([4, *(len(row["name"]) for row in rows)]) + 2
-    wide = {name: max(len(name) + 2, 12 if name in uniform else 26) for name in columns}
-    has_label = any("label" in row.get("key", {}) for row in rows)
-    has_verdict = any("verdict" in row.get("key", {}) for row in rows)
-    head = f"  {'item':<{width}}" + ("read      " if has_label else "") + "".join(
-        f"{name:<{wide[name]}}" for name in columns) + ("verdict" if has_verdict else "")
-    lines.append(head.rstrip())
-    for row in rows:
-        text = f"  {row['name']:<{width}}"
-        if row["state"] == "refused":
-            lines.append(text + f"refused: {row['reason']}")
-            continue
-        key = row.get("key", {})
-        if has_label:
-            text += f"{key.get('label', '-'):<10}"
-        for name in columns:
-            item = key.get("columns", {}).get(name)
-            cell = "-" if item is None else _cell(item, name not in uniform)
-            text += f"{cell:<{wide[name]}}"
-        verdict = key.get("verdict", "")
-        if row["state"] != "resolved":
-            verdict = f"{verdict} ({row['state']})".strip()
-        lines.append((text + verdict).rstrip())
+    for digits in (5, 4, 3):       # shorten only numbers until the common case fits 80 columns
+        table_lines, widest = _table_lines(_each_table(rows, columns, uniform, digits))
+        if widest <= 80 or digits == 3:
+            break
+    lines += table_lines
     if uniform:
         lines.append("  labels: " + ", ".join(f"{name} {uniform[name]}" for name in columns
                                               if name in uniform))
@@ -1093,7 +1124,10 @@ def _promptset_lines(result: dict[str, Any]) -> list[str]:
             return [f"{result['id']} item {result['item']}:", _render(result["result"])]
         return _each_lines({**result["summary"], "id": result["id"]})
     lines = [f"set {result['set']}: {result['total']} items  ({result['source']})"]
-    for item in result["items"]:
+    shown = result["items"]
+    if result["action"] in ("load", "define") and len(shown) > 10:   # show prints them all
+        shown = shown[:5]
+    for item in shown:
         prompt = (json.dumps(item["prompt"]) if "prompt" in item
                   else " ".join(map(str, item["ids"]))
                   + (" ..." if item["prompt_tokens"] > len(item["ids"]) else ""))
@@ -1102,6 +1136,8 @@ def _promptset_lines(result: dict[str, Any]) -> list[str]:
                              for v in item["vars"])
         pair = f" pair {item['pair']}" if "pair" in item else ""
         lines.append(f"  {item['name']:<10}{prompt}  {roles} {variables}{pair}".rstrip())
+    if len(shown) < len(result["items"]):
+        lines.append(f"  +{len(result['items']) - len(shown)} more (set show {result['set']})")
     return lines
 
 

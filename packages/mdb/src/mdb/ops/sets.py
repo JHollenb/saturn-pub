@@ -787,7 +787,7 @@ register(Op("promptset", "Prompt sets: load a JSONL file, show or list sets, rea
              Arg("arg", "str", help="load: the JSONL file (not served: send the set inline); "
                                     "define: the items as JSON; result: an item name")),
             "mutate", False, _op_promptset,
-            usage="set load NAME FILE | promptset define NAME ITEMS | set show NAME | "
+            usage="set load NAME FILE | set define NAME ITEMS | set show NAME | "
                   "promptset list | "
                   "promptset result ID [ITEM]"))
 

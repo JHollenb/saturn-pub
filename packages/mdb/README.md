@@ -309,7 +309,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
 | `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
-| `promptset` | `set load NAME FILE \| promptset define NAME ITEMS \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file (not from the web), define a set inline, show or list sets, read a stored each result (the REPL's set load / set show) |
+| `promptset` | `set load NAME FILE \| set define NAME ITEMS \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file (not from the web), define a set inline, show or list sets, read a stored each result (the REPL's set load / set show) |
 | `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
 | `reverse-continue` | `reverse-continue` | navigate | Run backwards to the previous breakpoint or watch hit |
@@ -528,7 +528,9 @@ template, bound per item before dispatch, so each item's result holds plain addr
 `t@subject.L1.A[h1]` -> `t1.L1.A[h1]`, `[row=@subject]` and `rows=@subject` -> the row,
 `M[$answer,$foil]` -> `M[4,9]`, and `@pair:ADDR` -> the value at ADDR (roles of the paired item)
 in a clean run of the paired prompt at the same stop, the `ORIGIN:ADDR` of
-[State cells and other runs](#state-cells-and-other-runs). An item whose template does not bind
+[State cells and other runs](#state-cells-and-other-runs). A pair address with no row
+(`@pair:L20.A[h5]`) means the paired item's last row whatever the two lengths, and the item's
+row names the donor address used (`donor`); `t@ROLE` names the pair's own role row. An item whose template does not bind
 (here `d` has no `subject`) or whose op is refused is listed with its reason and left out of the
 statistics; the others run. Real output on the tiny Qwen2 (`tests/repl_golden/prompt_set.out`):
 
@@ -555,10 +557,10 @@ summary: none refused; statistics over all 4 items
   +30 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 ...
-  item  read      mass        effect      causal      verdict
-  a     t3.L1.h0  0.24902     0.011455    -0.015137   causal
-  b     t3.L1.h1  0.25195     -0.0082406  0.012207    causal
-  c     t4.L1.h1  0.19922     -0.0073077  0.0064697   causal
+  item  read      mass     effect      causal     verdict
+  a     t3.L1.h0  0.24902  0.011455    -0.015137  causal
+  b     t3.L1.h1  0.25195  -0.0082406  0.012207   causal
+  c     t4.L1.h1  0.19922  -0.0073077  0.0064697  causal
   d     refused: no role 'subject' (roles: last)
   labels: mass measured, effect derived-exact, causal measured
 summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others

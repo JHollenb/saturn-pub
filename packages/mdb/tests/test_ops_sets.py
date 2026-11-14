@@ -82,6 +82,68 @@ def test_a_malformed_set_is_refused_whole_naming_the_item_and_key(tmp_path):
     assert "secret" not in str(error.value)
 
 
+def test_set_define_routes_and_parses_its_json_with_spaces():
+    text = '[{"name": "a", "tokens": [1, 2]}, {"name": "b", "tokens": [3]}]'
+    verb, rest = route("set", f"define demo {text}")
+    assert verb == "promptset"
+    assert parse(verb, rest) == {"action": "define", "name": "demo", "arg": text}
+
+
+def _row(name, read, mass, verdict="causal"):
+    return {"name": name, "state": "resolved", "key": {
+        "label": read, "verdict": verdict,
+        "columns": {"mass": {"value": mass, "authority": "measured"}}}}
+
+
+def _each_result(rows):
+    return {"set": "s", "line": "reads", "total": len(rows), "at": "t@last.logits",
+            "runs": "released", "id": "each1", "items": rows,
+            "statistics": {"exclusion": "x", "numeric": [], "verdicts": [],
+                           "omitted": {"count": 0}, "partial": {"count": 0}}}
+
+
+def test_each_table_columns_are_as_wide_as_their_widest_cell_and_keep_addresses_whole():
+    from mdb.repl.render import _each_lines
+
+    long = "t21.L24.h40"
+    rows = [_row("freezing", long, 0.38281234), _row("b", "t3.L1.h0", 0.9),
+            {"name": "c", "state": "refused", "reason": "no role 'subject'"}]
+    lines = _each_lines(_each_result(rows))
+    table = [line for line in lines if "freezing" in line or line.strip().startswith("item")]
+    head, first = table
+    assert first.split()[1] == long and first.split()[2] == "0.38281"
+    assert head.index("mass") == first.index("0.38281")
+    assert [line for line in lines if line.startswith("  b ")][0].index("0.9") == \
+        head.index("mass")
+    assert any(line.startswith("  c") and "refused: no role" in line for line in lines)
+    assert max(len(line) for line in table) <= 80
+
+
+def test_each_table_shortens_numbers_not_addresses_to_fit_80_columns():
+    from mdb.repl.render import _each_lines
+
+    a = "t2121.L124.h4040.somewhere.very.long.address"
+    rows = [_row("x" * 12, a, 0.123456789, "a long verdict text")]
+    rows[0]["key"]["columns"]["effect"] = {"value": 0.987654321, "authority": "derived-exact"}
+    line = [l for l in _each_lines(_each_result(rows)) if l.startswith("  xxxx")][0]
+    assert a in line and "0.123456789" not in line and "0.12346" not in line
+    assert "0.123" in line
+
+
+def test_set_load_of_a_big_set_prints_the_count_and_the_first_five():
+    from mdb.repl.render import _promptset_lines
+
+    items = [{"name": f"p{i}", "ids": [1, 2], "prompt_tokens": 2, "roles": [], "vars": []}
+             for i in range(12)]
+    base = {"set": "big", "source": "f", "total": 12, "items": items}
+    load = _promptset_lines({**base, "action": "load"})
+    assert load[0].startswith("set big: 12 items") and len(load) == 7
+    assert load[-1] == "  +7 more (set show big)"
+    assert len(_promptset_lines({**base, "action": "show"})) == 13
+    small = {**base, "total": 3, "items": items[:3]}
+    assert len(_promptset_lines({**small, "action": "load"})) == 4
+
+
 def test_the_repl_grammar_routes_set_load_and_parses_each():
     assert route("set", "load recall f.jsonl") == ("promptset", "load recall f.jsonl")
     assert route("set", "L1.m = 0 scale") == ("set", "L1.m = 0 scale")
