@@ -1,0 +1,12 @@
+mrun: job-04733a16cb05 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 818cb0e script exp1_depth.py
+[    4.8s] load
+[   12.1s] B d3-lm:Fisherman's Bastion 7.28s
+[   19.0s] B d3-lm:the Astronomical Clock of the Old Town 6.91s
+[   19.0s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.54
+	Maximum resident set size (kbytes): 4357632
+mrun: job-04733a16cb05 -> succeeded
+mrun: job-04733a16cb05 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 21.11, 'peak_rss_mb': 3040.8, 'peak_vram_mb': 3862.0}

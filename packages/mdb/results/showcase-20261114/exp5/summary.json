@@ -1,0 +1,36 @@
+{
+ "n_B": 26,
+ "N1": {
+  "named_beats_random_by_0.5": "26/26",
+  "named_beats_answer_null": "26/26",
+  "holds": true,
+  "median_dM_named": -4.0625,
+  "median_dM_random": 0.0,
+  "median_dM_answer_null": 0.0625
+ },
+ "N2": {
+  "neurons_above_floor": 71,
+  "spearman": 0.944379066339332,
+  "median_ratio": 0.8290433821384795,
+  "holds": false,
+  "set_forecast_over_native_median": 1.1403084172021702
+ },
+ "N3": {
+  "median_ratio_by_layer": {
+   "20": 0.9722026325762272,
+   "21": 0.8213384533883072,
+   "22": 0.8335889350622893,
+   "23": 0.8294353428269353,
+   "24": 0.8291916043439415,
+   "25": 0.8651282214559615,
+   "26": 0.7685004409092169
+  },
+  "holds": false
+ },
+ "N4": {
+  "batched_minus_stepped_within_2_spacings": "51/52",
+  "holds": true,
+  "max_abs": 0.375
+ },
+ "falsifier_fires": false
+}

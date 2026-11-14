@@ -1,0 +1,65 @@
+mrun: job-a38bd2b83820 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 63084a8 script exp1_depth.py
+[    5.2s] load
+[    8.1s] B d3-lm:Big Ben 2.91s
+[   15.3s] B d3-lm:Fisherman's Bastion 7.21s
+[   19.7s] B d3-lm:Notre-Dame Cathedral 4.46s
+[   23.2s] B d3-lm:Retiro Park 3.43s
+[   27.7s] B d3-lm:Schonbrunn Palace 4.55s
+[   32.3s] B d3-lm:St. Stephen's Cathedral 4.6s
+[   36.4s] B d3-lm:Tivoli Gardens 4.07s
+[   39.5s] B d3-lm:Wat Arun 3.12s
+[   44.0s] B d3-lm:the Anne Frank House 4.53s
+[   48.6s] B d3-lm:the Belem Tower 4.53s
+[   52.3s] B d3-lm:the Brandenburg Gate 3.74s
+[   58.2s] B d3-lm:the Colosseum 5.9s
+[   61.3s] B d3-lm:the Grand Palace 3.12s
+[   67.2s] B d3-lm:the Khan el-Khalili bazaar 5.84s
+[   71.4s] B d3-lm:the Little Mermaid statue 4.22s
+[   74.8s] B d3-lm:the Meiji Shrine 3.45s
+[   78.3s] B d3-lm:the Pantheon 3.5s
+[   82.0s] B d3-lm:the Prado Museum 3.62s
+[   86.4s] B d3-lm:the Rijksmuseum 4.39s
+[   91.3s] B d3-lm:the Szechenyi thermal bath 4.91s
+[   95.2s] B d3-lm:the Vasa Museum 3.94s
+[   98.0s] B d3-per:Alexander Pushkin 2.84s
+[  102.0s] B d3-per:August Strindberg 3.93s
+[  104.8s] B d3-per:Charlie Chaplin 2.83s
+[  108.9s] B d3-per:Edith Piaf 4.08s
+[  111.3s] B d3-per:Erno Rubik 2.38s
+[  115.8s] B d3-per:Franz Kafka 4.5s
+[  119.4s] B d3-per:Fyodor Dostoevsky 3.68s
+[  121.7s] B d3-per:Greta Garbo 2.22s
+[  123.6s] B d3-per:Hokusai 1.9s
+[  125.5s] B d3-per:John Keats 1.9s
+[  127.7s] B d3-per:Lope de Vega 2.22s
+[  133.6s] B d3-per:Marie Curie 5.91s
+[  136.1s] B d3-per:Mikhail Lermontov 2.52s
+[  138.8s] B d3-per:Natsume Soseki 2.71s
+[  141.8s] B d3-per:Pedro Calderon de la Barca 2.95s
+[  144.3s] B d3-per:Plato 2.53s
+[  146.1s] B d3-per:Sophia Loren 1.74s
+[  148.0s] B d3-per:Virginia Woolf 1.9s
+[  151.1s] B d3-per:Walter Benjamin 3.13s
+[  152.7s] B d4-work:Candide 1.61s
+[  156.6s] B d4-work:The Arcades Project 3.88s
+[  162.5s] B d4-work:The Book of Disquiet 5.91s
+[  166.7s] B d4-work:The Metamorphosis 4.21s
+[  172.1s] B d4-work:the Commentaries on the Gallic War 5.36s
+[  174.7s] B d4-work:the Rubik's Cube 2.59s
+[  178.7s] B d4-work:the Unfinished Symphony 4.08s
+[  183.3s] B d4-work:the book Fear and Trembling 4.54s
+[  186.7s] B d4-work:the novel A Hero of Our Time 3.42s
+[  189.0s] B d4-work:the novel Kokoro 2.26s
+[  195.8s] B d4-work:the novel Palace Walk 6.85s
+[  199.7s] B d4-work:the novel The Trial 3.87s
+[  202.8s] B d4-work:the painting Impression, Sunrise 3.12s
+[  205.5s] B d4-work:the play Life Is a Dream 2.68s
+[  209.6s] B d4-work:the poem Ode to a Nightingale 4.1s
+[  209.6s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:31.26
+	Maximum resident set size (kbytes): 4357472
+mrun: job-a38bd2b83820 -> succeeded
+mrun: job-a38bd2b83820 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 212.21, 'peak_rss_mb': 3684.3, 'peak_vram_mb': 3878.0}

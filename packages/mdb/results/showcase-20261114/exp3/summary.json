@@ -1,0 +1,95 @@
+{
+ "n_items": 132,
+ "correct_with_nominated": 97,
+ "wrong": 27,
+ "nominated_total": 63,
+ "nominated_by_layer": {
+  "20": 5,
+  "21": 15,
+  "22": 14,
+  "23": 15,
+  "24": 9,
+  "25": 5
+ },
+ "languages_with_features": 17,
+ "H1": {
+  "L21_24_features": 53,
+  "holds": true
+ },
+ "H2": {
+  "median_lang_minus_2city_drop": -1.75,
+  "median_ratio_lang_over_city": 1.013157894736842,
+  "median_dM_lang_joint": -2.5,
+  "median_dM_city_joint": -2.0,
+  "holds": false
+ },
+ "H3": {
+  "random_within_floor": "96/119",
+  "holds": true
+ },
+ "H4": {
+  "items": [
+   {
+    "id": "d3-lm:the Colosseum",
+    "n_features": 7,
+    "below": 5,
+    "holds": true
+   },
+   {
+    "id": "d3-per:Baruch Spinoza",
+    "n_features": 1,
+    "below": 1,
+    "holds": true
+   },
+   {
+    "id": "d3-per:Harry Houdini",
+    "n_features": 3,
+    "below": 2,
+    "holds": true
+   },
+   {
+    "id": "d4-work:The Blue Danube waltz",
+    "n_features": 3,
+    "below": 3,
+    "holds": true
+   },
+   {
+    "id": "d4-work:the Unfinished Symphony",
+    "n_features": 3,
+    "below": 2,
+    "holds": true
+   }
+  ],
+  "holds_on": "5/5",
+  "holds": true
+ },
+ "falsifier_fires": true,
+ "mean_ablation_same_layer": {
+  "median_dM_lang": -0.875,
+  "median_dM_city": -1.125
+ },
+ "single_feature_median_dM_lang": -0.375,
+ "hop_edge_joint": {
+  "n": 97,
+  "median_share_direct": -0.0,
+  "median_share_mlp": 0.8594539087430508,
+  "median_share_reread": 0.15085330253942278,
+  "median_share_norm": -0.011604462937809402
+ },
+ "transcoder_rel_err_median_by_layer": {
+  "20": 0.5752206251036368,
+  "21": 0.479210493459601,
+  "22": 0.39510140201836663,
+  "23": 0.4436085964596454,
+  "24": 0.4036275365316084,
+  "25": 0.5179881238786992
+ },
+ "transcoder_error_direct_median_by_layer": {
+  "20": 0.01296839167335924,
+  "21": 0.062351880284097425,
+  "22": -0.019830471467764198,
+  "23": 0.11686623366570059,
+  "24": 0.09252736879002649,
+  "25": -0.21144042078061406
+ }
+}

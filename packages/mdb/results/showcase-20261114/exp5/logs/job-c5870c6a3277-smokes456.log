@@ -1,0 +1,74 @@
+mrun: job-10f34d848bac -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 5f1df98 script exp4_brackets.py
+[    4.3s] load
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.77
+	Maximum resident set size (kbytes): 5372092
+Traceback (most recent call last):
+NameError: name 'saved' is not defined. Did you mean: 'same'?
+Command exited with non-zero status 1
+== revision 5f1df98 script exp5_neurons.py
+[    4.1s] load
+[    4.5s] grads 3 groups
+[    4.5s] named 6 countries
+[    5.9s] sealed 6 items
+[    7.0s] batch Spain 1 items 67 arms 1.1s
+[    8.1s] batch Poland 1 items 67 arms 1.1s
+[    9.2s] batch Sweden 1 items 67 arms 1.1s
+[   10.3s] batch Germany 1 items 67 arms 1.1s
+[   11.4s] batch Italy 1 items 67 arms 1.1s
+[   12.4s] batch China 1 items 67 arms 1.1s
+[   13.2s] S city:Seville 0.71s
+[   14.0s] S city:Krakow 0.86s
+[   14.7s] S currency:krona 0.71s
+[   15.4s] S city:Munich 0.71s
+[   16.1s] S city:Naples 0.71s
+[   16.8s] S city:Shenzhen 0.71s
+[   16.8s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.26
+	Maximum resident set size (kbytes): 4358140
+== revision 5f1df98 script exp6_tlnull.py
+[    5.8s] load
+mrun: job-10f34d848bac -> killed_vram
+mrun: job-10f34d848bac killed_vram -> auto-retry job-c5870c6a3277 (grown reservation)
+mrun: job-c5870c6a3277 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 5f1df98 script exp4_brackets.py
+[    4.2s] load
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.58
+	Maximum resident set size (kbytes): 5373464
+Traceback (most recent call last):
+NameError: name 'saved' is not defined. Did you mean: 'same'?
+Command exited with non-zero status 1
+== revision 5f1df98 script exp5_neurons.py
+[    4.0s] load
+[    4.5s] grads 3 groups
+[    4.5s] named 6 countries
+[    5.8s] sealed 6 items
+[    6.9s] batch Spain 1 items 67 arms 1.1s
+[    8.0s] batch Poland 1 items 67 arms 1.1s
+[    9.1s] batch Sweden 1 items 67 arms 1.1s
+[   10.2s] batch Germany 1 items 67 arms 1.1s
+[   11.3s] batch Italy 1 items 67 arms 1.1s
+[   12.4s] batch China 1 items 67 arms 1.1s
+[   13.1s] S city:Seville 0.71s
+[   13.9s] S city:Krakow 0.86s
+[   14.7s] S currency:krona 0.71s
+[   15.4s] S city:Munich 0.71s
+[   16.1s] S city:Naples 0.71s
+[   16.8s] S city:Shenzhen 0.71s
+[   16.8s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.19
+	Maximum resident set size (kbytes): 4357284
+== revision 5f1df98 script exp6_tlnull.py
+[    6.0s] load
+[   11.9s] F city:Aarhus 5.95s
+mrun: job-c5870c6a3277 -> killed_vram
+mrun: job-c5870c6a3277 finished: killed_vram result={'status': 'killed_vram', 'returncode': -9, 'elapsed_s': 37.99, 'peak_rss_mb': 6558.5, 'peak_vram_mb': 15308.0}
+mrun: failure diagnostics: kind=killed_vram phase=process.finalize message=tree VRAM 15308MB > ceiling 14643MB returncode=-9
+mrun: failure class=memory_ceiling retry=auto-retried-grown
+mrun: failure log tail available via `mrun why job-c5870c6a3277`

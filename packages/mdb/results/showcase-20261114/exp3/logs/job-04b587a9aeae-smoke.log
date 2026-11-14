@@ -1,0 +1,146 @@
+mrun: job-04b587a9aeae -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 63084a8 script exp3_hop3.py
+[    5.6s] load
+[    6.2s] P1 d2:Amsterdam 0.66s
+[    6.6s] P1 d2:Ankara 0.38s
+[    7.0s] P1 d2:Athens 0.38s
+[    7.4s] P1 d2:Bangkok 0.37s
+[    7.7s] P1 d2:Berlin 0.37s
+[    8.1s] P1 d2:Budapest 0.37s
+[    8.5s] P1 d2:Cairo 0.37s
+[    8.9s] P1 d2:Copenhagen 0.37s
+[    9.2s] P1 d2:Helsinki 0.37s
+[    9.6s] P1 d2:Lisbon 0.37s
+[   10.0s] P1 d2:London 0.37s
+[   10.3s] P1 d2:Madrid 0.37s
+[   10.7s] P1 d2:Moscow 0.36s
+[   11.1s] P1 d2:Oslo 0.37s
+[   11.4s] P1 d2:Paris 0.37s
+[   11.8s] P1 d2:Prague 0.37s
+[   12.2s] P1 d2:Rome 0.37s
+[   12.5s] P1 d2:Seoul 0.37s
+[   12.9s] P1 d2:Stockholm 0.37s
+[   13.3s] P1 d2:Tokyo 0.37s
+[   13.6s] P1 d2:Vienna 0.37s
+[   14.0s] P1 d2:Warsaw 0.37s
+[   14.4s] P1 d3-lm:Anitkabir 0.38s
+[   14.8s] P1 d3-lm:Big Ben 0.37s
+[   15.1s] P1 d3-lm:Buckingham Palace 0.37s
+[   15.5s] P1 d3-lm:Fisherman's Bastion 0.38s
+[   15.9s] P1 d3-lm:Gyeongbokgung Palace 0.38s
+[   16.3s] P1 d3-lm:Notre-Dame Cathedral 0.37s
+[   16.6s] P1 d3-lm:Red Square 0.36s
+[   17.0s] P1 d3-lm:Retiro Park 0.37s
+[   17.4s] P1 d3-lm:Saint Basil's Cathedral 0.37s
+[   17.9s] P1 d3-lm:Schonbrunn Palace 0.52s
+[   18.3s] P1 d3-lm:Shibuya Crossing 0.37s
+[   18.6s] P1 d3-lm:St. Stephen's Cathedral 0.38s
+[   19.0s] P1 d3-lm:Suomenlinna fortress 0.38s
+[   19.4s] P1 d3-lm:Tivoli Gardens 0.36s
+[   19.7s] P1 d3-lm:Tower Bridge 0.37s
+[   20.1s] P1 d3-lm:Wat Arun 0.37s
+[   20.5s] P1 d3-lm:the Acropolis 0.37s
+[   20.9s] P1 d3-lm:the Anne Frank House 0.37s
+[   21.3s] P1 d3-lm:the Astronomical Clock of the Old Town 0.38s
+[   21.6s] P1 d3-lm:the Belem Tower 0.38s
+[   22.0s] P1 d3-lm:the Belvedere palace 0.38s
+[   22.4s] P1 d3-lm:the Brandenburg Gate 0.36s
+[   22.7s] P1 d3-lm:the Charles Bridge 0.37s
+[   23.1s] P1 d3-lm:the Colosseum 0.38s
+[   23.5s] P1 d3-lm:the Eiffel Tower 0.38s
+[   23.9s] P1 d3-lm:the Grand Palace 0.37s
+[   24.3s] P1 d3-lm:the Jeronimos Monastery 0.39s
+[   24.6s] P1 d3-lm:the Khan el-Khalili bazaar 0.39s
+[   25.0s] P1 d3-lm:the Kremlin 0.37s
+[   25.4s] P1 d3-lm:the Little Mermaid statue 0.38s
+[   25.8s] P1 d3-lm:the Louvre 0.37s
+[   26.1s] P1 d3-lm:the Meiji Shrine 0.37s
+[   26.5s] P1 d3-lm:the Palace of Culture and Science 0.38s
+[   26.9s] P1 d3-lm:the Pantheon 0.37s
+[   27.3s] P1 d3-lm:the Parthenon 0.38s
+[   27.6s] P1 d3-lm:the Prado Museum 0.38s
+[   28.0s] P1 d3-lm:the Reichstag building 0.37s
+[   28.4s] P1 d3-lm:the Rijksmuseum 0.38s
+[   28.8s] P1 d3-lm:the Senso-ji temple 0.38s
+[   29.2s] P1 d3-lm:the Szechenyi thermal bath 0.38s
+[   29.5s] P1 d3-lm:the Trevi Fountain 0.38s
+[   29.9s] P1 d3-lm:the Vasa Museum 0.38s
+[   30.3s] P1 d3-lm:the Vigeland sculpture park 0.38s
+[   30.7s] P1 d3-per:Alexander Pushkin 0.38s
+[   31.0s] P1 d3-per:Alexander von Humboldt 0.37s
+[   31.4s] P1 d3-per:August Strindberg 0.38s
+[   31.8s] P1 d3-per:Baruch Spinoza 0.38s
+[   32.2s] P1 d3-per:Charlie Chaplin 0.38s
+[   32.6s] P1 d3-per:Claude Monet 0.38s
+[   32.9s] P1 d3-per:Edith Piaf 0.38s
+[   33.3s] P1 d3-per:Ennio Morricone 0.38s
+[   33.7s] P1 d3-per:Erno Rubik 0.38s
+[   34.1s] P1 d3-per:Fernando Pessoa 0.38s
+[   34.5s] P1 d3-per:Franz Kafka 0.37s
+[   34.8s] P1 d3-per:Franz Schubert 0.38s
+[   35.2s] P1 d3-per:Fyodor Dostoevsky 0.38s
+[   35.6s] P1 d3-per:Georges Bizet 0.37s
+[   36.0s] P1 d3-per:Greta Garbo 0.38s
+[   36.3s] P1 d3-per:Harry Houdini 0.37s
+[   36.7s] P1 d3-per:Hokusai 0.37s
+[   37.1s] P1 d3-per:Johann Strauss II 0.38s
+[   37.5s] P1 d3-per:John Keats 0.38s
+[   37.8s] P1 d3-per:Julius Caesar 0.38s
+[   38.2s] P1 d3-per:Lope de Vega 0.38s
+[   38.6s] P1 d3-per:Ludwig Wittgenstein 0.38s
+[   39.0s] P1 d3-per:Marie Curie 0.38s
+[   39.3s] P1 d3-per:Marlene Dietrich 0.38s
+[   39.7s] P1 d3-per:Mikhail Lermontov 0.38s
+[   40.1s] P1 d3-per:Naguib Mahfouz 0.38s
+[   40.5s] P1 d3-per:Natsume Soseki 0.38s
+[   40.9s] P1 d3-per:Niels Bohr 0.38s
+[   41.2s] P1 d3-per:Pedro Calderon de la Barca 0.38s
+[   41.6s] P1 d3-per:Pericles 0.38s
+[   42.0s] P1 d3-per:Plato 0.37s
+[   42.4s] P1 d3-per:Rainer Maria Rilke 0.38s
+[   42.8s] P1 d3-per:Sophia Loren 0.38s
+[   43.1s] P1 d3-per:Soren Kierkegaard 0.39s
+[   43.5s] P1 d3-per:Virginia Woolf 0.38s
+[   43.9s] P1 d3-per:Voltaire 0.38s
+[   44.3s] P1 d3-per:Walter Benjamin 0.38s
+[   44.6s] P1 d3-per:Yukio Mishima 0.38s
+[   45.0s] P1 d4-work:Candide 0.38s
+[   45.4s] P1 d4-work:Eugene Onegin 0.38s
+[   45.8s] P1 d4-work:The Arcades Project 0.39s
+[   46.2s] P1 d4-work:The Blue Danube waltz 0.39s
+[   46.6s] P1 d4-work:The Book of Disquiet 0.39s
+[   47.0s] P1 d4-work:The Great Wave off Kanagawa 0.39s
+[   47.4s] P1 d4-work:The Metamorphosis 0.39s
+[   47.7s] P1 d4-work:The Republic 0.38s
+[   48.1s] P1 d4-work:the Commentaries on the Gallic War 0.40s
+[   48.5s] P1 d4-work:the Duino Elegies 0.39s
+[   48.9s] P1 d4-work:the Rubik's Cube 0.39s
+[   49.3s] P1 d4-work:the Tractatus Logico-Philosophicus 0.40s
+[   49.7s] P1 d4-work:the Unfinished Symphony 0.39s
+[   50.1s] P1 d4-work:the book Either/Or 0.38s
+[   50.5s] P1 d4-work:the book Fear and Trembling 0.39s
+[   50.8s] P1 d4-work:the film The Great Dictator 0.39s
+[   51.2s] P1 d4-work:the novel A Hero of Our Time 0.39s
+[   51.6s] P1 d4-work:the novel Crime and Punishment 0.38s
+[   52.0s] P1 d4-work:the novel Kokoro 0.38s
+[   52.4s] P1 d4-work:the novel Mrs Dalloway 0.39s
+[   52.8s] P1 d4-work:the novel Palace Walk 0.38s
+[   53.2s] P1 d4-work:the novel The Sound of Waves 0.39s
+[   53.6s] P1 d4-work:the novel The Trial 0.39s
+[   53.9s] P1 d4-work:the opera Carmen 0.38s
+[   54.3s] P1 d4-work:the painting Impression, Sunrise 0.39s
+[   54.7s] P1 d4-work:the play Fuenteovejuna 0.39s
+[   55.1s] P1 d4-work:the play Life Is a Dream 0.39s
+[   55.5s] P1 d4-work:the play Miss Julie 0.39s
+[   55.9s] P1 d4-work:the poem Ode to a Nightingale 0.39s
+[   55.9s] NOMINATED 63
+[   57.4s] P2 d2:Amsterdam 1.53s
+[   57.4s] P2 d2:Ankara 0.0s
+[   59.3s] P2 d2:Athens 1.85s
+[   59.3s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:00.76
+	Maximum resident set size (kbytes): 8185384
+mrun: job-04b587a9aeae -> succeeded
+mrun: job-04b587a9aeae finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 61.19, 'peak_rss_mb': 8033.6, 'peak_vram_mb': 7704.0}

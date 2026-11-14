@@ -1,0 +1,31 @@
+{
+ "experiment": "2: SAE features as symbol-table bindings with lifetime and readers at the carrier",
+ "written": "2026-11-14T11:16-08:00",
+ "status": "sealed before any showcase job; single seed",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA (Beast, mrun, priority 70)",
+ "sae": "Qwen-Scope SAE-Res-Qwen3-1.7B-Base-W32K-L0_50 (resid_post, k=50), layers 9..22 loaded; L19 checked against SAELens to_saelens() (strict load) active set; SAE.from_pretrained registry load attempted offline and its outcome recorded",
+ "panel": "Run 1a base items (64; results/twohop-20261113/next/r1_items.json group=base), consumer M[answer (capital), donor answer] at the last row (the B1 map consumer)",
+ "memo_predictions_verbatim": "see memo_sections.json section 2 (c)",
+ "predictions": {
+  "L1": "the top country feature's component carries >= 0.5 of the carrier's to_consumer on >= 40/64 base items; the error component <= 0.2 on >= 48/64",
+  "L2": "at L20, removing the top country feature's component moves M by >= 0.5 of the whole-cell removal (cell zeroed) on the median item; the random component (matched norm) <= 0.15; the error component <= 0.2",
+  "L3": "the lineage onset of the top country feature (decoder-cosine >= 0.7 chain, active at each layer) is at a median layer <= L12 (>= 6 layers before L18). Falsifier: onset within 2 layers of L17 (onset >= L15) on >= 40/64",
+  "L4": "the feature-component removal is above the floor only inside L17..L21 (not at L15, L16, L22, L23) on >= 48/64 items",
+  "partition_falsifier": "the component partition (sum of component shares = the float64 cell image's share; closure of components vs W_V^g(rho gamma h)) fails outside float64 rounding on any item -> B-a is wrong"
+ },
+ "operational_definitions": {
+  "carrier": "L20 KV6 at R_argmax (frozen B1 rule: argmax of the answer row's L20 h12+h13 attention over the span), mdb circuit_map.slot_rows",
+  "components": "mdb Binding.component over basis L(l-1) for cell L(l) KV6 at the carrier row: one component per active feature, decoder bias, error",
+  "to_consumer": "mdb component_table: sum_{h in group 6} p[h,r] c.W_O,h v_i at the native attention weights (exact direct share); 'carrier to_consumer' = the native cell's share",
+  "country feature": "an active feature whose component's content readout over the 57 panel countries (symbols.content through W_O of KV group 6 and gamma_F W_U) names the item's true country; the content ranking of a feature component is independent of its activation and rho, so this is a property of the feature at that cell; 'top' = the largest to_consumer among them; items with none count as failing L1",
+  "random component": "a uniformly drawn (seed 20261114) active feature whose content does not name the truth; its removal is rescaled to the top country component's norm",
+  "whole-cell removal": "the cell set to zero",
+  "floor": "2 bf16 spacings at the larger |logit| of (answer, foil) + the measured cell_sweep null_vs_stepped of that item",
+  "L2 ratios": "dM(arm)/dM(zero) per item at L20, median over items with a top country feature",
+  "lineage": "backward from the L19 top feature: at each layer l<19 the feature of basis l with the largest decoder cosine to the previous chain feature; onset = lowest layer such that every layer from it to L19 has cosine >= 0.7 and that feature active at the carrier row (L9 lowest examined: onset L9 is censored and reported as such)",
+  "projection strip": "the exact projection of the unit L19 decoder direction onto t<crow>.L<l>.h_out, l = 0..27 (reported, not judged)",
+  "nulls": "always-last-row cell (where the last span row differs from the carrier): its top country component share; random component share; error share"
+ },
+ "native_arms": "per item one batched mdb cell_sweep (null arm per chunk) over L15..L23 x {top, random, error, zero}",
+ "deviation_from_memo": "the memo's L15..L23 table is read from a native run (h at the carrier row is not in the 1a captures, only K/V); the lineage is examined L9..L19 so that L3's threshold (<= L12) is measurable"
+}

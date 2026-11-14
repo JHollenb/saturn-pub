@@ -1,0 +1,43 @@
+mrun: job-0daea658c771 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 536b308 script exp2_base.py
+[   15.9s] load
+[   19.0s] saelens
+[   27.6s] A currency:yen 8.58s
+[   35.3s] A currency:won 7.70s
+[   44.3s] A currency:ruble 9.03s
+[   52.8s] A currency:rouble 8.49s
+[   60.5s] A currency:yuan 7.74s
+[   69.8s] A currency:renminbi 9.29s
+[   78.2s] A currency:baht 8.37s
+[   88.2s] A currency:zloty 10.02s
+[   97.0s] A currency:forint 8.78s
+[  102.8s] A currency:krona 5.85s
+[  111.0s] A currency:rupiah 8.14s
+[  118.6s] A currency:shekel 7.62s
+[  126.1s] A currency:koruna 7.55s
+[  134.2s] A currency:pound sterling 8.06s
+[  141.1s] A currency:sterling 6.94s
+[  148.7s] A currency:rial 7.55s
+[  156.8s] A person:Hokusai 8.10s
+[  166.3s] A person:Akira Kurosawa 9.50s
+[  175.6s] A person:Haruki Murakami 9.32s
+[  184.5s] A person:Mao Zedong 8.91s
+[  193.8s] A person:Miguel de Cervantes 9.32s
+[  202.6s] A person:Giuseppe Verdi 8.73s
+[  209.7s] A person:Mozart 7.14s
+[  218.4s] A person:Frederic Chopin 8.72s
+[  227.2s] A person:Jean Sibelius 8.73s
+[  236.1s] A person:Henrik Ibsen 8.92s
+[  244.8s] A person:Edvard Munch 8.72s
+[  252.3s] A person:Socrates 7.54s
+[  259.3s] A person:Plato 6.93s
+[  269.7s] A person:Soren Kierkegaard 10.43s
+[  277.8s] A person:Hans Christian Andersen 8.13s
+[  286.3s] A person:Rembrandt 8.44s
+[  286.3s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:48.34
+	Maximum resident set size (kbytes): 10013352
+mrun: job-0daea658c771 -> succeeded
+mrun: job-0daea658c771 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 288.87, 'peak_rss_mb': 9819.0, 'peak_vram_mb': 3970.0}

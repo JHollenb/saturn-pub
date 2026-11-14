@@ -1,0 +1,148 @@
+{
+ "basis": {
+  "name": "qwen-scope",
+  "layer": 19,
+  "site": "L19.h_out",
+  "k": 50,
+  "d_model": 2048,
+  "d_sae": 32768,
+  "source": {
+   "set": "qwen-scope",
+   "path": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50/layer19.sae.pt",
+   "revision": "ce1a79d9c5163932d65c417380e53230e1086370",
+   "repo": "Qwen/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50",
+   "file": "layer19.sae.pt",
+   "bytes": 537012603,
+   "sha256_manifest": "22c8b37547657123891d681ef3241a252ee4a6c9639c4a886a50a66bb26a37cd"
+  },
+  "saelens": {
+   "hook_name": "blocks.19.hook_resid_post",
+   "release": "qwen-scope-3-1.7b-base-w32k-l50",
+   "sae_id": "layer19",
+   "model": "Qwen/Qwen3-1.7B-Base"
+  }
+ },
+ "sae_set": {
+  "name": "qwen-scope",
+  "path": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50",
+  "site_port": "h_out",
+  "k": 50,
+  "layers": [
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22
+  ],
+  "cache": 15,
+  "loaded": [
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22
+  ],
+  "revision": "ce1a79d9c5163932d65c417380e53230e1086370",
+  "hook_point": "resid_post",
+  "repo": "Qwen/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50",
+  "files": {
+   "9": {
+    "file": "layer9.sae.pt",
+    "bytes": 537012593,
+    "sha256_manifest": "ece4cd40cc17bcfdab2d2f30ccba7635e77b6b92919364be3e3324e95d7e3ab3"
+   },
+   "10": {
+    "file": "layer10.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "2ff54588ccd5c5751d07a7b5e93c030c3c4782244447bf0ea1fd05d77f23e6aa"
+   },
+   "11": {
+    "file": "layer11.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "3ec7c31d06970b62c3943410f72fc26eae788981931f028a5cd5739cd9b5424c"
+   },
+   "12": {
+    "file": "layer12.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "1f37add67e80c89ee10d43eb6cdd147dccc734faf71f0551d05757f32c85ee05"
+   },
+   "13": {
+    "file": "layer13.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "4011188521cc57bee4404c22c945e9253bb0c132b8262aec246e6040aaa53188"
+   },
+   "14": {
+    "file": "layer14.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "7d8505855340aba1d5d5f2d0df5d8e953a415fe30670c528db9dfb0b4f8fcd69"
+   },
+   "15": {
+    "file": "layer15.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "f2b605e05ac2bccf9aafd6e0db793a8ced33e4b19348c54fe8797b545f0f6886"
+   },
+   "16": {
+    "file": "layer16.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "c493ae4b5db8c637750b7929cf622db57be654769524d810a8a1392af7b59a69"
+   },
+   "17": {
+    "file": "layer17.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "b0b228c40d5625e7369ca3c0023d235262dece7b35d6420987da34213a692067"
+   },
+   "18": {
+    "file": "layer18.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "61065548644971c20d52533f7bca59161b2a4ef642017dcd657bf8f38bbada98"
+   },
+   "19": {
+    "file": "layer19.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "22c8b37547657123891d681ef3241a252ee4a6c9639c4a886a50a66bb26a37cd"
+   },
+   "20": {
+    "file": "layer20.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "83731168bd90ad6b8ad11d1ed81deb4a628f29c11aaceb9006689ea3e7ba7b6a"
+   },
+   "21": {
+    "file": "layer21.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "4b946e138ecc9037f033c646cd2ee5fd5da282f7fd3207e877cf2389f119c107"
+   },
+   "22": {
+    "file": "layer22.sae.pt",
+    "bytes": 537012603,
+    "sha256_manifest": "fea01bf5a3e6ffaca2cdd6ed55f799956414295cbbb7889520dd69064cc5aabf"
+   }
+  }
+ },
+ "sae_lens_version": "6.55.5",
+ "registry_load": {
+  "ok": false,
+  "error": "LocalEntryNotFoundError: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on."
+ },
+ "to_saelens": {
+  "ok": true,
+  "metadata": "SAEMetadata({'sae_lens_version': '6.55.5', 'sae_lens_training_version': None, 'hook_name': 'blocks.19.hook_resid_post', 'model_name': 'Qwen/Qwen3-1.7B-Base', 'prepend_bos': False})"
+ }
+}

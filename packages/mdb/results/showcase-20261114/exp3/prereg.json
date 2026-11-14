@@ -1,0 +1,29 @@
+{
+ "experiment": "3: where hop 3 is made: transcoder features nominate answer-row MLP writers, mdb's ladder measures them",
+ "written": "2026-11-14T11:40-08:00",
+ "status": "sealed before job C; single seed",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "library": "mwhanna/qwen3-1.7b-transcoders-lowl0 L20..L25 (trained on post-trained Qwen3-1.7B; Base/post-trained reconstruction ratio 0.81-0.89 at L21-22 measured in tracker entry 5), read with safetensors in the SAELens mwhanna_transcoder layout (hook mlp.hook_in -> hook_mlp_out = mdb n -> m, ReLU, no b_dec on the input). circuit-tracer is not installed (needs transformers <= 4.57); not used.",
+ "panel": "the 132 depth items d2 (22, all correct) + d3-lm/d3-per/d4-work (83 correct, 27 wrong) from 1c; native runs (prefill = last row)",
+ "memo_predictions_verbatim": "memo_sections.json section 3 (c)",
+ "predictions": {
+  "H1": "at least 3 recurring language-writing features exist in L21..L24 with cross-language null <= 1/50",
+  "H2": "the joint top-5 removal drops the language margin by >= 2x the capital (city) margin on the median correct depth item",
+  "H3": "the random-feature arm is within the floor on >= 0.75 of items",
+  "H4": "on wrong items whose carrier names the true country (the 5/27 of AUDIT-B1 S4), the nominated features' activations are below the correct-item median on >= 4/5",
+  "falsifier": "H2 fails with H1 holding: recurring language features exist but their native removal moves capital as much as language"
+ },
+ "operational_definitions": {
+  "direct effect": "rho_F c . a_s d_s with c = gamma_F * (W_U[language] - W_U[runner-up language]), rho_F at the native final state of the answer row (float64)",
+  "runner-up": "the best other token of the 26-language set (resp. 43-city set) by native logits",
+  "capital margin": "M[city, runner-up city] with city = b1_sets truths 'city' (the hop-2 city of the chain, the capital in the d2 family and the landmark/person/work city otherwise), read in the same arm",
+  "nomination": "per layer L20..L25: (layer, feature) qualifies on an item when its direct effect on that item's language margin is >= 0.25; it is a language-writing feature of language g when it qualifies on >= 3 items of g and on <= (items of other languages)/50 items of other languages; per item the top 5 such features of its own language by direct effect",
+  "H1 count": "distinct (layer, feature) with layer in 21..24",
+  "H2": "per correct item with >= 1 nominated feature: dM_lang(joint) / dM_city(joint) >= 2 with both drops measured as negative changes; the statistic is the median over items of -dM_lang - 2 * (-dM_city) >= 0, reported with the ratio",
+  "H3": "|dM_lang(random)| <= floor (2 bf16 spacings at the larger |logit| of the language pair)",
+  "H4": "wrong items with b1-score carrier_country == True; activation of each of the item language's nominated features (0 if inactive) against the median activation of that feature over correct items of the same language; holds on an item when the majority of its nominated features are below",
+  "error term": "the transcoder error (m - reconstruction) and its direct effect are reported per layer, never folded",
+  "hop_edge": "the joint arm as its own run, split against a native run by symbols.hop_edge(cell_layer = the lowest edited layer); neurons=True on the first 8 correct items only (cost)"
+ },
+ "nulls": "random active non-nominated feature at the top feature's layer, rescaled to the top feature's write norm; the self-excluded mean ablation of the whole MLP at the top feature's layer (B6 analogue)"
+}
