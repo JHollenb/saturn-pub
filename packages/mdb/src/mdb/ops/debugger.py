@@ -504,6 +504,9 @@ def attach(
         raise Refused(
             f"no port program for model_type {family!r}; supported: {', '.join(sorted(PROGRAMS))}"
         )
+    refusal = config_refusal(family, config)
+    if refusal is not None:
+        raise Refused(f"cannot attach: {refusal}")
     implementation = getattr(config, "_attn_implementation", None)
     if implementation != "eager":
         raise Refused(
@@ -518,9 +521,6 @@ def attach(
         )
     from saturn_pub.adapters.decoder import DecoderAdapter
 
-    refusal = config_refusal(family, config)
-    if refusal is not None:
-        raise Refused(f"cannot attach: {refusal}")
     try:
         adapter = DecoderAdapter(model, granularity="operation")
     except ValueError as error:
