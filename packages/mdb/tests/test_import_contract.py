@@ -1,14 +1,14 @@
 """Import contract of the engine set (pure standard library: ``ast`` over the source files).
 
 Engine set: ``mdb/__init__.py``, ``mdb/cli.py``, ``mdb/__main__.py`` and every module under
-``mdb/{core,engine,analysis,ops,repl,serve}``. Rules, with no allow-list:
+``mdb/{core,engine,analysis,ops,interop,repl,serve}``. Rules, with no allow-list:
 
 1. No engine module imports a flat lane module (``mdb.<module>`` outside the engine set) or
    ``mdb_lanes``: ``import``/``from`` statements (absolute or relative, at any depth, including
    function-local ones), ``importlib.import_module``/``__import__`` with a literal name, and the
    lazy export table of ``mdb/__init__.py``.
 2. Layers import only downward (or within their own layer):
-   core < engine < analysis < ops < repl < serve < top (``__init__``, ``cli``, ``__main__``).
+   core < engine < analysis < ops < interop < repl < serve < top (``__init__``, ``cli``, ``__main__``).
    The one exception is marked at its own line: an engine-to-engine import whose line carries
    ``# sanctioned upward import`` (today only ``Debugger.repl`` in ``mdb/ops/debugger.py``,
    a function-local convenience). The marker never excuses rule 1 or rule 3.
@@ -21,7 +21,7 @@ import ast
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parents[1] / "src" / "mdb"
-LAYERS = ("core", "engine", "analysis", "ops", "repl", "serve")
+LAYERS = ("core", "engine", "analysis", "ops", "interop", "repl", "serve")
 TOP = ("__init__", "cli", "__main__")
 RANK = {**{name: i for i, name in enumerate(LAYERS)}, "top": len(LAYERS)}
 PACKAGE_NAMES = {"__version__", "attach", "open_tiny", "Debugger"}

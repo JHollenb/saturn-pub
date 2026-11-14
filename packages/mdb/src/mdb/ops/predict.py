@@ -32,11 +32,12 @@ from typing import Any
 from mdb.core.pointers import seal_digest
 
 from .builtin import (
+    ImportedValue,
     cell_request,
     finite_limit,
+    imported_or_local,
     resolve_target,
     selector_mask,
-    value_source,
 )
 from .errors import BadArgs, Refused
 from .registry import Arg, Op, register
@@ -204,12 +205,12 @@ def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None)
         raise Refused(f"edits apply to layer ports or state cells, not {found.text}")
     if op == "mix" or dose is not None:
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v)")
-    if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another run goes into a state cell "
-                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
+    value, source = imported_or_local(ctx, value)
     finite_limit(run, value)
     mask = selection = None
+    whole = isinstance(value, ImportedValue)  # a whole port: the selector masks it
+    if whole:
+        value = value.tensor
     if found.selector:
         from mdb.engine import breakpoints as bp
 
@@ -218,7 +219,7 @@ def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None)
         mask, index, chosen = selector_mask(
             axes, shape, found.selector, head_dim=run.adapter.head_dim,
             row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
-        if isinstance(value, torch.Tensor):
+        if isinstance(value, torch.Tensor) and not whole:
             if torch.broadcast_shapes(value.shape, chosen) != chosen:
                 raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
             full = torch.zeros(shape, dtype=run.adapter.dtype)

@@ -1119,6 +1119,28 @@ def value_source(ctx, value):
     return _select(ctx, source, tensor).value, source.text
 
 
+class ImportedValue:
+    """A whole-port tensor from an import (``Debugger.import_values``): the target's selector,
+    if any, picks its elements (``take``)."""
+
+    def __init__(self, tensor, pointer):
+        self.tensor, self.pointer = tensor, pointer
+
+
+def imported_or_local(ctx, value):
+    """``value_source`` plus ``IMPORT:t<r>.L<l>.<port>`` (a whole port from an import, as an
+    ``ImportedValue``); any other ``ORIGIN:`` value is refused for a port, as before."""
+    if isinstance(value, str) and ":" in value.partition("[")[0]:
+        branch = value.partition(":")[0].strip()
+        if branch not in getattr(ctx.debugger, "imports", {}):
+            raise Refused(f"{value}: a value from another run goes into a state cell "
+                          "(cache.L<i>.k|v); a port takes a number, an address of this run "
+                          "or an import (IMPORT:t<r>.L<l>.<port>)")
+        tensor, pointer = ctx.debugger.port_value(value.strip(), run=ctx.run)
+        return ImportedValue(tensor, pointer), value.strip()
+    return value_source(ctx, value)
+
+
 def finite_limit(run, value) -> None:
     import torch
 
@@ -1245,12 +1267,12 @@ def _op_set(ctx, target, value, op, dose=None):
     if op == "mix" or dose is not None:
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v); a port takes "
                       "replace, add or scale")
-    if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another run goes into a state cell "
-                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
+    value, source = imported_or_local(ctx, value)
     finite_limit(run, value)
     kwargs: dict[str, Any] = {}
+    whole = isinstance(value, ImportedValue)  # a whole port: the selector masks it
+    if whole:
+        value = value.tensor
     if found.selector:
         # ONE edit: the selector becomes a mask over the port (shape known without running
         # anything), so replace/add/scale apply to the selected elements only and the rest
@@ -1260,7 +1282,7 @@ def _op_set(ctx, target, value, op, dose=None):
         mask, index, chosen = selector_mask(
             axes, shape, found.selector, head_dim=run.adapter.head_dim,
             row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
-        if isinstance(value, torch.Tensor):
+        if isinstance(value, torch.Tensor) and not whole:
             if torch.broadcast_shapes(value.shape, chosen) != chosen:
                 raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
             full = torch.zeros(shape, dtype=run.adapter.dtype)
