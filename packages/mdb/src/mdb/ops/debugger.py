@@ -70,6 +70,7 @@ class Debugger:
         self.live: Run | None = None
         self.runs: dict[str, Run] = {}
         self.run_checkpoints: dict[str, dict[str, Any]] = {}  # in-memory, of runs not shown
+        self.carried_circuits: dict[int, Any] = {}   # id -> circuit, built by an earlier run
 
     @property
     def family(self) -> str:
@@ -130,6 +131,7 @@ class Debugger:
         run = Run(self.adapter, self.tokens(prompt), **options)
         run.until(f"L0.{run.program.names[0]}")
         run.name = name
+        self._carry_circuits(run)
         self.runs[name] = run
         self.live = run
         return run
@@ -247,10 +249,25 @@ class Debugger:
         project = self._project("restart")
         found = recipes.find_checkpoint(project, name, session_id=self.session_id)
         if found is None:
-            raise Refused(f"no durable checkpoint {name!r} in {project.root}")
+            raise Refused(f"no durable checkpoint {name!r} in this project "
+                          f"(session {self.session_id})")
         run = self.replay(recipes.load(project, found["body"]["recipe"]))
+        self._carry_circuits(run)
         self.live = run
         return run
+
+    def _carry_circuits(self, run: Run) -> None:
+        """Keep the circuit ledger across a new run: the circuits of the run this one replaces
+        (the live one) join ``run``'s ledger, so ``circuit show ID`` still reads them and new
+        ids continue after them; ``carried_circuits`` holds the ones that belong to an earlier
+        run (a circuit record is sealed and independent of the run that built it)."""
+        from mdb.analysis import circuits
+
+        if self.live is None or self.live is run:
+            return
+        earlier = circuits.ledger(self.live)
+        circuits.ledger(run).update(earlier)
+        self.carried_circuits.update(earlier)
 
     def replay(self, recipe: dict[str, Any]) -> Run:
         """A new run restored to a replay recipe of this project (``RecipeError`` refusals:

@@ -180,6 +180,9 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
                 out["ablated"] = {name: last[name]["nodes"] for name in ("retained",
                                                                         "complement")
                                   if "nodes" in last.get(name, {})}
+            if getattr(ctx.debugger, "carried_circuits", {}).get(id) is circuit:
+                out["from_previous_run"] = True   # built by an earlier run: its tokens are not
+                return out                         # this run's, so no token text is attached
             texts = _source_texts(ctx, circuit.record["body"]["root"])
             if texts:
                 out["token_text"] = texts

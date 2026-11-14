@@ -1581,6 +1581,11 @@ def _op_info(ctx, subject, offset, limit):
                         "committed": [_edit_json(m) for m in committed_cells[:limit]],
                         "staged_total": len(staged_cells),
                         "committed_total": len(committed_cells)}
+        left = {kind: len(listed) - limit for kind, listed in
+                (("staged", staged_cells), ("committed", committed_cells))
+                if len(listed) > limit}
+        if left:    # +N more: never a silent cut at ``limit``
+            out["cells"]["omitted"] = left
     return out
 
 

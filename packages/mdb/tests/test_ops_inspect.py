@@ -308,3 +308,23 @@ def test_circuit_show_marks_what_the_last_test_ablated(debugger):
         ids.add(node["id"])
         stack += node.get("children", [])
     assert set(shown["ablated"]["retained"]) | set(shown["ablated"]["complement"]) <= ids
+
+
+def test_circuits_survive_start_and_are_marked_as_from_a_previous_run():
+    ctx = open_tiny("qwen2", "bf16").ops()
+    dispatch(ctx, "start", {"prompt": PROMPT})
+    dispatch(ctx, "until", {"target": "t3.logits"})
+    first = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 1})
+    own = _clean(dispatch(ctx, "circuit", {"target": "show", "id": first["id"]}))
+    assert "from_previous_run" not in own
+    before = ctx.run
+    dispatch(ctx, "start", {"prompt": [1, 7, 9, 3]})
+    assert ctx.run is not before
+    dispatch(ctx, "until", {"target": "t3.logits"})
+    shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": first["id"]}))
+    assert shown["record"]["id"] == first["record"]["id"]
+    assert shown["from_previous_run"] is True and "token_text" not in shown
+    second = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 1})
+    assert second["id"] == first["id"] + 1          # ids continue, none reused
+    fresh = _clean(dispatch(ctx, "circuit", {"target": "show", "id": second["id"]}))
+    assert "from_previous_run" not in fresh

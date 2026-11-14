@@ -704,3 +704,17 @@ def test_values_at_a_later_row_stay_under_edits_committed_in_an_earlier_row(debu
             dispatch(ctx, "until", {"target": target})
         prov = _prov(dispatch(ctx, "print", {"address": target}))
         assert [u["address"] for u in prov["under_edits"]] == [f"t{ROW}.L0.v"], target
+
+
+def test_info_edits_counts_the_edits_of_a_layer_it_cannot_list():
+    """70 committed edits in one layer: ``limit`` (at most 64) lists that many and says how many
+    were left out and how many there are."""
+    dbg = open_tiny("qwen2", "fp32")
+    run = dbg.run([1, 5, 9, 3])
+    run.until("t3.L0.h")
+    for i in range(70):
+        run.set("t3.L0.h_out", 0.01 * (i + 1), "add")
+    run.until("t3.L1.h")
+    info = dispatch(dbg.ops(run), "info", {"subject": "edits", "limit": 64})
+    (layer,) = info["committed"]
+    assert layer["edits_total"] == 70 and len(layer["edits"]) == 64 and layer["omitted"] == 6

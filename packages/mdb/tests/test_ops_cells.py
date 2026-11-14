@@ -261,3 +261,14 @@ def test_seek_with_a_run_name_switches_to_that_run_and_moves_it(debugger):
     with pytest.raises(Refused, match=r"no run named 'nobody'.*have: .*boiling"):
         dispatch(ctx, "seek", {"target": "nobody:t3.L0.p"})
     assert ctx.run is donor
+
+
+def test_info_edits_says_how_many_cell_edits_it_left_out(debugger):
+    ctx = _ctx(debugger)
+    dispatch(ctx, "set", {"target": A, "value": f"boiling:{A}"})
+    dispatch(ctx, "set", {"target": B, "value": f"boiling:{B}"})
+    info = dispatch(ctx, "info", {"subject": "edits", "limit": 1})
+    assert len(info["cells"]["staged"]) == 1 and info["cells"]["staged_total"] == 2
+    assert info["cells"]["omitted"] == {"staged": 1}
+    full = dispatch(ctx, "info", {"subject": "edits", "limit": 2})
+    assert "omitted" not in full["cells"] and unlabelled(info) == []

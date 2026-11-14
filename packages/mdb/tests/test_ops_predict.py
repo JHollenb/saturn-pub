@@ -252,3 +252,44 @@ def test_an_interrupt_at_any_session_restore_of_a_whatif_leaves_the_session(debu
             break  # past the what-if's last native restore
         interrupted_at.append(nth)
     assert len(interrupted_at) >= 2, interrupted_at
+
+
+@pytest.mark.parametrize("where", ["restore-call", "finally-entry"])
+def test_an_interrupt_before_the_final_restore_starts_still_restores_the_session(
+        debugger, monkeypatch, where):
+    """Ctrl-C landing before the what-if's final restore has done anything (at the entry of
+    the ``finally`` that restores, or at the call): the restore still completes, the edit
+    measured is not left staged, and the interrupt is raised afterwards."""
+    from mdb.engine.run import Run
+
+    _, cursor, address, value, op, consumer, _ = SITES[3]
+    run = debugger.run(PROMPT)
+    run.until(cursor)
+    before = state_digest(run)
+    fired = []
+    if where == "restore-call":
+        original = Run.restore
+
+        def restore(self, checkpoint, *, defer_interrupt=False):
+            if defer_interrupt and not fired:
+                fired.append(1)
+                raise KeyboardInterrupt     # before the restore ran
+            return original(self, checkpoint, defer_interrupt=defer_interrupt)
+
+        monkeypatch.setattr(Run, "restore", restore)
+    else:
+        original = propagate._complete_restore
+
+        def complete(run_, checkpoint, state):
+            if not fired:
+                fired.append(1)
+                raise KeyboardInterrupt     # the interrupt lands before the restore starts
+            return original(run_, checkpoint, state)
+
+        monkeypatch.setattr(propagate, "_complete_restore", complete)
+    with pytest.raises(KeyboardInterrupt):
+        whatif(run, Edit(address, value, op), consumer)
+    monkeypatch.undo()
+    assert fired
+    assert state_digest(run) == before
+    assert run.edits == [] and run.where == cursor
