@@ -1,7 +1,7 @@
 # mdb
 
 mdb is a debugger for language models, in the spirit of gdb. It runs a loaded Hugging Face
-decoder (Qwen2 or Qwen3) and stops inside each native layer at named values called ports, where
+decoder (Qwen2, Qwen3, Llama or Mistral; gemma is not supported, M32) and stops inside each native layer at named values called ports, where
 you can read them, edit them, checkpoint and rewind. Every number it shows carries a label that
 says how the number was obtained.
 
@@ -60,7 +60,7 @@ staged at t3.L1.p: none
 `mdb engine MODEL [PROMPT]` names what to debug, as `gdb PROGRAM` does. `MODEL` is a checkpoint
 directory, the name of a model in the local Hugging Face cache (`mdb engine qwen2.5-1.5b
 "Weather: freezing"`; the name lookup was run against a real cache, the model was not loaded
-here), `tiny:qwen2` or `tiny:qwen3`, or the address of a running `mdb serve` (see
+here), `tiny:qwen2`, `tiny:qwen3`, `tiny:llama` or `tiny:mistral` (the same four as `--tiny` of `mdb engine` and `mdb serve`), or the address of a running `mdb serve` (see
 [Live and remote sessions](#live-and-remote-sessions-mdb-serve)). Nothing is ever downloaded; a
 name that matches no cached model, or several, is refused with the candidates. `--project DIR`
 attaches a project, which makes checkpoints durable.
@@ -224,8 +224,9 @@ in which case it lands after the read; the reply says which. `mix DOSE` is
 `frame main:` switch; `info runs` lists them. `ORIGIN:ADDR` takes a value from another run, a
 checkpoint or a stored session of the same model and numeric scope: into a cell, as `v` or `kr`
 occurrences or cache cells (`k`/`kn` occurrences are refused, before RoPE); into a port, as any
-occurrence of the same selected shape (the activation patching example above). `seek` does not switch runs
-(use `frame NAME:`), and a target without a row (`seek L20.p`) is on the cursor's row.
+occurrence of the same selected shape (the activation patching example above). `seek b:t3.L1.p`
+makes run `b` current, as `frame b:` does, and moves it there (a run name needs the full
+occurrence, `b:t3.L1.p`, not `b:L1.p`); a target without a row (`seek L20.p`) is on the cursor's row.
 
 ```
 (mdb) info runs
@@ -247,7 +248,7 @@ edits come from one cached full-layer probe (64 layers kept), not a rebuild per 
 
 One line per port, in native execution order, generated from the port program
 (`mdb.engine.ports.program_for`); `info ports` and `list` print the same. The tables here are kept by hand. Proof IDs refer to
-`obsidian/model-math/` (P01-P33). On Qwen3, `qr` and `kr` take `qn` and `kn`.
+`obsidian/model-math/` (P01-P33). On Qwen3, `qr` and `kr` take `qn` and `kn`. Llama and Mistral have the Qwen2 list (`info program` on `tiny:llama`: `h a q k v qr kr s p A o r n g sg u f m h_out`); a projection without bias contributes no bias term, and a config outside a family's premises (a non-silu activation, Llama `mlp_bias`) is refused by `attach`, `trace` and `program_for`. The families come from one table, `mdb.engine.ports.FAMILIES`.
 | Port | Read at | Operator | Proofs |
 |---|---|---|---|
 | `h` | decoder layer input | h = layer input (residual stream) | P01 |
@@ -288,7 +289,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit show ID` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), show as a walk; `circuit test ID` is disabled (issue M4) |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit show ID [node=NODEID]` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), show as a walk (`node=` opens one stored page of a circuit that did not fit one record); `circuit test ID` is disabled and refuses (issue M4) |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
 | `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |
@@ -308,7 +309,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `info` | `info ports\|breakpoints\|watch\|display\|checkpoints\|edits\|program\|runs [offset=N] [limit=N]` | read | Show debugger tables or the program (lists are paged: offset=, limit=) |
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
-| `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
+| `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer; `print M[a,b]` (also `x`, `display`) is the measured logit difference, refused before the logits stop |
 | `promptset` | `set load NAME FILE \| set define NAME ITEMS \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file (not from the web), define a set inline, show or list sets, read a stored each result (the REPL's set load / set show) |
 | `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
@@ -327,7 +328,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
 | `until` | `until ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
 | `up` | `up [N] [PORT]` | navigate | Move the focus to a producer (toward the layer input), N times; `up PORT` picks the producer by name, the result lists the alternatives |
-| `verify` | `verify [ID ...]` | mutate | Compare open forecasts whose target the cursor has passed with the native values (residual, bound, order) |
+| `verify` | `verify [ID ...]` | mutate | Compare open forecasts whose target the cursor has passed with the native values: native against the emulated prediction in dtype spacings, `confirmed` / `not confirmed` / `unresolved`, the rounding effect against exact, and the order proof (the op's own help text still describes the removed 3 x sqrt(n) floor, see Known limits) |
 | `watch` | `watch ADDR [change\|level\|edge] [if PREDICATE]` | mutate | Watch an address: stop when it changes (or a predicate holds: level/edge); cache cells (cache.L<i>.k\|v) are evaluated at boundary stops only |
 | `whatif` | `whatif ADDR=EXPR [replace\|add\|scale\|mix DOSE] consumer=M[a,b]\|logits[i]\|ADDR` | navigate | Predicted, then natively measured change of a consumer under one edit; the session is left exactly where it was |
 | `where` | `where` | read | Show the cursor, its operator and the context tokens |
@@ -358,7 +359,7 @@ means the same in both.
 ```python
 import torch, mdb
 
-model = mdb.open_tiny("qwen2").model         # any loaded Qwen2/Qwen3 causal LM
+model = mdb.open_tiny("qwen2").model         # any loaded Qwen2/Qwen3/Llama/Mistral causal LM
 batch = torch.tensor([[1, 5, 9, 3], [2, 6, 10, 4]])
 with mdb.trace(model, ports=["L1.p", "L1.s", "L1.m", "L0.h"]) as t, torch.no_grad():
     model(batch)                             # the experiment's own forward
@@ -510,8 +511,13 @@ Mass is summed over the heads and layers that read the binding, so it can exceed
 verdicts follow the rule in [Verdicts](#verdicts-p20).
 
 `circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
-whatever is not listed stays in the record as `+N more` and `remainder` nodes. `circuit test` is
-disabled for now (issue M4). `compare` measures two edits separately and together:
+whatever is not listed stays in the record as `+N more` and `remainder` nodes; a subtree that was
+dropped without expanding is recorded as not examined, and one that does not fit one record is a
+`paged` pointer to a sha256-checked child page (`circuit show ID node=NODEID`). `circuit test` is
+disabled (M4): it tested sufficiency by zero-ablating every node outside the circuit, which on the
+real model is 26,924 nodes, moves the margin by 27.75 and always says "not sufficient"; the op
+refuses with `circuit test is disabled: zero-ablating the complement says nothing on a real model
+(issue M4)`. `compare` measures two edits separately and together:
 
 ```
 (mdb) circuit M[4,9] top=2 depth=3
@@ -683,7 +689,10 @@ remote prompt `quit` ends the client and leaves the session as it is, `source FI
 client's file, and Ctrl-C interrupts the op the server is running. From Python:
 `mdb.repl.remote.Remote(url).op("print", address="p")` returns the JSON that `--json` prints.
 The server has no authentication and binds loopback; use a tunnel (`ssh -L 8799:127.0.0.1:8799
-host`). `--allow-remote` and `--allow-host` exist but add no authentication.
+host`). `--allow-remote` and `--allow-host` exist but add no authentication. One SIGTERM ends `mdb serve`
+even with a browser's events socket open (`tests/test_serve_sigterm.py`). `--tiny` takes the same
+four families as `mdb engine`. The `/op` route refuses `promptset load` (it reads a file on the
+server); send a set with `promptset define`.
 
 ## Lanes
 
@@ -708,15 +717,78 @@ cd $W/packages/mdb && env PYTHONPATH=$W/src:$W/packages/mdb/src OMP_NUM_THREADS=
 layers (`core`, `engine`, `analysis`, `ops`, `repl`, `serve`) import only downward; `import mdb`
 loads no torch. Every automated test uses a random tiny CPU model (issue M15).
 
+Run the test files of the module you touched, not the whole suite (it is large and loads many
+tiny models; on a small laptop keep to one Python process at a time). Examples:
+`tests/test_ops_registry.py` (the op table), `tests/test_engine_run.py` (the stepper),
+`tests/test_analysis_whatif_modes.py` (whatif at any cursor), `tests/test_repl_golden.py` (the
+transcripts in `tests/repl_golden/`; after an intended change regenerate one with
+`MDB_UPDATE_GOLDEN=1 ... pytest tests/test_repl_golden.py -k NAME` and read the diff).
+`tests/test_deep_models.py` runs every analysis op on a 40-layer and a 70-layer tiny model (M40:
+no op result may exceed the record bound). The serve tests (`tests/test_serve_*.py`) need the
+environment of the common harness (`fastapi`, `httpx`) and skip with `importorskip` elsewhere,
+so a pass in the plain venv says nothing about the server. The tests of `saturn_pub` live in
+`$W/tests` (run them from `$W` with `PYTHONPATH=$W/src`).
+
 ## Measured on a real model
 
 Qwen2.5-1.5B, bf16, CUDA, eager attention, RTX 4080, torch 2.13.0+cu130, transformers 5.13.1,
-engine commit `b440ac6`, via mrun (job-301fd6de7034, job-2c1cebccd74d). All numbers measured.
+through mrun; one prompt family (`Description: icy / Temperature: cold / ... / Temperature:`, 22
+tokens, margin `M[" hot"," cold"]`). Every number is measured; logs are under
+`results/engine-r5-20261113/` and `results/engine-r6-20261113/` (local, not tracked).
 
-- port step 2.8 ms; layer commit 5.2 ms; restore 4.8 ms; checkpoint 631 bytes; token 189 ms
-  plain, 213 ms stepped; peak host memory 3.9 GB (the model load)
+Cost and size (round 4, engine commit `b440ac6`, job-301fd6de7034, job-2c1cebccd74d; the
+checkpoint size is from round 5, job-5e7d47663d29, revision 3472a33 plus the round-5 working tree):
+
+- port step 2.8 ms; layer commit 5.2 ms; restore 4.8 ms; checkpoint 739 bytes (earlier 631);
+  token 189 ms plain, 213 ms stepped; peak host memory 3.9 GB (the model load)
 - `explain` 0.28 s; `symbols` 0.40 s; `whatif` 1.9 s; `circuit` depth 2 / 3: 0.61 s / 0.46 s;
-  `reads` 0.20 s, or 5.4 s with causal verdicts (issue M6)
+  `reads` 0.20 s, or 5.4 s with causal verdicts (round 4; M6 later made the verdicts share one
+  excursion, measured on a tiny model only)
+- round 5, job-5e7d47663d29 (the session timings the job printed; the log does not name the
+  device): load + attach 3.74 s, `checkpoint` 0.29 s, `restart` 0.01 s, `explain M[a,b]` 0.26 s,
+  `reads t18 ... causal=false` 0.52 s, `whatif` of a cache cell 2.25 s (2.19 s with `mix 0.5`)
+- round 6, job-c5130b0aaf7e: `verify` took 0.00 to 0.01 s per forecast, per its log lines
+
+Rounding: exact math is not what the dtype computes (round 6, M42, job-c5130b0aaf7e, engine
+revision `df7d715` plus working-tree `forecast.py`, `verdict.py`, `kinds.py`; 3 prompts, `forecast`
+sealed at `L0.h` and at `L14.h`, then `verify`; bf16 28 layers and an fp32 2-layer cut of the same
+model):
+
+- the emulated prediction is bit-equal to native at every stop checked: 0.0 spacings in every
+  `mdb` seal/verify pair of the log (all `confirmed`), bf16 and fp32
+- the exact (float64) chain of the same operands is far off at `L0.m`: bf16 34.7, 48.4 and 78.0
+  spacings for the three prompts (fp32 cut: 30.9 to 39.4); at the logits 1.4 to 1.6 spacings (bf16,
+  sealed at `L0.h`)
+- origin, bf16 prompt 0 (t21): `t21.L0.s[h3]`, a score of spacing 64 at |s| 1.51e+04; rounding ties
+  the top scores, so the native softmax is not the softmax of the real scores. Prompt 1 names
+  `t11.L0.p[h1]` (spacing 64 at |s| 9.47e+03)
+- a float64 chain rounded once per sum is not enough (0 to 8 spacings off in bf16, 1 to 35 in fp32,
+  M42 resolution)
+
+Cross-run head patch (M43, job-59cba8de26fc, revision `f0a483a`): `whatif L20.A[h5] =
+clean:L20.A[h5] --consumer M[" hot"," cold"]`, with the clean run on `boiling` and the edited run
+on `freezing`, moves the margin from -4.75 to -0.375 (native dM 4.375, exact 4.2303, residual
+0.14467, floor 0.25, `effect`). Before the fix this failed on the real model with "Expected all
+tensors to be on the same device, but found at least two devices, cuda:0 and cpu" (job-176bc5bdcee7;
+the donor block was on the GPU, the index on the host).
+
+Whatif exact is the same at both cursors (job-c772b1dfb576, revision `8cc8e55`): `whatif L20.m =
+clean:L20.m` sealed at `L0.h` (mode ahead) and again after `until logits` (mode rewind) both give
+exact dM 0.5074 on measured operands (0.50742 in the verdict line of each) and `whatif L20.A[h5]
+= clean:L20.A[h5]` gives 4.2145 at both; a no-op `L20.m *= 1` gives exact 0, native 0.
+
+Prompt set (job-c772b1dfb576): six temperature prompts (freezing, boiling, frosty, scorching,
+chilly, burning), margin `M[$answer,$foil]` 3.75 to 6.375, mean 4.7708, 6/6 positive. `each temp:
+whatif L20.A[h5] *= 0` gives a mean delta of -1.6042 (min -2, max -0.9375), 6/6 negative, all six
+`effect`. `each temp: whatif L20.A[h5] = @pair:L20.A[h5]` (head output from the opposite prompt)
+gives a mean delta of -4.6719 (min -5.1875, max -4.375), 4/4 negative; the other two items
+(frosty, scorching, prompts of 23 and 24 tokens) were refused because the pair address named a
+prompt row; M53 (851c41a) changed that to the paired item's last row, and it was not rerun on the
+real model. `each temp: reads t@last` found reads that are `unresolved` at the noise level (M51).
+
+Other models: SmolLM2-360M (Llama family), bf16 CUDA on Beast, job-d16ba4fd134b (M24 resolution):
+the selfcheck passed with 576 stop probes and 0 mismatches, port step 3.0 ms, stepped against the
+full forward max |dlogit| 0.28. A real Mistral checkpoint was not run.
 
 The stepped run is bitwise equal to Hugging Face's incremental program (prefill plus one
 token). Against one full forward over the whole prompt the largest logit difference is 0.25
@@ -727,8 +799,10 @@ token). Against one full forward over the whole prompt the largest logit differe
 Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below are its `issue`.
 
 - `attach` needs eager attention, one sequence (batch 1) and frozen weights in eval mode;
-  `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2 and
-  Qwen3 only, and Qwen3 at real size is not run (M14).
+  `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2,
+  Qwen3, Llama and Mistral (`mdb.engine.ports.FAMILIES`); not gemma or gemma2 (M32). Real
+  models run so far: Qwen2.5-1.5B and SmolLM2-360M (Llama). Qwen3 at real size and a real
+  Mistral checkpoint are not run (M14, M24).
 - A checkpoint is bound to its numeric scope (thread count, determinism flag, matmul
   precision, CUDA reduced-precision reduction flags); restoring under another scope is refused.
 - Memory: trail marks share the state a step did not change, so a mark costs about what its step wrote (one layer's new K/V row, the hidden carrier, the logits); `Run.held_bytes()` measures it, and `retain_rows` bounds it further.
@@ -737,15 +811,45 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   makes 26, but native code then has computed ports past the cursor
   (`run.status()["computed_past_cursor"]`).
 - A stepped run equals Hugging Face's incremental program, not one full forward (M10).
-- `circuit test` is disabled for now (issue M4).
-- Open items are in `issues.jsonl`: M6, M9, M11-M17 (and any later ids), M7 deferred, M10 a
-  known limit.
+- `circuit test` is disabled and refuses (M4): zero-ablating the complement of a circuit
+  (26,924 nodes on the real model, job-eb4248434df4: retained delta 1.8125, complement delta
+  27.75) always says "not sufficient". It comes back when a reference-run ablation (mean or donor
+  run, now possible with `NAME:ADDR` values) is built.
 - Running on mrun's native kernels is not supported; Hugging Face models are the supported
-  path (issue M7).
+  path (M7, deferred; the proxy over the store seam was measured feasible, see the ledger).
+- A port edit acts on the cursor's row only, and prompt rows prefilled in one call have no
+  ports (M35); a replayed (batched-prefill) and a token-by-token run of the same prompt can
+  differ by one bf16 step (M26, same cause class as the M5 answer). `prefill=K` and `sweep`
+  address these, see [Prefill split and position patching](#prefill-split-and-position-patching);
+  the ledger states whether the two issues are closed.
+- A cell `whatif` is refused (prediction only; the native measurement runs) when the first
+  affected row has not started at the cursor (M9).
+- Verdicts: the floor is `max(|residual|, 2 x spacing)` with the 2 supplied, and after M46 the
+  residual is edited-run rounding minus base-run rounding, so reads at the noise level are
+  `unresolved` (on the real model two of the top three reads for the hot/cold margin, M51). The
+  accumulation premise is conservative: on bf16 CUDA every bound for sums of 256 or more terms is
+  `bound refused`, although a measurement on an RTX 4080 found the linear stages bitwise equal with
+  the flag on and off (M50). Bounds never decide a verdict.
+- On MPS (no float64) `whatif` fails with `a numeric claim needs a finite number` (M44); CPU and
+  CUDA are the tested devices.
+- No dictionary or interpretable unit (M23, by choice: a candidate is a reader role declared
+  from a transplant result). Two circuit systems exist, the lane-era `discover_circuit` (ranks by
+  write norm, picks the attention sink) and the engine's `circuit`; use the engine's (M25).
+- The help text of two ops lags the code: `verify` still describes the removed 3 x sqrt(n) floor
+  and `circuit` still says "test by native ablation" (`ops/predict.py`, `ops/inspect.py`; not in
+  the ledger yet).
+- Package hygiene (M13: `experiments/`, `examples/`, `results/`, `docs/` of the lane era still
+  live in `packages/mdb`; bare `mdb run|open|attach` still dispatch to lanes), savings left out of
+  the cast round because they change float64 digits (M16), and only tiny-model tests in the
+  repository (M15: the three real-model faults of the last rounds, the 48 s per-port rebuild, the
+  17.6 GB float64 weight copy and the rounded RoPE buffer, were visible only on a real model; the
+  device mix, the op-result cap and the verify floor of rounds 5 and 6 as well).
 
 ## Not built yet
 
 - `trace(project=)`.
-- `export` (a walkthrough bundle of records and pointers) and `mdb serve --model` as an mrun
-  job with the REPL on a tunnel; port programs for Qwen3 at real size and FLUX.2 Klein (all
-  M14).
+- `export` (a walkthrough bundle of records and pointers): the verb answers "not built yet".
+- `mdb serve --model` as an mrun job with the REPL connected through a tunnel (no remote parity
+  run on the GPU machine yet), port programs for Qwen3 at real size and FLUX.2
+  Klein (M14).
+- gemma and gemma2 port programs (M32); the circuit-test replacement (M4); named units (M23).
