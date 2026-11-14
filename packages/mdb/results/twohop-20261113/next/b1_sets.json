@@ -1,0 +1,3102 @@
+{
+ "sets": {
+  "countries": [
+   5159,
+   5616,
+   6323,
+   6778,
+   6864,
+   8330,
+   8359,
+   9625,
+   9856,
+   10259,
+   11093,
+   11862,
+   12623,
+   13224,
+   14648,
+   14867,
+   15344,
+   15893,
+   16663,
+   17009,
+   17689,
+   18753,
+   20500,
+   23190,
+   23968,
+   24427,
+   25296,
+   25662,
+   27602,
+   29467,
+   31503,
+   31677,
+   32961,
+   33000,
+   33150,
+   33311,
+   34340,
+   34898,
+   36255,
+   36666,
+   38501,
+   39271,
+   42776,
+   47568,
+   47747,
+   52355,
+   58719,
+   59357,
+   61978,
+   70315,
+   71530,
+   72437,
+   73477,
+   90750,
+   94004,
+   94628,
+   95744
+  ],
+  "cities": [
+   6515,
+   7148,
+   12095,
+   19846,
+   21718,
+   22415,
+   24081,
+   25445,
+   26194,
+   26549,
+   32166,
+   32877,
+   37169,
+   37741,
+   45826,
+   46287,
+   50189,
+   52082,
+   52550,
+   52695,
+   54578,
+   55218,
+   56564,
+   57023,
+   57858,
+   59016,
+   61625,
+   61953,
+   63033,
+   63061,
+   67289,
+   68790,
+   69595,
+   70244,
+   72176,
+   76334,
+   78563,
+   80701,
+   85875,
+   86545,
+   91432,
+   94311,
+   96525
+  ],
+  "languages": [
+   5938,
+   6364,
+   8522,
+   8585,
+   10769,
+   14811,
+   15154,
+   16134,
+   17860,
+   23234,
+   23734,
+   26392,
+   30109,
+   31984,
+   33150,
+   33625,
+   34117,
+   36266,
+   42188,
+   43680,
+   44621,
+   49861,
+   56769,
+   57853,
+   58829,
+   88624
+  ],
+  "persons_surname": [
+   328,
+   393,
+   422,
+   431,
+   444,
+   472,
+   730,
+   3089,
+   3128,
+   3616,
+   4509,
+   5016,
+   6569,
+   8446,
+   10882,
+   12193,
+   12839,
+   12886,
+   16171,
+   22950,
+   26212,
+   26649,
+   29311,
+   46300,
+   51190,
+   51350,
+   53653,
+   57025,
+   61450,
+   64606,
+   68061,
+   75300,
+   77476,
+   79576,
+   82176,
+   87309,
+   93411
+  ],
+  "persons_given": [
+   328,
+   431,
+   434,
+   444,
+   472,
+   479,
+   2876,
+   2925,
+   3199,
+   3616,
+   3757,
+   4716,
+   6156,
+   9740,
+   10882,
+   12989,
+   13928,
+   20042,
+   21890,
+   23833,
+   24927,
+   29062,
+   32016,
+   32205,
+   42482,
+   50385,
+   57663,
+   65520,
+   68061,
+   69245,
+   70371,
+   74330,
+   84450,
+   87864,
+   91451,
+   94259
+  ]
+ },
+ "sizes": {
+  "countries": 57,
+  "cities": 43,
+  "languages": 26,
+  "persons_surname": 37,
+  "persons_given": 36
+ },
+ "creator": {
+  "Candide": "Voltaire",
+  "the opera Carmen": "Georges Bizet",
+  "the painting Impression, Sunrise": "Claude Monet",
+  "the Commentaries on the Gallic War": "Julius Caesar",
+  "The Arcades Project": "Walter Benjamin",
+  "the play Life Is a Dream": "Pedro Calderon de la Barca",
+  "the play Fuenteovejuna": "Lope de Vega",
+  "The Great Wave off Kanagawa": "Hokusai",
+  "the novel The Sound of Waves": "Yukio Mishima",
+  "the novel Kokoro": "Natsume Soseki",
+  "Eugene Onegin": "Alexander Pushkin",
+  "the novel Crime and Punishment": "Fyodor Dostoevsky",
+  "the novel A Hero of Our Time": "Mikhail Lermontov",
+  "The Metamorphosis": "Franz Kafka",
+  "the novel The Trial": "Franz Kafka",
+  "the Duino Elegies": "Rainer Maria Rilke",
+  "the novel Mrs Dalloway": "Virginia Woolf",
+  "the film The Great Dictator": "Charlie Chaplin",
+  "the poem Ode to a Nightingale": "John Keats",
+  "the Unfinished Symphony": "Franz Schubert",
+  "The Blue Danube waltz": "Johann Strauss II",
+  "the Tractatus Logico-Philosophicus": "Ludwig Wittgenstein",
+  "The Republic": "Plato",
+  "the book Fear and Trembling": "Soren Kierkegaard",
+  "the book Either/Or": "Soren Kierkegaard",
+  "the Rubik's Cube": "Erno Rubik",
+  "The Book of Disquiet": "Fernando Pessoa",
+  "the play Miss Julie": "August Strindberg",
+  "the novel Palace Walk": "Naguib Mahfouz"
+ },
+ "people": {
+  "Voltaire": [
+   "Voltaire",
+   "Voltaire"
+  ],
+  "Georges Bizet": [
+   "Georges",
+   "Bizet"
+  ],
+  "Claude Monet": [
+   "Claude",
+   "Monet"
+  ],
+  "Edith Piaf": [
+   "Edith",
+   "Piaf"
+  ],
+  "Julius Caesar": [
+   "Julius",
+   "Caesar"
+  ],
+  "Sophia Loren": [
+   "Sophia",
+   "Loren"
+  ],
+  "Ennio Morricone": [
+   "Ennio",
+   "Morricone"
+  ],
+  "Marlene Dietrich": [
+   "Marlene",
+   "Dietrich"
+  ],
+  "Alexander von Humboldt": [
+   "Alexander",
+   "Humboldt"
+  ],
+  "Walter Benjamin": [
+   "Walter",
+   "Benjamin"
+  ],
+  "Lope de Vega": [
+   "Lope",
+   "Vega"
+  ],
+  "Pedro Calderon de la Barca": [
+   "Pedro",
+   "Calderon"
+  ],
+  "Hokusai": [
+   "Hokusai",
+   "Hokusai"
+  ],
+  "Yukio Mishima": [
+   "Yukio",
+   "Mishima"
+  ],
+  "Natsume Soseki": [
+   "Natsume",
+   "Soseki"
+  ],
+  "Alexander Pushkin": [
+   "Alexander",
+   "Pushkin"
+  ],
+  "Fyodor Dostoevsky": [
+   "Fyodor",
+   "Dostoevsky"
+  ],
+  "Mikhail Lermontov": [
+   "Mikhail",
+   "Lermontov"
+  ],
+  "Franz Kafka": [
+   "Franz",
+   "Kafka"
+  ],
+  "Rainer Maria Rilke": [
+   "Rainer",
+   "Rilke"
+  ],
+  "Virginia Woolf": [
+   "Virginia",
+   "Woolf"
+  ],
+  "Charlie Chaplin": [
+   "Charlie",
+   "Chaplin"
+  ],
+  "John Keats": [
+   "John",
+   "Keats"
+  ],
+  "Franz Schubert": [
+   "Franz",
+   "Schubert"
+  ],
+  "Johann Strauss II": [
+   "Johann",
+   "Strauss"
+  ],
+  "Ludwig Wittgenstein": [
+   "Ludwig",
+   "Wittgenstein"
+  ],
+  "Plato": [
+   "Plato",
+   "Plato"
+  ],
+  "Pericles": [
+   "Pericles",
+   "Pericles"
+  ],
+  "Baruch Spinoza": [
+   "Baruch",
+   "Spinoza"
+  ],
+  "Soren Kierkegaard": [
+   "Soren",
+   "Kierkegaard"
+  ],
+  "Niels Bohr": [
+   "Niels",
+   "Bohr"
+  ],
+  "Harry Houdini": [
+   "Harry",
+   "Houdini"
+  ],
+  "Erno Rubik": [
+   "Erno",
+   "Rubik"
+  ],
+  "Fernando Pessoa": [
+   "Fernando",
+   "Pessoa"
+  ],
+  "Greta Garbo": [
+   "Greta",
+   "Garbo"
+  ],
+  "August Strindberg": [
+   "August",
+   "Strindberg"
+  ],
+  "Naguib Mahfouz": [
+   "Naguib",
+   "Mahfouz"
+  ],
+  "Marie Curie": [
+   "Marie",
+   "Curie"
+  ]
+ },
+ "truths": {
+  "d1:France": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "France",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Paris": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "France",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Eiffel Tower": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "France",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-lm:the Louvre": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "France",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-lm:Notre-Dame Cathedral": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "France",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Voltaire": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Voltaire",
+   "persons_surname": 10882,
+   "persons_given": 10882,
+   "bridge": "France",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Georges Bizet": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Georges Bizet",
+   "persons_surname": 61450,
+   "persons_given": 94259,
+   "bridge": "France",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Claude Monet": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Claude Monet",
+   "persons_surname": 3128,
+   "persons_given": 74330,
+   "bridge": "France",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Edith Piaf": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Edith Piaf",
+   "persons_surname": 393,
+   "persons_given": 3199,
+   "bridge": "France",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d4-work:Candide": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Voltaire",
+   "persons_surname": 10882,
+   "persons_given": 10882,
+   "bridge": "France",
+   "family": "d4-work",
+   "span": [
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d4-work:the opera Carmen": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Georges Bizet",
+   "persons_surname": 61450,
+   "persons_given": 94259,
+   "bridge": "France",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d4-work:the painting Impression, Sunrise": {
+   "country": 9625,
+   "city": 12095,
+   "language": 8585,
+   "person": "Claude Monet",
+   "persons_surname": 3128,
+   "persons_given": 74330,
+   "bridge": "France",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d1:Italy": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Italy",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Rome": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Italy",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Colosseum": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Italy",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-lm:the Trevi Fountain": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Italy",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:the Pantheon": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Italy",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-per:Julius Caesar": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": "Julius Caesar",
+   "persons_surname": 53653,
+   "persons_given": 69245,
+   "bridge": "Italy",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Sophia Loren": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": "Sophia Loren",
+   "persons_surname": 51190,
+   "persons_given": 70371,
+   "bridge": "Italy",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Ennio Morricone": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": "Ennio Morricone",
+   "persons_surname": 8446,
+   "persons_given": 2925,
+   "bridge": "Italy",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d4-work:the Commentaries on the Gallic War": {
+   "country": 15344,
+   "city": 21718,
+   "language": 14811,
+   "person": "Julius Caesar",
+   "persons_surname": 53653,
+   "persons_given": 69245,
+   "bridge": "Italy",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54
+   ],
+   "row": 54,
+   "n": 56
+  },
+  "d1:Germany": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Germany",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Berlin": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Germany",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Brandenburg Gate": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Germany",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:the Reichstag building": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Germany",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Marlene Dietrich": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": "Marlene Dietrich",
+   "persons_surname": 26212,
+   "persons_given": 2876,
+   "bridge": "Germany",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Alexander von Humboldt": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": "Alexander von Humboldt",
+   "persons_surname": 87309,
+   "persons_given": 20042,
+   "bridge": "Germany",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Walter Benjamin": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": "Walter Benjamin",
+   "persons_surname": 29311,
+   "persons_given": 32205,
+   "bridge": "Germany",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d4-work:The Arcades Project": {
+   "country": 9856,
+   "city": 19846,
+   "language": 5938,
+   "person": "Walter Benjamin",
+   "persons_surname": 29311,
+   "persons_given": 32205,
+   "bridge": "Germany",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d1:Spain": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Spain",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Madrid": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Spain",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Prado Museum": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Spain",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:Retiro Park": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Spain",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-per:Lope de Vega": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": "Lope de Vega",
+   "persons_surname": 64606,
+   "persons_given": 444,
+   "bridge": "Spain",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Pedro Calderon de la Barca": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": "Pedro Calderon de la Barca",
+   "persons_surname": 75300,
+   "persons_given": 42482,
+   "bridge": "Spain",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d4-work:the play Life Is a Dream": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": "Pedro Calderon de la Barca",
+   "persons_surname": 75300,
+   "persons_given": 42482,
+   "bridge": "Spain",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the play Fuenteovejuna": {
+   "country": 17689,
+   "city": 24081,
+   "language": 15154,
+   "person": "Lope de Vega",
+   "persons_surname": 64606,
+   "persons_given": 444,
+   "bridge": "Spain",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53
+   ],
+   "row": 53,
+   "n": 55
+  },
+  "d1:Japan": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Japan",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Tokyo": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Japan",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Senso-ji temple": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Japan",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-lm:the Meiji Shrine": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Japan",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:Shibuya Crossing": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Japan",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-per:Hokusai": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Hokusai",
+   "persons_surname": 472,
+   "persons_given": 472,
+   "bridge": "Japan",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Yukio Mishima": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Yukio Mishima",
+   "persons_surname": 77476,
+   "persons_given": 57663,
+   "bridge": "Japan",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Natsume Soseki": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Natsume Soseki",
+   "persons_surname": 328,
+   "persons_given": 23833,
+   "bridge": "Japan",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d4-work:The Great Wave off Kanagawa": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Hokusai",
+   "persons_surname": 472,
+   "persons_given": 472,
+   "bridge": "Japan",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53
+   ],
+   "row": 53,
+   "n": 55
+  },
+  "d4-work:the novel The Sound of Waves": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Yukio Mishima",
+   "persons_surname": 77476,
+   "persons_given": 57663,
+   "bridge": "Japan",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the novel Kokoro": {
+   "country": 6323,
+   "city": 26194,
+   "language": 10769,
+   "person": "Natsume Soseki",
+   "persons_surname": 328,
+   "persons_given": 23833,
+   "bridge": "Japan",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d1:Russia": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Russia",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Moscow": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Russia",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Kremlin": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Russia",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43
+   ],
+   "row": 43,
+   "n": 45
+  },
+  "d3-lm:Red Square": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Russia",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43
+   ],
+   "row": 43,
+   "n": 45
+  },
+  "d3-lm:Saint Basil's Cathedral": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Russia",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Alexander Pushkin": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Alexander Pushkin",
+   "persons_surname": 22950,
+   "persons_given": 20042,
+   "bridge": "Russia",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Fyodor Dostoevsky": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Fyodor Dostoevsky",
+   "persons_surname": 422,
+   "persons_given": 434,
+   "bridge": "Russia",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "row": 51,
+   "n": 53
+  },
+  "d3-per:Mikhail Lermontov": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Mikhail Lermontov",
+   "persons_surname": 444,
+   "persons_given": 91451,
+   "bridge": "Russia",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d4-work:Eugene Onegin": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Alexander Pushkin",
+   "persons_surname": 22950,
+   "persons_given": 20042,
+   "bridge": "Russia",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d4-work:the novel Crime and Punishment": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Fyodor Dostoevsky",
+   "persons_surname": 422,
+   "persons_given": 434,
+   "bridge": "Russia",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the novel A Hero of Our Time": {
+   "country": 8359,
+   "city": 22415,
+   "language": 8522,
+   "person": "Mikhail Lermontov",
+   "persons_surname": 444,
+   "persons_given": 91451,
+   "bridge": "Russia",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53
+   ],
+   "row": 53,
+   "n": 55
+  },
+  "d1:the Czech Republic": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Czech",
+   "family": "d1",
+   "span": [
+    35,
+    36,
+    37
+   ],
+   "row": 37,
+   "n": 39
+  },
+  "d2:Prague": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Czech",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Charles Bridge": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Czech",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-lm:the Astronomical Clock of the Old Town": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Czech",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d3-per:Franz Kafka": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": "Franz Kafka",
+   "persons_surname": 57025,
+   "persons_given": 65520,
+   "bridge": "Czech",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Rainer Maria Rilke": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": "Rainer Maria Rilke",
+   "persons_surname": 431,
+   "persons_given": 431,
+   "bridge": "Czech",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d4-work:The Metamorphosis": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": "Franz Kafka",
+   "persons_surname": 57025,
+   "persons_given": 65520,
+   "bridge": "Czech",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "row": 51,
+   "n": 53
+  },
+  "d4-work:the novel The Trial": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": "Franz Kafka",
+   "persons_surname": 57025,
+   "persons_given": 65520,
+   "bridge": "Czech",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d4-work:the Duino Elegies": {
+   "country": 33150,
+   "city": 67289,
+   "language": 33150,
+   "person": "Rainer Maria Rilke",
+   "persons_surname": 431,
+   "persons_given": 431,
+   "bridge": "Czech",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d1:the United Kingdom": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Britain",
+   "family": "d1",
+   "span": [
+    35,
+    36,
+    37
+   ],
+   "row": 37,
+   "n": 39
+  },
+  "d2:London": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Britain",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Big Ben": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Britain",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43
+   ],
+   "row": 43,
+   "n": 45
+  },
+  "d3-lm:Tower Bridge": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Britain",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43
+   ],
+   "row": 43,
+   "n": 45
+  },
+  "d3-lm:Buckingham Palace": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Britain",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43
+   ],
+   "row": 43,
+   "n": 45
+  },
+  "d3-per:Virginia Woolf": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "Virginia Woolf",
+   "persons_surname": 46300,
+   "persons_given": 12989,
+   "bridge": "Britain",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Charlie Chaplin": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "Charlie Chaplin",
+   "persons_surname": 26649,
+   "persons_given": 24927,
+   "bridge": "Britain",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:John Keats": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "John Keats",
+   "persons_surname": 6569,
+   "persons_given": 3757,
+   "bridge": "Britain",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d4-work:the novel Mrs Dalloway": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "Virginia Woolf",
+   "persons_surname": 46300,
+   "persons_given": 12989,
+   "bridge": "Britain",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the film The Great Dictator": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "Charlie Chaplin",
+   "persons_surname": 26649,
+   "persons_given": 24927,
+   "bridge": "Britain",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the poem Ode to a Nightingale": {
+   "country": 13224,
+   "city": 7148,
+   "language": 6364,
+   "person": "John Keats",
+   "persons_surname": 6569,
+   "persons_given": 3757,
+   "bridge": "Britain",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55
+   ],
+   "row": 55,
+   "n": 57
+  },
+  "d1:Austria": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Austria",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Vienna": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Austria",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Schonbrunn Palace": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Austria",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-lm:St. Stephen's Cathedral": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Austria",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-lm:the Belvedere palace": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Austria",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Franz Schubert": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Franz Schubert",
+   "persons_surname": 5016,
+   "persons_given": 65520,
+   "bridge": "Austria",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Johann Strauss II": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Johann Strauss II",
+   "persons_surname": 93411,
+   "persons_given": 87864,
+   "bridge": "Austria",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Ludwig Wittgenstein": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Ludwig Wittgenstein",
+   "persons_surname": 82176,
+   "persons_given": 84450,
+   "bridge": "Austria",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d4-work:the Unfinished Symphony": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Franz Schubert",
+   "persons_surname": 5016,
+   "persons_given": 65520,
+   "bridge": "Austria",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d4-work:The Blue Danube waltz": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Johann Strauss II",
+   "persons_surname": 93411,
+   "persons_given": 87864,
+   "bridge": "Austria",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53
+   ],
+   "row": 53,
+   "n": 55
+  },
+  "d4-work:the Tractatus Logico-Philosophicus": {
+   "country": 34898,
+   "city": 46287,
+   "language": 5938,
+   "person": "Ludwig Wittgenstein",
+   "persons_surname": 82176,
+   "persons_given": 84450,
+   "bridge": "Austria",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56
+   ],
+   "row": 56,
+   "n": 58
+  },
+  "d1:Greece": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Greece",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Athens": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Greece",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Acropolis": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Greece",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-lm:the Parthenon": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Greece",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Plato": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": "Plato",
+   "persons_surname": 68061,
+   "persons_given": 68061,
+   "bridge": "Greece",
+   "family": "d3-per",
+   "span": [
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-per:Pericles": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": "Pericles",
+   "persons_surname": 3616,
+   "persons_given": 3616,
+   "bridge": "Greece",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d4-work:The Republic": {
+   "country": 24427,
+   "city": 45826,
+   "language": 17860,
+   "person": "Plato",
+   "persons_surname": 68061,
+   "persons_given": 68061,
+   "bridge": "Greece",
+   "family": "d4-work",
+   "span": [
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d1:the Netherlands": {
+   "country": 25662,
+   "city": 37741,
+   "language": 23234,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Netherlands",
+   "family": "d1",
+   "span": [
+    35,
+    36
+   ],
+   "row": 36,
+   "n": 38
+  },
+  "d2:Amsterdam": {
+   "country": 25662,
+   "city": 37741,
+   "language": 23234,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Netherlands",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Rijksmuseum": {
+   "country": 25662,
+   "city": 37741,
+   "language": 23234,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Netherlands",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-lm:the Anne Frank House": {
+   "country": 25662,
+   "city": 37741,
+   "language": 23234,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Netherlands",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Baruch Spinoza": {
+   "country": 25662,
+   "city": 37741,
+   "language": 23234,
+   "person": "Baruch Spinoza",
+   "persons_surname": 3089,
+   "persons_given": 4716,
+   "bridge": "Netherlands",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d1:Denmark": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Denmark",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Copenhagen": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Denmark",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Tivoli Gardens": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Denmark",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:the Little Mermaid statue": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Denmark",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-per:Soren Kierkegaard": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": "Soren Kierkegaard",
+   "persons_surname": 730,
+   "persons_given": 328,
+   "bridge": "Denmark",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d3-per:Niels Bohr": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": "Niels Bohr",
+   "persons_surname": 51350,
+   "persons_given": 21890,
+   "bridge": "Denmark",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d4-work:the book Fear and Trembling": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": "Soren Kierkegaard",
+   "persons_surname": 730,
+   "persons_given": 328,
+   "bridge": "Denmark",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "row": 52,
+   "n": 54
+  },
+  "d4-work:the book Either/Or": {
+   "country": 34340,
+   "city": 63061,
+   "language": 43680,
+   "person": "Soren Kierkegaard",
+   "persons_surname": 730,
+   "persons_given": 328,
+   "bridge": "Denmark",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "row": 51,
+   "n": 53
+  },
+  "d1:Hungary": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Hungary",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Budapest": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Hungary",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Fisherman's Bastion": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Hungary",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d3-lm:the Szechenyi thermal bath": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Hungary",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "row": 48,
+   "n": 50
+  },
+  "d3-per:Harry Houdini": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": "Harry Houdini",
+   "persons_surname": 472,
+   "persons_given": 13928,
+   "bridge": "Hungary",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Erno Rubik": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": "Erno Rubik",
+   "persons_surname": 12839,
+   "persons_given": 9740,
+   "bridge": "Hungary",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d4-work:the Rubik's Cube": {
+   "country": 42776,
+   "city": 69595,
+   "language": 56769,
+   "person": "Erno Rubik",
+   "persons_surname": 12839,
+   "persons_given": 9740,
+   "bridge": "Hungary",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "row": 51,
+   "n": 53
+  },
+  "d1:Portugal": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Portugal",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Lisbon": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Portugal",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Belem Tower": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Portugal",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-lm:the Jeronimos Monastery": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Portugal",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Fernando Pessoa": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": "Fernando Pessoa",
+   "persons_surname": 79576,
+   "persons_given": 50385,
+   "bridge": "Portugal",
+   "family": "d3-per",
+   "span": [
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d4-work:The Book of Disquiet": {
+   "country": 33311,
+   "city": 80701,
+   "language": 42188,
+   "person": "Fernando Pessoa",
+   "persons_surname": 79576,
+   "persons_given": 50385,
+   "bridge": "Portugal",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50,
+    51
+   ],
+   "row": 51,
+   "n": 53
+  },
+  "d1:Sweden": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Sweden",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Stockholm": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Sweden",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Vasa Museum": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Sweden",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45
+   ],
+   "row": 45,
+   "n": 47
+  },
+  "d3-per:Greta Garbo": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": "Greta Garbo",
+   "persons_surname": 12193,
+   "persons_given": 479,
+   "bridge": "Sweden",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:August Strindberg": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": "August Strindberg",
+   "persons_surname": 4509,
+   "persons_given": 6156,
+   "bridge": "Sweden",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d4-work:the play Miss Julie": {
+   "country": 23190,
+   "city": 52082,
+   "language": 30109,
+   "person": "August Strindberg",
+   "persons_surname": 4509,
+   "persons_given": 6156,
+   "bridge": "Sweden",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d1:Egypt": {
+   "country": 14867,
+   "city": 52550,
+   "language": 34117,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Egypt",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Cairo": {
+   "country": 14867,
+   "city": 52550,
+   "language": 34117,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Egypt",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Khan el-Khalili bazaar": {
+   "country": 14867,
+   "city": 52550,
+   "language": 34117,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Egypt",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d3-per:Naguib Mahfouz": {
+   "country": 14867,
+   "city": 52550,
+   "language": 34117,
+   "person": "Naguib Mahfouz",
+   "persons_surname": 16171,
+   "persons_given": 29062,
+   "bridge": "Egypt",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d4-work:the novel Palace Walk": {
+   "country": 14867,
+   "city": 52550,
+   "language": 34117,
+   "person": "Naguib Mahfouz",
+   "persons_surname": 16171,
+   "persons_given": 29062,
+   "bridge": "Egypt",
+   "family": "d4-work",
+   "span": [
+    47,
+    48,
+    49,
+    50
+   ],
+   "row": 50,
+   "n": 52
+  },
+  "d1:Turkey": {
+   "country": 17009,
+   "city": 70244,
+   "language": 23734,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Turkey",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Ankara": {
+   "country": 17009,
+   "city": 70244,
+   "language": 23734,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Turkey",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Anitkabir": {
+   "country": 17009,
+   "city": 70244,
+   "language": 23734,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Turkey",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d1:Poland": {
+   "country": 27602,
+   "city": 72176,
+   "language": 31984,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Poland",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Warsaw": {
+   "country": 27602,
+   "city": 72176,
+   "language": 31984,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Poland",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Palace of Culture and Science": {
+   "country": 27602,
+   "city": 72176,
+   "language": 31984,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Poland",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+   ],
+   "row": 47,
+   "n": 49
+  },
+  "d3-per:Marie Curie": {
+   "country": 27602,
+   "city": 72176,
+   "language": 31984,
+   "person": "Marie Curie",
+   "persons_surname": 12886,
+   "persons_given": 32016,
+   "bridge": "Poland",
+   "family": "d3-per",
+   "span": [
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d1:South Korea": {
+   "country": 11862,
+   "city": 50189,
+   "language": 16134,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Korea",
+   "family": "d1",
+   "span": [
+    35,
+    36
+   ],
+   "row": 36,
+   "n": 38
+  },
+  "d2:Seoul": {
+   "country": 11862,
+   "city": 50189,
+   "language": 16134,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Korea",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Gyeongbokgung Palace": {
+   "country": 11862,
+   "city": 50189,
+   "language": 16134,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Korea",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+   ],
+   "row": 49,
+   "n": 51
+  },
+  "d1:Thailand": {
+   "country": 29467,
+   "city": 59016,
+   "language": 26392,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Thailand",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Bangkok": {
+   "country": 29467,
+   "city": 59016,
+   "language": 26392,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Thailand",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Grand Palace": {
+   "country": 29467,
+   "city": 59016,
+   "language": 26392,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Thailand",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d3-lm:Wat Arun": {
+   "country": 29467,
+   "city": 59016,
+   "language": 26392,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Thailand",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44
+   ],
+   "row": 44,
+   "n": 46
+  },
+  "d1:Finland": {
+   "country": 36255,
+   "city": 76334,
+   "language": 57853,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Finland",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Helsinki": {
+   "country": 36255,
+   "city": 76334,
+   "language": 57853,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Finland",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:Suomenlinna fortress": {
+   "country": 36255,
+   "city": 76334,
+   "language": 57853,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Finland",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  },
+  "d1:Norway": {
+   "country": 31503,
+   "city": 57858,
+   "language": 44621,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Norway",
+   "family": "d1",
+   "span": [
+    35
+   ],
+   "row": 35,
+   "n": 37
+  },
+  "d2:Oslo": {
+   "country": 31503,
+   "city": 57858,
+   "language": 44621,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Norway",
+   "family": "d2",
+   "span": [
+    40
+   ],
+   "row": 40,
+   "n": 42
+  },
+  "d3-lm:the Vigeland sculpture park": {
+   "country": 31503,
+   "city": 57858,
+   "language": 44621,
+   "person": null,
+   "persons_surname": null,
+   "persons_given": null,
+   "bridge": "Norway",
+   "family": "d3-lm",
+   "span": [
+    42,
+    43,
+    44,
+    45,
+    46
+   ],
+   "row": 46,
+   "n": 48
+  }
+ }
+}
