@@ -14,6 +14,13 @@ must resolve declared installed packages, never discover sibling checkout paths
 or patch `sys.path`. Private `saturn`, `common` and `common_harness` imports remain
 forbidden. Maintainer extraction tools require an explicit upstream source.
 
+The current engine is `src/mdb/{core,engine,analysis,ops,repl,serve}`; `README.md` in this
+directory is its documentation and `issues.jsonl` its open-issue ledger (each closed entry's
+`resolution` says what changed and what was measured). Layers import only downward and no
+lane module (`tests/test_import_contract.py`). Run the test files of the module you touch, on
+tiny CPU models; the serve tests need the common harness environment (`fastapi`) and skip
+elsewhere. Real-model checks go through mrun, and a number in the docs carries its job id.
+
 Run MDB's tests in a separate process from the root Saturn-pub suite to avoid
 test-module collisions. Test guards must allow public `saturn_pub` imports and
 continue blocking private workspace packages. Test installed wheels with their

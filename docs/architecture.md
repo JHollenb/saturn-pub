@@ -122,5 +122,8 @@ Adapter protocol, not a promise that every private prototype already has a publi
 MDB is independently installed from `packages/mdb`. It owns durable BenchSession
 history, managed execution-state pages, branch ownership and optional mrun worker
 integration. Its [documentation](mdb.md) and [qualification records](../packages/mdb/docs/QUALIFICATION.md)
-define that package's scope. Sharing a repository does not merge the executors or
+define that package's scope; those describe the lane-era tool. The current engine
+(`mdb engine`, `mdb serve`: ports, state cells, forecasts, prompt sets, web viewer; layers
+`core`, `engine`, `analysis`, `ops`, `repl`, `serve`, importing only downward and no lane
+module) is described in the [package README](../packages/mdb/README.md). Sharing a repository does not merge the executors or
 make their serialized cuts interchangeable.

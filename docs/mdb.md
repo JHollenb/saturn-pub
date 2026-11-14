@@ -1,4 +1,8 @@
-> Note: this page describes the lane-era `mdb` tool (now `mdb-lanes`). The current port-level engine (`mdb engine`, `mdb serve`, the web viewer) is documented in [../packages/mdb/README.md](../packages/mdb/README.md).
+> Note: this page describes the lane-era `mdb` tool (now `mdb-lanes`). The current port-level engine (`mdb engine`, `mdb serve`, the web viewer) is documented in [../packages/mdb/README.md](../packages/mdb/README.md). The engine
+installs three commands, `mdb engine`, `mdb serve` and `mdb version`, for Qwen2, Qwen3, Llama
+and Mistral decoders. Every other `mdb` command and `from mdb import BenchSession` below need
+the separate `mdb-lanes` plug-in (`pip install ./packages/mdb-lanes`); without it they answer
+"the mdb-lanes plug-in is not installed". With it, `mdb lanes VERB` runs them.
 
 # MDB: durable model debugging
 
