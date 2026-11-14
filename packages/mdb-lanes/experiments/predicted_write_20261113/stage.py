@@ -143,13 +143,14 @@ def items_map():
     return items
 
 
-def stage_panel(run, plans, plan, lease_index, vram_mb, ram_mb, est_wall_s, timeout_s):
+def stage_panel(run, plans, plan, lease_index, vram_mb, ram_mb, est_wall_s, timeout_s, leases_file=None):
     from mdb_lanes.attention_panels import Panel
     from mdb_lanes.flux_read_panels import RUN_SCHEMA, lease_roots
     plans = Path(plans)
     plan_json = json.loads((plans / f"{plan}.plan.json").read_text())
     seal = json.loads((plans / f"{plan}.seal.json").read_text())
-    leases = json.loads((plans / f"{plan}.leases.json").read_text())
+    leases_file = leases_file or f"{plan}.leases.json"
+    leases = json.loads((plans / leases_file).read_text())
     panel = Panel.from_json(plan_json)
     if panel.sha256() != seal["plan_sha256"] or leases["plan_sha256"] != seal["plan_sha256"]:
         raise ValueError("plan, seal and leases disagree")
@@ -157,7 +158,8 @@ def stage_panel(run, plans, plan, lease_index, vram_mb, ram_mb, est_wall_s, time
     items = items_map()
     roots = lease_roots(panel, lease, items)
     work = len(lease["branches"]) + len(roots)
-    tag = f"{plan}-{lease_index:02d}"
+    suffix = leases_file.removeprefix(f"{plan}.leases").removesuffix(".json")
+    tag = f"{plan}-{suffix + '-' if suffix else ''}{lease_index:02d}"
     passes = [dict(tag=tag, plan_file=f"plans/{plan}.plan.json", plan_sha256=seal["plan_sha256"],
                    seal_sha256=seal["seal_sha256"], lease=lease, precision="native", zero_method="delta",
                    reference_dir=None)]
@@ -198,7 +200,11 @@ def submit(run, priority, attempt):
     request = json.loads((run / "request.json").read_text())
     staged = json.loads((run / "staged-command.json").read_text())
     if (run / "submission.json").exists():
-        raise ValueError("already submitted")
+        prev = json.loads((run / "submission.json").read_text())
+        if attempt <= prev.get("attempt", 1):
+            raise ValueError(f"already submitted as attempt {prev.get('attempt', 1)} ({prev.get('job_id')}); "
+                             "pass --attempt N with N above it")
+        (run / f"submission.attempt{prev.get('attempt', 1)}.json").write_text(json.dumps(prev, indent=1) + "\n")
     for name, digest in request["source_hashes"].items():
         if name.startswith("mdb_lanes/"):
             continue            # checked by the worker bootstrap against the shipped wheel
@@ -229,7 +235,7 @@ def submit(run, priority, attempt):
                               est_wall_s=resource["est_wall_s"], timeout_s=resource["timeout_s"], priority=priority,
                               retry_on_kill=False, preflight=True,
                               note="mdb predicted-write experiment 2026-11-13: " + run.name)
-    save(run / "submission.json", {"job_id": str(job), "attempt": attempt})
+    (run / "submission.json").write_text(json.dumps({"job_id": str(job), "attempt": attempt}, indent=1) + "\n")
     return dict(job_id=str(job), run=str(run))
 
 
@@ -251,6 +257,9 @@ if __name__ == "__main__":
     p.add_argument("--plans", type=Path, required=True)
     p.add_argument("--plan", required=True)
     p.add_argument("--lease", type=int, required=True)
+    p.add_argument("--leases-file", default=None,
+                   help="leases file in --plans (default <plan>.leases.json); main.leases-r2.json repacks main "
+                        "without replicated branches (flux_read_panels.check_lease refuses those)")
     p.add_argument("--vram-mb", type=int, default=10400)
     p.add_argument("--ram-mb", type=int, default=20000)
     p.add_argument("--est-wall-s", type=int, default=400)
@@ -273,7 +282,7 @@ if __name__ == "__main__":
         print(json.dumps(PL.write(a.capture, a.out), indent=1))
     elif a.cmd == "panel":
         print(json.dumps(stage_panel(a.run.resolve(), a.plans, a.plan, a.lease, a.vram_mb, a.ram_mb, a.est_wall_s,
-                                     a.timeout_s)))
+                                     a.timeout_s, a.leases_file)))
     elif a.cmd == "qwen":
         print(json.dumps(stage_qwen(a.run.resolve(), a.vram_mb, a.ram_mb, a.est_wall_s, a.timeout_s)))
     else:
