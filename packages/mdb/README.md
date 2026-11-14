@@ -636,6 +636,29 @@ record (`core.kinds.SYMBOL`) is a schema plus bindings:
 - consumer and evidence: base, edited and delta `measured`, the verdict; origin: the donor value
   (run, address, sha256, cut), the run, its prefill split and its edits.
 
+Design choices (made in M23, 2026-11-14; each is a choice, not a constraint of the engine, and can
+be reversed):
+
+- A `no effect` or `unresolved` result is refused. It is not stored as an unbound symbol, so every
+  named symbol has a measured effect behind it.
+- A role names one row. For a word of several tokens that is its first token; the other tokens
+  are not part of the symbol (issue M61: measured weak effect on such words).
+- On a plain run (outside `each`) a role symbol may bind by the same-tokens-before-the-row rule.
+  Inside `each` it binds by the item's role only.
+- `break NAME` resolves the name once, when the breakpoint is set. It does not re-bind when the
+  run or the prompt changes.
+- A `whatif` whose source is another address of the same run counts as a transplant and can be
+  named.
+- Readers are measured at the consumer's row only. Reads of the source at other rows are not in
+  the record.
+- "Last `whatif`" and "last `compare`" are tracked per context (per REPL or per server session),
+  not globally.
+- `symbol show`, `symbol delete` and `symbols` work without a live run.
+- A name lives in the session. The record is stored in the project, but reopening the project does
+  not bring the name back (issue M60).
+- Names are expanded by a generic before/after hook in `ops.registry.dispatch`
+  (`registry.hook`), so every verb that takes an address accepts a name without its own code.
+
 Only a result with verdict `effect` is declared; `no effect`, `unresolved` or a scalar edit
 (an ablation, not a transplant) is refused and no record is made. The name stands for its address
 where an address is expected (`print`, `x`, `whatif`, `set`, `compare`, `break`, `reads`,
