@@ -134,3 +134,99 @@ def test_feature_bindings_carry_saelens_ids_that_saelens_agrees_with(tmp_path):
         assert c["feature"] in active
         assert c["activation"]["value"] == pytest.approx(active[c["feature"]], rel=1e-5,
                                                          abs=1e-5)
+
+
+def _tiny_qwen3_run():
+    import mdb
+    from mdb.engine.models import tiny_model
+
+    model = tiny_model("qwen3", "fp32", layers=2)
+    run = mdb.attach(model).run(TOKENS, prefill=0)      # every row stepped: ports at each row
+    run.until("t5.logits")
+    return model, run
+
+
+def test_pyvene_specs_collect_the_tensors_mdb_reads():
+    """The pyvene spec on a binding row (value cell: head_value_output, unit h.pos; residual:
+    model.layers[l].output / block_input, unit pos) collects mdb's value, with the Qwen3 shim."""
+    pytest.importorskip("pyvene")
+    from mdb.analysis import symbols
+    from mdb.analysis.forecast import Margin
+    from mdb.interop import names, pyvene_names
+
+    warnings.filterwarnings("ignore")
+    model, run = _tiny_qwen3_run()
+    assert set(pyvene_names.qwen3_shim()) <= {"Qwen3Model", "Qwen3ForCausalLM",
+                                              "Qwen3ForSequenceClassification"}
+    assert pyvene_names.qwen3_shim() == []                          # idempotent
+    dh = run.adapter.head_dim
+    for layer in range(2):
+        v = run.read_cache(layer, "v", staged=False)
+        for g in range(run.adapter.num_kv_heads):
+            for row in (1, 3, 5):
+                address = f"cache.L{layer}.v[kv{g},row={row}]"
+                got = pyvene_names.collect(model, TOKENS, address).reshape(-1)
+                assert float((got - v[0, g, row]).abs().max()) < 1e-6, address
+                row_spec = names.cell_names(layer, g, row, "v", head_dim=dh)["pyvene"]
+                found = pyvene_names.spec(address)
+                assert row_spec["component"] == found["component"]
+                assert (row_spec["unit_locations"]["h"], row_spec["unit_locations"]["pos"]) == \
+                    found["unit_locations"][0]
+        for port in ("h_out", "h"):
+            address = f"t3.L{layer}.{port}"
+            got = pyvene_names.collect(model, TOKENS, address).reshape(-1)
+            mine = run.read(address).reshape(-1)
+            assert float((got - mine).abs().max()) < 1e-5, address
+            assert names.residual_names(layer, port)["pyvene"]["component"] == \
+                pyvene_names.spec(address)["component"]
+    assert names.cell_names(0, 0, 1, "k", head_dim=dh)["pyvene"]["state"] == "no counterpart"
+    tab = symbols.table(run, consumer=Margin(5, 4, 9), foreign=True)
+    from mdb.core.records import verify_record
+
+    verify_record(tab.records[0])
+
+
+def test_circuit_tracer_node_ids_and_qwen3_locations_match_mdb():
+    """mdb's ct_* ids equal circuit-tracer 0.5.0's own Node ids, and the modules its Qwen3
+    mapping hooks (mlp.hook_in / mlp.hook_out / embed) hold mdb's n, m and emb values."""
+    pytest.importorskip("nnsight")
+    try:
+        from mdb.interop import circuit_tracer_names as ctn
+
+        ctn.import_circuit_tracer()
+    except ImportError as error:
+        pytest.skip(f"circuit_tracer does not import: {error}")
+    from circuit_tracer.frontend.graph_models import Node
+
+    from mdb.interop import names, nn
+
+    assert names.ct_node(3, 7, 1234)["id"] == Node.feature_node(3, 7, 1234).node_id
+    assert names.ct_error_node(3, 7)["id"] == Node.error_node(3, 7).node_id
+    assert names.ct_token_node(7, 42)["id"] == Node.token_node(7, 42).node_id
+    assert names.ct_logit_node(7, 42, 28)["id"] == Node.logit_node(7, 42, "x", 28).node_id
+    warnings.filterwarnings("ignore")
+    model, run = _tiny_qwen3_run()
+    nm = nn.wrap(model)
+    saved = {}
+    with torch.no_grad(), nm.trace(torch.tensor([TOKENS])):
+        order = [(0, "emb")] + [(layer, port) for layer in range(2) for port in ("n", "m")]
+        for layer, port in order:                     # nnsight requests in execution order
+            path, side = ctn.qwen3_locations(layer)[port]
+            envoy = nm
+            for part in path.split("."):
+                match = part.split("[")
+                envoy = getattr(envoy, match[0])
+                if len(match) > 1:
+                    envoy = envoy[int(match[1].rstrip("]"))]
+            saved[(layer, port)] = getattr(envoy, side).save()
+    checked = 0
+    for (layer, port), value in saved.items():
+        for row in (2, 5):
+            address = f"t{row}.emb" if port == "emb" else f"t{row}.L{layer}.{port}"
+            mine = run.read(address).reshape(-1)
+            theirs = value[0, row].reshape(-1)
+            assert float((theirs - mine).abs().max()) < 1e-5, address
+            checked += 1
+    assert checked == 5 * 2
+    node = names.ct_node(1, 5, 9)
+    assert node["reads"] == "t5.L1.n" and node["writes"] == "t5.L1.m"

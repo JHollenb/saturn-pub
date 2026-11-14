@@ -216,8 +216,8 @@ def to_tool(layout: str, value: Any, *, head_dim: int) -> Any:
 # --- foreign names of cells, rows and reads: ``mdb.core.foreign_names`` (re-exported here;
 # analysis attaches them to symbol-table rows and may not import this layer) ---
 from mdb.core.foreign_names import (  # noqa: E402,F401
-    MEASURED_MAP, SUPPLIED_MAP, UNVERIFIED_MAP, binding_names, cell_names, ct_node,
-    neuronpedia_url, read_names, row_names,
+    MEASURED_MAP, SUPPLIED_MAP, UNVERIFIED_MAP, binding_names, cell_names, ct_error_node,
+    ct_logit_node, ct_node, ct_token_node, neuronpedia_url, read_names, row_names,
 )
 
 
@@ -232,6 +232,10 @@ def residual_names(layer: int, port: str = "h_out", *, repo: str | None = None,
             "tl": {"hook": to_tl(f"L{layer}.{port}") + index, "verified": MEASURED_MAP},
             "nnsight": {"path": to_nnsight(f"L{layer}.{port}") + index,
                         "verified": MEASURED_MAP},
+            "pyvene": ({"layer": layer, "component": f"model.layers[{layer}].output",
+                        "unit": "pos", "verified": MEASURED_MAP} if port == "h_out" else
+                       {"layer": layer, "component": "block_input", "unit": "pos",
+                        "verified": MEASURED_MAP}),
             "saelens": {**saelens_ref(repo, layer, port),
                         "verified": MEASURED_MAP if repo else UNVERIFIED_MAP}}
 

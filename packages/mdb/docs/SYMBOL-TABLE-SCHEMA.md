@@ -58,8 +58,10 @@ Declaring candidate sets on the REPL: `candidates countries = countries.json`, `
 | read `t<j>.L<l>.h<h>` | `blocks.<l>.attn.hook_pattern[:, h, j, s]` | `model.model.layers[l].self_attn.output[1][:, h, j, s]` | measured |
 | residual `L<l>.h_out` | `blocks.<l>.hook_resid_post` | `model.model.layers[l].output` | measured (`test_interop.py`) |
 | SAELens feature | `release`, `sae_id`, `hook_name`, feature index | | measured on a random dictionary (SAELens TopKSAE agrees on ids and activations) |
-| pyvene spec | | | unverified: pyvene is not installed; the component string is not checked against its Qwen2 model map |
-| circuit-tracer node | | | unverified: not installed (needs transformers <= 4.57) |
+| pyvene spec, value cell | `head_value_output`, unit `h.pos`, locations `(([[g]], [[r]]),)` | | measured on tiny Qwen3 with pyvene 0.1.8 and `interop.pyvene_names.qwen3_shim()` (CollectIntervention equals mdb's cache cell within fp32 rounding) |
+| pyvene spec, residual | `model.layers[l].output` (h_out) / `block_input` (h), unit `pos` | | measured the same way |
+| pyvene spec, key cell | | | no counterpart: pyvene's key components are k_proj's output, before k_norm and RoPE |
+| circuit-tracer nodes | feature `{l}_{f}_{pos}`, error `0_{l}_{pos}`, token `E_{tok}_{pos}`, logit `{L+1}_{tok}_{pos}` | | measured: equal to circuit-tracer 0.5.0's `Node` ids; its Qwen3 mapping's `mlp.hook_in`, `mlp.hook_out` and embed modules hold mdb's `t<r>.L<l>.n`, `t<r>.L<l>.m` and `t<r>.emb` (fp32 rounding). Import needs `interop.circuit_tracer_names.import_circuit_tracer()` under huggingface_hub 1.x; attribution itself is not checked under transformers 5.x |
 | Neuronpedia URL | | | supplied: built only from a caller-given `{release/sae_id: {model, source}}` mapping |
 
 ## Record kinds

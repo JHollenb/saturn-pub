@@ -10,8 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
-# # ``verified`` says how a mapping is known: ``measured`` (tests/test_interop_cells.py reads the
-# same value through the tool and mdb on tiny Qwen2/Qwen3, bitwise on prefilled rows), or
+# ``verified`` says how a mapping is known: ``measured`` (tests/test_interop_symtab.py reads the
+# same value through the tool and mdb on tiny Qwen2/Qwen3, within float32 rounding), or
 # ``unverified`` (written from the library's documentation; not installed or not tested here).
 # A Neuronpedia link needs a supplied id mapping (Neuronpedia's model/source ids are not
 # SAELens's release/sae_id), so it is labelled ``supplied`` and only built when one is given.
@@ -35,8 +35,10 @@ _CELL_PORT = {
 def cell_names(layer: int, kv: int, row: int, port: str = "v", *,
                head_dim: int) -> dict[str, Any]:
     """Foreign names of the cache cell ``cache.L<layer>.<port>[kv<kv>,row=<row>]``: the
-    TransformerLens hook and index, the nnsight path and index (both ``measured``), and a pyvene
-    representation spec (``unverified``: pyvene is not installed here)."""
+    TransformerLens hook and index, the nnsight path and index, and a pyvene representation
+    spec (``interop.pyvene_names``: ``head_value_output`` with unit ``h.pos``), all
+    ``measured`` on tiny Qwen3 (``tests/test_interop_symtab.py``). A key cell has no pyvene
+    counterpart: pyvene's key components are k_proj's output, before k_norm and RoPE."""
     if port not in _CELL_PORT:
         raise KeyError(f"cache port {port!r} is k or v")
     tl_hook, tl_index, nn_path, nn_index = _CELL_PORT[port]
@@ -48,13 +50,14 @@ def cell_names(layer: int, kv: int, row: int, port: str = "v", *,
                "verified": MEASURED_MAP},
         "nnsight": {"path": nn_path.format(**fill), "index": nn_index.format(**fill),
                     "verified": MEASURED_MAP},
-        "pyvene": {"layer": layer,
-                   "component": "value_output" if port == "v" else "key_output",
-                   "unit": "pos", "unit_locations": [[row]],
-                   "subspace": [kv * head_dim, (kv + 1) * head_dim],
-                   "verified": UNVERIFIED_MAP,
-                   "note": "pyvene's Qwen2 model map component string not checked against "
-                           "installed source"},
+        "pyvene": ({"layer": layer, "component": "head_value_output", "unit": "h.pos",
+                    "unit_locations": {"h": [[kv]], "pos": [[row]]},
+                    "verified": MEASURED_MAP,
+                    "note": "Qwen3 needs interop.pyvene_names.qwen3_shim(); pyvene 0.1.8"}
+                   if port == "v" else
+                   {"state": "no counterpart",
+                    "reason": "pyvene's key_output / head_key_output is k_proj's output, before "
+                              "k_norm and RoPE; the cache holds the rotated key"}),
     }
     return out
 
@@ -71,7 +74,7 @@ def row_names(row: int) -> dict[str, Any]:
                     "embed": f"model.model.embed_tokens.output[:, {row}]",
                     "verified": MEASURED_MAP},
         "pyvene": {"component": "value_output", "unit": "pos", "unit_locations": [[row]],
-                   "verified": UNVERIFIED_MAP},
+                   "layers": "every layer", "verified": MEASURED_MAP},
     }
 
 
@@ -101,10 +104,36 @@ def neuronpedia_url(mapping: dict[str, Any] | None, release: str | None, sae_id:
 
 
 def ct_node(layer: int, row: int, feature: int) -> dict[str, Any]:
-    """A circuit-tracer attribution-graph node for a transcoder feature (``unverified``:
-    circuit-tracer is not installed; it needs transformers <= 4.57)."""
+    """A circuit-tracer attribution-graph node for transcoder feature ``feature`` of layer
+    ``layer`` at position ``row`` (circuit-tracer 0.5.0 ``Node.feature_node`` id
+    ``{layer}_{feature}_{pos}``). The transcoder reads mdb's ``t<row>.L<layer>.n`` (Qwen3
+    ``mlp.hook_in`` = post_attention_layernorm output) and writes into ``t<row>.L<layer>.m``
+    (``mlp.hook_out``); both measured on tiny Qwen3 through circuit-tracer's own nnsight
+    mapping."""
     return {"layer": layer, "position": row, "feature": int(feature),
-            "id": f"{layer}_{int(feature)}_{row}", "verified": UNVERIFIED_MAP}
+            "id": f"{layer}_{int(feature)}_{row}", "reads": f"t{row}.L{layer}.n",
+            "writes": f"t{row}.L{layer}.m", "verified": MEASURED_MAP}
+
+
+def ct_error_node(layer: int, row: int) -> dict[str, Any]:
+    """The circuit-tracer error node of layer ``layer`` at ``row`` (id ``0_{layer}_{pos}``):
+    ``t<row>.L<layer>.m`` minus the transcoder's reconstruction."""
+    return {"layer": layer, "position": row, "id": f"0_{layer}_{row}",
+            "address": f"t{row}.L{layer}.m", "verified": MEASURED_MAP}
+
+
+def ct_token_node(row: int, token: int) -> dict[str, Any]:
+    """The circuit-tracer embedding node of ``token`` at ``row`` (id ``E_{token}_{pos}``):
+    mdb's ``t<row>.emb``."""
+    return {"position": row, "token": int(token), "id": f"E_{int(token)}_{row}",
+            "address": f"t{row}.emb", "verified": MEASURED_MAP}
+
+
+def ct_logit_node(row: int, token: int, layers: int) -> dict[str, Any]:
+    """The circuit-tracer logit node (id ``{layers + 1}_{token}_{pos}``): mdb's
+    ``t<row>.logits[i=<token>]``."""
+    return {"position": row, "token": int(token), "id": f"{layers + 1}_{int(token)}_{row}",
+            "address": f"t{row}.logits[i={int(token)}]", "verified": MEASURED_MAP}
 
 
 def binding_names(cells: list[Any], *, head_dim: int, kv_heads: int, layers: int,
