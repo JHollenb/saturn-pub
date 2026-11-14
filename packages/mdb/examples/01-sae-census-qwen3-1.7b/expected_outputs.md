@@ -95,19 +95,15 @@ at L14, against 0.27 to 0.41 for other rows.
 
 ## Validation run of this example
 
-One mrun job, `job-4898fc946910` (Beast, bf16 eager, `MDB_NPAIRS=6`, priority 70, revision
-`a66ec512`): succeeded in 202 s wall, peak VRAM 3808 MB, peak RSS 6264 MB. Log:
-`validation-job-4898fc946910.log`. 13 of 13 value checks passed:
+One mrun job, `job-6df33e74e5cb` (Beast, bf16 eager, `MDB_NPAIRS=6`, priority 70): succeeded in 149 s wall,
+peak VRAM 4580 MB, peak RSS 6359 MB. Log: `validation-job-6df33e74e5cb.log`. 21 of 21 checks passed:
 
-- The six census pairs equal the original rows exactly (base, Delta, Phi, E; for example
-  Rome->Berlin 9.0, -14.375, -14.125, -1.25), L* = 20 on every pair, `|Delta - cell| <= 0.5` on 6/6.
-  Medians over these 6 pairs: sigma_Phi 0.932, sigma_E 0.068 (the 18-pair medians are 0.970 and 0.046).
-- Recall prompt: base 9.5; largest direct feature at L22 is f1077 (+6.8046); ablating it moves the margin
-  by -1.75 native (sealed linear +0.2979, exact -1.7521); error splice at L14 -0.5 (L22 -0.375);
-  replacement model margin -3.2344, top token `-wide`. All equal the original.
-- Splice medians over the 6 pairs: median |native| 0.25 (L8), 1.25 (L14), 0.5625 (L18), 0.9375 (L22).
+- The six census pairs equal the original rows (base, Delta, Phi, E within 0.5; in practice exact), L* = 20, `|Delta - cell| <= 0.5` on 6/6.
+- Source side (L4, L10, L16, full / Phi / E minus null) for the same six pairs is within 0.5 of the original on every cell.
+- Recall prompt: base 9.5; top direct feature f1077; ablating it -1.75 native; error splice at L14 -0.5;
+  replacement model -3.2344, top token `-wide`.
+- SAELens (strict `to_saelens()`, sae-lens 6.55.5): the active set equals mdb's on rows 3 and 0 at L20; the relative
+  error is 0.310 on row 3 and 0.454 on row 0 (the t0 caveat holds, with a smaller gap than TP1's L4 value of 1.26).
 
-Differences from the original: only the SAELens check (section 4) was skipped in this job, because
-`einops` was not on the path (`sae_lens not installed: No module named 'einops'`); `run.sh` now adds
-`site-tl440-nn082`, which holds it. That `run.sh` fix and the SAELens strict-load check (section 4) are
-NOT yet run on Beast: a rerun was blocked because another job held the GPU for over an hour.
+An earlier run, `job-4898fc946910` (before the source arm and the einops path fix), matched the same reader and recall numbers
+and skipped the SAELens check.

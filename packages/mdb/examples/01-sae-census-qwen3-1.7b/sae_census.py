@@ -43,6 +43,7 @@ SAE = os.environ.get("MDB_SAE", "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32
 NPAIRS = int(os.environ.get("MDB_NPAIRS", "6"))        # consecutive city pairs (the study used 18)
 READER_LAYERS = [16, 18, 19, 20, 21, 22]               # value-cell transplant layers tried
 SPLICE_LAYERS = [8, 14, 18, 22]                        # error-splice layers
+SOURCE_LAYERS = [4, 10, 16]                            # source-side layers
 OUT = Path(os.environ.get("MRUN_ARTIFACTS_DIR") or os.environ.get("MDB_OUT") or "out")
 OUT.mkdir(parents=True, exist_ok=True)
 DEVICE = os.environ.get("MDB_DEVICE", "cuda")
@@ -204,6 +205,10 @@ print("symbol:", RESULT["symbol"])
 # 3. Patch X's own residual at that site natively, three ways, each as a fresh run:
 #    `Delta` = replace by `recon@T + error@T` (the whole residual), `Phi` = add
 #    `recon@T - recon` (features only), `E` = add `error@T - error` (error only).
+# 4. Source side: take Y's entity-row residual (a 4-token run) at `L4`, `L10` or `L16.h_out`, in the
+#    same three forms (full, features, error), write it into a truncated run of X, and carry it
+#    into X's full prompt as the K/V cells of all later layers; subtract a null arm (the
+#    unedited truncated run). Feature and error shares are `Phi / full` and `E / full`.
 #
 # Feature share `sigma_Phi = Phi / Delta` and error share `sigma_E = E / Delta`. Consistency
 # check: the whole-residual patch must reproduce the cell transplant (`|Delta - cell| <= 0.5`).
@@ -265,6 +270,29 @@ for (xa, ya, ida, ka), (xb, yb, idb, kb) in pairs:
         direct = feat["accounting"]["error"]["value"]
         d = native(ida, ka, kb, base, [(f"L{layer + 1}.h", f"L{layer + 1}.h", "error*-1", "add")])
         row["splice"][layer] = {"native": d, "error_direct": direct}
+    # source side: the entity row's residual at L{l}.h_out of Y's truncated run (first 4 tokens),
+    # full / features part / error part, realised on the entity row of a truncated run of X and
+    # carried into X's full prompt as the K/V cells of layers l+1..27 (null arm: the unedited
+    # truncated run, to remove the stepped-vs-prefill difference)
+    op("start", {"prompt": idb[:4], "name": "tc"})
+    op("until", {"target": "logits"})
+    row["source"] = {}
+    for layer in SOURCE_LAYERS:
+        out = {}
+        for arm, value, kind in (("null", None, None), ("full", "recon@tc+error@tc", "replace"),
+                                 ("phi", "recon@tc-recon", "add"),
+                                 ("E", "error@tc-error", "add")):
+            op("start", {"prompt": ida[:4], "name": "tm"})
+            op("until", {"target": f"L{layer + 1}.h"})
+            if value is not None and "error" in op(
+                    "set", {"target": f"L{layer + 1}.h", "value": value, "op": kind}):
+                out[arm] = None
+                continue
+            op("until", {"target": "logits"})
+            steps = [(None, f"cache.L{k}.{t}[row=3]", f"tm:cache.L{k}.{t}[row=3]", None)
+                     for k in range(layer + 1, 28) for t in ("k", "v")]
+            out[arm] = native(ida, ka, kb, base, steps)
+        row["source"][layer] = out
     row["seconds"] = round(time.monotonic() - t_pair, 1)
     ROWS.append(row)
     rd = row["reader"]
@@ -353,6 +381,20 @@ for layer in SPLICE_LAYERS:
            and abs(r["splice"][layer]["error_direct"]) > 0.05]
     summary["splice"][layer] = {"median_abs_native": med([abs(x) for x in nat]),
                                 "median_abs_A": med([abs(x) for x in amp]), "n_A": len(amp)}
+summary["source"] = {}
+for layer in SOURCE_LAYERS:
+    full, shares = [], []
+    for r in ROWS:
+        o = r["source"][layer]
+        if None in o.values():
+            continue
+        f, p, e = (o[k] - o["null"] for k in ("full", "phi", "E"))
+        full.append(f)
+        if abs(f) >= 1.0:
+            shares.append((p / f, e / f))
+    summary["source"][layer] = {"median_full": med(full),
+                                "median_phi_share": med([a for a, _ in shares]),
+                                "median_E_share": med([b for _, b in shares])}
 RESULT["summary"] = summary
 print(json.dumps(summary, indent=1))
 
@@ -368,7 +410,29 @@ EXPECTED_PAIRS = {   # pair: (base, Delta, Phi, E) from job-6aa7bc89a6ed (census
     "Moscow->Athens": (12.75, -16.5, -14.75, -1.75),
     "Athens->Beijing": (10.25, -12.875, -11.125, -0.625),
     "Beijing->Madrid": (15.5, -13.25, -10.625, -2.0)}
+EXPECTED_SOURCE = {   # pair: {layer: (full, phi, E)}, null-subtracted, from job-6aa7bc89a6ed
+    "Paris->Rome": {4: (-15.625, -14.875, -0.375), 10: (-15.25, -14.5, 0.25),
+                    16: (-15.25, -14.25, -0.625)},
+    "Rome->Berlin": {4: (-20.0, -19.125, -0.375), 10: (-19.875, -19.5, -0.375),
+                     16: (-19.375, -18.125, -1.125)},
+    "Berlin->Moscow": {4: (-18.125, -18.5, -0.5), 10: (-17.75, -17.25, -1.0),
+                       16: (-17.875, -17.5, 0.25)},
+    "Moscow->Athens": {4: (-23.75, -23.875, -0.5), 10: (-23.75, -22.5, -3.0),
+                       16: (-23.875, -23.25, -2.625)},
+    "Athens->Beijing": {4: (-23.0, -22.75, 0.375), 10: (-22.375, -20.25, 0.25),
+                        16: (-21.875, -18.625, -0.75)},
+    "Beijing->Madrid": {4: (-25.0, -24.625, -0.125), 10: (-22.5, -22.125, -0.375),
+                        16: (-22.125, -20.0, -1.375)}}
 checks = []
+for r in ROWS:
+    if r["pair"] in EXPECTED_SOURCE:
+        ok = True
+        for layer, exp in EXPECTED_SOURCE[r["pair"]].items():
+            o = r["source"][layer]
+            got = (None if None in o.values() else
+                   tuple(o[k] - o["null"] for k in ("full", "phi", "E")))
+            ok = ok and got is not None and all(abs(g - e) <= 0.5 for g, e in zip(got, exp))
+        checks.append((f"source side {r['pair']} (L4, L10, L16)", ok))
 for r in ROWS:
     if r["pair"] in EXPECTED_PAIRS:
         eb, ed, ep, ee = EXPECTED_PAIRS[r["pair"]]
