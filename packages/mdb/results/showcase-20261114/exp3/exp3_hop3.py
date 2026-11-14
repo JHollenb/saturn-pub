@@ -40,6 +40,7 @@ LAYERS = list(range(20, 26))
 dbg = load()
 ad = dbg.adapter
 dev = ad.model.lm_head.weight.device
+# TODO(mdb-feature P3): sae.open_set('transcoder', TC_DIR, layers=...) with read_site='L<l>.n', write_site='L<l>.m' — safetensors transcoders are loaded and moved to device by hand; sae.py loads residual SAEs only.
 TC = {}
 for x in LAYERS:
     st = load_file(f"{TC_DIR}/layer_{x}.safetensors")
@@ -48,13 +49,16 @@ for x in LAYERS:
 log("load")
 T = SETS["truths"]
 LANGS, CITIES = SETS["sets"]["languages"], SETS["sets"]["cities"]
+# TODO(mdb): use reads.readout(run, Margin).vector/.rho (analysis/reads.py:108-128) instead of manual final-norm gamma/rho and W_U rows (gap audit §1 final-norm readout row).
 final = getattr(ad.backbone, ad.spec.final_norm)
 GAMMA = f64(final.weight).reshape(-1).cpu()
 W_U = ad.model.lm_head.weight
 VER = {"library": "mwhanna/qwen3-1.7b-transcoders-lowl0 (read directly; SAELens mwhanna_transcoder layout)",
        "version": "safetensors bf16, config model_name Qwen/Qwen3-1.7B"}
+# TODO(mdb): use interop.names.to_nnsight / core.foreign_names.ct_node instead of a hand-typed address map (gap audit §1 library address maps row).
 AMAP = {"t<last>.L<l>.n": "blocks.<l>.mlp.hook_in", "t<last>.L<l>.m": "blocks.<l>.hook_mlp_out"}
 rng = random.Random(20261114)
+# TODO(mdb-feature P7): pset.shard(K, N) with roles/vars — pool construction and SHARD/PICK slicing are hand-rolled.
 pool = sorted([i for i in items("depth") if i["family"] in ("d2", "d3-lm", "d3-per", "d4-work")
                and (SCORE[i["id"]]["correct"] or i["family"] != "d2")], key=lambda i: i["id"])
 SHARD = None
@@ -72,6 +76,7 @@ def runner(lg, truth, toks):
     return max(rest, key=lambda t: float(lg[t]))
 
 
+# TODO(mdb-feature P3): FeatureBasis.encode for transcoders (bf16 GPU screen + float64 exact re-encode) — encode/decode of transcoders is hand-written here and again in exp4.
 def encode(x, n):
     pre = (TC[x]["W_enc"] @ n.to(dev, torch.bfloat16)).float().cpu() + TC[x]["b_enc"]
     ids = (pre > 0).nonzero().reshape(-1)
@@ -94,10 +99,12 @@ for item in pool:
     last = len(ids) - 1
     tr = T[iid]
     run = dbg.run(ids, name="nat")
+    # TODO(mdb): use symbols.table + an edge-mode watch on the answer row's candidate-set argmax over L*, with margins (Q2 item 4), instead of one read at the logits (gap audit §3/§5 Q4.2).
     run.until(f"t{last}.logits")
     lg = run.read(f"t{last}.logits").reshape(-1).float()
     lang, city = tr["language"], tr["city"]
     rl, rc = runner(lg, lang, LANGS), runner(lg, city, CITIES)
+    # TODO(mdb): use reads.readout(run, Margin(last, lang, rl)).vector/.rho instead of hand-rolled rho and cl/cc direct-effect vectors (gap audit §1 final-norm readout row).
     hl = f64(run.read(f"t{last}.L{ad.layers - 1}.h_out")).reshape(-1).cpu()
     rho = float((hl.pow(2).mean() + float(final.variance_epsilon)) ** -0.5)
     cl = rho * GAMMA * (f64(W_U[lang]) - f64(W_U[rl])).cpu()
@@ -115,6 +122,7 @@ for item in pool:
         writes = D * acts[:, None]
         rec["layers"][x] = {"ids": fid, "acts": acts.tolist(), "de_lang": (writes @ cl).tolist(),
                             "de_city": (writes @ cc).tolist()}
+        # TODO(mdb-feature P3): MLP-write binding: component_binding(run, name, 't<r>.L<l>.m', transcoder_basis) with the Unbound row = error — recon, rel_err and error_de_lang are recomputed by hand (error share of each MLP write).
         m = f64(run.read(f"t{last}.L{x}.m")).reshape(-1).cpu()
         ms[x] = m
         msum[x] += m
@@ -125,6 +133,7 @@ for item in pool:
     del run
     log(f"P1 {iid} {time.monotonic() - t0:.2f}s")
 
+# TODO(mdb-feature P10): nominate(scores, rule, k) -> sealed SuspectList, then branches.measure(list, nulls=[...]) — frozen nomination rule is coded by hand (5 such rules across scripts).
 # ---------------- nomination (frozen rule)
 qual = collections.defaultdict(lambda: collections.defaultdict(set))   # (layer, f) -> lang -> items
 for iid, (rec, _) in P1.items():
@@ -151,6 +160,7 @@ json.dump({"features": [[x, f, lang] for (x, f), lang in sorted(nominated.items(
 fh = open(f"{OUT}/exp3-items{TAG}.jsonl", "w")
 cache = {}
 n_neuron = 0
+# TODO(mdb-feature P7): each/pset.runs(..., shard=K/N) — item loop and shard slicing hand-rolled.
 for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[SHARD::2]):
     t0 = time.monotonic()
     iid, ids = item["id"], item["ids"]
@@ -173,6 +183,7 @@ for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[S
     toks = [rec["lang"], rec["runner_lang"], rec["city"], rec["runner_city"]]
     arms = {}
     if feats:
+        # TODO(mdb-feature P1): run.branches(at=ck)... br.add per nominated feature, 'joint', 'random', 'mean' — one checkpoint + go() loop is the Branches object; the joint arm below needs two extra fresh runs.
         run = dbg.run(ids, name="arms")
         run.until(f"t{last}.L20.h")
         ck = run.checkpoint("pre")
@@ -191,12 +202,15 @@ for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[S
 
         writes = []
         for de, x, f, a in feats:
+            # TODO(mdb-feature P3): feature_value(f, act, basis) supplied vector from the transcoder binding — feature write -a*d_f is built by hand.
             w = -(dec(x, [f])[0] * a)
             writes.append((x, w))
             go([(x, w)], f"L{x}.f{f}")
         go(writes, "joint")
         de0, x0, f0, a0 = feats[0]
         L0 = rec["layers"][x0]
+        # TODO(mdb-feature P1): br.add_null('random', like='top', norm='matched', pool=active_non_nominated) — matched-norm random null drawn by hand.
+        # TODO(mdb-feature P6): pool.random(matched_norm=..., seed=...) — same.
         nomset = {f for (x, f) in nominated if x == x0}
         cands = [(f, a) for f, a in zip(L0["ids"], L0["acts"]) if f not in nomset]
         if cands:
@@ -205,8 +219,10 @@ for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[S
             wr = -wr * (writes[0][1].norm() / (wr.norm() + 1e-30))
             go([(x0, wr)], "random")
             arms["random"]["feature"] = [x0, fr]
+        # TODO(mdb-feature P6): pool.mean(by=..., leave_out=item) over the MLP write — leave-one-out class mean coded by hand (self-inclusion bug hit once in TP1).
         mean = (msum[x0] - ms[x0]) / (len(P1) - 1)
         go([(x0, mean - ms[x0])], f"mean_L{x0}")
+        # TODO(mdb): use branches from the one checkpoint (P1) so hop_edge attaches to any branch instead of two extra fresh runs (nat2, joint) (gap audit §4 exp3 / exp3:211-217).
         # joint arm as its own run, split by hop_edge against the native run
         nat = dbg.run(ids, name="nat2")
         nat.until(f"t{last}.logits")

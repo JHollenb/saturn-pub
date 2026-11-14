@@ -65,6 +65,7 @@ def entity(iid):
     return iid.split(":", 1)[1].lower()
 
 
+# TODO(mdb-feature P6): named value pool with pool.donor(item, rule='same country, family order') — donor choice and its provenance are hand-coded and not sealed.
 def pick_donor(iid):
     me = T[iid]
     pool = [k for k, v in SCORE.items() if v["correct"] and k != iid and T[k]["country"] == me["country"]]
@@ -73,6 +74,8 @@ def pick_donor(iid):
     return pool[0] if pool else None
 
 
+# TODO(mdb-feature P5): run.set(addr, other_run.ref('cache.L20.v[kv6,row=..]')) with ORIGIN:ADDR recorded — donor value is fetched by a second run and passed as a bare tensor, origin lost (donor-value row).
+# TODO(mdb): use ops/sets.py ORIGIN:ADDR / @pair: cross-run values instead of a second dbg.run per donor (gap audit §1 donor-value row).
 def donor_state(did):
     if did not in DONORS:
         d = by_id[did]
@@ -87,10 +90,13 @@ def donor_state(did):
     return DONORS[did]
 
 
+# TODO(mdb-feature P1): run.branches(at=ck, consumer=Margin(last,a,b)).add('R1', edits=[...]).run(mode='stepped') — checkpoint -> edit -> until logits -> read -> restore loop keyed by arm label, written by hand in 8 scripts.
+# TODO(mdb): use excursion/come_back or propagate.whatif instead of a hand-rolled branch loop (gap audit §1 branch-loop row).
 def arm(run, ckw, crow, last, value, toks, seal=False):
     dt = run.read_cache(CL, "v", staged=False).dtype
     run.set_cell(CL, "v", value.to(dt).reshape(1, 1, 1, -1), rows=[crow], kv=[CG])
     out = {}
+    # TODO(mdb): use propagate.whatif / SC3 seal-including-staged-edits to seal the predicted margin before the edit instead of forecast.seal taken after set_cell commits (gap audit §4 exp1 'Seal before the edit').
     if seal:
         try:
             run.until(f"t{last}.L{CL + 1}.h")
@@ -113,6 +119,7 @@ def arm(run, ckw, crow, last, value, toks, seal=False):
     return out
 
 
+# TODO(mdb-feature P7): for item, run in pset.runs(at='t@last.logits', prefill='@span_first', shard=K/N) — item loop, PICK/shard slicing and JSONL are hand-rolled (14 of 14 drivers).
 recs = []
 fh = open(f"{OUT}/exp1-items{TAG}.jsonl", "w")
 for item in depth:
@@ -135,8 +142,12 @@ for item in depth:
            "last_span": span[-1], "country": country, "language": lang, "foil": foil,
            "native": kept(nat, toks), "native_text": text(int(nat.argmax()))}
     run.restore(ck0)
+    # TODO(mdb): use symbols.table(consumer, sets=, content_layers=True) with declare('carrier', ...) instead of FeatureContext + ctx.best_feature/ctx.content one-off reads (gap audit §0/§4: showcase never used the symbol table).
+    # TODO(mdb-feature P9): layer-indexed FeatureContext over an SAE set (L0..L20) — one basis and one layer today, so the 'country at carrier' column cannot be a time series.
     ctx = FeatureContext(B19, crow, CL, CG, sets={"COUNTRIES": COUNTRY_FEATS}, labels=LABEL,
                          candidates={"C": SETS["sets"]["countries"]}, constants={"truth": country})
+    # TODO(mdb): use an edge-mode watch over t@carrier.L*.h plus backtrace/reverse-continue instead of a level watch and an unconditional break at the SAME stop t<last>.L20.h (gap audit §4 exp1 'Watch over time').
+    # TODO(mdb): with a time axis 'fired' would mean 'first became true at layer l' and the wrong write could be named; today 30/83 false alarms cannot be split from late-corrected items.
     table = bp.Table()
     w = table.add_watch(f"t{last}.L{CL}.h", run.program, mode="level",
                         compiled=FeatureCondition(WATCH, ctx))
@@ -179,6 +190,8 @@ for item in depth:
         arms["R2"] = arm(run, ckw, crow, last, ds["cell"].double().cpu(), toks)
         arms["R2"]["copy"] = arms["R2"]["text"] in entity(did).replace("-", " ").split()
         arms["R3"] = arm(run, ckw, crow, last, cb.native - cb.get("error").value + ds["error"], toks)
+    # TODO(mdb-feature P1): br.add_null('random', like='R1', norm='matched', pool=active_features, seed=...) — the matched-norm random-feature null is drawn and rescaled differently in 4 scripts.
+    # TODO(mdb-feature P6): pool.random(matched_norm=..., seed=...) — random feature draw and norm rescale are hand-coded here.
     if "R1" in arms:
         arms["R1"]["copy"] = arms["R1"]["text"] in entity(iid).replace("-", " ").split()
         nonc = [f for f in cb.active if f not in LABEL]
@@ -195,6 +208,7 @@ for item in depth:
     rec["arms"] = arms
     rec["floor"] = floor_of(nat, lang, foil)
     rec["seconds"] = round(time.monotonic() - t0, 2)
+    # TODO(mdb-feature P8): sealed per-item record via dbg.records_to — per-item output is a bare JSONL line; sealed ids are not backed by a stored record.
     fh.write(json.dumps(rec, default=float) + "\n")
     fh.flush()
     log(f"B {iid} {rec['seconds']}s")

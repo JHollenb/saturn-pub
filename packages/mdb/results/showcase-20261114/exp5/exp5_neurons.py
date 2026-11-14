@@ -44,12 +44,14 @@ if PICK:
     base = base[: int(PICK)]
 log("load")
 VER = nn.version()
+# TODO(mdb): use interop.names.to_nnsight instead of a hand-typed address map (gap audit §1 library address maps row).
 AMAP = {f"t<last>.L{x}.f": f"model.model.layers[{x}].mlp.down_proj.input" for x in LAYERS}
 
 # ---- 1. gradients
 by_len = collections.defaultdict(list)
 for i in base:
     by_len[len(i["ids"])].append(i)
+# TODO(mdb-feature Q2.2): linearity ratio per edit stored as a column (native dM over mdb's own linear forecast) — N2 ratio 0.83 / Spearman 0.94 was computed against nnsight only, so 'nnsight gradient off' vs 'knock-out nonlinear' cannot be split.
 G, V, M0 = {}, {}, {}
 for n, group in by_len.items():
     res = nn.grads(model, [i["ids"] for i in group], [f"L{x}.f" for x in LAYERS],
@@ -59,9 +61,12 @@ for n, group in by_len.items():
         V[it["id"]] = torch.stack([res["values"][f"L{x}.f"][j, -1].double().cpu() for x in LAYERS])
         M0[it["id"]] = res["margin"][j]
 log(f"grads {len(by_len)} groups")
+# TODO(mdb-feature P6): pool.mean(by=..., leave_out=item) of the f cell over the panel — 64-item mean computed by hand with no record of which items entered it.
 MEAN = torch.stack(list(V.values())).mean(0)                         # (8, 6144)
 FC = {k: G[k] * (MEAN - V[k]) for k in G}                             # forecast per neuron
 
+# TODO(mdb-feature P7): pset.split(by='$bridge', alternate=A/B) with roles — A/B panel construction is hand-rolled.
+# TODO(mdb-feature P10): nominate(scores, rule, k) -> sealed SuspectList — nomination rule (8 most negative, negative on every A item) coded by hand.
 # ---- 2. panels and nomination
 by_c = collections.defaultdict(list)
 for i in base:
@@ -101,12 +106,14 @@ for it in Bp:
     run.until(f"t{last}.L20.h")
     tgt = {"kind": "margin", "row": last, "indices": [it["answer"], it["donor"]["answer"]]}
     recs = {}
+    # TODO(mdb): use propagate.whatif linear term sealed as a second (derived) column next to the nnsight supplied forecast instead of only the nnsight forecast is sealed (gap audit §4 exp5).
     for li, k in named[c]:
         x = LAYERS[li]
         r = supplied.seal(run, target=tgt, edit={"address": f"t{last}.L{x}.f[i={k}]", "row": last,
                                                  "layer": x, "op": "replace with the 64-item mean"},
                           value=float(FC[it["id"]][li, k]), library="nnsight", version=VER,
                           address_map=AMAP, method="attribution patching: dM/df . (mean_f - f)")
+        # TODO(mdb-feature P8): keep the full seal_record via record sink — only {'id','value'} is kept per record.
         recs[f"L{x}.n{k}"] = {"id": r["id"], "value": float(FC[it["id"]][li, k])}
     setv = float(sum(FC[it["id"]][li, k] for li, k in named[c]))
     r = supplied.seal(run, target=tgt, edit={"address": "named set", "row": last, "layer": 20,
@@ -120,6 +127,8 @@ for it in Bp:
 fh.close()
 log(f"sealed {len(sealed)} items")
 
+# TODO(mdb-feature P6): pool.random(matched_norm=..., seed=...) and a lexical/answer-token null pool — random set and answer-token-fixed null are drawn by hand.
+# TODO(mdb): use analysis/candidates.py lexical null instead of the hand-rolled answer-token null score loop below (gap audit §1 answer-token null row).
 # ---- 4. batched native arms per country
 native = {}
 for c, sel in named.items():
@@ -172,6 +181,7 @@ for it in Bp:
     topn = max(singles, key=lambda k: abs(singles[k]))
     run2 = dbg.run(it["ids"], name="step2")
     run2.until(f"t{last}.L20.h")
+    # TODO(mdb-feature P1): run.branches(at=ck).add('set', edits=[...]).add(top_single).run(mode='stepped', recheck=2) — stepped authority over batched arms is the Branches 'recheck=k' pattern written by hand.
     ck = run2.checkpoint("pre")
     stepped = {}
     for arm, cells in (("set", sel), (topn, [(LAYERS.index(int(topn[1:].split(".")[0])),
@@ -179,6 +189,7 @@ for it in Bp:
         for li in sorted({li for li, _ in cells}):
             x = LAYERS[li]
             run2.until(f"t{last}.L{x}.h")
+            # TODO(mdb-feature P5): run.set('t@last.L<x>.f[i=k1,k2]', mean_values) selector on the f port — value/mask tensors for the neuron set are built by hand.
             val = torch.zeros(1, 1, MEAN.shape[1], dtype=ad.dtype, device=W_U.device)
             mask = torch.zeros(1, 1, MEAN.shape[1], dtype=torch.bool, device=W_U.device)
             for l2, k in cells:
@@ -191,6 +202,7 @@ for it in Bp:
         stepped[arm] = float(lg[a] - lg[b]) - m0
         run2.restore(ck)
     rec = {"id": it["id"], "country": c, "base_batched": nat["base"], "base_stepped": m0,
+           # TODO(mdb): use verdict.spacing instead of common.spacing (gap audit §1 bf16 spacing row).
            "floor": floor_of(lg0, a, b), "spacing": spacing(max(abs(float(lg0[a])), abs(float(lg0[b])))),
            "native_batched": nat["delta"], "stepped": stepped, "top_single": topn,
            "forecast": {k: v["value"] for k, v in sealed[it["id"]].items()},
@@ -203,6 +215,7 @@ for it in Bp:
     out.flush()
     del run, run2
     log(f"S {it['id']} {time.monotonic() - t0:.2f}s")
+# TODO(mdb-feature P8): panel + named sets sealed into the project — panel membership is a loose JSON file, not custody-checked.
 json.dump({"A": [i["id"] for i in A], "B": [i["id"] for i in Bp],
            "named": {c: [[LAYERS[li], k] for li, k in s] for c, s in named.items()},
            "nnsight": VER}, open(f"{OUT}/exp5-panels{'-smoke' if PICK else ''}.json", "w"), indent=1)

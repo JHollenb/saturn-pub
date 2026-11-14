@@ -20,6 +20,7 @@ TC_DIR = "/mnt/big/llm-models/qwen3-1.7b-transcoders-lowl0"
 CL, CG = 20, 6
 T0 = time.monotonic()
 HERE = Path(os.environ.get("DATA", "."))
+# TODO(mdb-feature P7): prompt set with roles/vars/pairs (@carrier, $answer, $foil) loaded once — 14 of 14 drivers re-read items/sets/score JSON by hand and re-index them.
 SPEC = json.load(open(HERE / "r1_items.json"))
 SETS = json.load(open(HERE / "b1_sets.json"))
 SCORE = json.load(open(HERE / "b1-score.json"))["per_item"]
@@ -42,6 +43,8 @@ def items(group):
     return [i for i in SPEC["items"] if i["group"] == group]
 
 
+# TODO(mdb): use cm.slot_rows with a Slot whose layers/kv come from the map's model entry instead of a per-script carrier-row wrapper (gap audit §1 carrier-row row).
+# TODO(mdb-feature P11): Slot taking layers/kv per model — exp6 re-implemented slot_rows as crow_of because Slot hard-codes layer and KV.
 def carrier_row(run, item):
     return cm.slot_rows(CARRIER, run, {"name": item["id"], "span": item["span"],
                                        "last": len(item["ids"]) - 1})[0]
@@ -57,6 +60,7 @@ def margin(logits, a, b):
     return float(lg[a] - lg[b])
 
 
+# TODO(mdb): use mdb.analysis.verdict.spacing (analysis/verdict.py:59) instead of a hand-rolled bf16 spacing (gap audit §1 bf16 spacing row).
 def spacing(x):
     """bf16 spacing at |x| (8 bits of mantissa incl. hidden: 2^(e-7))."""
     import math
@@ -66,6 +70,8 @@ def spacing(x):
     return 2.0 ** (math.floor(math.log2(x)) - 7)
 
 
+# TODO(mdb): use supplied.judge(floor_spacings=, extra_floor=) / verdict.spacing instead of floor_of (gap audit §1 bf16 spacing row, P1 cheap part).
+# TODO(mdb-feature P1): Branches record dM, floor in spacings and in floors per branch — every driver attaches the floor by hand.
 def floor_of(logits, a, b, extra=0.0):
     """2 bf16 spacings at the larger |logit| of the pair (the B1/P6 wording that held) plus a
     measured kernel-path delta."""
@@ -73,6 +79,7 @@ def floor_of(logits, a, b, extra=0.0):
     return 2 * spacing(max(abs(float(lg[a])), abs(float(lg[b])))) + abs(extra)
 
 
+# TODO(mdb-feature P8): dbg.records_to(path) / attached project store so every seal, verify and judge appends its full record, plus script_sha256 in procedure — results are dumped as ad-hoc JSON and driver custody is not provable.
 def dump(obj, path):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     json.dump(obj, open(path, "w"), indent=1, default=float)
