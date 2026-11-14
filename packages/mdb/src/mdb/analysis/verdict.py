@@ -13,9 +13,12 @@ verdict reads:
   ``confirm`` uses too), ``spacing`` the gap between adjacent values of the consumer's dtype at
   the consumer's magnitude (both logits of a margin, before and after the edit; the logit; the
   largest element of a vector).
-* ``effect`` (resolved) when every element's ``|native - emulated|`` is within the floor and the
-  native delta is not zero; ``no effect`` (resolved) when they agree and the native delta is zero:
-  the dtype shows no change at the consumer. The exact delta is reported either way, as a fact
+* ``effect`` (resolved) when every element's ``|native - emulated|`` is within the floor, the
+  native delta is not zero and the emulated delta has its sign; ``no effect`` (resolved) when
+  they agree and both are zero: the dtype shows no change at the consumer. Within the floor but
+  with different signs (or one of them zero) ``unresolved``: a floor of one spacing cannot decide
+  a change no bigger than itself (M59). ``size_spacings`` is ``|native delta|`` in spacings and
+  ``rests_on`` says what an effect rests on. The exact delta is reported either way, as a fact
   beside the verdict (``note``: an exact change the dtype cannot show; a native change that is
   the dtype's rounding).
 * beyond the floor: what the caller found where emulation and native part (``parting``: ``not
@@ -39,10 +42,10 @@ EFFECT = "effect"
 NO_EFFECT = "no effect"
 UNRESOLVED = "unresolved"
 CRITERION = ("effect when native Δ and emulated Δ agree within the floor (1 x dtype spacing at "
-             "the consumer, supplied) and native Δ != 0; no effect when they agree and native "
-             "Δ = 0; beyond the floor not confirmed or unresolved by where emulation and native "
-             "part; P20: native Δ = exact Δ + rounding effect (emulated - exact) + residual "
-             "(native - emulated)")
+             "the consumer, supplied) and on the sign, and native Δ != 0; no effect when they "
+             "agree and both are 0; within the floor but not on the sign unresolved; beyond the "
+             "floor not confirmed or unresolved by where emulation and native part; P20: native "
+             "Δ = exact Δ + rounding effect (emulated - exact) + residual (native - emulated)")
 NATIVE_ONLY = ("effect when the edited and base native values differ (native Δ != 0), no effect "
                "when they are equal (no prediction: native only)")
 
@@ -117,19 +120,32 @@ def decide(native: Any, emulated: Any, size: float, dtype: Any, *, exact: Any = 
                basis="P20: native against the emulated delta")
     if exact is not None:
         out["rounding_effect"] = _num(float(emulated[k] - exact[k]), EXACT)
+    out["size_spacings"] = _num(abs(n) / step, MEASURED)
     if worst > floor:
         found = parting or {"verdict": UNRESOLVED, "state": "unresolved",
                             "reason": f"native and emulated Δ part by {worst / step:.3g} "
                                       "spacings"}
         out.update(found)
         return out
+    m = float(emulated[k])
+    if (n == 0) != (m == 0) or n * m < 0:
+        # within the floor, but the two disagree on whether (or which way) the consumer moved:
+        # the floor cannot decide a change no bigger than itself (M59)
+        out.update(verdict=UNRESOLVED, state="unresolved",
+                   reason=f"native Δ {n:.5g} and emulated Δ {m:.5g} agree within the floor "
+                          f"({worst / step:.2g} spacings) but not on the sign of the change")
+        return out
     out["state"] = "resolved"
+    rests = (f"rests on native = emulated within {worst / step:.2g} spacings at a change of "
+             f"{abs(n) / step:.2g} spacings")
     if changed:
         out["verdict"] = EFFECT
+        out["rests_on"] = rests
         if exact is not None:
             e = float(exact[k])
             if e == 0 or (e > 0) != (n > 0):
-                out["note"] = (f"the native change is the dtype's rounding: exact Δ {e:.5g}")
+                out["note"] = (f"the native change is the dtype's rounding: exact Δ {e:.5g}; "
+                               + rests)
     else:
         out["verdict"] = NO_EFFECT
         if exact is not None:

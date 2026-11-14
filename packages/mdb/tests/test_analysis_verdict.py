@@ -12,7 +12,7 @@ from mdb.analysis import verdict as _verdict  # noqa: E402
 from mdb.analysis.compare import Side, compare  # noqa: E402
 from mdb.analysis.forecast import Logit, Margin  # noqa: E402
 from mdb.analysis.propagate import Edit, whatif  # noqa: E402
-from mdb.analysis.verdict import EFFECT, NO_EFFECT, decide, spacing  # noqa: E402
+from mdb.analysis.verdict import EFFECT, NO_EFFECT, UNRESOLVED, decide, spacing  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
@@ -128,3 +128,19 @@ def test_compare_verdicts_are_native_only(debugger):
     assert verdicts["A"]["verdict"] == EFFECT and verdicts["B"]["verdict"] == NO_EFFECT
     assert verdicts["A"]["basis"].startswith("native only")
     assert "exact" not in verdicts["A"]
+
+
+def test_a_change_within_the_floor_with_the_other_sign_is_unresolved():
+    """M59: native -0.0625 (half a spacing at |logit| 20) and emulated 0 agree within the floor
+    of one spacing but not on whether the consumer moved: unresolved (it was an effect). Equal,
+    the effect says what it rests on and the exact change of the other sign is the rounding."""
+    bf16 = torch.bfloat16
+    apart = decide(torch.tensor(-0.0625), torch.tensor(0.0), 20.0, bf16)
+    assert (apart["verdict"], apart["state"]) == (UNRESOLVED, "unresolved"), apart
+    assert "not on the sign" in apart["reason"]
+    agreed = decide(torch.tensor(-0.0625), torch.tensor(-0.0625), 20.0, bf16,
+                    exact=torch.tensor(0.0075))
+    assert agreed["verdict"] == EFFECT and agreed["size_spacings"]["value"] == 0.5
+    assert agreed["rests_on"] == ("rests on native = emulated within 0 spacings at a change of "
+                                  "0.5 spacings")
+    assert "the native change is the dtype's rounding: exact Δ 0.0075" in agreed["note"]

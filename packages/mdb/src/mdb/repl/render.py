@@ -736,6 +736,8 @@ def effect_line(effect: dict[str, Any], delta: str = "\u0394", exact_note: str =
     """The P20 verdict: native against the emulated change within the floor (1 spacing,
     supplied), the exact change beside it; ``exact_note`` says which exact change it is."""
     numbers = f"native {delta} {_claimed(effect['native'])}"
+    if "size_spacings" in effect:
+        numbers += f" = {effect['size_spacings']['value']:.2g} spacings"
     if "emulated" in effect:
         numbers += (f", emulated {delta} {_claimed(effect['emulated'])}, residual "
                     f"{_claimed(effect['residual'])} = "
