@@ -173,6 +173,21 @@ def gone_of(rows, word, arm, cut_type):
     return (d(arm) - d(f"iso:{word}")) / span, span, nd
 
 
+def _lt(a, b, f):
+    return None if a is None or b is None else bool(a < f * b)
+
+
+def _ge(a, b, f):
+    return None if a is None or b is None else bool(a >= f * b)
+
+
+def _status(cells):
+    held = [c["holds"] for c in cells]
+    if any(h is None for h in held):
+        return {"cells": cells, "status": "not tested (cells missing)", "missing": sum(h is None for h in held)}
+    return {"cells": cells, "held_cells": sum(held), "of": len(held), "status": "held" if all(held) else "failed"}
+
+
 def arms(plans, dirs):
     from mdb_lanes.attention_panels import Panel, arm_effects
     from mdb_lanes.flux_read_panels import merge_results
@@ -212,17 +227,14 @@ def arms(plans, dirs):
     fc = {}
     if main:
         f1 = [{"word": w, "type": t, "mml": g(w, "massmatch-lowpw", t), "own60": g(w, "own60", t),
-               "holds": g(w, "massmatch-lowpw", t) < g(w, "own60", t) / 3} for w in G1 for t in pre]
+               "holds": _lt(g(w, "massmatch-lowpw", t), g(w, "own60", t), 1 / 3)} for w in G1 for t in pre]
         f2 = [{"word": w, "type": t, "pml": g(w, "pwmatch-lowmass", t), "pw60": g(w, "pw60", t),
-               "holds": g(w, "pwmatch-lowmass", t) >= 2 * g(w, "pw60", t) / 3} for w in WORDS for t in pre]
+               "holds": _ge(g(w, "pwmatch-lowmass", t), g(w, "pw60", t), 2 / 3)} for w in WORDS for t in pre]
         f4 = [{"word": w, "type": t, "draw": r, "rand": g(w, r, t), "pw60": g(w, "pw60", t),
-               "holds": g(w, r, t) < g(w, "pw60", t) / 3} for w in WORDS for t in pre for r in ("rand60a", "rand60b")]
-        fc["F1"] = {"cells": f1, "held_cells": sum(c["holds"] for c in f1), "of": len(f1),
-                    "status": "held" if all(c["holds"] for c in f1) else "failed"}
-        fc["F2"] = {"cells": f2, "held_cells": sum(c["holds"] for c in f2), "of": len(f2),
-                    "status": "held" if all(c["holds"] for c in f2) else "failed"}
-        fc["F4"] = {"cells": f4, "held_cells": sum(c["holds"] for c in f4), "of": len(f4),
-                    "status": "held" if all(c["holds"] for c in f4) else "failed"}
+               "holds": _lt(g(w, r, t), g(w, "pw60", t), 1 / 3)} for w in WORDS for t in pre for r in ("rand60a", "rand60b")]
+        fc["F1"] = _status(f1)
+        fc["F2"] = _status(f2)
+        fc["F4"] = _status(f4)
         fc["keep"] = {f"{w}/{t}": {k: g(w, k, t) for k in ("keep-pw60", "keep-own60", "keep-rand60a")}
                       for w in WORDS for t in pre}
     f3 = effects.get("f3", {})
@@ -252,6 +264,56 @@ def arms(plans, dirs):
                     "mean_diff": float(np.mean(diff)), "pw_wins": wins, "of": len(cells),
                     "status": "held" if np.mean(diff) > 0 and wins >= 8 else "failed"}
     out["forecasts"] = fc
+    return out
+
+
+# ============================================================================= image-only PW
+
+def imgpw(capture, plans, arms_json=None):
+    """Secondary report (PREREG seal note): image-receiver-only PW beside PW_both and mass.
+
+    Per word: Spearman over the 600 units, top-60 overlaps, the text-receiver share of PW, and,
+    when ``arms_json`` (results/arms.json) is given, the F3 correlation of per-set image-only PW
+    with gone next to PW (cut type) and mass.
+    """
+    import sys
+    sys.path.insert(0, str(HERE))
+    import plans as PL
+    FS = PL.FS
+    from mdb_lanes import predicted_write as PW
+    from mdb_lanes.analysis_metrics import correlation_report
+    raw = json.loads((Path(plans) / "sets.json").read_text())
+    sets = {w: {k: (PL.flat(v) if v and isinstance(v[0], list) else v) for k, v in d.items()} for w, d in raw.items()}
+    masses = FS.word_masses()
+    effects = json.loads(Path(arms_json).read_text())["effects"].get("f3", {}) if arms_json else {}
+    out = {}
+    for w in WORDS:
+        sc = PL.unit_scores(capture, w)["iso"]
+        mass = np.asarray(masses[w], np.float64)
+        img = {"zero": sc["pw_zero_img"], "renorm": sc["pw_mask_img"]}
+        full = {"zero": sc["pw_zero"], "renorm": sc["pw_mask"]}
+        rec = {"text_receiver_share": {t: float(1 - img[t].sum() / full[t].sum()) for t in img},
+               "spearman_600": {f"img_{t}_vs_mass": PW.spearman(img[t], mass) for t in img},
+               "spearman_600_img_vs_full": {t: PW.spearman(img[t], full[t]) for t in img},
+               "top60_overlap_img_zero_vs_mass": PW.overlap(PW.top_units(img["zero"], 60), PW.top_units(mass, 60)),
+               "top60_overlap_img_zero_vs_pw60": PW.overlap(PW.top_units(img["zero"], 60), sets[w]["pw60"])}
+        if effects:
+            cells = {}
+            for t, pre in (("zero", "z"), ("renorm", "m")):
+                names = sorted(k for k in sets[w] if k.startswith("f3s"))
+                y = [effects[f"{pre}:{n}:{w}"]["gone"] for n in names]
+                cells[t] = {"img_pw": correlation_report([float(img[t][sets[w][n]].sum()) for n in names], y)["spearman"],
+                            "pw": correlation_report([float(full[t][sets[w][n]].sum()) for n in names], y)["spearman"],
+                            "mass": correlation_report([float(mass[sets[w][n]].sum()) for n in names], y)["spearman"]}
+            rec["f3_spearman"] = cells
+        out[w] = rec
+    if effects:
+        diffs = [out[w]["f3_spearman"][t]["img_pw"] - out[w]["f3_spearman"][t]["mass"] for w in WORDS
+                 for t in ("zero", "renorm")]
+        out["f3_img_summary"] = {"mean_spearman_img_pw": float(np.mean([out[w]["f3_spearman"][t]["img_pw"] for w in WORDS
+                                                                        for t in ("zero", "renorm")])),
+                                 "mean_diff_vs_mass": float(np.mean(diffs)), "img_wins": int(sum(d > 0 for d in diffs)),
+                                 "of": len(diffs)}
     return out
 
 
@@ -389,5 +451,7 @@ if __name__ == "__main__":
         print(save("arms.json", arms(a.plans, a.panels)))
     elif a.cmd == "sheets":
         print("\n".join(sheets(a.capture, a.panels, a.out)))
+    elif a.cmd == "imgpw":
+        print(save("imgpw.json", imgpw(a.capture, a.plans, a.path)))
     elif a.cmd == "qwen":
         print(save("qwen.json", qwen(a.path)))

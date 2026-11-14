@@ -1,0 +1,176 @@
+{
+ "ball": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": 0.538235294117647,
+    "mass": -0.36176470588235293,
+    "pw": 0.3911764705882353
+   },
+   "zero": {
+    "img_pw": 0.06764705882352941,
+    "mass": -0.5147058823529411,
+    "pw": 0.19117647058823528
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.8444574407770221,
+   "img_zero_vs_mass": 0.8400699007506951
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.4872522423673399,
+   "zero": 0.4893952483201342
+  },
+  "text_receiver_share": {
+   "renorm": 0.8042467558418455,
+   "zero": 0.8046876696743638
+  },
+  "top60_overlap_img_zero_vs_mass": 33,
+  "top60_overlap_img_zero_vs_pw60": 45
+ },
+ "black": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": -0.1588235294117647,
+    "mass": 0.10882352941176471,
+    "pw": 0.05588235294117647
+   },
+   "zero": {
+    "img_pw": -0.29411764705882354,
+    "mass": -0.047058823529411764,
+    "pw": -0.05588235294117647
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.8200372059371999,
+   "img_zero_vs_mass": 0.8146378297528303
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.6971417142825397,
+   "zero": 0.6937704826957852
+  },
+  "text_receiver_share": {
+   "renorm": 0.8554104921177158,
+   "zero": 0.8572695240152437
+  },
+  "top60_overlap_img_zero_vs_mass": 30,
+  "top60_overlap_img_zero_vs_pw60": 44
+ },
+ "f3_img_summary": {
+  "img_wins": 6,
+  "mean_diff_vs_mass": 0.12279411764705882,
+  "mean_spearman_img_pw": 0.13921568627450978,
+  "of": 12
+ },
+ "night": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": 0.6411764705882353,
+    "mass": 0.061764705882352944,
+    "pw": 0.4764705882352941
+   },
+   "zero": {
+    "img_pw": 0.5088235294117647,
+    "mass": 0.047058823529411764,
+    "pw": 0.38823529411764707
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.8636081886839712,
+   "img_zero_vs_mass": 0.8606892360907841
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.646638518440329,
+   "zero": 0.6379375498265273
+  },
+  "text_receiver_share": {
+   "renorm": 0.7491602063824603,
+   "zero": 0.750987358740157
+  },
+  "top60_overlap_img_zero_vs_mass": 32,
+  "top60_overlap_img_zero_vs_pw60": 40
+ },
+ "rain": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": 0.026470588235294117,
+    "mass": -0.1411764705882353,
+    "pw": 0.2088235294117647
+   },
+   "zero": {
+    "img_pw": 0.11176470588235295,
+    "mass": -0.0029411764705882353,
+    "pw": 0.2323529411764706
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.8721100179738002,
+   "img_zero_vs_mass": 0.870561402539471
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.5861727949244303,
+   "zero": 0.5770167694910263
+  },
+  "text_receiver_share": {
+   "renorm": 0.7927637602088681,
+   "zero": 0.7990753643645613
+  },
+  "top60_overlap_img_zero_vs_mass": 34,
+  "top60_overlap_img_zero_vs_pw60": 43
+ },
+ "red": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": 0.07647058823529412,
+    "mass": 0.37941176470588234,
+    "pw": 0.16470588235294117
+   },
+   "zero": {
+    "img_pw": 0.07058823529411765,
+    "mass": 0.15294117647058825,
+    "pw": 0.2411764705882353
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.823614338473561,
+   "img_zero_vs_mass": 0.8169311808347022
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.6771744365956572,
+   "zero": 0.683505509737527
+  },
+  "text_receiver_share": {
+   "renorm": 0.8211243285811912,
+   "zero": 0.8239590275930143
+  },
+  "top60_overlap_img_zero_vs_mass": 31,
+  "top60_overlap_img_zero_vs_pw60": 39
+ },
+ "snow": {
+  "f3_spearman": {
+   "renorm": {
+    "img_pw": -0.03235294117647059,
+    "mass": 0.25588235294117645,
+    "pw": 0.09705882352941177
+   },
+   "zero": {
+    "img_pw": 0.11470588235294117,
+    "mass": 0.25882352941176473,
+    "pw": 0.1264705882352941
+   }
+  },
+  "spearman_600": {
+   "img_renorm_vs_mass": 0.8976648795598013,
+   "img_zero_vs_mass": 0.8934524232970769
+  },
+  "spearman_600_img_vs_full": {
+   "renorm": 0.6189982194394984,
+   "zero": 0.6148214856152379
+  },
+  "text_receiver_share": {
+   "renorm": 0.6969393963121984,
+   "zero": 0.6984910574529168
+  },
+  "top60_overlap_img_zero_vs_mass": 38,
+  "top60_overlap_img_zero_vs_pw60": 52
+ }
+}
