@@ -1,0 +1,1660 @@
+mrun: job-702270785e57 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 3670655d941af69f14e5d9ae3dd75996f59f0697
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+== smoke: tiny SAE tests on this env
+/home/beast/domains/mrun/.venv/bin/python: No module named pytest
+load 6.2s
+(mdb) sae {"action": "load", "name": "qs", "path": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "cache": 28, "verify": true}  [0.05s]
+sae qs: /mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50  site L<l>.h_out  k 50  layers 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27  revision ce1a79d9c5163932d65c417380e53230e1086370  cache 28
+===== recall
+(mdb) start {"prompt": "The Eiffel Tower is located in the city of"}  [0.67s]
+t10.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until {"target": "logits"}  [0.25s]
+t10.logits  logits = lm_head(fn)
+(mdb) print {"address": "logits", "top": 3}  [0.04s]
+t10.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 3984.9 min -1.4453 max 30.875 mean 9.6138 abs_max 30.875 [measured]
+  top |v|: [0,12095] 30.875 " Paris", [0,30743] 29.5 " ____", [0,1304] 29.375 " __" [measured]
+  pointer occurrence ~stepped sha256 60c643354efcb07f
+(mdb) features {"address": "L*.h_out", "consumer": "M[12095,21718]"}  [28.24s]
+features profile  SAE qs  consumer t10.M[12095,21718] = 9.5 [measured P19]
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L0.h_out   -0.023095   -0.017182 -0.0035783 -0.0023348      0.1011    0.031481     0.24833  0
+  L1.h_out  -0.0068105  -0.0059056 -0.010017 0.0091125      -1.338    0.078254     0.27146  0
+  L2.h_out   -0.015153   -0.013159 -0.011462 0.0094681    -0.62483     0.07066     0.32479  0
+  L3.h_out   -0.012469   -0.011028 -0.020942  0.019501     -1.5639     0.12904     0.29231  0
+  L4.h_out   -0.018972    0.010684  -0.02432 -0.0053352     0.28122    0.034542     0.29067  0
+  L5.h_out   -0.058192   -0.055473 -0.012595 0.0098757    -0.16971    0.053135     0.31388  0
+  L6.h_out   -0.047858   -0.055486 -0.0082553  0.015883    -0.33189    0.082669     0.35203  0
+  L7.h_out   -0.022008   -0.012461 -0.0032836 -0.0062636      0.2846    0.033982     0.34367  0
+  L8.h_out    0.038145    -0.02427 -0.0054754   0.06789      1.7798     0.23355     0.39057  0
+  L9.h_out     0.11445     0.01865 -0.0041572  0.099961     0.87338     0.26027     0.38222  0
+  L10.h_out    0.12161    0.004433 -0.0049121   0.12209      1.0039     0.27302     0.37077  0
+  L11.h_out   0.065584   -0.044774 -0.015275   0.12563      1.9156     0.23956     0.38006  0
+  L12.h_out  -0.010132   -0.057914 -0.013582  0.061364     -6.0567     0.11692     0.40304  0
+  L13.h_out   0.074367   -0.021823 -0.017797   0.11399      1.5328     0.20055     0.42857  0
+  L14.h_out   0.031449   -0.027448 -0.027205  0.086102      2.7378     0.12723     0.42411  0
+  L15.h_out   0.055254    -0.13539 -0.011112   0.20176      3.6514     0.22262     0.41827  0
+  L16.h_out   -0.23635    -0.27793 -0.046567  0.088146    -0.37295    0.086116      0.3693  0
+  L17.h_out   -0.35798      -0.439 -0.061767   0.14278    -0.39886     0.10216     0.36934  0
+  L18.h_out    0.19172   -0.083817   0.00102   0.27452      1.4319     0.17022     0.38615  0
+  L19.h_out     0.5082     0.21434 -0.0090312    0.3029     0.59601        0.13     0.35474  0
+  L20.h_out     3.8818      3.1969  0.022257   0.66265     0.17071      0.1132     0.38005  3.5527e-15
+  L21.h_out     5.3714      5.2742   0.04657  0.050672   0.0094336   0.0077881     0.36769  3.5527e-15
+  L22.h_out     11.736      11.598   0.02616   0.11183   0.0095292   0.0081265     0.33807  -1.4211e-14
+  L23.h_out     14.194      14.136  0.076367 -0.018498  -0.0013033   0.0011357     0.33155  1.0658e-14
+  L24.h_out     15.332      14.342   0.11929   0.87076    0.056793    0.048708     0.34677  0
+  L25.h_out     13.355       12.52  0.096088   0.73887    0.055327    0.048393     0.35015  1.954e-14
+  L26.h_out      13.68      12.979   0.43125   0.27023    0.019753    0.017982     0.29996  1.2434e-14
+  L27.h_out     9.4189      9.2379   0.37245  -0.19146   -0.020327    0.017081     0.31632  0
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L*.h_out", "consumer": "M[12095,21718]", "shift": -1}  [0.57s]
+features profile  SAE qs  consumer t10.M[12095,21718] = 9.5 [measured P19]  (each SAE applied -1 layers off its site)
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L0.h_out   -0.023095   -0.011295 -0.010017 -0.0017828    0.077193    0.026381     0.56513  0
+  L1.h_out  -0.0068105   -0.018505 -0.011462  0.023157     -3.4002     0.18775     0.47189  0
+  L2.h_out   -0.015153   -0.016586 -0.020942  0.022375     -1.4766     0.16148     0.50682  0
+  L3.h_out   -0.012469    0.013984  -0.02432 -0.0021328     0.17105    0.015534      0.4184  0
+  L4.h_out   -0.018972   -0.031588 -0.012595  0.025211     -1.3289     0.15321       0.444  0
+  L5.h_out   -0.058192   -0.035722 -0.0082553 -0.014214     0.24426    0.081893     0.44651  0
+  L6.h_out   -0.047858   -0.045464 -0.0032836 0.00089011   -0.018599    0.006414     0.46314  0
+  L7.h_out   -0.022008   -0.020415 -0.0054754 0.0038819    -0.17638    0.018867     0.45774  0
+  L8.h_out    0.038145   -0.034629 -0.0041572  0.076932      2.0168      0.2699     0.50692  0
+  L9.h_out     0.11445   -0.050485 -0.0049121   0.16985       1.484     0.43571     0.48212  0
+  L10.h_out    0.12161   -0.033293 -0.015275   0.17018      1.3994     0.39227     0.45147  0
+  L11.h_out   0.065584   -0.058115 -0.013582   0.13728      2.0932     0.26185     0.45226  0
+  L12.h_out  -0.010132   -0.095118 -0.017797   0.10278     -10.145     0.20177     0.42542  0
+  L13.h_out   0.074367   -0.089146 -0.027205   0.19072      2.5645     0.30622     0.48734  0
+  L14.h_out   0.031449   -0.093558 -0.011112   0.13612      4.3282     0.21798     0.50444  0
+  L15.h_out   0.055254    -0.13871 -0.046567   0.24053      4.3531     0.29994     0.51435  0
+  L16.h_out   -0.23635    -0.38422 -0.061767   0.20964    -0.88697     0.22549     0.47857  0
+  L17.h_out   -0.35798    -0.11343   0.00102  -0.24558     0.68601     0.21115     0.45132  -1.7764e-15
+  L18.h_out    0.19172    0.068095 -0.0090312   0.13266     0.69193    0.079272     0.48203  1.7764e-15
+  L19.h_out     0.5082     0.55084  0.022257 -0.064892    -0.12769    0.033637     0.46947  0
+  L20.h_out     3.8818      3.6963   0.04657   0.13897    0.035801    0.027819     0.44195  3.5527e-15
+  L21.h_out     5.3714      4.7361   0.02616   0.60923     0.11342    0.082916     0.45306  -5.3291e-15
+  L22.h_out     11.736      12.046  0.076367  -0.38632   -0.032918    0.025975     0.37199  7.1054e-15
+  L23.h_out     14.194      12.739   0.11929    1.3349    0.094046    0.080582     0.38626  0
+  L24.h_out     15.332      13.838  0.096088    1.3975    0.091151    0.082666     0.41286  1.5987e-14
+  L25.h_out     13.355      11.751   0.43125    1.1722    0.087772    0.072748      0.3844  8.8818e-15
+  L26.h_out      13.68      10.131   0.37245    3.1769     0.23223     0.21144     0.38271  3.5527e-15
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L*.h_out", "consumer": "M[12095,21718]", "shift": 1}  [0.91s]
+features profile  SAE qs  consumer t10.M[12095,21718] = 9.5 [measured P19]  (each SAE applied +1 layers off its site)
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L1.h_out  -0.0068105  -0.0018763 -0.0035783 -0.0013559     0.19908    0.013054     0.66705  0
+  L2.h_out   -0.015153   0.0042433 -0.010017 -0.009379     0.61895    0.072917     0.51558  1.7764e-15
+  L3.h_out   -0.012469   -0.019037 -0.011462  0.018031      -1.446      0.1038     0.52743  0
+  L4.h_out   -0.018972   -0.018432 -0.020942  0.020402     -1.0754     0.12038     0.40609  0
+  L5.h_out   -0.058192   -0.016097  -0.02432 -0.017774     0.30544    0.093033      0.5039  0
+  L6.h_out   -0.047858   -0.055436 -0.012595  0.020173    -0.42151     0.10221     0.49187  0
+  L7.h_out   -0.022008   -0.051612 -0.0082553  0.037859     -1.7202     0.15785     0.52725  0
+  L8.h_out    0.038145   -0.033069 -0.0032836  0.074498       1.953     0.29512     0.45855  0
+  L9.h_out     0.11445   -0.015272 -0.0054754    0.1352      1.1813      0.3624     0.46798  0
+  L10.h_out    0.12161    0.023676 -0.0041572   0.10209      0.8395     0.22038     0.47714  0
+  L11.h_out   0.065584    -0.20033 -0.0049121   0.27083      4.1294     0.35461     0.51568  0
+  L12.h_out  -0.010132   -0.049358 -0.015275  0.054502     -5.3793     0.11324     0.43862  0
+  L13.h_out   0.074367   -0.055359 -0.013582   0.14331       1.927     0.22213       0.483  0
+  L14.h_out   0.031449   0.0061737 -0.017797  0.043073      1.3696    0.067776     0.48537  0
+  L15.h_out   0.055254   -0.042994 -0.027205   0.12545      2.2705     0.15219     0.49345  0
+  L16.h_out   -0.23635    -0.37784 -0.011112    0.1526    -0.64567     0.12333     0.51325  0
+  L17.h_out   -0.35798    -0.27152 -0.046567   -0.0399     0.11146    0.028325     0.54727  0
+  L18.h_out    0.19172    -0.39727 -0.061767   0.65076      3.3943     0.33647      0.4764  0
+  L19.h_out     0.5082     -0.0358   0.00102   0.54298      1.0684     0.25138      0.4817  -1.7764e-15
+  L20.h_out     3.8818      1.6376 -0.0090312    2.2532     0.58045     0.37564     0.48124  0
+  L21.h_out     5.3714      4.0198  0.022257    1.3293     0.24748     0.17491     0.43608  3.5527e-15
+  L22.h_out     11.736      8.6399   0.04657    3.0492     0.25982     0.23037     0.53572  5.3291e-15
+  L23.h_out     14.194      12.588   0.02616    1.5799     0.11131    0.095407     0.45189  -1.0658e-14
+  L24.h_out     15.332      15.734  0.076367  -0.47851    -0.03121    0.026033     0.44829  1.0658e-14
+  L25.h_out     13.355       14.03   0.11929  -0.79408    -0.05946    0.044641     0.39996  -1.7764e-15
+  L26.h_out      13.68      13.188  0.096088   0.39583    0.028935    0.025028     0.38745  2.3093e-14
+  L27.h_out     9.4189      21.833   0.43125   -12.845     -1.3637     0.23176      2.0909  1.954e-14
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L20.h_out", "consumer": "M[12095,21718]", "top": 10, "lens": 5, "circuit": false}  [0.24s]
+features t10.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 884.23 [measured]
+  f25654  act 192.33 [derived-exact]  ||d|| 1  effect 2.1273 [derived-exact P19]  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f15655  act 135.56 [derived-exact]  ||d|| 1  effect 0.3225 [derived-exact P19]  promotes " Toronto" " London" " Seattle" " Nairobi" " Chicago" [derived-local]
+  f562    act 117.65 [derived-exact]  ||d|| 1  effect 0.28642 [derived-exact P19]  promotes " Nobel" "\u7684\u4f1f\u5927" " Leonardo" "\u5bb6\u55bb\u6237\u6653" "\u4f1f\u5927" [derived-local]
+  f4492   act 73.32 [derived-exact]  ||d|| 1  effect 0.23041 [derived-exact P19]  promotes " streets" "\u8857\u533a" "\u5e02\u6c11" " downtown" "\u57ce\u5e02\u7ba1\u7406" [derived-local]
+  f3621   act 121.42 [derived-exact]  ||d|| 1  effect -0.2147 [derived-exact P19]  promotes " Math" "\u4eba\u58eb" "<span" "\u4fe1" "YLE" [derived-local]
+  f23469  act 31.677 [derived-exact]  ||d|| 1  effect 0.16482 [derived-exact P19]  promotes " d\u00e9" "R\u00e9" " sous" " suiv" " Pr\u00e9" [derived-local]
+  f6083   act 75.235 [derived-exact]  ||d|| 1  effect -0.14368 [derived-exact P19]  promotes "iest" "akest" "\u0e21\u0e2d\u0e1a" " \u043d\u0430\u0438" " greatest" [derived-local]
+  f27357  act 89.619 [derived-exact]  ||d|| 1  effect 0.11917 [derived-exact P19]  promotes " city" " cities" "\u8fd9\u5ea7\u57ce\u5e02" "\u57ce\u5e02" "\u57ce\u5e02\u7684" [derived-local]
+  f3570   act 121.6 [derived-exact]  ||d|| 1  effect -0.11314 [derived-exact P19]
+  f9025   act 27.283 [derived-exact]  ||d|| 1  effect 0.095378 [derived-exact P19]
+  +40 more  act Σ 1560.2  effect Σ 0.32242 [derived-exact P19]
+  b_dec    ||b|| 579.38  effect 0.022257 [derived-exact P19]
+  ERROR    ||e|| 336.05 [derived-exact]  ||e||/||x|| 0.38005  energy 0.14443  effect 0.66265 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t10.M[12095,21718] 9.5 [measured P19] = direct 3.8818 [derived-exact P19] (features 3.1969 + bias 0.022257 + error 0.66265) + later layers 5.5445 [derived-exact P19] + head bias 0 + remainder 0.073699 [measured P19]
+  error/direct 0.17071  |error| share 0.1132  closure 3.5527e-15 [derived-exact P19]
+(mdb) features {"address": "L22.h_out", "consumer": "M[12095,21718]", "top": 10, "lens": 5, "circuit": false}  [0.07s]
+features t10.L22.h_out  SAE qs L22 (L22.h_out, k 50, 50 active)  ||x|| 1578.2 [measured]
+  f1077   act 575.13 [derived-exact]  ||d|| 1  effect 6.8046 [derived-exact P19]  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+  f24354  act 344.82 [derived-exact]  ||d|| 1  effect 1.4442 [derived-exact P19]  promotes " London" " Paris" " Tokyo" "\u5317\u4eac" "\u4f26\u6566" [derived-local]
+  f19276  act 432.52 [derived-exact]  ||d|| 1  effect 1.1887 [derived-exact P19]  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+  f24452  act 209.89 [derived-exact]  ||d|| 1  effect 1.1206 [derived-exact P19]  promotes " city" "\u57ce\u5e02\u7684" "\u57ce\u5e02" "(city" "city" [derived-local]
+  f25151  act 188.59 [derived-exact]  ||d|| 1  effect 0.58523 [derived-exact P19]  promotes "\u6d77\u6dc0" "\u6d77\u6dc0\u533a" "\u90ca\u533a" "\u9ad8\u65b0\u533a" "\u90d1\u5dde\u5e02" [derived-local]
+  f31091  act 90.691 [derived-exact]  ||d|| 1  effect -0.1715 [derived-exact P19]  promotes "\u963f\u6839\u5ef7" " thu\u1ed9c" "\u5308" "\u897f\u73ed\u7259" "\u745e\u5178" [derived-local]
+  f11805  act 59.376 [derived-exact]  ||d|| 1  effect -0.16397 [derived-exact P19]  promotes "\u610f\u5927\u5229" "\u6b27\u6d32" " Italy" " Spain" "\u897f\u73ed\u7259" [derived-local]
+  f29364  act 68.355 [derived-exact]  ||d|| 1  effect 0.1628 [derived-exact P19]  promotes "\u5927\u5b66" " UCLA" " University" " Yale" "\u6e05\u534e\u5927\u5b66" [derived-local]
+  f29922  act 136.17 [derived-exact]  ||d|| 1  effect -0.138 [derived-exact P19]
+  f26676  act 85.546 [derived-exact]  ||d|| 1  effect 0.1344 [derived-exact P19]
+  +40 more  act Σ 2707.4  effect Σ 0.63066 [derived-exact P19]
+  b_dec    ||b|| 1045.6  effect 0.02616 [derived-exact P19]
+  ERROR    ||e|| 533.54 [derived-exact]  ||e||/||x|| 0.33807  energy 0.11429  effect 0.11183 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t10.M[12095,21718] 9.5 [measured P19] = direct 11.736 [derived-exact P19] (features 11.598 + bias 0.02616 + error 0.11183) + later layers -2.3117 [derived-exact P19] + head bias 0 + remainder 0.076018 [measured P19]
+  error/direct 0.0095292  |error| share 0.0081265  closure -1.4211e-14 [derived-exact P19]
+(mdb) features {"address": "L23.h_out", "consumer": "M[12095,21718]", "top": 10, "lens": 5, "circuit": true}  [0.06s]
+features t10.L23.h_out  SAE qs L23 (L23.h_out, k 50, 50 active)  ||x|| 1850 [measured]
+  f22014  act 601.15 [derived-exact]  ||d|| 1  effect 7.6133 [derived-exact P19]  promotes "\u6cd5\u56fd" " France" " French" "French" "France" [derived-local]
+  f906    act 428.69 [derived-exact]  ||d|| 1  effect 1.9839 [derived-exact P19]  promotes " London" " Paris" " Chicago" " Toronto" "London" [derived-local]
+  f22221  act 520.03 [derived-exact]  ||d|| 1  effect 1.0708 [derived-exact P19]  promotes " Convention" "\u6267" "\u6267\u653f" "\u516c\u793e" "-symbol" [derived-local]
+  f12022  act 152.64 [derived-exact]  ||d|| 1  effect 0.54703 [derived-exact P19]  promotes " Metro" "\u5e7f\u5dde\u5e02" "\u90d1\u5dde\u5e02" " \u043c\u0435\u0442\u0440\u043e" "\u897f\u6e56" [derived-local]
+  f7620   act 97.531 [derived-exact]  ||d|| 1  effect 0.53785 [derived-exact P19]  promotes " city" "\u57ce\u5e02\u7684" "(city" "\u8fd9\u5ea7\u57ce\u5e02" "\u57ce\u5e02" [derived-local]
+  f17459  act 226.06 [derived-exact]  ||d|| 1  effect 0.53672 [derived-exact P19]  promotes " Copp" " Ph" "XE" "Fr" "\u7981\u5fcc" [derived-local]
+  f25516  act 148.75 [derived-exact]  ||d|| 1  effect 0.53643 [derived-exact P19]  promotes "i\u00e8re" "ot" "aud" "oire" "iaux" [derived-local]
+  f18119  act 247.18 [derived-exact]  ||d|| 1  effect 0.40507 [derived-exact P19]  promotes "\u7aef\u6b63" "\u81ea\u79c1" ":=" " pr\u00e9c" " sanitary" [derived-local]
+  f24975  act 150.59 [derived-exact]  ||d|| 1  effect -0.20627 [derived-exact P19]
+  f23465  act 59.737 [derived-exact]  ||d|| 1  effect 0.18685 [derived-exact P19]
+  +40 more  act Σ 3522.6  effect Σ 0.92413 [derived-exact P19]
+  b_dec    ||b|| 1261.8  effect 0.076367 [derived-exact P19]
+  ERROR    ||e|| 613.36 [derived-exact]  ||e||/||x|| 0.33155  energy 0.10993  effect -0.018498 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t10.M[12095,21718] 9.5 [measured P19] = direct 14.194 [derived-exact P19] (features 14.136 + bias 0.076367 + error -0.018498) + later layers -4.7702 [derived-exact P19] + head bias 0 + remainder 0.076538 [measured P19]
+  error/direct -0.0013033  |error| share 0.0011357  closure 1.0658e-14 [derived-exact P19]
+  circuit 1 stored (record 7fefd5e548bf723c): circuit show 1
+(mdb) circuit {"target": "show", "id": 1}  [0.00s]
+circuit 1  t10.M[12095,21718]  top 8 depth 1  (22 nodes, record 7fefd5e548bf723c)
+  t10.M[12095,21718]  9.5 [measured]
+    L23.h_out via SAE  t10.L23.h_out  14.194 [derived-exact P19]
+      f22014  t10.L23.h_out{sae=qs,feature=22014}  7.6133 [derived-exact P19]
+      f906  t10.L23.h_out{sae=qs,feature=906}  1.9839 [derived-exact P19]
+      f22221  t10.L23.h_out{sae=qs,feature=22221}  1.0708 [derived-exact P19]
+      f12022  t10.L23.h_out{sae=qs,feature=12022}  0.54703 [derived-exact P19]
+      f7620  t10.L23.h_out{sae=qs,feature=7620}  0.53785 [derived-exact P19]
+      f17459  t10.L23.h_out{sae=qs,feature=17459}  0.53672 [derived-exact P19]
+      f25516  t10.L23.h_out{sae=qs,feature=25516}  0.53643 [derived-exact P19]
+      f18119  t10.L23.h_out{sae=qs,feature=18119}  0.40507 [derived-exact P19]
+      +42 more  t10.L23.h_out features (unlisted)  0.90471 [derived-exact]
+      sae bias  t10.L23.h_out{sae=qs,b_dec}  0.076367 [derived-exact P19]
+      sae error  t10.L23.h_out{sae=qs,error}  -0.018498 [derived-exact P19]
+    L27.mlp  t10.L27.m  -4.7731 [derived-exact P19]
+    L25.mlp  t10.L25.m  -2.311 [derived-exact P19]
+    L26.attn  t10.L26.o  1.1479 [derived-exact P19]
+    L24.mlp  t10.L24.m  0.98324 [derived-exact P19]
+    L26.mlp  t10.L26.m  -0.81935 [derived-exact P19]
+    L27.attn  t10.L27.o  0.51449 [derived-exact P19]
+    L25.attn  t10.L25.o  0.33368 [derived-exact P19]
+    L24.attn  t10.L24.o  0.15399 [derived-exact P19]
+    remainder  t10.M[12095,21718]  0.076538 [measured]
+  closure 0 [derived-exact P19] within 2.4732e-13 [bound] (zero by construction: float64 summation only)
+  remainders not all bounded (a bound was refused) their rounding bounds; 0 edit node(s)
+(mdb) features {"address": "L22.h_out", "match": "L22.f[i=5773]", "top": 8, "lens": 5}  [1.11s]
+features t10.L22.h_out  SAE qs L22 (L22.h_out, k 50, 50 active)  ||x|| 1578.2 [measured]
+  f1077   act 575.13 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+  f19276  act 432.52 [derived-exact]  ||d|| 1  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+  f24354  act 344.82 [derived-exact]  ||d|| 1  promotes " London" " Paris" " Tokyo" "\u5317\u4eac" "\u4f26\u6566" [derived-local]
+  f17657  act 238.41 [derived-exact]  ||d|| 1  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f24452  act 209.89 [derived-exact]  ||d|| 1  promotes " city" "\u57ce\u5e02\u7684" "\u57ce\u5e02" "(city" "city" [derived-local]
+  f25151  act 188.59 [derived-exact]  ||d|| 1  promotes "\u6d77\u6dc0" "\u6d77\u6dc0\u533a" "\u90ca\u533a" "\u9ad8\u65b0\u533a" "\u90d1\u5dde\u5e02" [derived-local]
+  f10541  act 159.79 [derived-exact]  ||d|| 1  promotes " dreams" " strangers" " contrasts" " surprises" " Dreams" [derived-local]
+  f30329  act 144.52 [derived-exact]  ||d|| 1  promotes "\u3001\n\n" "\uff0c\n\n" "\u6109" " \u0420\u0430" "\u5783" [derived-local]
+  +42 more  act Σ 2604.8
+  b_dec    ||b|| 1045.6
+  ERROR    ||e|| 533.54 [derived-exact]  ||e||/||x|| 0.33807  energy 0.11429
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  match L22.f[i=5773]: W_down[:, 5773] of L22 (the write per unit of f[i=5773])  ||v|| 1.8037  outside listed span 0.2748 [derived-exact]
+    f19276  cos -0.83734 [derived-exact]  coef -1.423  active here, act 432.52  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+    f1031   cos 0.66127 [derived-exact]  coef 0.11566  not active here  promotes "\u5c06\u5176" "\u5bf9\u5176\u8fdb\u884c" " se" "\u628a\u5b83" "\u628a\u8fd9\u4e9b" [derived-local]
+    f1077   cos -0.49548 [derived-exact]  coef -0.81914  active here, act 575.13  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+    f28431  cos -0.18317 [derived-exact]  coef 0.045593  not active here  promotes "\ufffd" "\ufffd" "\u0c28" "\u0c30" "\u0c17" [derived-local]
+    f5568   cos -0.12542 [derived-exact]  coef -0.038728  not active here  promotes "\u5df4\u9ece" "opot" "ekt" "\u58ee" "t\u00e1" [derived-local]
+    f3877   cos -0.12215 [derived-exact]  coef -0.016214  not active here  promotes "\ufffd" "\u0ca6" "\ufffd" " Caribbean" " Hait" [derived-local]
+    f3364   cos -0.11454 [derived-exact]  coef 0.047583  not active here  promotes "nal" " validated" "ulary" " adapted" "\u8c23" [derived-local]
+    f10480  cos -0.11156 [derived-exact]  coef -0.0052227  not active here  promotes "\ufffd" "\ufffd" "\ufffd" "\ufffd" " \u00e9c" [derived-local]
+(mdb) features {"address": "L20.h_out", "match": "L20.A[h13]", "top": 8, "lens": 5}  [1.31s]
+features t10.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 884.23 [measured]
+  f25654  act 192.33 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f29239  act 172.6 [derived-exact]  ||d|| 1  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f15655  act 135.56 [derived-exact]  ||d|| 1  promotes " Toronto" " London" " Seattle" " Nairobi" " Chicago" [derived-local]
+  f3570   act 121.6 [derived-exact]  ||d|| 1  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f3621   act 121.42 [derived-exact]  ||d|| 1  promotes " Math" "\u4eba\u58eb" "<span" "\u4fe1" "YLE" [derived-local]
+  f562    act 117.65 [derived-exact]  ||d|| 1  promotes " Nobel" "\u7684\u4f1f\u5927" " Leonardo" "\u5bb6\u55bb\u6237\u6653" "\u4f1f\u5927" [derived-local]
+  f27357  act 89.619 [derived-exact]  ||d|| 1  promotes " city" " cities" "\u8fd9\u5ea7\u57ce\u5e02" "\u57ce\u5e02" "\u57ce\u5e02\u7684" [derived-local]
+  f7242   act 79.365 [derived-exact]  ||d|| 1  promotes "scape" " ordinance" " council" " mayor" "\u968d" [derived-local]
+  +42 more  act Σ 1515.8
+  b_dec    ||b|| 579.38
+  ERROR    ||e|| 336.05 [derived-exact]  ||e||/||x|| 0.38005  energy 0.14443
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  match L20.A[h13]: W_o,h13 A_h13 of L20 at t10  ||v|| 163.17  outside listed span 0.66772 [derived-exact]
+    f25654  cos 0.68197 [derived-exact]  coef 100.62  active here, act 192.33  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+    f12170  cos 0.32173 [derived-exact]  coef 20.799  not active here  promotes "\u0c28" "\ufffd" "\ufffd" "\u0c35" "\u0c32" [derived-local]
+    f6371   cos 0.27809 [derived-exact]  coef 3.915  active here, act 44.847  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" " euros" [derived-local]
+    f23469  cos 0.25423 [derived-exact]  coef -9.2297  active here, act 31.677  promotes " d\u00e9" "R\u00e9" " sous" " suiv" " Pr\u00e9" [derived-local]
+    f14546  cos 0.23124 [derived-exact]  coef 35.757  active here, act 35.414  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" "\u6d77\u6dc0" [derived-local]
+    f12095  cos 0.20638 [derived-exact]  coef 17.676  not active here  promotes " Czech" " Slovak" " Slovakia" " Prague" " Hungary" [derived-local]
+    f13218  cos 0.20147 [derived-exact]  coef 7.5435  not active here  promotes "-addons" "(_('" " F\u00e9" " Swiss" " Switzerland" [derived-local]
+    f14853  cos 0.20119 [derived-exact]  coef 14.585  not active here  promotes " Hogwarts" " Hermione" " Dumbledore" " Voldemort" " Rowling" [derived-local]
+(mdb) features {"address": "L20.h_out", "match": "L20.A[h13,src=2]", "top": 8, "lens": 5}  [1.06s]
+features t10.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 884.23 [measured]
+  f25654  act 192.33 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f29239  act 172.6 [derived-exact]  ||d|| 1  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f15655  act 135.56 [derived-exact]  ||d|| 1  promotes " Toronto" " London" " Seattle" " Nairobi" " Chicago" [derived-local]
+  f3570   act 121.6 [derived-exact]  ||d|| 1  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f3621   act 121.42 [derived-exact]  ||d|| 1  promotes " Math" "\u4eba\u58eb" "<span" "\u4fe1" "YLE" [derived-local]
+  f562    act 117.65 [derived-exact]  ||d|| 1  promotes " Nobel" "\u7684\u4f1f\u5927" " Leonardo" "\u5bb6\u55bb\u6237\u6653" "\u4f1f\u5927" [derived-local]
+  f27357  act 89.619 [derived-exact]  ||d|| 1  promotes " city" " cities" "\u8fd9\u5ea7\u57ce\u5e02" "\u57ce\u5e02" "\u57ce\u5e02\u7684" [derived-local]
+  f7242   act 79.365 [derived-exact]  ||d|| 1  promotes "scape" " ordinance" " council" " mayor" "\u968d" [derived-local]
+  +42 more  act Σ 1515.8
+  b_dec    ||b|| 579.38
+  ERROR    ||e|| 336.05 [derived-exact]  ||e||/||x|| 0.38005  energy 0.14443
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  match L20.A[h13,src=2]: p[h13,2] W_o,h13 v[kv6,2] of L20 at t10  ||v|| 125.67  outside listed span 0.66288 [derived-exact]
+    f25654  cos 0.69117 [derived-exact]  coef 80.348  active here, act 192.33  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+    f12170  cos 0.31143 [derived-exact]  coef 13.191  not active here  promotes "\u0c28" "\ufffd" "\ufffd" "\u0c35" "\u0c32" [derived-local]
+    f6371   cos 0.2629 [derived-exact]  coef 5.0521  active here, act 44.847  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" " euros" [derived-local]
+    f23469  cos 0.25739 [derived-exact]  coef -7.9004  active here, act 31.677  promotes " d\u00e9" "R\u00e9" " sous" " suiv" " Pr\u00e9" [derived-local]
+    f14546  cos 0.25596 [derived-exact]  coef 30.654  active here, act 35.414  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" "\u6d77\u6dc0" [derived-local]
+    f13218  cos 0.19674 [derived-exact]  coef 6.5677  not active here  promotes "-addons" "(_('" " F\u00e9" " Swiss" " Switzerland" [derived-local]
+    f24108  cos 0.19539 [derived-exact]  coef 1.273  not active here  promotes " Flask" " SQLAlchemy" " flask" " Louisiana" " mongo" [derived-local]
+    f14853  cos 0.19137 [derived-exact]  coef 11.112  not active here  promotes " Hogwarts" " Hermione" " Dumbledore" " Voldemort" " Rowling" [derived-local]
+(mdb) whatif {"target": "L4.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [13.47s]
+whatif t10.L4.h_out add tensor 74904288100e from error*-1 (SAE qs L4) -> t10.M[12095,21718]  (mode rewind, record 471043f972e0e253)
+  sealed  linear ΔM = -0.31541 [derived-local P14]   exact ΔM = -0.31102 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 9.5 [measured] -> edited 9.125 [measured])
+  error split (P20): linear -0.31541 [derived-local P14] + nonlinear 0.0043844 [derived-exact P20] + realisation 0.00073085 [derived-exact P20] + rounding -0.064709 [measured P20]
+  verdict (P20): effect  native ΔM -0.375 [measured P20], exact ΔM -0.31029 [derived-exact P20], residual -0.064709 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L8.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [9.10s]
+whatif t10.L8.h_out add tensor 23299041fca4 from error*-1 (SAE qs L8) -> t10.M[12095,21718]  (mode rewind, record 8739eac2bbee0776)
+  sealed  linear ΔM = -0.078612 [derived-local P14]   exact ΔM = -0.22617 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 9.5 [measured] -> edited 9.25 [measured])
+  error split (P20): linear -0.078612 [derived-local P14] + nonlinear -0.14756 [derived-exact P20] + realisation -0.00067601 [derived-exact P20] + rounding -0.023153 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.22685 [derived-exact P20], residual -0.023153 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L12.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [7.48s]
+whatif t10.L12.h_out add tensor 0a8df887a351 from error*-1 (SAE qs L12) -> t10.M[12095,21718]  (mode rewind, record a9544a48327cb1ff)
+  sealed  linear ΔM = 1.1912 [derived-local P14]   exact ΔM = 0.95891 [derived-exact]
+  native  ΔM = 0.875 [measured]   (base 9.5 [measured] -> edited 10.375 [measured])
+  error split (P20): linear 1.1912 [derived-local P14] + nonlinear -0.23232 [derived-exact P20] + realisation -0.0017258 [derived-exact P20] + rounding -0.082186 [measured P20]
+  verdict (P20): effect  native ΔM 0.875 [measured P20], exact ΔM 0.95719 [derived-exact P20], residual -0.082186 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L14.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [5.63s]
+whatif t10.L14.h_out add tensor 362627794444 from error*-1 (SAE qs L14) -> t10.M[12095,21718]  (mode rewind, record 174609cf8de39fc8)
+  sealed  linear ΔM = -0.16867 [derived-local P14]   exact ΔM = -0.52737 [derived-exact]
+  native  ΔM = -0.5 [measured]   (base 9.5 [measured] -> edited 9 [measured])
+  error split (P20): linear -0.16867 [derived-local P14] + nonlinear -0.3587 [derived-exact P20] + realisation 0.00030935 [derived-exact P20] + rounding 0.027056 [measured P20]
+  verdict (P20): effect  native ΔM -0.5 [measured P20], exact ΔM -0.52706 [derived-exact P20], residual 0.027056 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L16.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.98s]
+whatif t10.L16.h_out add tensor 9100874442ab from error*-1 (SAE qs L16) -> t10.M[12095,21718]  (mode rewind, record 01c3ca26598759cf)
+  sealed  linear ΔM = -0.45619 [derived-local P14]   exact ΔM = -0.17547 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 9.5 [measured] -> edited 9.375 [measured])
+  error split (P20): linear -0.45619 [derived-local P14] + nonlinear 0.28072 [derived-exact P20] + realisation -0.00068006 [derived-exact P20] + rounding 0.051148 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.17615 [derived-exact P20], residual 0.051148 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L17.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.68s]
+whatif t10.L17.h_out add tensor 678d1bc8d9e3 from error*-1 (SAE qs L17) -> t10.M[12095,21718]  (mode rewind, record 01e272c2945072dc)
+  sealed  linear ΔM = -0.50316 [derived-local P14]   exact ΔM = -0.85602 [derived-exact]
+  native  ΔM = -0.75 [measured]   (base 9.5 [measured] -> edited 8.75 [measured])
+  error split (P20): linear -0.50316 [derived-local P14] + nonlinear -0.35286 [derived-exact P20] + realisation 0.0020738 [derived-exact P20] + rounding 0.10395 [measured P20]
+  verdict (P20): effect  native ΔM -0.75 [measured P20], exact ΔM -0.85395 [derived-exact P20], residual 0.10395 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L18.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [5.23s]
+whatif t10.L18.h_out add tensor b8e89be00540 from error*-1 (SAE qs L18) -> t10.M[12095,21718]  (mode rewind, record 00e153537417885b)
+  sealed  linear ΔM = -0.4231 [derived-local P14]   exact ΔM = -0.46179 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 9.5 [measured] -> edited 9.125 [measured])
+  error split (P20): linear -0.4231 [derived-local P14] + nonlinear -0.038695 [derived-exact P20] + realisation 0.00099916 [derived-exact P20] + rounding 0.085795 [measured P20]
+  verdict (P20): effect  native ΔM -0.375 [measured P20], exact ΔM -0.46079 [derived-exact P20], residual 0.085795 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L19.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.03s]
+whatif t10.L19.h_out add tensor fd87cbd42e25 from error*-1 (SAE qs L19) -> t10.M[12095,21718]  (mode rewind, record 57e23b0e8ff7f3c4)
+  sealed  linear ΔM = -1.1055 [derived-local P14]   exact ΔM = -1.2928 [derived-exact]
+  native  ΔM = -1.25 [measured]   (base 9.5 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -1.1055 [derived-local P14] + nonlinear -0.18734 [derived-exact P20] + realisation 0.00064203 [derived-exact P20] + rounding 0.042176 [measured P20]
+  verdict (P20): effect  native ΔM -1.25 [measured P20], exact ΔM -1.2922 [derived-exact P20], residual 0.042176 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.36s]
+whatif t10.L20.h_out add tensor ad4063c35541 from error*-1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record aa00da3b706ed846)
+  sealed  linear ΔM = -1.8715 [derived-local P14]   exact ΔM = -1.5283 [derived-exact]
+  native  ΔM = -1.5 [measured]   (base 9.5 [measured] -> edited 8 [measured])
+  error split (P20): linear -1.8715 [derived-local P14] + nonlinear 0.34319 [derived-exact P20] + realisation 0.0051289 [derived-exact P20] + rounding 0.023172 [measured P20]
+  verdict (P20): effect  native ΔM -1.5 [measured P20], exact ΔM -1.5232 [derived-exact P20], residual 0.023172 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [3.73s]
+whatif t10.L21.h_out add tensor a25e2f40132a from error*-1 (SAE qs L21) -> t10.M[12095,21718]  (mode rewind, record 501d942affb6e60c)
+  sealed  linear ΔM = -0.33542 [derived-local P14]   exact ΔM = -0.64991 [derived-exact]
+  native  ΔM = -0.5 [measured]   (base 9.5 [measured] -> edited 9 [measured])
+  error split (P20): linear -0.33542 [derived-local P14] + nonlinear -0.31449 [derived-exact P20] + realisation 0.00034262 [derived-exact P20] + rounding 0.14956 [measured P20]
+  verdict (P20): effect  native ΔM -0.5 [measured P20], exact ΔM -0.64956 [derived-exact P20], residual 0.14956 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [6.54s]
+whatif t10.L22.h_out add tensor 4deb0016d94c from error*-1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 7391abe222cae295)
+  sealed  linear ΔM = -0.56481 [derived-local P14]   exact ΔM = -0.3956 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 9.5 [measured] -> edited 9.125 [measured])
+  error split (P20): linear -0.56481 [derived-local P14] + nonlinear 0.16921 [derived-exact P20] + realisation -0.00071849 [derived-exact P20] + rounding 0.021318 [measured P20]
+  verdict (P20): effect  native ΔM -0.375 [measured P20], exact ΔM -0.39632 [derived-exact P20], residual 0.021318 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [5.49s]
+whatif t10.L23.h_out add tensor 817446891b68 from error*-1 (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record d7637f42064e3130)
+  sealed  linear ΔM = -1.466 [derived-local P14]   exact ΔM = -1.0927 [derived-exact]
+  native  ΔM = -1 [measured]   (base 9.5 [measured] -> edited 8.5 [measured])
+  error split (P20): linear -1.466 [derived-local P14] + nonlinear 0.3733 [derived-exact P20] + realisation 0.0053384 [derived-exact P20] + rounding 0.087317 [measured P20]
+  verdict (P20): effect  native ΔM -1 [measured P20], exact ΔM -1.0873 [derived-exact P20], residual 0.087317 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L24.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.06s]
+whatif t10.L24.h_out add tensor 402a62cf0490 from error*-1 (SAE qs L24) -> t10.M[12095,21718]  (mode rewind, record ce63d950dcf480cc)
+  sealed  linear ΔM = -2.5091 [derived-local P14]   exact ΔM = -2.3042 [derived-exact]
+  native  ΔM = -2.25 [measured]   (base 9.5 [measured] -> edited 7.25 [measured])
+  error split (P20): linear -2.5091 [derived-local P14] + nonlinear 0.20497 [derived-exact P20] + realisation -0.0047283 [derived-exact P20] + rounding 0.058894 [measured P20]
+  verdict (P20): effect  native ΔM -2.25 [measured P20], exact ΔM -2.3089 [derived-exact P20], residual 0.058894 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L25.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [2.80s]
+whatif t10.L25.h_out add tensor 0bafbfe92592 from error*-1 (SAE qs L25) -> t10.M[12095,21718]  (mode rewind, record 30cd1f479810440c)
+  sealed  linear ΔM = -1.1072 [derived-local P14]   exact ΔM = -1.1489 [derived-exact]
+  native  ΔM = -1.125 [measured]   (base 9.5 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -1.1072 [derived-local P14] + nonlinear -0.041665 [derived-exact P20] + realisation -0.0051456 [derived-exact P20] + rounding 0.029031 [measured P20]
+  verdict (P20): effect  native ΔM -1.125 [measured P20], exact ΔM -1.154 [derived-exact P20], residual 0.029031 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L26.h_out", "value": "error*-1", "op": "add", "consumer": "M[12095,21718]"}  [2.57s]
+whatif t10.L26.h_out add tensor e062f2fde2a8 from error*-1 (SAE qs L26) -> t10.M[12095,21718]  (mode rewind, record f52c02122e5843f4)
+  sealed  linear ΔM = 0.12576 [derived-local P14]   exact ΔM = 0.14952 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 9.5 [measured] -> edited 9.75 [measured])
+  error split (P20): linear 0.12576 [derived-local P14] + nonlinear 0.023761 [derived-exact P20] + realisation 0.0096156 [derived-exact P20] + rounding 0.090859 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.15914 [derived-exact P20], residual 0.090859 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.37s]
+whatif t10.L20.h_out add tensor 2a12fa883fe1 from feature[25654,coef]*-1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record 948b80573c55b52d)
+  sealed  linear ΔM = -0.98575 [derived-local P14]   exact ΔM = -1.544 [derived-exact]
+  native  ΔM = -1.625 [measured]   (base 9.5 [measured] -> edited 7.875 [measured])
+  error split (P20): linear -0.98575 [derived-local P14] + nonlinear -0.55823 [derived-exact P20] + realisation 9.9913e-05 [derived-exact P20] + rounding -0.081125 [measured P20]
+  verdict (P20): effect  native ΔM -1.625 [measured P20], exact ΔM -1.5439 [derived-exact P20], residual -0.081125 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[15655,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [4.82s]
+whatif t10.L20.h_out add tensor 60479ad20137 from feature[15655,coef]*-1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record 2079a0656c8da760)
+  sealed  linear ΔM = -0.36975 [derived-local P14]   exact ΔM = -0.54271 [derived-exact]
+  native  ΔM = -0.5 [measured]   (base 9.5 [measured] -> edited 9 [measured])
+  error split (P20): linear -0.36975 [derived-local P14] + nonlinear -0.17295 [derived-exact P20] + realisation 0.000453 [derived-exact P20] + rounding 0.042254 [measured P20]
+  verdict (P20): effect  native ΔM -0.5 [measured P20], exact ΔM -0.54225 [derived-exact P20], residual 0.042254 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[562,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [7.14s]
+whatif t10.L20.h_out add tensor 2bf5fdaf3477 from feature[562,coef]*-1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record 6ceb4692af2ba2f7)
+  sealed  linear ΔM = -1.0952 [derived-local P14]   exact ΔM = -1.1615 [derived-exact]
+  native  ΔM = -1.125 [measured]   (base 9.5 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -1.0952 [derived-local P14] + nonlinear -0.066334 [derived-exact P20] + realisation 0.0016526 [derived-exact P20] + rounding 0.034883 [measured P20]
+  verdict (P20): effect  native ΔM -1.125 [measured P20], exact ΔM -1.1599 [derived-exact P20], residual 0.034883 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "-feature[25654,coef]-feature[15655,coef]-feature[562,coef]", "op": "add", "consumer": "M[12095,21718]"}  [2.21s]
+whatif t10.L20.h_out add tensor e75107b02b08 from -feature[25654,coef]-feature[15655,coef]-feature[562,coef] (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record 8e83f8a3f0167fe2)
+  sealed  linear ΔM = -2.4507 [derived-local P14]   exact ΔM = -3.296 [derived-exact]
+  native  ΔM = -3.25 [measured]   (base 9.5 [measured] -> edited 6.25 [measured])
+  error split (P20): linear -2.4507 [derived-local P14] + nonlinear -0.8453 [derived-exact P20] + realisation -0.001603 [derived-exact P20] + rounding 0.047609 [measured P20]
+  verdict (P20): effect  native ΔM -3.25 [measured P20], exact ΔM -3.2976 [derived-exact P20], residual 0.047609 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*1", "op": "add", "consumer": "M[12095,21718]"}  [2.14s]
+whatif t10.L20.h_out add tensor e02dad3afbdb from feature[25654,coef]*1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record e6a174d7cd6aa29d)
+  sealed  linear ΔM = 0.98575 [derived-local P14]   exact ΔM = 0.98364 [derived-exact]
+  native  ΔM = 1 [measured]   (base 9.5 [measured] -> edited 10.5 [measured])
+  error split (P20): linear 0.98575 [derived-local P14] + nonlinear -0.0021102 [derived-exact P20] + realisation 0.0021313 [derived-exact P20] + rounding 0.01423 [measured P20]
+  verdict (P20): effect  native ΔM 1 [measured P20], exact ΔM 0.98577 [derived-exact P20], residual 0.01423 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.86s]
+whatif t10.L22.h_out add tensor 9bc5437bcaf7 from feature[1077,coef]*-1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 90eb603fb2c9f6c3)
+  sealed  linear ΔM = 0.29551 [derived-local P14]   exact ΔM = -1.8572 [derived-exact]
+  native  ΔM = -1.75 [measured]   (base 9.5 [measured] -> edited 7.75 [measured])
+  error split (P20): linear 0.29551 [derived-local P14] + nonlinear -2.1527 [derived-exact P20] + realisation -0.0062229 [derived-exact P20] + rounding 0.11345 [measured P20]
+  verdict (P20): effect  native ΔM -1.75 [measured P20], exact ΔM -1.8635 [derived-exact P20], residual 0.11345 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[24354,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.86s]
+whatif t10.L22.h_out add tensor c766488b4bba from feature[24354,coef]*-1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 480c7cfc2dc8445e)
+  sealed  linear ΔM = -0.26297 [derived-local P14]   exact ΔM = -0.40275 [derived-exact]
+  native  ΔM = -0.5 [measured]   (base 9.5 [measured] -> edited 9 [measured])
+  error split (P20): linear -0.26297 [derived-local P14] + nonlinear -0.13977 [derived-exact P20] + realisation -0.0046755 [derived-exact P20] + rounding -0.092578 [measured P20]
+  verdict (P20): effect  native ΔM -0.5 [measured P20], exact ΔM -0.40742 [derived-exact P20], residual -0.092578 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[19276,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.85s]
+whatif t10.L22.h_out add tensor dc2e5358b29e from feature[19276,coef]*-1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 5b3ae74a9df590b9)
+  sealed  linear ΔM = -1.3205 [derived-local P14]   exact ΔM = -0.97533 [derived-exact]
+  native  ΔM = -1 [measured]   (base 9.5 [measured] -> edited 8.5 [measured])
+  error split (P20): linear -1.3205 [derived-local P14] + nonlinear 0.34517 [derived-exact P20] + realisation 0.002531 [derived-exact P20] + rounding -0.027203 [measured P20]
+  verdict (P20): effect  native ΔM -1 [measured P20], exact ΔM -0.9728 [derived-exact P20], residual -0.027203 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "-feature[1077,coef]-feature[24354,coef]-feature[19276,coef]", "op": "add", "consumer": "M[12095,21718]"}  [1.85s]
+whatif t10.L22.h_out add tensor 41aa37ee6bc9 from -feature[1077,coef]-feature[24354,coef]-feature[19276,coef] (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 66b58620125f5487)
+  sealed  linear ΔM = -1.288 [derived-local P14]   exact ΔM = -3.2323 [derived-exact]
+  native  ΔM = -3.25 [measured]   (base 9.5 [measured] -> edited 6.25 [measured])
+  error split (P20): linear -1.288 [derived-local P14] + nonlinear -1.9443 [derived-exact P20] + realisation -0.00439 [derived-exact P20] + rounding -0.013343 [measured P20]
+  verdict (P20): effect  native ΔM -3.25 [measured P20], exact ΔM -3.2367 [derived-exact P20], residual -0.013343 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*1", "op": "add", "consumer": "M[12095,21718]"}  [1.85s]
+whatif t10.L22.h_out add tensor 4123561cc537 from feature[1077,coef]*1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 489c9625d2a8b123)
+  sealed  linear ΔM = -0.29551 [derived-local P14]   exact ΔM = 0.44917 [derived-exact]
+  native  ΔM = 0.5 [measured]   (base 9.5 [measured] -> edited 10 [measured])
+  error split (P20): linear -0.29551 [derived-local P14] + nonlinear 0.74467 [derived-exact P20] + realisation 0.0057951 [derived-exact P20] + rounding 0.045038 [measured P20]
+  verdict (P20): effect  native ΔM 0.5 [measured P20], exact ΔM 0.45496 [derived-exact P20], residual 0.045038 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22014,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.71s]
+whatif t10.L23.h_out add tensor f2405aed5d04 from feature[22014,coef]*-1 (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record 8541a4328a733917)
+  sealed  linear ΔM = 0.58181 [derived-local P14]   exact ΔM = -0.94837 [derived-exact]
+  native  ΔM = -1 [measured]   (base 9.5 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 0.58181 [derived-local P14] + nonlinear -1.5302 [derived-exact P20] + realisation 0.0042511 [derived-exact P20] + rounding -0.055877 [measured P20]
+  verdict (P20): effect  native ΔM -1 [measured P20], exact ΔM -0.94412 [derived-exact P20], residual -0.055877 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[906,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.86s]
+whatif t10.L23.h_out add tensor 790ff2e4ae77 from feature[906,coef]*-1 (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record 8ee4bcb573a46c13)
+  sealed  linear ΔM = 0.56407 [derived-local P14]   exact ΔM = 0.38655 [derived-exact]
+  native  ΔM = 0.375 [measured]   (base 9.5 [measured] -> edited 9.875 [measured])
+  error split (P20): linear 0.56407 [derived-local P14] + nonlinear -0.17752 [derived-exact P20] + realisation -0.0031507 [derived-exact P20] + rounding -0.0083956 [measured P20]
+  verdict (P20): effect  native ΔM 0.375 [measured P20], exact ΔM 0.3834 [derived-exact P20], residual -0.0083956 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22221,coef]*-1", "op": "add", "consumer": "M[12095,21718]"}  [1.77s]
+whatif t10.L23.h_out add tensor 3c161d0ae762 from feature[22221,coef]*-1 (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record c705ade5781a2e00)
+  sealed  linear ΔM = -1.0458 [derived-local P14]   exact ΔM = -0.99849 [derived-exact]
+  native  ΔM = -1 [measured]   (base 9.5 [measured] -> edited 8.5 [measured])
+  error split (P20): linear -1.0458 [derived-local P14] + nonlinear 0.047363 [derived-exact P20] + realisation -0.0013804 [derived-exact P20] + rounding -0.00013362 [measured P20]
+  verdict (P20): effect  native ΔM -1 [measured P20], exact ΔM -0.99987 [derived-exact P20], residual -0.00013362 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "-feature[22014,coef]-feature[906,coef]-feature[22221,coef]", "op": "add", "consumer": "M[12095,21718]"}  [1.72s]
+whatif t10.L23.h_out add tensor befc87c0ef1a from -feature[22014,coef]-feature[906,coef]-feature[22221,coef] (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record d28d3f8ce5153182)
+  sealed  linear ΔM = 0.10002 [derived-local P14]   exact ΔM = -1.5397 [derived-exact]
+  native  ΔM = -1.5 [measured]   (base 9.5 [measured] -> edited 8 [measured])
+  error split (P20): linear 0.10002 [derived-local P14] + nonlinear -1.6397 [derived-exact P20] + realisation 0.0053414 [derived-exact P20] + rounding 0.034368 [measured P20]
+  verdict (P20): effect  native ΔM -1.5 [measured P20], exact ΔM -1.5344 [derived-exact P20], residual 0.034368 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22014,coef]*1", "op": "add", "consumer": "M[12095,21718]"}  [1.70s]
+whatif t10.L23.h_out add tensor 1f42538550b4 from feature[22014,coef]*1 (SAE qs L23) -> t10.M[12095,21718]  (mode rewind, record ae6d313f6f0fb958)
+  sealed  linear ΔM = -0.58181 [derived-local P14]   exact ΔM = 0.019205 [derived-exact]
+  native  ΔM = 0 [measured]   (base 9.5 [measured] -> edited 9.5 [measured])
+  error split (P20): linear -0.58181 [derived-local P14] + nonlinear 0.60101 [derived-exact P20] + realisation 5.3405e-05 [derived-exact P20] + rounding -0.019258 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.019258 [derived-exact P20], residual -0.019258 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*0.5", "op": "add", "consumer": "M[12095,21718]"}  [2.18s]
+whatif t10.L20.h_out add tensor d3f262fe6bcc from feature[25654,coef]*0.5 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record bb26f03e526da8f2)
+  sealed  linear ΔM = 0.49287 [derived-local P14]   exact ΔM = 0.42063 [derived-exact]
+  native  ΔM = 0.375 [measured]   (base 9.5 [measured] -> edited 9.875 [measured])
+  error split (P20): linear 0.49287 [derived-local P14] + nonlinear -0.072246 [derived-exact P20] + realisation 0.00255 [derived-exact P20] + rounding -0.048179 [measured P20]
+  verdict (P20): effect  native ΔM 0.375 [measured P20], exact ΔM 0.42318 [derived-exact P20], residual -0.048179 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*1", "op": "add", "consumer": "M[12095,21718]"}  [2.13s]
+whatif t10.L20.h_out add tensor e02dad3afbdb from feature[25654,coef]*1 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record e6a174d7cd6aa29d)
+  sealed  linear ΔM = 0.98575 [derived-local P14]   exact ΔM = 0.98364 [derived-exact]
+  native  ΔM = 1 [measured]   (base 9.5 [measured] -> edited 10.5 [measured])
+  error split (P20): linear 0.98575 [derived-local P14] + nonlinear -0.0021102 [derived-exact P20] + realisation 0.0021313 [derived-exact P20] + rounding 0.01423 [measured P20]
+  verdict (P20): effect  native ΔM 1 [measured P20], exact ΔM 0.98577 [derived-exact P20], residual 0.01423 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*2", "op": "add", "consumer": "M[12095,21718]"}  [2.13s]
+whatif t10.L20.h_out add tensor 70be8e5776b3 from feature[25654,coef]*2 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record 12b789a9f16951bf)
+  sealed  linear ΔM = 1.9715 [derived-local P14]   exact ΔM = 2.0022 [derived-exact]
+  native  ΔM = 2 [measured]   (base 9.5 [measured] -> edited 11.5 [measured])
+  error split (P20): linear 1.9715 [derived-local P14] + nonlinear 0.030694 [derived-exact P20] + realisation -0.0037856 [derived-exact P20] + rounding 0.0015934 [measured P20]
+  verdict (P20): effect  native ΔM 2 [measured P20], exact ΔM 1.9984 [derived-exact P20], residual 0.0015934 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*4", "op": "add", "consumer": "M[12095,21718]"}  [2.14s]
+whatif t10.L20.h_out add tensor 9aa4ba1541ec from feature[25654,coef]*4 (SAE qs L20) -> t10.M[12095,21718]  (mode rewind, record d500dcb6ed387bed)
+  sealed  linear ΔM = 3.943 [derived-local P14]   exact ΔM = 3.4625 [derived-exact]
+  native  ΔM = 3.4375 [measured]   (base 9.5 [measured] -> edited 12.938 [measured])
+  error split (P20): linear 3.943 [derived-local P14] + nonlinear -0.4805 [derived-exact P20] + realisation 0.0091981 [derived-exact P20] + rounding -0.034194 [measured P20]
+  verdict (P20): effect  native ΔM 3.4375 [measured P20], exact ΔM 3.4717 [derived-exact P20], residual -0.034194 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*0.5", "op": "add", "consumer": "M[12095,21718]"}  [1.86s]
+whatif t10.L22.h_out add tensor 0210340aa0fe from feature[1077,coef]*0.5 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record a0146f505aa66aeb)
+  sealed  linear ΔM = -0.14775 [derived-local P14]   exact ΔM = 0.11002 [derived-exact]
+  native  ΔM = 0 [measured]   (base 9.5 [measured] -> edited 9.5 [measured])
+  error split (P20): linear -0.14775 [derived-local P14] + nonlinear 0.25777 [derived-exact P20] + realisation 0.0019634 [derived-exact P20] + rounding -0.11198 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.11198 [derived-exact P20], residual -0.11198 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*1", "op": "add", "consumer": "M[12095,21718]"}  [1.85s]
+whatif t10.L22.h_out add tensor 4123561cc537 from feature[1077,coef]*1 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 489c9625d2a8b123)
+  sealed  linear ΔM = -0.29551 [derived-local P14]   exact ΔM = 0.44917 [derived-exact]
+  native  ΔM = 0.5 [measured]   (base 9.5 [measured] -> edited 10 [measured])
+  error split (P20): linear -0.29551 [derived-local P14] + nonlinear 0.74467 [derived-exact P20] + realisation 0.0057951 [derived-exact P20] + rounding 0.045038 [measured P20]
+  verdict (P20): effect  native ΔM 0.5 [measured P20], exact ΔM 0.45496 [derived-exact P20], residual 0.045038 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*2", "op": "add", "consumer": "M[12095,21718]"}  [1.85s]
+whatif t10.L22.h_out add tensor 29aab28ed2cc from feature[1077,coef]*2 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 92c3419c1860edd6)
+  sealed  linear ΔM = -0.59101 [derived-local P14]   exact ΔM = 0.05591 [derived-exact]
+  native  ΔM = 0.0625 [measured]   (base 9.5 [measured] -> edited 9.5625 [measured])
+  error split (P20): linear -0.59101 [derived-local P14] + nonlinear 0.64692 [derived-exact P20] + realisation -0.0029054 [derived-exact P20] + rounding 0.0094953 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.0625 [measured P20], exact ΔM 0.053005 [derived-exact P20], residual 0.0094953 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*4", "op": "add", "consumer": "M[12095,21718]"}  [1.84s]
+whatif t10.L22.h_out add tensor 7c642a8de1e5 from feature[1077,coef]*4 (SAE qs L22) -> t10.M[12095,21718]  (mode rewind, record 8a7841e854d84c07)
+  sealed  linear ΔM = -1.182 [derived-local P14]   exact ΔM = -1.2055 [derived-exact]
+  native  ΔM = -1.25 [measured]   (base 9.5 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -1.182 [derived-local P14] + nonlinear -0.023456 [derived-exact P20] + realisation 0.013822 [derived-exact P20] + rounding -0.058339 [measured P20]
+  verdict (P20): effect  native ΔM -1.25 [measured P20], exact ΔM -1.1917 [derived-exact P20], residual -0.058339 [measured P20]; floor 0.25 [measured P20] = max(|residual|, 2 x spacing 0.125 [measured P20])
+  session unchanged at t10.logits  (5 moves, restored)
+(mdb) feature {"feature": 25654, "layer": 20, "top": 4}  [0.24s]
+feature f25654 of t10.L20.h_out (SAE qs): active at its site, cutoff 23.889 [derived-exact]; first above cutoff t10.L20.r, last t10.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -3.5579   -3.9126     -3.2502     -0.35411      0.6629
+  L1       -3.2502   -3.3763     -3.9365     -0.12677     -0.5619
+  L2       -3.9365   -3.8893     -4.3925     0.047894    -0.50051
+  L3       -4.3925   -4.1556     -4.3254      0.23693    -0.16979
+  L4       -4.3254   -4.0928       -4.62      0.23385    -0.52605
+  L5         -4.62   -4.2176     -4.2938      0.40245    -0.07359
+  L6       -4.2938   -3.7859     -5.4012       0.5095     -1.6157
+  L7       -5.4012   -4.3769     -4.2337       1.0248     0.14498
+  L8       -4.2337   -1.8819     -2.2889       2.3558    -0.40727
+  L9       -2.2889   -2.4666     -4.2679     -0.17532     -1.7999
+  L10      -4.2679   -4.4529     -5.2278     -0.19195    -0.76435
+  L11      -5.2278     -4.78     -5.4813      0.44248    -0.70346
+  L12      -5.4813   -5.7119     -5.7425     -0.23938    -0.03071
+  L13      -5.7425   -5.5153     -4.0056      0.22157      1.5073
+  L14      -4.0056    -3.381     -1.4481       0.6308      1.9237
+  L15      -1.4481   -2.7688     -3.0548      -1.3158    -0.26749
+  L16      -3.0548   -3.8725    -0.79913     -0.80502      3.0726
+  L17     -0.79913    3.5302    -0.12285       4.3145     -3.6397
+  L18     -0.12285    7.7876      18.554       7.9124      10.758
+  L19       18.554    13.703       15.46      -4.8627      1.7502
+  L20        15.46    157.32      192.33       141.86      35.001
+  L21       192.33    203.15      232.06       10.886      28.917
+  L22       232.06    229.73      442.05      -2.2141      212.29
+  L23       442.05     443.3      486.91       1.2931      43.677
+  L24       486.91    490.72      515.41       3.8018      24.668
+  L25       515.41    523.56      523.37       8.1958    -0.29895
+  L26       523.37    553.62      523.38       30.268     -30.108
+  L27       523.38    549.91      682.58       26.436      132.48
+  top heads of L20.attn: h13 108.08, h12 32.343, h4 4.7866, h9 -1.303 [derived-exact P07]
+  top neurons of L22.mlp: f5773 189.19, f5878 8.8655, f5488 3.892, f1312 2.9619 [derived-exact P15]
+(mdb) feature {"feature": 15655, "layer": 20, "top": 4}  [0.02s]
+feature f15655 of t10.L20.h_out (SAE qs): active at its site, cutoff 23.889 [derived-exact]; first above cutoff t10.L17.h_out, last t10.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -9.1712   -8.9521     -8.6198      0.21854      0.3314
+  L1       -8.6198   -8.8142     -8.7785     -0.19488    0.035497
+  L2       -8.7785   -8.7189     -8.3403     0.060392     0.37839
+  L3       -8.3403   -8.0991     -8.5162      0.23957    -0.41863
+  L4       -8.5162   -8.4573       -8.35     0.059681     0.10738
+  L5         -8.35   -8.2159     -7.3525      0.13474     0.86735
+  L6       -7.3525   -6.9652      -6.433      0.38615     0.53175
+  L7        -6.433    -6.301     -7.0322      0.12662    -0.71844
+  L8       -7.0322   -5.7528     -6.2812       1.2792    -0.52482
+  L9       -6.2812   -5.5055     -4.6128      0.77331     0.89499
+  L10      -4.6128   -4.2989     -4.4086      0.30003    -0.11767
+  L11      -4.4086   -3.0144     -3.0339       1.3945   -0.020309
+  L12      -3.0339   -1.8419     0.37827       1.1861      2.2157
+  L13      0.37827   0.53076      2.4965      0.14306      1.9726
+  L14       2.4965    3.8076      6.6623       1.3226      2.8591
+  L15       6.6623     8.243      12.656       1.5862      4.4175
+  L16       12.656     12.53      16.274     -0.13381      3.7482
+  L17       16.274    20.944      52.915       4.6734      31.971
+  L18       52.915    59.398      70.622       6.5002      11.202
+  L19       70.622    68.748      97.025      -1.8623      28.251
+  L20       97.025    89.733      135.56      -7.2812      45.821
+  L21       135.56    135.06      166.45     -0.51264      31.341
+  L22       166.45    179.78      265.34       13.344      85.634
+  L23       265.34    270.94      303.91        5.598      33.009
+  L24       303.91    302.51      281.89      -1.4274     -20.766
+  L25       281.89    279.04      272.55      -2.7883     -6.5076
+  L26       272.55    265.21      228.59      -7.2673     -36.631
+  L27       228.59    242.67      437.59       14.077      194.83
+  top heads of L27.attn: h5 7.961, h13 5.1621, h7 4.1421, h6 -1.8961 [derived-exact P07]
+  top neurons of L27.mlp: f946 87.212, f1417 -38.459, f826 19.173, f3227 15.862 [derived-exact P15]
+(mdb) feature {"feature": 1077, "layer": 22, "top": 4}  [0.02s]
+feature f1077 of t10.L22.h_out (SAE qs): active at its site, cutoff 38.325 [derived-exact]; first above cutoff t10.L20.r, last t10.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0        9.6827    9.1958      9.6718     -0.48656     0.47582
+  L1        9.6718    9.4767      8.9288     -0.19504    -0.54796
+  L2        8.9288    8.7556      7.9939     -0.17181    -0.75946
+  L3        7.9939    8.3771      8.0557       0.3824    -0.31956
+  L4        8.0557    8.0177      7.8123    -0.037714    -0.20465
+  L5        7.8123    8.0754      7.7977      0.26121    -0.27428
+  L6        7.7977     8.605      6.9342      0.80735     -1.6681
+  L7        6.9342    7.7957      8.1315      0.85893     0.33584
+  L8        8.1315    10.692      9.9506       2.5651    -0.74421
+  L9        9.9506    10.284      8.5418       0.3358     -1.7403
+  L10       8.5418    7.5529      6.9869     -0.99457    -0.55858
+  L11       6.9869    7.7432      6.4203      0.75045     -1.3278
+  L12       6.4203    6.2162      6.4542     -0.21742     0.23908
+  L13       6.4542    6.3908      7.2716    -0.067031     0.87518
+  L14       7.2716    7.4774       8.787      0.20708      1.2884
+  L15        8.787    5.9107      5.7652      -2.8742    -0.11819
+  L16       5.7652    3.5155      8.4555      -2.2354       4.932
+  L17       8.4555    10.441      9.2598       1.9786     -1.1723
+  L18       9.2598    15.855      21.007        6.597       5.137
+  L19       21.007    13.705       19.11      -7.3122      5.4237
+  L20        19.11    138.17      180.81       119.06      42.644
+  L21       180.81    190.55       233.2       9.7584       42.67
+  L22        233.2    229.65      575.13      -3.4385      345.45
+  L23       575.13    574.89       628.2     -0.15689       53.29
+  L24        628.2    629.93      650.74       1.7536      20.714
+  L25       650.74    654.87      653.58       4.2411     -1.2816
+  L26       653.58    682.78      662.59       29.187     -20.163
+  L27       662.59    696.28       972.9        33.67      276.27
+  top heads of L20.attn: h13 98.421, h12 21.441, h4 3.2267, h9 -1.8287 [derived-exact P07]
+  top neurons of L22.mlp: f5773 322.91, f5878 6.3485, f5557 3.4783, f1928 2.1862 [derived-exact P15]
+(mdb) feature {"feature": 24354, "layer": 22, "top": 4}  [0.02s]
+feature f24354 of t10.L22.h_out (SAE qs): active at its site, cutoff 38.325 [derived-exact]; first above cutoff t10.L17.h_out, last t10.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -8.2377   -8.0701     -8.0465      0.16713    0.022796
+  L1       -8.0465   -8.1093     -8.0771    -0.063722    0.031251
+  L2       -8.0771   -7.8797     -7.4845      0.19716     0.39489
+  L3       -7.4845   -7.3609     -7.4089      0.12516   -0.050633
+  L4       -7.4089   -7.4667       -7.35    -0.054816     0.11941
+  L5         -7.35   -7.1774      -7.077      0.17253     0.10624
+  L6        -7.077   -6.4054     -6.4415      0.66965   -0.035026
+  L7       -6.4415   -6.5381     -7.5505     -0.09677     -1.0047
+  L8       -7.5505    -5.583     -6.4038       1.9701    -0.81665
+  L9       -6.4038   -5.9457     -6.3733      0.45418    -0.42259
+  L10      -6.3733   -5.9747     -7.0925      0.38964     -1.1235
+  L11      -7.0925   -7.0192     -9.1684     0.073106     -2.1494
+  L12      -9.1684   -8.9249     -7.9078       0.2377        1.02
+  L13      -7.9078   -7.8165      -6.097     0.076303      1.7247
+  L14       -6.097   -6.2431     -5.1694       -0.147      1.0608
+  L15      -5.1694    -6.534     -2.7306      -1.3669       3.824
+  L16      -2.7306    -3.278     0.75197     -0.55325      4.0401
+  L17      0.75197    3.1359      39.632       2.3903      36.507
+  L18       39.632    41.914      50.895       2.2741      8.9888
+  L19       50.895    48.862      80.008       -2.014      31.098
+  L20       80.008    86.865      125.65        6.874        38.8
+  L21       125.65    122.83      162.95      -2.8386      40.131
+  L22       162.95    176.03      344.82       13.066      168.85
+  L23       344.82    348.44      366.66       3.5744      18.322
+  L24       366.66     366.9      377.43     0.073372      10.417
+  L25       377.43    375.44      371.42      -1.8214     -3.9454
+  L26       371.42    360.46      315.54      -11.166     -44.862
+  L27       315.54    328.38      568.45        12.88      240.04
+  top heads of L22.attn: h4 22.641, h5 -9.6686, h15 4.9942, h9 -1.6115 [derived-exact P07]
+  top neurons of L27.mlp: f946 94.745, f1417 -49.474, f3227 31.131, f3309 29.832 [derived-exact P15]
+T 179.9s
+===== followup
+(mdb) start {"prompt": "The Eiffel Tower is located in the city of Paris, It is the capital of"}  [0.04s]
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until {"target": "logits"}  [0.23s]
+t17.logits  logits = lm_head(fn)
+(mdb) print {"address": "logits", "top": 3}  [0.00s]
+t17.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 4896.8 min 1.8984 max 32.75 mean 12.096 abs_max 32.75 [measured]
+  top |v|: [0,9625] 32.75 " France", [0,892] 32 " which", [0,279] 31.875 " the" [measured]
+  pointer occurrence ~stepped sha256 6d799ac3bfd7f563
+(mdb) features {"address": "L*.h_out", "consumer": "M[9625,15344]"}  [0.48s]
+features profile  SAE qs  consumer t17.M[9625,15344] = 8.25 [measured P19]
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L0.h_out    0.012434     0.01031 0.0028978 -0.00077328    -0.06219    0.014594     0.39957  0
+  L1.h_out    0.027378    0.016063 0.0066578 0.0046573     0.17011    0.055805     0.35719  0
+  L2.h_out    0.022335    0.011039   0.01094 0.00035521    0.015904   0.0042207     0.37752  0
+  L3.h_out    0.001961  0.00062257  0.012336 -0.010998     -5.6082     0.11879     0.36144  0
+  L4.h_out  -0.0019841  -0.0068586  0.012824 -0.0079492      4.0064    0.073011      0.2868  0
+  L5.h_out   -0.025849   -0.035419  0.013573 -0.0040018     0.15482    0.028169     0.34609  0
+  L6.h_out   -0.013754   -0.021465  0.022218 -0.014507      1.0547    0.088303     0.37775  0
+  L7.h_out    0.032748    0.014279  0.021542 -0.003073   -0.093838    0.025198      0.4082  0
+  L8.h_out    0.046802  -0.0074105  0.015725  0.038488     0.82235     0.18535     0.45039  0
+  L9.h_out    0.056191    0.027415  0.016142  0.012634     0.22484    0.054119     0.42554  0
+  L10.h_out   0.057086    0.062208 0.0090314 -0.014153    -0.24793    0.046855     0.42678  0
+  L11.h_out   0.085873    0.055951   0.01419  0.015733     0.18321    0.053396     0.44279  0
+  L12.h_out    0.10423    0.058067  0.011693  0.034468      0.3307     0.10529     0.45794  0
+  L13.h_out    0.10908    0.088152 0.0094775  0.011448     0.10495    0.035345     0.47935  1.7764e-15
+  L14.h_out    0.21076     0.15038 0.0072637   0.05311       0.252      0.1224     0.52067  0
+  L15.h_out    0.23121     0.16799 0.0077155  0.055501     0.24005     0.11197     0.51852  0
+  L16.h_out    0.36085      0.2709 0.0094464    0.0805     0.22309     0.11896     0.46859  1.7764e-15
+  L17.h_out    0.45985     0.21499 0.0091285   0.23573     0.51262     0.26954       0.439  0
+  L18.h_out    0.59981     0.32494  0.033188   0.24169     0.40294     0.20566     0.43734  0
+  L19.h_out     0.7924      0.3372  0.074281   0.38092     0.48071       0.235     0.42982  -1.7764e-15
+  L20.h_out     3.1178      2.6865    0.1316   0.29965     0.09611    0.071226     0.42358  0
+  L21.h_out     4.0391      3.6042   0.12061   0.31433    0.077822    0.061177      0.4227  0
+  L22.h_out     6.9955      6.4264   0.09842   0.47069    0.067284    0.053983     0.37475  1.7764e-15
+  L23.h_out     11.741      10.711  0.091363    0.9378    0.079877    0.067897     0.35143  -7.1054e-15
+  L24.h_out     11.148      10.671   0.17703   0.29923    0.026842    0.022649     0.37601  7.1054e-15
+  L25.h_out     11.097      10.849   0.22269  0.025285   0.0022786   0.0021156     0.33174  -1.7764e-15
+  L26.h_out     10.604      10.558   0.47338  -0.42828   -0.040391    0.034845     0.28786  1.7764e-14
+  L27.h_out     8.2045      8.0957   0.41815  -0.30929   -0.037697     0.03096     0.26606  -1.7764e-15
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L*.h_out", "consumer": "M[9625,15344]", "shift": -1}  [0.26s]
+features profile  SAE qs  consumer t17.M[9625,15344] = 8.25 [measured P19]  (each SAE applied -1 layers off its site)
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L0.h_out    0.012434   0.0037603 0.0066578 0.0020159     0.16213    0.040855      0.6171  0
+  L1.h_out    0.027378   0.0015892   0.01094  0.014849     0.54236     0.17163     0.50185  0
+  L2.h_out    0.022335  -0.0079293  0.012336  0.017928     0.80269     0.20234     0.51025  0
+  L3.h_out    0.001961  -0.0047551  0.012824 -0.0061075     -3.1145    0.076029     0.47882  0
+  L4.h_out  -0.0019841   -0.015284  0.013573 -0.00027313     0.13766   0.0027252     0.43331  0
+  L5.h_out   -0.025849   -0.038107  0.022218 -0.0099598     0.38531    0.078318     0.46917  0
+  L6.h_out   -0.013754   0.0057443  0.021542 -0.041041      2.9838     0.27392     0.46982  0
+  L7.h_out    0.032748   -0.010543  0.015725  0.027566     0.84176     0.16366     0.50837  0
+  L8.h_out    0.046802    0.030472  0.016142 0.00018858   0.0040293   0.0011879     0.50658  0
+  L9.h_out    0.056191    0.032863 0.0090314  0.014296     0.25442    0.084426       0.538  0
+  L10.h_out   0.057086    0.029798   0.01419  0.013098     0.22944    0.057849     0.52709  0
+  L11.h_out   0.085873    0.023609  0.011693  0.050572     0.58891     0.18619     0.49173  0
+  L12.h_out    0.10423    0.096283 0.0094775 -0.0015326   -0.014704   0.0056934     0.49655  0
+  L13.h_out    0.10908     0.10987 0.0072637 -0.0080519   -0.073819    0.024787     0.54502  0
+  L14.h_out    0.21076     0.14158 0.0077155  0.061461     0.29162     0.15089     0.60082  0
+  L15.h_out    0.23121     0.11252 0.0094464   0.10924     0.47247     0.22936     0.60735  0
+  L16.h_out    0.36085     0.27307 0.0091285  0.078645     0.21795     0.13484     0.56198  0
+  L17.h_out    0.45985     0.34546  0.033188  0.081195     0.17657    0.097561     0.52176  -1.7764e-15
+  L18.h_out    0.59981     0.32513  0.074281    0.2004      0.3341     0.16703     0.54392  0
+  L19.h_out     0.7924     0.66045    0.1316 0.00034377  0.00043383  0.00022535     0.51907  0
+  L20.h_out     3.1178      3.0864   0.12061 -0.089202   -0.028611    0.021417     0.49218  0
+  L21.h_out     4.0391      2.7619   0.09842    1.1788     0.29185     0.22222     0.48482  3.5527e-15
+  L22.h_out     6.9955         6.3  0.091363   0.60413     0.08636    0.064906     0.42718  -3.5527e-15
+  L23.h_out     11.741      10.743   0.17703    0.8207    0.069902    0.061649     0.39773  5.3291e-15
+  L24.h_out     11.148      10.627   0.22269   0.29792    0.026725    0.024908     0.42113  0
+  L25.h_out     11.097       9.331   0.47338    1.2924     0.11647     0.10565     0.38313  1.2434e-14
+  L26.h_out     10.604      7.8422   0.41815    2.3432     0.22098     0.20419     0.38313  3.5527e-15
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L*.h_out", "consumer": "M[9625,15344]", "shift": 1}  [0.25s]
+features profile  SAE qs  consumer t17.M[9625,15344] = 8.25 [measured P19]  (each SAE applied +1 layers off its site)
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L1.h_out    0.027378    0.011786 0.0028978  0.012694     0.46366      0.1416     0.66684  0
+  L2.h_out    0.022335    0.013965 0.0066578  0.001712     0.07665    0.020795     0.54241  0
+  L3.h_out    0.001961    0.017027   0.01094 -0.026006     -13.261     0.20827     0.45103  0
+  L4.h_out  -0.0019841    0.010657  0.012336 -0.024977      12.588       0.216     0.59887  0
+  L5.h_out   -0.025849   0.0098051  0.012824 -0.048477      1.8754     0.29455     0.55441  0
+  L6.h_out   -0.013754   -0.030206  0.013573 0.0028787     -0.2093    0.022576     0.53994  0
+  L7.h_out    0.032748   -0.016377  0.022218  0.026907     0.82163     0.16001     0.50447  0
+  L8.h_out    0.046802    0.017192  0.021542 0.0080679     0.17238    0.063904     0.51456  0
+  L9.h_out    0.056191   0.0094023  0.015725  0.031063     0.55282     0.15532     0.52083  0
+  L10.h_out   0.057086    0.041135  0.016142 -0.00019012  -0.0033304  0.00072901     0.50814  0
+  L11.h_out   0.085873     0.10041 0.0090314 -0.023572     -0.2745    0.081655     0.52393  0
+  L12.h_out    0.10423    0.078785   0.01419  0.011253     0.10797    0.034603     0.51338  0
+  L13.h_out    0.10908    0.038482  0.011693  0.058902     0.54001     0.16013     0.52296  1.7764e-15
+  L14.h_out    0.21076     0.12417 0.0094775  0.077109     0.36587     0.17223     0.55037  0
+  L15.h_out    0.23121    0.093878 0.0072637   0.13007     0.56255      0.2442     0.58366  0
+  L16.h_out    0.36085     0.44939 0.0077155 -0.096256    -0.26675     0.10659     0.65573  0
+  L17.h_out    0.45985     0.41996 0.0094464  0.030436    0.066188    0.032719     0.55345  0
+  L18.h_out    0.59981      0.3037 0.0091285   0.28698     0.47845     0.27077     0.54913  0
+  L19.h_out     0.7924     0.11592  0.033188   0.64329     0.81183     0.39493     0.53228  -1.7764e-15
+  L20.h_out     3.1178      1.9105  0.074281     1.133     0.36339      0.2981     0.53635  -1.7764e-15
+  L21.h_out     4.0391      2.8668    0.1316    1.0408     0.25767     0.18995     0.44866  1.7764e-15
+  L22.h_out     6.9955      6.0486   0.12061   0.82626     0.11811    0.098539     0.52435  -1.7764e-15
+  L23.h_out     11.741      8.8012   0.09842     2.841     0.24198     0.20859     0.47547  3.5527e-15
+  L24.h_out     11.148      10.898  0.091363   0.15849    0.014217     0.01222     0.39665  -7.1054e-15
+  L25.h_out     11.097      10.848   0.17703   0.07174    0.006465   0.0053032     0.38231  5.3291e-15
+  L26.h_out     10.604      12.661   0.22269   -2.2799    -0.21501     0.13895     0.36644  3.5527e-15
+  L27.h_out     8.2045      11.632   0.47338   -3.9004     -0.4754     0.10762      2.3735  2.6645e-14
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) features {"address": "L20.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5, "circuit": false}  [0.06s]
+features t17.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 921.78 [measured]
+  f25654  act 184.21 [derived-exact]  ||d|| 1  effect 2.0997 [derived-exact P19]  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f27749  act 78.576 [derived-exact]  ||d|| 1  effect 0.23344 [derived-exact P19]  promotes " whom" "ships" " who" "who" "\u043c\u044b" [derived-local]
+  f29239  act 172.59 [derived-exact]  ||d|| 1  effect 0.15991 [derived-exact P19]  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f14546  act 36.04 [derived-exact]  ||d|| 1  effect 0.123 [derived-exact P19]  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" "\u6d77\u6dc0" [derived-local]
+  f20296  act 132.09 [derived-exact]  ||d|| 1  effect -0.11112 [derived-exact P19]  promotes "\u9996\u90fd" " bordered" "\u4eba\u53e3" "\u4e2d\u90e8" "\u9762\u79ef\u7ea6" [derived-local]
+  f6371   act 53.435 [derived-exact]  ||d|| 1  effect -0.090513 [derived-exact P19]  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" " euros" [derived-local]
+  f10907  act 46.206 [derived-exact]  ||d|| 1  effect 0.064066 [derived-exact P19]  promotes "\u67d0" "\u67d0\u4e2a" "each" " slain" "lain" [derived-local]
+  f3570   act 168.59 [derived-exact]  ||d|| 1  effect 0.061094 [derived-exact P19]  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f12086  act 85.247 [derived-exact]  ||d|| 1  effect -0.057547 [derived-exact P19]
+  f26596  act 90.916 [derived-exact]  ||d|| 1  effect 0.051902 [derived-exact P19]
+  +40 more  act Σ 1711.8  effect Σ 0.1526 [derived-exact P19]
+  b_dec    ||b|| 579.38  effect 0.1316 [derived-exact P19]
+  ERROR    ||e|| 390.45 [derived-exact]  ||e||/||x|| 0.42358  energy 0.17942  effect 0.29965 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t17.M[9625,15344] 8.25 [measured P19] = direct 3.1178 [derived-exact P19] (features 2.6865 + bias 0.1316 + error 0.29965) + later layers 5.0911 [derived-exact P19] + head bias 0 + remainder 0.041122 [measured P19]
+  error/direct 0.09611  |error| share 0.071226  closure 0 [derived-exact P19]
+(mdb) features {"address": "L21.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5, "circuit": false}  [0.06s]
+features t17.L21.h_out  SAE qs L21 (L21.h_out, k 50, 50 active)  ||x|| 1099.4 [measured]
+  f25554  act 204.04 [derived-exact]  ||d|| 1  effect 2.4609 [derived-exact P19]  promotes "\u6cd5\u56fd" " France" " French" "France" "French" [derived-local]
+  f10111  act 28.535 [derived-exact]  ||d|| 1  effect 0.21608 [derived-exact P19]  promotes "-f" "\tf" "f" "\u0444" " \u0641" [derived-local]
+  f8405   act 87.086 [derived-exact]  ||d|| 1  effect 0.20135 [derived-exact P19]  promotes " Scandinavian" " Scandin" " Norwegian" " Nordic" "\u632a\u5a01" [derived-local]
+  f22594  act 175.15 [derived-exact]  ||d|| 1  effect 0.18658 [derived-exact P19]  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f6347   act 76.709 [derived-exact]  ||d|| 1  effect 0.17196 [derived-exact P19]  promotes "ships" " ceremonies" " whom" " affairs" "artment" [derived-local]
+  f23516  act 132.34 [derived-exact]  ||d|| 1  effect 0.15133 [derived-exact P19]  promotes "\u5e7f\u5dde\u5e02" "\u90d1\u5dde\u5e02" "\u6b66\u6c49\u5e02" " qu\u1eadn" "\u6d77\u6dc0\u533a" [derived-local]
+  f32305  act 72.203 [derived-exact]  ||d|| 1  effect 0.11064 [derived-exact P19]  promotes "\u7f8e\u56fd" " USA" "\u7f8e\u570b" "\u7f8e\u56fd\u4eba" "\u5728\u7f8e\u56fd" [derived-local]
+  f26270  act 31.019 [derived-exact]  ||d|| 1  effect 0.099879 [derived-exact P19]  promotes " Sioux" " Omaha" "\u725b\u8089" " Saskatchewan" " cow" [derived-local]
+  f15655  act 95.166 [derived-exact]  ||d|| 1  effect -0.092226 [derived-exact P19]
+  f23654  act 56.734 [derived-exact]  ||d|| 1  effect -0.076702 [derived-exact P19]
+  +40 more  act Σ 2182.4  effect Σ 0.1744 [derived-exact P19]
+  b_dec    ||b|| 774.79  effect 0.12061 [derived-exact P19]
+  ERROR    ||e|| 464.73 [derived-exact]  ||e||/||x|| 0.4227  energy 0.17868  effect 0.31433 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t17.M[9625,15344] 8.25 [measured P19] = direct 4.0391 [derived-exact P19] (features 3.6042 + bias 0.12061 + error 0.31433) + later layers 4.1645 [derived-exact P19] + head bias 0 + remainder 0.046342 [measured P19]
+  error/direct 0.077822  |error| share 0.061177  closure 0 [derived-exact P19]
+(mdb) features {"address": "L22.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5, "circuit": false}  [0.06s]
+features t17.L22.h_out  SAE qs L22 (L22.h_out, k 50, 50 active)  ||x|| 1500.1 [measured]
+  f1077   act 432.85 [derived-exact]  ||d|| 1  effect 5.3118 [derived-exact P19]  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+  f19276  act 303.6 [derived-exact]  ||d|| 1  effect 0.42394 [derived-exact P19]  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+  f13320  act 84.179 [derived-exact]  ||d|| 1  effect 0.25378 [derived-exact P19]  promotes " Scandinavian" " Norway" " Norwegian" " Maine" " Arctic" [derived-local]
+  f17657  act 203.08 [derived-exact]  ||d|| 1  effect 0.18483 [derived-exact P19]  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f11805  act 148.21 [derived-exact]  ||d|| 1  effect -0.17888 [derived-exact P19]  promotes "\u610f\u5927\u5229" "\u6b27\u6d32" " Italy" " Spain" "\u897f\u73ed\u7259" [derived-local]
+  f25151  act 104.55 [derived-exact]  ||d|| 1  effect 0.17495 [derived-exact P19]  promotes "\u6d77\u6dc0" "\u6d77\u6dc0\u533a" "\u90ca\u533a" "\u9ad8\u65b0\u533a" "\u90d1\u5dde\u5e02" [derived-local]
+  f8572   act 227.56 [derived-exact]  ||d|| 1  effect 0.14271 [derived-exact P19]  promotes " countries" " nations" " country" "countries" " Countries" [derived-local]
+  f799    act 71.49 [derived-exact]  ||d|| 1  effect 0.12872 [derived-exact P19]  promotes " ceremonies" "ships" " affairs" "artment" "ship" [derived-local]
+  f20000  act 84.088 [derived-exact]  ||d|| 1  effect -0.12726 [derived-exact P19]
+  f19164  act 77.466 [derived-exact]  ||d|| 1  effect -0.095194 [derived-exact P19]
+  +40 more  act Σ 2843  effect Σ 0.20696 [derived-exact P19]
+  b_dec    ||b|| 1045.6  effect 0.09842 [derived-exact P19]
+  ERROR    ||e|| 562.17 [derived-exact]  ||e||/||x|| 0.37475  energy 0.14044  effect 0.47069 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t17.M[9625,15344] 8.25 [measured P19] = direct 6.9955 [derived-exact P19] (features 6.4264 + bias 0.09842 + error 0.47069) + later layers 1.2096 [derived-exact P19] + head bias 0 + remainder 0.044937 [measured P19]
+  error/direct 0.067284  |error| share 0.053983  closure 1.7764e-15 [derived-exact P19]
+(mdb) features {"address": "L23.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5, "circuit": true}  [0.06s]
+features t17.L23.h_out  SAE qs L23 (L23.h_out, k 50, 50 active)  ||x|| 1852 [measured]
+  f22014  act 737.64 [derived-exact]  ||d|| 1  effect 9.5118 [derived-exact P19]  promotes "\u6cd5\u56fd" " France" " French" "French" "France" [derived-local]
+  f22221  act 486.53 [derived-exact]  ||d|| 1  effect 0.64559 [derived-exact P19]  promotes " Convention" "\u6267" "\u6267\u653f" "\u516c\u793e" "-symbol" [derived-local]
+  f24939  act 177.79 [derived-exact]  ||d|| 1  effect 0.21863 [derived-exact P19]  promotes " counties" " county" "county" " department" " Counties" [derived-local]
+  f16134  act 199.45 [derived-exact]  ||d|| 1  effect 0.21726 [derived-exact P19]  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f17459  act 55.854 [derived-exact]  ||d|| 1  effect 0.16416 [derived-exact P19]  promotes " Copp" " Ph" "XE" "Fr" "\u7981\u5fcc" [derived-local]
+  f12022  act 97.214 [derived-exact]  ||d|| 1  effect 0.14299 [derived-exact P19]  promotes " Metro" "\u5e7f\u5dde\u5e02" "\u90d1\u5dde\u5e02" " \u043c\u0435\u0442\u0440\u043e" "\u897f\u6e56" [derived-local]
+  f3757   act 177.8 [derived-exact]  ||d|| 1  effect -0.13976 [derived-exact P19]  promotes " Germany" " Italy" " Australia" " France" " Canada" [derived-local]
+  f24975  act 77.955 [derived-exact]  ||d|| 1  effect -0.13763 [derived-exact P19]  promotes " Grow" "oran" "Grow" "ughs" "SOR" [derived-local]
+  f15014  act 206.79 [derived-exact]  ||d|| 1  effect 0.1336 [derived-exact P19]
+  f7597   act 81.507 [derived-exact]  ||d|| 1  effect -0.098762 [derived-exact P19]
+  +40 more  act Σ 3057.5  effect Σ 0.053605 [derived-exact P19]
+  b_dec    ||b|| 1261.8  effect 0.091363 [derived-exact P19]
+  ERROR    ||e|| 650.85 [derived-exact]  ||e||/||x|| 0.35143  energy 0.1235  effect 0.9378 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t17.M[9625,15344] 8.25 [measured P19] = direct 11.741 [derived-exact P19] (features 10.711 + bias 0.091363 + error 0.9378) + later layers -3.5368 [derived-exact P19] + head bias 0 + remainder 0.046128 [measured P19]
+  error/direct 0.079877  |error| share 0.067897  closure -7.1054e-15 [derived-exact P19]
+  circuit 1 stored (record 3e13a582f65fdc4a): circuit show 1
+(mdb) circuit {"target": "show", "id": 1}  [0.00s]
+circuit 1  t17.M[9625,15344]  top 8 depth 1  (22 nodes, record 3e13a582f65fdc4a)
+  t17.M[9625,15344]  8.25 [measured]
+    L23.h_out via SAE  t17.L23.h_out  11.741 [derived-exact P19]
+      f22014  t17.L23.h_out{sae=qs,feature=22014}  9.5118 [derived-exact P19]
+      f22221  t17.L23.h_out{sae=qs,feature=22221}  0.64559 [derived-exact P19]
+      f24939  t17.L23.h_out{sae=qs,feature=24939}  0.21863 [derived-exact P19]
+      f16134  t17.L23.h_out{sae=qs,feature=16134}  0.21726 [derived-exact P19]
+      f17459  t17.L23.h_out{sae=qs,feature=17459}  0.16416 [derived-exact P19]
+      f12022  t17.L23.h_out{sae=qs,feature=12022}  0.14299 [derived-exact P19]
+      f3757  t17.L23.h_out{sae=qs,feature=3757}  -0.13976 [derived-exact P19]
+      f24975  t17.L23.h_out{sae=qs,feature=24975}  -0.13763 [derived-exact P19]
+      +42 more  t17.L23.h_out features (unlisted)  0.088444 [derived-exact]
+      sae bias  t17.L23.h_out{sae=qs,b_dec}  0.091363 [derived-exact P19]
+      sae error  t17.L23.h_out{sae=qs,error}  0.9378 [derived-exact P19]
+    L27.mlp  t17.L27.m  -3.083 [derived-exact P19]
+    L26.mlp  t17.L26.m  -1.0779 [derived-exact P19]
+    L27.attn  t17.L27.o  0.68718 [derived-exact P19]
+    L26.attn  t17.L26.o  0.58105 [derived-exact P19]
+    L24.mlp  t17.L24.m  -0.37847 [derived-exact P19]
+    L25.mlp  t17.L25.m  -0.34567 [derived-exact P19]
+    L25.attn  t17.L25.o  0.29397 [derived-exact P19]
+    L24.attn  t17.L24.o  -0.21396 [derived-exact P19]
+    remainder  t17.M[9625,15344]  0.046128 [measured]
+  closure -1.7764e-15 [derived-exact P19] within 1.897e-13 [bound] (zero by construction: float64 summation only)
+  remainders not all bounded (a bound was refused) their rounding bounds; 0 edit node(s)
+(mdb) features {"address": "L23.h_out", "match": "L23.f[i=2298]", "top": 8, "lens": 5}  [0.75s]
+features t17.L23.h_out  SAE qs L23 (L23.h_out, k 50, 50 active)  ||x|| 1852 [measured]
+  f22014  act 737.64 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " France" " French" "French" "France" [derived-local]
+  f22221  act 486.53 [derived-exact]  ||d|| 1  promotes " Convention" "\u6267" "\u6267\u653f" "\u516c\u793e" "-symbol" [derived-local]
+  f10698  act 244.28 [derived-exact]  ||d|| 1  promotes " which" "which" " Which" " WHICH" "Which" [derived-local]
+  f15014  act 206.79 [derived-exact]  ||d|| 1  promotes " countries" " nations" " country" "countries" " Countries" [derived-local]
+  f16134  act 199.45 [derived-exact]  ||d|| 1  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f28882  act 184.3 [derived-exact]  ||d|| 1  promotes " sorts" " the" " those" " these" " both" [derived-local]
+  f3757   act 177.8 [derived-exact]  ||d|| 1  promotes " Germany" " Italy" " Australia" " France" " Canada" [derived-local]
+  f24939  act 177.79 [derived-exact]  ||d|| 1  promotes " counties" " county" "county" " department" " Counties" [derived-local]
+  +42 more  act Σ 2941.4
+  b_dec    ||b|| 1261.8
+  ERROR    ||e|| 650.85 [derived-exact]  ||e||/||x|| 0.35143  energy 0.1235
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  match L23.f[i=2298]: W_down[:, 2298] of L23 (the write per unit of f[i=2298])  ||v|| 1.7593  outside listed span 0.39437 [derived-exact]
+    f22014  cos -0.70039 [derived-exact]  coef -1.1223  active here, act 737.64  promotes "\u6cd5\u56fd" " France" " French" "French" "France" [derived-local]
+    f18119  cos 0.61674 [derived-exact]  coef 1.0291  not active here  promotes "\u7aef\u6b63" "\u81ea\u79c1" ":=" " pr\u00e9c" " sanitary" [derived-local]
+    f24975  cos -0.15793 [derived-exact]  coef -0.24946  active here, act 77.955  promotes " Grow" "oran" "Grow" "ughs" "SOR" [derived-local]
+    f22841  cos 0.12844 [derived-exact]  coef 0.036572  not active here  promotes "iate" "\u00f3j" "rian" "iant" "lop" [derived-local]
+    f2611   cos -0.1281 [derived-exact]  coef -0.0045586  not active here  promotes ".nb" " french" "_nb" "Nb" " exemple" [derived-local]
+    f6469   cos -0.12584 [derived-exact]  coef -0.03947  not active here  promotes "\u0c28" "\ufffd" "\u0c15" "\u0c17" " \ufffd" [derived-local]
+    f1031   cos 0.12436 [derived-exact]  coef 0.094085  not active here  promotes "\u5c06\u5176" "\u628a\u5b83" "\u5bf9\u5176\u8fdb\u884c" "\u4ece\u4e2d" " se" [derived-local]
+    f17459  cos -0.10902 [derived-exact]  coef -0.032476  active here, act 55.854  promotes " Copp" " Ph" "XE" "Fr" "\u7981\u5fcc" [derived-local]
+(mdb) features {"address": "L22.h_out", "match": "L22.f[i=5773]", "top": 8, "lens": 5}  [0.76s]
+features t17.L22.h_out  SAE qs L22 (L22.h_out, k 50, 50 active)  ||x|| 1500.1 [measured]
+  f1077   act 432.85 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+  f19276  act 303.6 [derived-exact]  ||d|| 1  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+  f8572   act 227.56 [derived-exact]  ||d|| 1  promotes " countries" " nations" " country" "countries" " Countries" [derived-local]
+  f17657  act 203.08 [derived-exact]  ||d|| 1  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f29922  act 186.58 [derived-exact]  ||d|| 1  promotes " sorts" " the" " their" " course" " its" [derived-local]
+  f1993   act 160.18 [derived-exact]  ||d|| 1  promotes " Republic" "\u4e2d\u534e\u4eba\u6c11" " United" "Republic" "United" [derived-local]
+  f26131  act 157.2 [derived-exact]  ||d|| 1  promotes "\u4ec0\u4e48\u6837\u7684" "\u4ec0\u4e48" "\u54ea\u4e9b" "\u4f55\u79cd" " what" [derived-local]
+  f30329  act 150.61 [derived-exact]  ||d|| 1  promotes "\u3001\n\n" "\uff0c\n\n" "\u6109" " \u0420\u0430" "\u5783" [derived-local]
+  +42 more  act Σ 2758.4
+  b_dec    ||b|| 1045.6
+  ERROR    ||e|| 562.17 [derived-exact]  ||e||/||x|| 0.37475  energy 0.14044
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  match L22.f[i=5773]: W_down[:, 5773] of L22 (the write per unit of f[i=5773])  ||v|| 1.8037  outside listed span 0.2748 [derived-exact]
+    f19276  cos -0.83734 [derived-exact]  coef -1.423  active here, act 303.6  promotes " hin" " Arrange" "Arrange" "ackle" "halten" [derived-local]
+    f1031   cos 0.66127 [derived-exact]  coef 0.11566  not active here  promotes "\u5c06\u5176" "\u5bf9\u5176\u8fdb\u884c" " se" "\u628a\u5b83" "\u628a\u8fd9\u4e9b" [derived-local]
+    f1077   cos -0.49548 [derived-exact]  coef -0.81914  active here, act 432.85  promotes "\u6cd5\u56fd" " France" " French" "France" "\u5df4\u9ece" [derived-local]
+    f28431  cos -0.18317 [derived-exact]  coef 0.045593  not active here  promotes "\ufffd" "\ufffd" "\u0c28" "\u0c30" "\u0c17" [derived-local]
+    f5568   cos -0.12542 [derived-exact]  coef -0.038728  not active here  promotes "\u5df4\u9ece" "opot" "ekt" "\u58ee" "t\u00e1" [derived-local]
+    f3877   cos -0.12215 [derived-exact]  coef -0.016214  not active here  promotes "\ufffd" "\u0ca6" "\ufffd" " Caribbean" " Hait" [derived-local]
+    f3364   cos -0.11454 [derived-exact]  coef 0.047583  not active here  promotes "nal" " validated" "ulary" " adapted" "\u8c23" [derived-local]
+    f10480  cos -0.11156 [derived-exact]  coef -0.0052227  not active here  promotes "\ufffd" "\ufffd" "\ufffd" "\ufffd" " \u00e9c" [derived-local]
+(mdb) features {"address": "L20.h_out", "match": "L20.A[h13]", "top": 8, "lens": 5}  [0.76s]
+features t17.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 921.78 [measured]
+  f25654  act 184.21 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f29239  act 172.59 [derived-exact]  ||d|| 1  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f3570   act 168.59 [derived-exact]  ||d|| 1  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f20296  act 132.09 [derived-exact]  ||d|| 1  promotes "\u9996\u90fd" " bordered" "\u4eba\u53e3" "\u4e2d\u90e8" "\u9762\u79ef\u7ea6" [derived-local]
+  f5045   act 128.17 [derived-exact]  ||d|| 1  promotes " counties" "\u5e02\u53bf" " county" " districts" " Counties" [derived-local]
+  f28131  act 96.932 [derived-exact]  ||d|| 1  promotes " Republic" " Canada" " Germany" " countries" " republic" [derived-local]
+  f26596  act 90.916 [derived-exact]  ||d|| 1  promotes "\u540d\u5b57" "\u7684\u540d\u5b57" "\u59d3" " famous" " surname" [derived-local]
+  f29740  act 90.064 [derived-exact]  ||d|| 1  promotes " ...\n\n" " ...\n" "\u00a0" "\u2010" " ..." [derived-local]
+  +42 more  act Σ 1696.1
+  b_dec    ||b|| 579.38
+  ERROR    ||e|| 390.45 [derived-exact]  ||e||/||x|| 0.42358  energy 0.17942
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  match L20.A[h13]: W_o,h13 A_h13 of L20 at t17  ||v|| 154.85  outside listed span 0.64207 [derived-exact]
+    f25654  cos 0.70863 [derived-exact]  coef 99.627  active here, act 184.21  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+    f6371   cos 0.32771 [derived-exact]  coef 13.666  active here, act 53.435  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" " euros" [derived-local]
+    f12170  cos 0.32425 [derived-exact]  coef 18.005  not active here  promotes "\u0c28" "\ufffd" "\ufffd" "\u0c35" "\u0c32" [derived-local]
+    f1519   cos 0.25604 [derived-exact]  coef 10.813  not active here  promotes ".nativeElement" " Italians" " Catholic" " Catholics" "\u610f\u5927\u5229" [derived-local]
+    f23469  cos 0.25145 [derived-exact]  coef -12.28  not active here  promotes " d\u00e9" "R\u00e9" " sous" " suiv" " Pr\u00e9" [derived-local]
+    f14546  cos 0.24302 [derived-exact]  coef 36.68  active here, act 36.04  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" "\u6d77\u6dc0" [derived-local]
+    f14817  cos 0.21494 [derived-exact]  coef 4.5664  not active here  promotes "\u6b27\u76df" " EU" "EU" "\u6210\u5458\u56fd" "\u6b27\u6d32" [derived-local]
+    f24108  cos 0.21203 [derived-exact]  coef 2.4639  not active here  promotes " Flask" " SQLAlchemy" " flask" " Louisiana" " mongo" [derived-local]
+(mdb) features {"address": "L20.h_out", "match": "L20.A[h13,src=11]", "top": 8, "lens": 5}  [0.76s]
+features t17.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 921.78 [measured]
+  f25654  act 184.21 [derived-exact]  ||d|| 1  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+  f29239  act 172.59 [derived-exact]  ||d|| 1  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f3570   act 168.59 [derived-exact]  ||d|| 1  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f20296  act 132.09 [derived-exact]  ||d|| 1  promotes "\u9996\u90fd" " bordered" "\u4eba\u53e3" "\u4e2d\u90e8" "\u9762\u79ef\u7ea6" [derived-local]
+  f5045   act 128.17 [derived-exact]  ||d|| 1  promotes " counties" "\u5e02\u53bf" " county" " districts" " Counties" [derived-local]
+  f28131  act 96.932 [derived-exact]  ||d|| 1  promotes " Republic" " Canada" " Germany" " countries" " republic" [derived-local]
+  f26596  act 90.916 [derived-exact]  ||d|| 1  promotes "\u540d\u5b57" "\u7684\u540d\u5b57" "\u59d3" " famous" " surname" [derived-local]
+  f29740  act 90.064 [derived-exact]  ||d|| 1  promotes " ...\n\n" " ...\n" "\u00a0" "\u2010" " ..." [derived-local]
+  +42 more  act Σ 1696.1
+  b_dec    ||b|| 579.38
+  ERROR    ||e|| 390.45 [derived-exact]  ||e||/||x|| 0.42358  energy 0.17942
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  match L20.A[h13,src=11]: p[h13,11] W_o,h13 v[kv6,11] of L20 at t17  ||v|| 64.069  outside listed span 0.65752 [derived-exact]
+    f25654  cos 0.67938 [derived-exact]  coef 35.332  active here, act 184.21  promotes "\u6cd5\u56fd" " French" " France" "French" "France" [derived-local]
+    f6371   cos 0.35842 [derived-exact]  coef 5.5664  active here, act 53.435  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" " euros" [derived-local]
+    f1519   cos 0.31925 [derived-exact]  coef 7.5872  not active here  promotes ".nativeElement" " Italians" " Catholic" " Catholics" "\u610f\u5927\u5229" [derived-local]
+    f12170  cos 0.29165 [derived-exact]  coef 6.1697  not active here  promotes "\u0c28" "\ufffd" "\ufffd" "\u0c35" "\u0c32" [derived-local]
+    f14546  cos 0.24463 [derived-exact]  coef 15.704  active here, act 36.04  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" "\u6d77\u6dc0" [derived-local]
+    f14817  cos 0.24358 [derived-exact]  coef 2.7779  not active here  promotes "\u6b27\u76df" " EU" "EU" "\u6210\u5458\u56fd" "\u6b27\u6d32" [derived-local]
+    f26317  cos 0.24123 [derived-exact]  coef 4.02  not active here  promotes "\u610f\u5927\u5229" " Italy" " Italian" " Italians" "Italy" [derived-local]
+    f24108  cos 0.22844 [derived-exact]  coef 2.8968  not active here  promotes " Flask" " SQLAlchemy" " flask" " Louisiana" " mongo" [derived-local]
+(mdb) whatif {"target": "L8.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [3.84s]
+whatif t17.L8.h_out add tensor 44ea99a6418a from error*-1 (SAE qs L8) -> t17.M[9625,15344]  (mode rewind, record 2131120899d60bcd)
+  sealed  linear ΔM = -0.41393 [derived-local P14]   exact ΔM = -0.39078 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 8.25 [measured] -> edited 7.875 [measured])
+  error split (P20): linear -0.41393 [derived-local P14] + nonlinear 0.023147 [derived-exact P20] + realisation 0.00093294 [derived-exact P20] + rounding 0.014851 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.375 [measured P20], exact ΔM -0.38985 [derived-exact P20], residual 0.014851 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L14.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.99s]
+whatif t17.L14.h_out add tensor 58b433ee6f33 from error*-1 (SAE qs L14) -> t17.M[9625,15344]  (mode rewind, record 3d1e496b5b2011a5)
+  sealed  linear ΔM = 1.8118 [derived-local P14]   exact ΔM = 1.653 [derived-exact]
+  native  ΔM = 1.5 [measured]   (base 8.25 [measured] -> edited 9.75 [measured])
+  error split (P20): linear 1.8118 [derived-local P14] + nonlinear -0.15885 [derived-exact P20] + realisation -0.003059 [derived-exact P20] + rounding -0.14993 [measured P20]
+  verdict (P20): effect  native ΔM 1.5 [measured P20], exact ΔM 1.6499 [derived-exact P20], residual -0.14993 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L16.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.72s]
+whatif t17.L16.h_out add tensor 9538ec152da4 from error*-1 (SAE qs L16) -> t17.M[9625,15344]  (mode rewind, record 254a130c1fb4bea5)
+  sealed  linear ΔM = 0.54489 [derived-local P14]   exact ΔM = 0.57207 [derived-exact]
+  native  ΔM = 0.625 [measured]   (base 8.25 [measured] -> edited 8.875 [measured])
+  error split (P20): linear 0.54489 [derived-local P14] + nonlinear 0.027182 [derived-exact P20] + realisation -0.0019525 [derived-exact P20] + rounding 0.05488 [measured P20]
+  verdict (P20): effect  native ΔM 0.625 [measured P20], exact ΔM 0.57012 [derived-exact P20], residual 0.05488 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L18.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.45s]
+whatif t17.L18.h_out add tensor f8d5ff453663 from error*-1 (SAE qs L18) -> t17.M[9625,15344]  (mode rewind, record ab3dbea9f2e5d35a)
+  sealed  linear ΔM = -0.73683 [derived-local P14]   exact ΔM = -1.4774 [derived-exact]
+  native  ΔM = -1.5 [measured]   (base 8.25 [measured] -> edited 6.75 [measured])
+  error split (P20): linear -0.73683 [derived-local P14] + nonlinear -0.74056 [derived-exact P20] + realisation -0.003013 [derived-exact P20] + rounding -0.019599 [measured P20]
+  verdict (P20): effect  native ΔM -1.5 [measured P20], exact ΔM -1.4804 [derived-exact P20], residual -0.019599 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L19.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.32s]
+whatif t17.L19.h_out add tensor 0a17c58291a5 from error*-1 (SAE qs L19) -> t17.M[9625,15344]  (mode rewind, record 38cc39201ee9bd19)
+  sealed  linear ΔM = -0.24522 [derived-local P14]   exact ΔM = -0.74541 [derived-exact]
+  native  ΔM = -0.75 [measured]   (base 8.25 [measured] -> edited 7.5 [measured])
+  error split (P20): linear -0.24522 [derived-local P14] + nonlinear -0.50018 [derived-exact P20] + realisation 0.0025353 [derived-exact P20] + rounding -0.007127 [measured P20]
+  verdict (P20): effect  native ΔM -0.75 [measured P20], exact ΔM -0.74287 [derived-exact P20], residual -0.007127 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.18s]
+whatif t17.L20.h_out add tensor 35a9a6bfb071 from error*-1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record 5f5184420299cbea)
+  sealed  linear ΔM = 1.1244 [derived-local P14]   exact ΔM = 0.258 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 8.25 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 1.1244 [derived-local P14] + nonlinear -0.86637 [derived-exact P20] + realisation -0.001493 [derived-exact P20] + rounding -0.0065055 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.25651 [derived-exact P20], residual -0.0065055 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.03s]
+whatif t17.L21.h_out add tensor df8e9735be31 from error*-1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record f00fe892edcb86a7)
+  sealed  linear ΔM = 1.2425 [derived-local P14]   exact ΔM = 0.78633 [derived-exact]
+  native  ΔM = 0.875 [measured]   (base 8.25 [measured] -> edited 9.125 [measured])
+  error split (P20): linear 1.2425 [derived-local P14] + nonlinear -0.45622 [derived-exact P20] + realisation -0.0019936 [derived-exact P20] + rounding 0.090665 [measured P20]
+  verdict (P20): effect  native ΔM 0.875 [measured P20], exact ΔM 0.78434 [derived-exact P20], residual 0.090665 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.89s]
+whatif t17.L22.h_out add tensor 4e252d03b900 from error*-1 (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record 9828c6c0b31d829f)
+  sealed  linear ΔM = 0.62763 [derived-local P14]   exact ΔM = -0.070752 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.62763 [derived-local P14] + nonlinear -0.69838 [derived-exact P20] + realisation -0.0012872 [derived-exact P20] + rounding 0.072039 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.072039 [derived-exact P20], residual 0.072039 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.75s]
+whatif t17.L23.h_out add tensor 0cd9f9bf26fb from error*-1 (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record a64cc4ca8c869d8e)
+  sealed  linear ΔM = 0.73835 [derived-local P14]   exact ΔM = 0.52014 [derived-exact]
+  native  ΔM = 0.5 [measured]   (base 8.25 [measured] -> edited 8.75 [measured])
+  error split (P20): linear 0.73835 [derived-local P14] + nonlinear -0.21821 [derived-exact P20] + realisation -0.0037476 [derived-exact P20] + rounding -0.016393 [measured P20]
+  verdict (P20): unresolved  native ΔM 0.5 [measured P20], exact ΔM 0.51639 [derived-exact P20], residual -0.016393 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])  [native Δ 0.5 is within the floor 0.5 but the exact Δ 0.51639 is not]
+  session unchanged at t17.logits  (5 moves, restored)
+state: unresolved
+(mdb) whatif {"target": "L24.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.61s]
+whatif t17.L24.h_out add tensor 0820f7bb1c86 from error*-1 (SAE qs L24) -> t17.M[9625,15344]  (mode rewind, record c95b212354e590cf)
+  sealed  linear ΔM = 0.13636 [derived-local P14]   exact ΔM = -0.1226 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear 0.13636 [derived-local P14] + nonlinear -0.25896 [derived-exact P20] + realisation 0.00085776 [derived-exact P20] + rounding -0.0032557 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.12174 [derived-exact P20], residual -0.0032557 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L26.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.32s]
+whatif t17.L26.h_out add tensor 821151ea8bcd from error*-1 (SAE qs L26) -> t17.M[9625,15344]  (mode rewind, record 60358009c1ea061e)
+  sealed  linear ΔM = 0.58677 [derived-local P14]   exact ΔM = 0.97634 [derived-exact]
+  native  ΔM = 0.875 [measured]   (base 8.25 [measured] -> edited 9.125 [measured])
+  error split (P20): linear 0.58677 [derived-local P14] + nonlinear 0.38957 [derived-exact P20] + realisation -0.0045615 [derived-exact P20] + rounding -0.096781 [measured P20]
+  verdict (P20): effect  native ΔM 0.875 [measured P20], exact ΔM 0.97178 [derived-exact P20], residual -0.096781 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t17.L20.h_out add tensor 2b5bf74ee556 from feature[25654,coef]*-1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record be9c640550165a72)
+  sealed  linear ΔM = -1.0846 [derived-local P14]   exact ΔM = -1.5743 [derived-exact]
+  native  ΔM = -1.5 [measured]   (base 8.25 [measured] -> edited 6.75 [measured])
+  error split (P20): linear -1.0846 [derived-local P14] + nonlinear -0.48968 [derived-exact P20] + realisation 0.00029735 [derived-exact P20] + rounding 0.074019 [measured P20]
+  verdict (P20): effect  native ΔM -1.5 [measured P20], exact ΔM -1.574 [derived-exact P20], residual 0.074019 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[27749,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t17.L20.h_out add tensor 43a951e25a9c from feature[27749,coef]*-1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record fb050e20541ecf98)
+  sealed  linear ΔM = -0.034215 [derived-local P14]   exact ΔM = -0.0631 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.034215 [derived-local P14] + nonlinear -0.028885 [derived-exact P20] + realisation 0.0018941 [derived-exact P20] + rounding 0.061206 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.061206 [derived-exact P20], residual 0.061206 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[29239,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.16s]
+whatif t17.L20.h_out add tensor 9d1e3968cc40 from feature[29239,coef]*-1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record 826bea8e83439bfe)
+  sealed  linear ΔM = 0.60573 [derived-local P14]   exact ΔM = 0.51402 [derived-exact]
+  native  ΔM = 0.5 [measured]   (base 8.25 [measured] -> edited 8.75 [measured])
+  error split (P20): linear 0.60573 [derived-local P14] + nonlinear -0.091707 [derived-exact P20] + realisation 0.0023649 [derived-exact P20] + rounding -0.016385 [measured P20]
+  verdict (P20): unresolved  native ΔM 0.5 [measured P20], exact ΔM 0.51639 [derived-exact P20], residual -0.016385 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])  [native Δ 0.5 is within the floor 0.5 but the exact Δ 0.51639 is not]
+  session unchanged at t17.logits  (5 moves, restored)
+state: unresolved
+(mdb) whatif {"target": "L20.h_out", "value": "-feature[25654,coef]-feature[27749,coef]-feature[29239,coef]", "op": "add", "consumer": "M[9625,15344]"}  [2.16s]
+whatif t17.L20.h_out add tensor 30c79ad5b6b2 from -feature[25654,coef]-feature[27749,coef]-feature[29239,coef] (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record b65350f401d013ed)
+  sealed  linear ΔM = -0.51313 [derived-local P14]   exact ΔM = -1.1505 [derived-exact]
+  native  ΔM = -1 [measured]   (base 8.25 [measured] -> edited 7.25 [measured])
+  error split (P20): linear -0.51313 [derived-local P14] + nonlinear -0.63741 [derived-exact P20] + realisation -0.00078701 [derived-exact P20] + rounding 0.15133 [measured P20]
+  verdict (P20): effect  native ΔM -1 [measured P20], exact ΔM -1.1513 [derived-exact P20], residual 0.15133 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [2.16s]
+whatif t17.L20.h_out add tensor e63921545aaf from feature[25654,coef]*1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record e11b0ab299469110)
+  sealed  linear ΔM = 1.0846 [derived-local P14]   exact ΔM = 0.81186 [derived-exact]
+  native  ΔM = 0.75 [measured]   (base 8.25 [measured] -> edited 9 [measured])
+  error split (P20): linear 1.0846 [derived-local P14] + nonlinear -0.27278 [derived-exact P20] + realisation -0.0015192 [derived-exact P20] + rounding -0.060343 [measured P20]
+  verdict (P20): effect  native ΔM 0.75 [measured P20], exact ΔM 0.81034 [derived-exact P20], residual -0.060343 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.03s]
+whatif t17.L21.h_out add tensor eb6a49613b6d from feature[25554,coef]*-1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record cc6c719678766b06)
+  sealed  linear ΔM = -1.281 [derived-local P14]   exact ΔM = -2.2134 [derived-exact]
+  native  ΔM = -2.125 [measured]   (base 8.25 [measured] -> edited 6.125 [measured])
+  error split (P20): linear -1.281 [derived-local P14] + nonlinear -0.93244 [derived-exact P20] + realisation -0.00050086 [derived-exact P20] + rounding 0.088922 [measured P20]
+  verdict (P20): effect  native ΔM -2.125 [measured P20], exact ΔM -2.2139 [derived-exact P20], residual 0.088922 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[10111,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.02s]
+whatif t17.L21.h_out add tensor abe8410bc2bb from feature[10111,coef]*-1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record a2ab738dd5bf5453)
+  sealed  linear ΔM = -0.11197 [derived-local P14]   exact ΔM = -0.14679 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear -0.11197 [derived-local P14] + nonlinear -0.034816 [derived-exact P20] + realisation -0.002419 [derived-exact P20] + rounding -0.1008 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.1492 [derived-exact P20], residual -0.1008 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[8405,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.02s]
+whatif t17.L21.h_out add tensor 6b36362ce64c from feature[8405,coef]*-1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record b6cb4703de3f98af)
+  sealed  linear ΔM = -0.22385 [derived-local P14]   exact ΔM = -0.27265 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear -0.22385 [derived-local P14] + nonlinear -0.048797 [derived-exact P20] + realisation 0.0014859 [derived-exact P20] + rounding 0.021166 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.27117 [derived-exact P20], residual 0.021166 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "-feature[25554,coef]-feature[10111,coef]-feature[8405,coef]", "op": "add", "consumer": "M[9625,15344]"}  [2.08s]
+whatif t17.L21.h_out add tensor db91fbaa3647 from -feature[25554,coef]-feature[10111,coef]-feature[8405,coef] (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record a00a364f71fccac7)
+  sealed  linear ΔM = -1.6168 [derived-local P14]   exact ΔM = -2.9626 [derived-exact]
+  native  ΔM = -3.125 [measured]   (base 8.25 [measured] -> edited 5.125 [measured])
+  error split (P20): linear -1.6168 [derived-local P14] + nonlinear -1.3458 [derived-exact P20] + realisation -0.00037115 [derived-exact P20] + rounding -0.16204 [measured P20]
+  verdict (P20): effect  native ΔM -3.125 [measured P20], exact ΔM -2.963 [derived-exact P20], residual -0.16204 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [2.04s]
+whatif t17.L21.h_out add tensor 12f00f9f5144 from feature[25554,coef]*1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record bdc146fc575e6500)
+  sealed  linear ΔM = 1.281 [derived-local P14]   exact ΔM = 0.76693 [derived-exact]
+  native  ΔM = 0.75 [measured]   (base 8.25 [measured] -> edited 9 [measured])
+  error split (P20): linear 1.281 [derived-local P14] + nonlinear -0.51405 [derived-exact P20] + realisation -0.0034522 [derived-exact P20] + rounding -0.013474 [measured P20]
+  verdict (P20): effect  native ΔM 0.75 [measured P20], exact ΔM 0.76347 [derived-exact P20], residual -0.013474 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.89s]
+whatif t17.L22.h_out add tensor aac957ba4924 from feature[1077,coef]*-1 (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record b777f9be25e1980c)
+  sealed  linear ΔM = -0.74552 [derived-local P14]   exact ΔM = -2.5981 [derived-exact]
+  native  ΔM = -2.5 [measured]   (base 8.25 [measured] -> edited 5.75 [measured])
+  error split (P20): linear -0.74552 [derived-local P14] + nonlinear -1.8525 [derived-exact P20] + realisation 0.0043132 [derived-exact P20] + rounding 0.093748 [measured P20]
+  verdict (P20): effect  native ΔM -2.5 [measured P20], exact ΔM -2.5937 [derived-exact P20], residual 0.093748 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[19276,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.91s]
+whatif t17.L22.h_out add tensor 94ef11ae1e9d from feature[19276,coef]*-1 (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record b957b1adc21da1db)
+  sealed  linear ΔM = -0.8462 [derived-local P14]   exact ΔM = -0.79839 [derived-exact]
+  native  ΔM = -0.875 [measured]   (base 8.25 [measured] -> edited 7.375 [measured])
+  error split (P20): linear -0.8462 [derived-local P14] + nonlinear 0.04781 [derived-exact P20] + realisation -0.0052971 [derived-exact P20] + rounding -0.071312 [measured P20]
+  verdict (P20): effect  native ΔM -0.875 [measured P20], exact ΔM -0.80369 [derived-exact P20], residual -0.071312 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[13320,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.89s]
+whatif t17.L22.h_out add tensor 99205fba29b1 from feature[13320,coef]*-1 (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record 2f7adcc9b691ff25)
+  sealed  linear ΔM = -0.24455 [derived-local P14]   exact ΔM = -0.27911 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear -0.24455 [derived-local P14] + nonlinear -0.034557 [derived-exact P20] + realisation -0.0027069 [derived-exact P20] + rounding 0.031812 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.28181 [derived-exact P20], residual 0.031812 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "-feature[1077,coef]-feature[19276,coef]-feature[13320,coef]", "op": "add", "consumer": "M[9625,15344]"}  [1.88s]
+whatif t17.L22.h_out add tensor 8bb78d456bc8 from -feature[1077,coef]-feature[19276,coef]-feature[13320,coef] (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record b79693668cb5339e)
+  sealed  linear ΔM = -1.8363 [derived-local P14]   exact ΔM = -3.7442 [derived-exact]
+  native  ΔM = -3.75 [measured]   (base 8.25 [measured] -> edited 4.5 [measured])
+  error split (P20): linear -1.8363 [derived-local P14] + nonlinear -1.908 [derived-exact P20] + realisation 0.0035518 [derived-exact P20] + rounding -0.0093207 [measured P20]
+  verdict (P20): effect  native ΔM -3.75 [measured P20], exact ΔM -3.7407 [derived-exact P20], residual -0.0093207 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [1.88s]
+whatif t17.L22.h_out add tensor 9379bbc4d0ac from feature[1077,coef]*1 (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record f43f05187f2861a8)
+  sealed  linear ΔM = 0.74552 [derived-local P14]   exact ΔM = 0.73306 [derived-exact]
+  native  ΔM = 0.75 [measured]   (base 8.25 [measured] -> edited 9 [measured])
+  error split (P20): linear 0.74552 [derived-local P14] + nonlinear -0.012462 [derived-exact P20] + realisation -0.0035355 [derived-exact P20] + rounding 0.020479 [measured P20]
+  verdict (P20): effect  native ΔM 0.75 [measured P20], exact ΔM 0.72952 [derived-exact P20], residual 0.020479 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22014,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.74s]
+whatif t17.L23.h_out add tensor 006a40701d28 from feature[22014,coef]*-1 (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record 076bb9a847b78f1b)
+  sealed  linear ΔM = -0.24425 [derived-local P14]   exact ΔM = -2.6442 [derived-exact]
+  native  ΔM = -2.625 [measured]   (base 8.25 [measured] -> edited 5.625 [measured])
+  error split (P20): linear -0.24425 [derived-local P14] + nonlinear -2.4 [derived-exact P20] + realisation -0.0027772 [derived-exact P20] + rounding 0.021999 [measured P20]
+  verdict (P20): effect  native ΔM -2.625 [measured P20], exact ΔM -2.647 [derived-exact P20], residual 0.021999 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22221,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.74s]
+whatif t17.L23.h_out add tensor 6d4116931502 from feature[22221,coef]*-1 (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record 09c649ae3814c0cf)
+  sealed  linear ΔM = -0.36776 [derived-local P14]   exact ΔM = -0.42586 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 8.25 [measured] -> edited 7.875 [measured])
+  error split (P20): linear -0.36776 [derived-local P14] + nonlinear -0.058102 [derived-exact P20] + realisation 0.0039809 [derived-exact P20] + rounding 0.046884 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.375 [measured P20], exact ΔM -0.42188 [derived-exact P20], residual 0.046884 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[24939,coef]*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.74s]
+whatif t17.L23.h_out add tensor 35db87c6685a from feature[24939,coef]*-1 (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record 5d0ee674bd69adc1)
+  sealed  linear ΔM = 0.1124 [derived-local P14]   exact ΔM = 0.043216 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear 0.1124 [derived-local P14] + nonlinear -0.069187 [derived-exact P20] + realisation -0.0045503 [derived-exact P20] + rounding 0.086334 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM 0.038666 [derived-exact P20], residual 0.086334 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "-feature[22014,coef]-feature[22221,coef]-feature[24939,coef]", "op": "add", "consumer": "M[9625,15344]"}  [1.74s]
+whatif t17.L23.h_out add tensor 899b372ffe27 from -feature[22014,coef]-feature[22221,coef]-feature[24939,coef] (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record 71e826d6b8a07a8f)
+  sealed  linear ΔM = -0.49961 [derived-local P14]   exact ΔM = -3.2559 [derived-exact]
+  native  ΔM = -3.25 [measured]   (base 8.25 [measured] -> edited 5 [measured])
+  error split (P20): linear -0.49961 [derived-local P14] + nonlinear -2.7563 [derived-exact P20] + realisation -0.00096056 [derived-exact P20] + rounding 0.0069088 [measured P20]
+  verdict (P20): effect  native ΔM -3.25 [measured P20], exact ΔM -3.2569 [derived-exact P20], residual 0.0069088 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22014,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [1.74s]
+whatif t17.L23.h_out add tensor 1dc29044c9b3 from feature[22014,coef]*1 (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record 2fb25bfbd15f9934)
+  sealed  linear ΔM = 0.24425 [derived-local P14]   exact ΔM = 0.40491 [derived-exact]
+  native  ΔM = 0.375 [measured]   (base 8.25 [measured] -> edited 8.625 [measured])
+  error split (P20): linear 0.24425 [derived-local P14] + nonlinear 0.16066 [derived-exact P20] + realisation 2.8785e-05 [derived-exact P20] + rounding -0.029937 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.375 [measured P20], exact ΔM 0.40494 [derived-exact P20], residual -0.029937 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*0.5", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t17.L20.h_out add tensor 514f1a7d8189 from feature[25654,coef]*0.5 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record 2f5b23b3c267c6f6)
+  sealed  linear ΔM = 0.54232 [derived-local P14]   exact ΔM = 0.44164 [derived-exact]
+  native  ΔM = 0.375 [measured]   (base 8.25 [measured] -> edited 8.625 [measured])
+  error split (P20): linear 0.54232 [derived-local P14] + nonlinear -0.10068 [derived-exact P20] + realisation -0.0013946 [derived-exact P20] + rounding -0.065242 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.375 [measured P20], exact ΔM 0.44024 [derived-exact P20], residual -0.065242 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t17.L20.h_out add tensor e63921545aaf from feature[25654,coef]*1 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record e11b0ab299469110)
+  sealed  linear ΔM = 1.0846 [derived-local P14]   exact ΔM = 0.81186 [derived-exact]
+  native  ΔM = 0.75 [measured]   (base 8.25 [measured] -> edited 9 [measured])
+  error split (P20): linear 1.0846 [derived-local P14] + nonlinear -0.27278 [derived-exact P20] + realisation -0.0015192 [derived-exact P20] + rounding -0.060343 [measured P20]
+  verdict (P20): effect  native ΔM 0.75 [measured P20], exact ΔM 0.81034 [derived-exact P20], residual -0.060343 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*2", "op": "add", "consumer": "M[9625,15344]"}  [2.16s]
+whatif t17.L20.h_out add tensor e4e37099429b from feature[25654,coef]*2 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record a465218a742cbba4)
+  sealed  linear ΔM = 2.1693 [derived-local P14]   exact ΔM = 1.5649 [derived-exact]
+  native  ΔM = 1.5 [measured]   (base 8.25 [measured] -> edited 9.75 [measured])
+  error split (P20): linear 2.1693 [derived-local P14] + nonlinear -0.60441 [derived-exact P20] + realisation 0.0034733 [derived-exact P20] + rounding -0.068341 [measured P20]
+  verdict (P20): effect  native ΔM 1.5 [measured P20], exact ΔM 1.5683 [derived-exact P20], residual -0.068341 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]*4", "op": "add", "consumer": "M[9625,15344]"}  [2.16s]
+whatif t17.L20.h_out add tensor bf971f26ff26 from feature[25654,coef]*4 (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record 35cc028b0aa3c2ef)
+  sealed  linear ΔM = 4.3386 [derived-local P14]   exact ΔM = 2.5589 [derived-exact]
+  native  ΔM = 2.5 [measured]   (base 8.25 [measured] -> edited 10.75 [measured])
+  error split (P20): linear 4.3386 [derived-local P14] + nonlinear -1.7797 [derived-exact P20] + realisation 0.0022658 [derived-exact P20] + rounding -0.061167 [measured P20]
+  verdict (P20): effect  native ΔM 2.5 [measured P20], exact ΔM 2.5612 [derived-exact P20], residual -0.061167 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*0.5", "op": "add", "consumer": "M[9625,15344]"}  [2.03s]
+whatif t17.L21.h_out add tensor ccb697f1f9a5 from feature[25554,coef]*0.5 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record 10538112392b7d8b)
+  sealed  linear ΔM = 0.64049 [derived-local P14]   exact ΔM = 0.48368 [derived-exact]
+  native  ΔM = 0.5 [measured]   (base 8.25 [measured] -> edited 8.75 [measured])
+  error split (P20): linear 0.64049 [derived-local P14] + nonlinear -0.15681 [derived-exact P20] + realisation -0.0036604 [derived-exact P20] + rounding 0.019978 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.5 [measured P20], exact ΔM 0.48002 [derived-exact P20], residual 0.019978 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*1", "op": "add", "consumer": "M[9625,15344]"}  [2.03s]
+whatif t17.L21.h_out add tensor 12f00f9f5144 from feature[25554,coef]*1 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record bdc146fc575e6500)
+  sealed  linear ΔM = 1.281 [derived-local P14]   exact ΔM = 0.76693 [derived-exact]
+  native  ΔM = 0.75 [measured]   (base 8.25 [measured] -> edited 9 [measured])
+  error split (P20): linear 1.281 [derived-local P14] + nonlinear -0.51405 [derived-exact P20] + realisation -0.0034522 [derived-exact P20] + rounding -0.013474 [measured P20]
+  verdict (P20): effect  native ΔM 0.75 [measured P20], exact ΔM 0.76347 [derived-exact P20], residual -0.013474 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*2", "op": "add", "consumer": "M[9625,15344]"}  [2.02s]
+whatif t17.L21.h_out add tensor d970f16c1f1c from feature[25554,coef]*2 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record e71df21e918f438f)
+  sealed  linear ΔM = 2.562 [derived-local P14]   exact ΔM = 1.0671 [derived-exact]
+  native  ΔM = 1 [measured]   (base 8.25 [measured] -> edited 9.25 [measured])
+  error split (P20): linear 2.562 [derived-local P14] + nonlinear -1.4948 [derived-exact P20] + realisation -0.0061459 [derived-exact P20] + rounding -0.060992 [measured P20]
+  verdict (P20): effect  native ΔM 1 [measured P20], exact ΔM 1.061 [derived-exact P20], residual -0.060992 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]*4", "op": "add", "consumer": "M[9625,15344]"}  [2.02s]
+whatif t17.L21.h_out add tensor 025e27365541 from feature[25554,coef]*4 (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record 8a35a47c12b0664c)
+  sealed  linear ΔM = 5.1239 [derived-local P14]   exact ΔM = 1.6424 [derived-exact]
+  native  ΔM = 1.6875 [measured]   (base 8.25 [measured] -> edited 9.9375 [measured])
+  error split (P20): linear 5.1239 [derived-local P14] + nonlinear -3.4815 [derived-exact P20] + realisation 0.0025744 [derived-exact P20] + rounding 0.042513 [measured P20]
+  verdict (P20): effect  native ΔM 1.6875 [measured P20], exact ΔM 1.645 [derived-exact P20], residual 0.042513 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) feature {"feature": 25654, "layer": 20, "top": 4}  [0.23s]
+feature f25654 of t17.L20.h_out (SAE qs): active at its site, cutoff 25.219 [derived-exact]; first above cutoff t17.L20.r, last t17.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -3.5579    -3.756     -3.6538     -0.19792     0.10182
+  L1       -3.6538   -3.6237     -3.9467     0.027963    -0.32278
+  L2       -3.9467   -3.8365     -4.1493      0.10783    -0.31391
+  L3       -4.1493   -3.8758     -4.0879      0.27414    -0.21243
+  L4       -4.0879   -3.7506     -4.7012       0.3351    -0.95066
+  L5       -4.7012   -4.4665     -4.6561      0.23395    -0.19168
+  L6       -4.6561   -3.7179     -3.3461      0.93735     0.36778
+  L7       -3.3461   -2.8345     -2.6301      0.51654     0.20611
+  L8       -2.6301   -0.3474     -1.6597       2.2765      -1.309
+  L9       -1.6597  -0.84294    -0.86118      0.82158   -0.015129
+  L10     -0.86118  -0.30216     0.34863      0.55978     0.64571
+  L11      0.34863   -1.0353     -1.8664      -1.3814    -0.82824
+  L12      -1.8664   -2.7271   -0.099322     -0.85154      2.6166
+  L13    -0.099322   -0.7012     0.38549     -0.59708      1.0959
+  L14      0.38549    1.9812    -0.50792       1.5925      -2.488
+  L15     -0.50792   -1.4672    -0.28843     -0.95333      1.1761
+  L16     -0.28843   -2.5011    -0.32003      -2.2084       2.173
+  L17     -0.32003    1.8851      6.1158       2.2278      4.2064
+  L18       6.1158    12.399      22.363       6.2836      9.9453
+  L19       22.363    18.408      23.524      -3.9879      5.1359
+  L20       23.524    156.87      184.21       133.34      27.347
+  L21       184.21    202.29      201.56       18.071    -0.61409
+  L22       201.56     211.6      384.35       9.9723      172.76
+  L23       384.35    380.96      531.77      -3.4295      150.84
+  L24       531.77    540.63      548.28       8.6898      7.8162
+  L25       548.28     554.3      555.03        5.959     0.76041
+  L26       555.03    584.32       579.7       29.166     -4.6031
+  L27        579.7    602.85      805.63       23.184      202.59
+  top heads of L20.attn: h13 103.75, h12 29.204, h4 3.1378, h9 -1.6521 [derived-exact P07]
+  top neurons of L27.mlp: f1477 -98.482, f946 65.454, f3309 44.858, f3227 33.835 [derived-exact P15]
+(mdb) feature {"feature": 27749, "layer": 20, "top": 4}  [0.02s]
+feature f27749 of t17.L20.h_out (SAE qs): active at its site, cutoff 25.219 [derived-exact]; first above cutoff t17.L17.h_out, last t17.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -27.545   -27.281     -26.243      0.26356      1.0401
+  L1       -26.243   -26.359     -25.054     -0.11427      1.3036
+  L2       -25.054    -24.93     -25.038      0.12256    -0.10388
+  L3       -25.038   -25.227     -25.608     -0.19125    -0.38038
+  L4       -25.608   -25.768     -24.338     -0.16246      1.4326
+  L5       -24.338   -24.142     -23.846      0.19559     0.30073
+  L6       -23.846   -22.517     -21.213       1.3231      1.2932
+  L7       -21.213   -21.834     -20.465     -0.62186      1.3725
+  L8       -20.465   -20.405     -20.347     0.059473    0.059089
+  L9       -20.347   -19.574     -19.637      0.76756   -0.063183
+  L10      -19.637   -18.287     -17.284       1.3491     0.99628
+  L11      -17.284   -15.776     -17.421       1.5146     -1.6412
+  L12      -17.421   -16.648     -11.414      0.76859      5.2347
+  L13      -11.414   -12.576     -12.973      -1.1852    -0.39855
+  L14      -12.973   -14.058     -11.482      -1.0691      2.5762
+  L15      -11.482   -10.181     -2.6396       1.3017      7.5452
+  L16      -2.6396   -3.5959       13.68     -0.95066      17.269
+  L17        13.68     14.13       29.28      0.43917      15.154
+  L18        29.28    29.755       36.06      0.46127      6.3028
+  L19        36.06     30.99      53.056      -5.0718       22.03
+  L20       53.056     48.09      78.576      -4.9842      30.494
+  L21       78.576    75.676      80.992      -2.8736      5.2861
+  L22       80.992    84.741       76.55       3.7482     -8.2241
+  L23        76.55     67.57      70.067      -9.0036      2.3845
+  L24       70.067    72.638      51.663       2.5678     -21.045
+  L25       51.663    51.592      76.266     -0.10066      24.697
+  L26       76.266    89.661       90.92       13.525      1.3588
+  L27        90.92    95.436      404.43        4.332       308.8
+  top heads of L26.attn: h0 10.024, h7 -2.295, h10 2.0078, h14 1.4589 [derived-exact P07]
+  top neurons of L27.mlp: f946 89.754, f3309 60.781, f1686 32.446, f3227 27.928 [derived-exact P15]
+(mdb) feature {"feature": 22014, "layer": 23, "top": 4}  [0.02s]
+feature f22014 of t17.L23.h_out (SAE qs): active at its site, cutoff 43.233 [derived-exact]; first above cutoff t17.L20.r, last t17.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -5.0297   -5.4134     -5.6163     -0.38355    -0.20223
+  L1       -5.6163   -5.5842     -5.8628     0.030433    -0.27806
+  L2       -5.8628   -5.7957     -6.2409     0.066739    -0.44349
+  L3       -6.2409   -5.9285      -6.538      0.31351    -0.61134
+  L4        -6.538    -6.272     -7.3249      0.26498     -1.0538
+  L5       -7.3249   -6.8439     -7.3869      0.48012     -0.5452
+  L6       -7.3869    -6.588     -6.4217      0.79789     0.16435
+  L7       -6.4217   -5.6445     -5.5595      0.78005    0.080386
+  L8       -5.5595   -3.1799     -4.1153       2.3759    -0.93913
+  L9       -4.1153   -3.1126     -3.5859       1.0044    -0.46558
+  L10      -3.5859   -3.4377     -3.6589      0.14942     -0.2243
+  L11      -3.6589   -3.7062     -4.0663    -0.048208    -0.35373
+  L12      -4.0663    -4.753     -1.0299     -0.67544       3.717
+  L13      -1.0299   -1.5771     0.33639     -0.54043      1.9187
+  L14      0.33639   0.98678    -0.48985       0.6451     -1.4834
+  L15     -0.48985   -3.1256     0.96829      -2.6454      4.0986
+  L16      0.96829  -0.95086      1.9433      -1.9177      2.8835
+  L17       1.9433     4.203      8.7662       2.2498      4.5478
+  L18       8.7662    15.048      19.764       6.2557      4.7088
+  L19       19.764    14.919      21.519      -4.8731       6.605
+  L20       21.519    124.51      156.97       102.99       32.44
+  L21       156.97    174.49         176        17.56        1.56
+  L22          176    185.69      439.18       9.6536      253.48
+  L23       439.18    439.53      737.64      0.26542      298.05
+  L24       737.64    746.11      744.73       8.3845      -1.241
+  L25       744.73    752.51      753.65       7.6662      1.0148
+  L26       753.65    779.13      784.93       25.401       5.745
+  L27       784.93    815.86      1121.8       30.979      305.61
+  top heads of L20.attn: h13 87.418, h12 16.561, h4 2.6838, h9 -1.7841 [derived-exact P07]
+  top neurons of L27.mlp: f946 112.53, f1477 -101.5, f3309 67.1, f3227 44.589 [derived-exact P15]
+(mdb) feature {"feature": 22221, "layer": 23, "top": 4}  [0.02s]
+feature f22221 of t17.L23.h_out (SAE qs): active at its site, cutoff 43.233 [derived-exact]; first above cutoff t17.L21.h_out, last t17.L27.h_out
+  layer   probe h     probe r   probe h_out   write attn   write mlp
+  L0       -9.9611   -9.9955     -9.6742    -0.034629     0.32208
+  L1       -9.6742   -9.5498     -10.181      0.12398    -0.63206
+  L2       -10.181   -10.135     -10.453     0.045304     -0.3199
+  L3       -10.453   -10.133     -10.947      0.31994    -0.81292
+  L4       -10.947   -10.907     -12.095     0.037267     -1.1863
+  L5       -12.095   -11.782     -10.842      0.31237     0.93519
+  L6       -10.842   -10.358       -10.9      0.48401    -0.54637
+  L7         -10.9    -11.07     -11.614     -0.16955    -0.54257
+  L8       -11.614   -11.208     -11.631      0.40116     -0.4249
+  L9       -11.631   -11.667     -12.059    -0.035946    -0.38955
+  L10      -12.059   -11.934     -9.8965      0.12496        2.04
+  L11      -9.8965   -9.5608      -9.935      0.33446    -0.37331
+  L12       -9.935   -10.607     -8.7999     -0.66705      1.7985
+  L13      -8.7999   -9.5618     -9.7113      -0.7665    -0.15101
+  L14      -9.7113   -9.1887     -9.8155      0.52932    -0.63491
+  L15      -9.8155   -11.888     -13.803      -2.0776     -1.9204
+  L16      -13.803   -15.818      -14.79      -2.0107      1.0151
+  L17       -14.79   -10.338     -4.3605       4.4178      5.9885
+  L18      -4.3605   -4.5723     -8.3802     -0.21381     -3.8087
+  L19      -8.3802   -15.839     -13.504      -7.4647      2.3256
+  L20      -13.504    15.415      28.977       28.924      13.574
+  L21       28.977    34.054      45.561       5.1007      11.547
+  L22       45.561    53.546      244.45       8.0279      190.86
+  L23       244.45    240.49      486.53       -3.943         246
+  L24       486.53    489.99       474.4       3.4452     -15.556
+  L25        474.4    482.42      453.99        7.895     -28.459
+  L26       453.99    453.45      421.56     -0.52995     -31.781
+  L27       421.56    434.21      654.83        12.44       220.6
+  top heads of L20.attn: h13 26.398, h12 6.7351, h0 -2.4945, h4 2.1553 [derived-exact P07]
+  top neurons of L23.mlp: f3956 213.64, f2298 28.457, f75 4.7415, f207 4.5612 [derived-exact P15]
+T 265.8s
+===== native replacement model (all sites spliced)
+(mdb) start {"prompt": "The Eiffel Tower is located in the city of", "name": "chain"}  [0.03s]
+run chain
+t10.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until {"target": "logits"}  [0.02s]
+t10.logits  logits = lm_head(fn)
+(mdb) print {"address": "logits", "top": 5}  [0.00s]
+t10.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 2229.7 min -23.75 max 25.25 mean -3.8499 abs_max 25.25 [measured, under edit t10.L1.h +26 more]
+  top |v|: [0,24472] 25.25 "-wide", [0,9150] 24.125 "wide", [0,31635] 24.125 "lit", [0,98055] -23.75 " Flesh", [0,5980] 22 "-based" [measured, under edit t10.L1.h +26 more]
+  pointer occurrence ~stepped sha256 2b1e8379caf391d3 cut e882e9185a97
+CHAIN margin -3.2344 [measured, under 27 splices] argmax 24472 '-wide'
+(mdb) features {"address": "L26.h_out", "consumer": "M[12095,21718]"}  [0.02s]
+features t10.L26.h_out  SAE qs L26 (L26.h_out, k 50, 50 active)  ||x|| 7.711e+13 [measured]
+  f4143   act 1.3421e+13 [derived-exact]  ||d|| 1  effect -0.78084 [derived-exact P19]
+  f6856   act 1.2233e+13 [derived-exact]  ||d|| 1  effect -0.68892 [derived-exact P19]
+  f3317   act 1.0602e+13 [derived-exact]  ||d|| 1  effect 0.47771 [derived-exact P19]
+  f6073   act 7.9944e+12 [derived-exact]  ||d|| 1  effect -0.45412 [derived-exact P19]
+  f14510  act 8.2384e+12 [derived-exact]  ||d|| 1  effect -0.44468 [derived-exact P19]
+  f20605  act 8.5957e+12 [derived-exact]  ||d|| 1  effect -0.36613 [derived-exact P19]
+  f18657  act 7.8222e+12 [derived-exact]  ||d|| 1  effect -0.36299 [derived-exact P19]
+  f7526   act 8.8632e+12 [derived-exact]  ||d|| 1  effect 0.35437 [derived-exact P19]
+  +42 more  act Σ 3.9148e+14  effect Σ -0.97574 [derived-exact P19]
+  b_dec    ||b|| 2901.2  effect 1.3822e-11 [derived-exact P19]
+  ERROR    ||e|| 7.1403e+13 [derived-exact]  ||e||/||x|| 0.92598  energy 0.85744  effect -2.2794 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 0.00024414 [derived-exact]
+  t10.M[12095,21718] -3.2344 [measured P19] = direct -5.5207 [derived-exact P19] (features -3.2413 + bias 1.3822e-11 + error -2.2794) + later layers 6.4226e-11 [derived-exact P19] + head bias 0 + remainder 2.2863 [measured P19]
+  error/direct 0.41288  |error| share 0.16802  closure 0 [derived-exact P19]
+  value under edits: t10.L1.h, t10.L2.h, t10.L3.h, t10.L4.h, t10.L5.h, t10.L6.h, t10.L7.h, t10.L8.h, t10.L9.h, t10.L10.h, t10.L11.h, t10.L12.h, t10.L13.h, t10.L14.h, t10.L15.h, t10.L16.h, t10.L17.h, t10.L18.h, t10.L19.h, t10.L20.h, t10.L21.h, t10.L22.h, t10.L23.h, t10.L24.h, t10.L25.h, t10.L26.h
+(mdb) start {"prompt": "The Eiffel Tower is located in the city of Paris, It is the capital of", "name": "chain"}  [0.03s]
+run chain
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until {"target": "logits"}  [0.03s]
+t17.logits  logits = lm_head(fn)
+(mdb) print {"address": "logits", "top": 5}  [0.00s]
+t17.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 2094.4 min -25.125 max 24.5 mean -3.5781 abs_max 25.125 [measured, under edit t17.L1.h +26 more]
+  top |v|: [0,93248] -25.125 "/OR", [0,2284] 24.5 "ways", [0,8969] 24.25 "overs", [0,13757] 24 "away", [0,3117] 23.75 "way" [measured, under edit t17.L1.h +26 more]
+  pointer occurrence ~stepped sha256 7ee89f5fdf097eb2 cut 9db1dc2352ca
+CHAIN margin 2.5195 [measured, under 27 splices] argmax 2284 'ways'
+(mdb) features {"address": "L26.h_out", "consumer": "M[9625,15344]"}  [0.02s]
+features t17.L26.h_out  SAE qs L26 (L26.h_out, k 50, 50 active)  ||x|| 1.7406e+11 [measured]
+  f12572  act 4.1244e+10 [derived-exact]  ||d|| 1  effect 0.69032 [derived-exact P19]
+  f24904  act 2.3896e+10 [derived-exact]  ||d|| 1  effect 0.45936 [derived-exact P19]
+  f14756  act 2.3255e+10 [derived-exact]  ||d|| 1  effect 0.45521 [derived-exact P19]
+  f9434   act 1.9311e+10 [derived-exact]  ||d|| 1  effect -0.4369 [derived-exact P19]
+  f20080  act 1.9789e+10 [derived-exact]  ||d|| 1  effect 0.41349 [derived-exact P19]
+  f10104  act 3.8873e+10 [derived-exact]  ||d|| 1  effect 0.40271 [derived-exact P19]
+  f25449  act 2.0108e+10 [derived-exact]  ||d|| 1  effect -0.38153 [derived-exact P19]
+  f10297  act 2.3512e+10 [derived-exact]  ||d|| 1  effect 0.36703 [derived-exact P19]
+  +42 more  act Σ 8.7312e+11  effect Σ 0.54239 [derived-exact P19]
+  b_dec    ||b|| 2901.2  effect 7.3492e-09 [derived-exact P19]
+  ERROR    ||e|| 1.6718e+11 [derived-exact]  ||e||/||x|| 0.96047  energy 0.9225  effect -0.85583 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 4.7684e-07 [derived-exact]
+  t17.M[9625,15344] 2.5195 [measured P19] = direct 1.6562 [derived-exact P19] (features 2.5121 + bias 7.3492e-09 + error -0.85583) + later layers 1.5448e-08 [derived-exact P19] + head bias 0 + remainder 0.8633 [measured P19]
+  error/direct -0.51673  |error| share 0.079419  closure 2.6645e-15 [derived-exact P19]
+  value under edits: t17.L1.h, t17.L2.h, t17.L3.h, t17.L4.h, t17.L5.h, t17.L6.h, t17.L7.h, t17.L8.h, t17.L9.h, t17.L10.h, t17.L11.h, t17.L12.h, t17.L13.h, t17.L14.h, t17.L15.h, t17.L16.h, t17.L17.h, t17.L18.h, t17.L19.h, t17.L20.h, t17.L21.h, t17.L22.h, t17.L23.h, t17.L24.h, t17.L25.h, t17.L26.h
+T 267.2s
+===== (c) steering vs transplant, rome counterfactual
+(mdb) checkpoint {"name": "main_logits"}  [0.00s]
+checkpoint main_logits at t17.logits (749 bytes)
+(mdb) start {"prompt": "The Colosseum is located in the city of Rome, It is the capital of", "name": "rome"}  [0.03s]
+run rome
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until {"target": "logits"}  [0.22s]
+t17.logits  logits = lm_head(fn)
+(mdb) print {"address": "logits", "top": 3}  [0.00s]
+t17.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 4422.1 min -0.51953 max 32.25 mean 10.696 abs_max 32.25 [measured]
+  top |v|: [0,15344] 32.25 " Italy", [0,279] 31.625 " the", [0,892] 30.125 " which" [measured]
+  pointer occurrence ~stepped sha256 d8f0ef239a1656cf
+(mdb) features {"address": "L20.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5}  [0.11s]
+features t17.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 906.29 [measured]
+  f26317  act 100.96 [derived-exact]  ||d|| 1  effect -1.1643 [derived-exact P19]  promotes "\u610f\u5927\u5229" " Italy" " Italian" " Italians" "Italy" [derived-local]
+  f13475  act 199.57 [derived-exact]  ||d|| 1  effect -0.57663 [derived-exact P19]  promotes " Romans" " Roman" "\u7f57\u9a6c" " Rome" " Gaul" [derived-local]
+  f27749  act 73.652 [derived-exact]  ||d|| 1  effect 0.21937 [derived-exact P19]  promotes " whom" "ships" " who" "who" "\u043c\u044b" [derived-local]
+  f29239  act 128.53 [derived-exact]  ||d|| 1  effect 0.11939 [derived-exact P19]  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f20296  act 127.67 [derived-exact]  ||d|| 1  effect -0.10768 [derived-exact P19]  promotes "\u9996\u90fd" " bordered" "\u4eba\u53e3" "\u4e2d\u90e8" "\u9762\u79ef\u7ea6" [derived-local]
+  f12086  act 98.256 [derived-exact]  ||d|| 1  effect -0.066499 [derived-exact P19]  promotes " southwestern" " northeastern" " southern" " southeastern" " northwest" [derived-local]
+  f3570   act 156.19 [derived-exact]  ||d|| 1  effect 0.056743 [derived-exact P19]  promotes " sorts" " course" "/from" "course" " the" [derived-local]
+  f11769  act 40.023 [derived-exact]  ||d|| 1  effect -0.055419 [derived-exact P19]  promotes " provincial" " Minister" " national" " State" " Ministry" [derived-local]
+  f25369  act 37.665 [derived-exact]  ||d|| 1  effect -0.046408 [derived-exact P19]
+  f11370  act 48.476 [derived-exact]  ||d|| 1  effect -0.043761 [derived-exact P19]
+  +40 more  act Σ 1585.1  effect Σ 0.2562 [derived-exact P19]
+  b_dec    ||b|| 579.38  effect 0.13193 [derived-exact P19]
+  ERROR    ||e|| 358.87 [derived-exact]  ||e||/||x|| 0.39598  energy 0.1568  effect -0.18539 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t17.M[9625,15344] -7.5 [measured P19] = direct -1.4624 [derived-exact P19] (features -1.409 + bias 0.13193 + error -0.18539) + later layers -6.0475 [derived-exact P19] + head bias 0 + remainder 0.0098664 [measured P19]
+  error/direct 0.12677  |error| share 0.054598  closure 1.7764e-15 [derived-exact P19]
+(mdb) features {"address": "L21.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5}  [0.05s]
+features t17.L21.h_out  SAE qs L21 (L21.h_out, k 50, 50 active)  ||x|| 1096 [measured]
+  f29974  act 138.4 [derived-exact]  ||d|| 1  effect -1.66 [derived-exact P19]  promotes "\u610f\u5927\u5229" " Italy" " Italian" " Italians" "Italy" [derived-local]
+  f5202   act 196.04 [derived-exact]  ||d|| 1  effect -0.67665 [derived-exact P19]  promotes " Romans" " Roman" "\u7f57\u9a6c" " Rome" "Roman" [derived-local]
+  f27579  act 35.629 [derived-exact]  ||d|| 1  effect -0.26165 [derived-exact P19]  promotes " della" " pi\u00f9" " delle" " Italian" " Italia" [derived-local]
+  f27378  act 25.782 [derived-exact]  ||d|| 1  effect -0.22025 [derived-exact P19]  promotes "\u610f\u5927\u5229" " Italy" " Italian" "Italy" " Italians" [derived-local]
+  f6347   act 74.025 [derived-exact]  ||d|| 1  effect 0.16637 [derived-exact P19]  promotes "ships" " ceremonies" " whom" " affairs" "artment" [derived-local]
+  f22594  act 136.13 [derived-exact]  ||d|| 1  effect 0.14539 [derived-exact P19]  promotes " ____" "____" " ______" " __" " _____" [derived-local]
+  f25828  act 81.646 [derived-exact]  ||d|| 1  effect -0.11571 [derived-exact P19]  promotes "\u5b81\u53bf" "\u5404\u53bf" " Counties" " counties" " County" [derived-local]
+  f15655  act 115.35 [derived-exact]  ||d|| 1  effect -0.11207 [derived-exact P19]  promotes " Europe" " Italy" " England" " Germany" " America" [derived-local]
+  f32305  act 66.612 [derived-exact]  ||d|| 1  effect 0.10233 [derived-exact P19]
+  f23654  act 72.307 [derived-exact]  ||d|| 1  effect -0.098005 [derived-exact P19]
+  +40 more  act Σ 1952.4  effect Σ 0.085497 [derived-exact P19]
+  b_dec    ||b|| 774.79  effect 0.12092 [derived-exact P19]
+  ERROR    ||e|| 442.5 [derived-exact]  ||e||/||x|| 0.40373  energy 0.163  effect 0.059972 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t17.M[9625,15344] -7.5 [measured P19] = direct -2.4638 [derived-exact P19] (features -2.6447 + bias 0.12092 + error 0.059972) + later layers -5.0453 [derived-exact P19] + head bias 0 + remainder 0.0091439 [measured P19]
+  error/direct -0.024341  |error| share 0.013076  closure -3.5527e-15 [derived-exact P19]
+(mdb) features {"address": "L22.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5}  [0.06s]
+features t17.L22.h_out  SAE qs L22 (L22.h_out, k 50, 50 active)  ||x|| 1499.6 [measured]
+  f15296  act 428.72 [derived-exact]  ||d|| 1  effect -5.3876 [derived-exact P19]  promotes " Italy" "\u610f\u5927\u5229" " Italian" "Italy" " Italians" [derived-local]
+  f406    act 202.19 [derived-exact]  ||d|| 1  effect -0.56257 [derived-exact P19]  promotes " Romans" " Roman" " consul" " Caesar" "\u7f57\u9a6c" [derived-local]
+  f11805  act 183.72 [derived-exact]  ||d|| 1  effect -0.2223 [derived-exact P19]  promotes "\u610f\u5927\u5229" "\u6b27\u6d32" " Italy" " Spain" "\u897f\u73ed\u7259" [derived-local]
+  f25865  act 81.809 [derived-exact]  ||d|| 1  effect -0.18031 [derived-exact P19]  promotes " Roman" " Romans" "\u7f57\u9a6c" " Gaul" " Rome" [derived-local]
+  f6980   act 184.71 [derived-exact]  ||d|| 1  effect -0.14796 [derived-exact P19]  promotes "\u5395" "\u75d4" "\u7caa" " toilet" "\u9a6c\u6876" [derived-local]
+  f19973  act 53.655 [derived-exact]  ||d|| 1  effect 0.14287 [derived-exact P19]  promotes " shel" "WINDOWS" " Tacoma" "draft" "xe" [derived-local]
+  f19164  act 104.35 [derived-exact]  ||d|| 1  effect -0.12856 [derived-exact P19]  promotes " USA" "USA" " Italy" " Germany" " Spain" [derived-local]
+  f17657  act 134.07 [derived-exact]  ||d|| 1  effect 0.12233 [derived-exact P19]  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f799    act 67.412 [derived-exact]  ||d|| 1  effect 0.12169 [derived-exact P19]
+  f20000  act 77.604 [derived-exact]  ||d|| 1  effect -0.11775 [derived-exact P19]
+  +40 more  act Σ 2666.1  effect Σ -0.24011 [derived-exact P19]
+  b_dec    ||b|| 1045.6  effect 0.09867 [derived-exact P19]
+  ERROR    ||e|| 541.47 [derived-exact]  ||e||/||x|| 0.36108  energy 0.13038  effect 0.21828 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t17.M[9625,15344] -7.5 [measured P19] = direct -6.2833 [derived-exact P19] (features -6.6003 + bias 0.09867 + error 0.21828) + later layers -1.2212 [derived-exact P19] + head bias 0 + remainder 0.0044581 [measured P19]
+  error/direct -0.03474  |error| share 0.025278  closure 7.1054e-15 [derived-exact P19]
+(mdb) features {"address": "L23.h_out", "consumer": "M[9625,15344]", "top": 10, "lens": 5}  [0.06s]
+features t17.L23.h_out  SAE qs L23 (L23.h_out, k 50, 50 active)  ||x|| 1776.9 [measured]
+  f29748  act 519.65 [derived-exact]  ||d|| 1  effect -6.4712 [derived-exact P19]  promotes " Italy" "\u610f\u5927\u5229" " Italian" "Italy" " Italians" [derived-local]
+  f16861  act 269.43 [derived-exact]  ||d|| 1  effect -1.9834 [derived-exact P19]  promotes "\u610f\u5927\u5229" " Sic" " Italy" " Italian" " Italians" [derived-local]
+  f31361  act 248.69 [derived-exact]  ||d|| 1  effect -0.74643 [derived-exact P19]  promotes " emperor" "\u7f57\u9a6c" "\u5e1d\u56fd" " Rome" " Empire" [derived-local]
+  f1518   act 98.901 [derived-exact]  ||d|| 1  effect -0.3606 [derived-exact P19]  promotes " Greek" " Athens" " Greeks" "\u5e0c\u814a" " Athen" [derived-local]
+  f10532  act 151.56 [derived-exact]  ||d|| 1  effect -0.29638 [derived-exact P19]  promotes " consul" " Lup" " cons" " Gaul" "lius" [derived-local]
+  f31246  act 205.52 [derived-exact]  ||d|| 1  effect -0.16318 [derived-exact P19]  promotes "\u75d4" "\u5395" "\u9a6c\u6876" " toilet" "\u9ab6" [derived-local]
+  f3757   act 190.51 [derived-exact]  ||d|| 1  effect -0.15013 [derived-exact P19]  promotes " Germany" " Italy" " Australia" " France" " Canada" [derived-local]
+  f16134  act 135.61 [derived-exact]  ||d|| 1  effect 0.14809 [derived-exact P19]  promotes " ____" "____" " __" " _____" " ______" [derived-local]
+  f16237  act 104.05 [derived-exact]  ||d|| 1  effect -0.13662 [derived-exact P19]
+  f7597   act 108.72 [derived-exact]  ||d|| 1  effect -0.13207 [derived-exact P19]
+  +40 more  act Σ 3133.4  effect Σ -0.14352 [derived-exact P19]
+  b_dec    ||b|| 1261.8  effect 0.091595 [derived-exact P19]
+  ERROR    ||e|| 643.11 [derived-exact]  ||e||/||x|| 0.36194  energy 0.131  effect 1.6481 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 3.5527e-15 [derived-exact]
+  t17.M[9625,15344] -7.5 [measured P19] = direct -8.6957 [derived-exact P19] (features -10.435 + bias 0.091595 + error 1.6481) + later layers 1.1939 [derived-exact P19] + head bias 0 + remainder 0.0018343 [measured P19]
+  error/direct -0.18953  |error| share 0.1185  closure -7.1054e-15 [derived-exact P19]
+(mdb) frame {"address": "main:"}  [0.00s]
+run main
+t17.logits  logits = lm_head(fn)
+(mdb) where {}  [0.00s]
+t17.logits  logits = lm_head(fn)
+tokens (last 16): 3092:"iff" 301:"el" 21938:" Tower" 374:" is" 7407:" located" 304:" in" 279:" the" 3283:" city" 315:" of" 12095:" Paris" 11:"," 1084:" It" 374:" is" 279:" the" 6722:" capital" 315:" of"
+staged edits: 0, lookahead none
+(mdb) whatif {"target": "cache.L20.v[row=11]", "value": "rome:cache.L20.v[row=11]", "op": "replace", "consumer": "M[9625,15344]"}  [2.26s]
+whatif cache.L20.v[row=11] replace tensor 2686a3df15e0 from rome:cache.L20.v[row=11] -> t17.M[9625,15344]  (mode rewind, record 946d2f9950467c55)
+  sealed  linear ΔM = -0.77345 [derived-local P14]   exact ΔM = -0.94698 [derived-exact]
+  native  ΔM = -0.875 [measured]   (base 8.25 [measured] -> edited 7.375 [measured])
+  error split (P20): linear -0.77345 [derived-local P14] + nonlinear -0.17353 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.071976 [measured P20]
+  verdict (P20): effect  native ΔM -0.875 [measured P20], exact ΔM -0.94698 [derived-exact P20], residual 0.071976 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "cache.L20.v[kv6,row=11]", "value": "rome:cache.L20.v[kv6,row=11]", "op": "replace", "consumer": "M[9625,15344]"}  [2.25s]
+whatif cache.L20.v[kv6,row=11] replace tensor 982319131891 from rome:cache.L20.v[kv6,row=11] -> t17.M[9625,15344]  (mode rewind, record fb3b7127e07e21ec)
+  sealed  linear ΔM = -0.77248 [derived-local P14]   exact ΔM = -0.9378 [derived-exact]
+  native  ΔM = -0.875 [measured]   (base 8.25 [measured] -> edited 7.375 [measured])
+  error split (P20): linear -0.77248 [derived-local P14] + nonlinear -0.16532 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.0628 [measured P20]
+  verdict (P20): effect  native ΔM -0.875 [measured P20], exact ΔM -0.9378 [derived-exact P20], residual 0.0628 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "cache.L20.k[kv6,row=11]", "value": "rome:cache.L20.k[kv6,row=11]", "op": "replace", "consumer": "M[9625,15344]"}  [2.26s]
+whatif cache.L20.k[kv6,row=11] replace tensor b13f972a248f from rome:cache.L20.k[kv6,row=11] -> t17.M[9625,15344]  (mode rewind, record 6fa4ff56b9d49b7c)
+  sealed  linear ΔM = 0.036847 [derived-local P14]   exact ΔM = 0.01374 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear 0.036847 [derived-local P14] + nonlinear -0.023107 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.11126 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM 0.01374 [derived-exact P20], residual 0.11126 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "cache.L22.v[row=11]", "value": "rome:cache.L22.v[row=11]", "op": "replace", "consumer": "M[9625,15344]"}  [1.99s]
+whatif cache.L22.v[row=11] replace tensor 20ef33269a1a from rome:cache.L22.v[row=11] -> t17.M[9625,15344]  (mode rewind, record 90b6b2aec3342b3e)
+  sealed  linear ΔM = -0.3156 [derived-local P14]   exact ΔM = -0.38725 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 8.25 [measured] -> edited 7.875 [measured])
+  error split (P20): linear -0.3156 [derived-local P14] + nonlinear -0.071645 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.012246 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.375 [measured P20], exact ΔM -0.38725 [derived-exact P20], residual 0.012246 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L16.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [2.73s]
+whatif t17.L16.h_out replace tensor 1b0455f849fe from recon@rome+error@rome (SAE qs L16) -> t17.M[9625,15344]  (mode rewind, record 273c9e682a660228)
+  sealed  linear ΔM = 0.58406 [derived-local P14]   exact ΔM = 0.31195 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 8.25 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 0.58406 [derived-local P14] + nonlinear -0.27211 [derived-exact P20] + realisation -7.1054e-15 [derived-exact P20] + rounding -0.061948 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.31195 [derived-exact P20], residual -0.061948 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L16.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L16.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L18.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [2.45s]
+whatif t17.L18.h_out replace tensor caa688ecccff from recon@rome+error@rome (SAE qs L18) -> t17.M[9625,15344]  (mode rewind, record 981368e94af562f6)
+  sealed  linear ΔM = 0.51193 [derived-local P14]   exact ΔM = 0.21062 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 8.25 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 0.51193 [derived-local P14] + nonlinear -0.30131 [derived-exact P20] + realisation -3.5527e-14 [derived-exact P20] + rounding 0.039377 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.21062 [derived-exact P20], residual 0.039377 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L18.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L18.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L20.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [2.25s]
+whatif t17.L20.h_out replace tensor dff1bd30c507 from recon@rome+error@rome (SAE qs L20) -> t17.M[9625,15344]  (mode rewind, record 63b78b0693e241fd)
+  sealed  linear ΔM = -1.8045 [derived-local P14]   exact ΔM = -8.6145 [derived-exact]
+  native  ΔM = -8.5 [measured]   (base 8.25 [measured] -> edited -0.25 [measured])
+  error split (P20): linear -1.8045 [derived-local P14] + nonlinear -6.81 [derived-exact P20] + realisation 7.1054e-15 [derived-exact P20] + rounding 0.1145 [measured P20]
+  verdict (P20): effect  native ΔM -8.5 [measured P20], exact ΔM -8.6145 [derived-exact P20], residual 0.1145 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L20.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L21.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [2.10s]
+whatif t17.L21.h_out replace tensor a54959b0923d from recon@rome+error@rome (SAE qs L21) -> t17.M[9625,15344]  (mode rewind, record 6fcfc5373e513fd3)
+  sealed  linear ΔM = -3.6906 [derived-local P14]   exact ΔM = -13.916 [derived-exact]
+  native  ΔM = -13.875 [measured]   (base 8.25 [measured] -> edited -5.625 [measured])
+  error split (P20): linear -3.6906 [derived-local P14] + nonlinear -10.225 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.040884 [measured P20]
+  verdict (P20): effect  native ΔM -13.875 [measured P20], exact ΔM -13.916 [derived-exact P20], residual 0.040884 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L21.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L21.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L22.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [1.95s]
+whatif t17.L22.h_out replace tensor 192f84491532 from recon@rome+error@rome (SAE qs L22) -> t17.M[9625,15344]  (mode rewind, record a2503ff49f528abc)
+  sealed  linear ΔM = -6.9879 [derived-local P14]   exact ΔM = -14.686 [derived-exact]
+  native  ΔM = -14.75 [measured]   (base 8.25 [measured] -> edited -6.5 [measured])
+  error split (P20): linear -6.9879 [derived-local P14] + nonlinear -7.6981 [derived-exact P20] + realisation -7.1054e-15 [derived-exact P20] + rounding -0.063915 [measured P20]
+  verdict (P20): effect  native ΔM -14.75 [measured P20], exact ΔM -14.686 [derived-exact P20], residual -0.063915 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L22.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L23.h_out", "value": "recon@rome+error@rome", "op": "replace", "consumer": "M[9625,15344]"}  [1.80s]
+whatif t17.L23.h_out replace tensor 8b0328ff4c3e from recon@rome+error@rome (SAE qs L23) -> t17.M[9625,15344]  (mode rewind, record bb85307323ff446d)
+  sealed  linear ΔM = -9.8833 [derived-local P14]   exact ΔM = -14.776 [derived-exact]
+  native  ΔM = -14.75 [measured]   (base 8.25 [measured] -> edited -6.5 [measured])
+  error split (P20): linear -9.8833 [derived-local P14] + nonlinear -4.8932 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.02643 [measured P20]
+  verdict (P20): effect  native ΔM -14.75 [measured P20], exact ΔM -14.776 [derived-exact P20], residual 0.02643 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.logits  (5 moves, restored)
+(mdb) whatif {"target": "L23.h_out", "value": "recon@rome-recon", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-recon (info runs)
+(mdb) whatif {"target": "L23.h_out", "value": "error@rome-error", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (refused): no run named rome-error (info runs)
+(mdb) whatif {"target": "L20.h_out", "value": "feature[25654,coef]@rome-feature[25654,coef]+feature[27749,coef]@rome-feature[27749,coef]+feature[29239,coef]@rome-feature[29239,coef]+feature[26317,coef]@rome-feature[26317,coef]+feature[13475,coef]@rome-feature[13475,coef]+feature[20296,coef]@rome-feature[20296,coef]", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (bad-args): cannot read feature term at '[25654,coef]+feature[27749,coef]@rome-feature[27749,coef]+feature[29239,coef]@rome-feature[29239,coef]+feature[26317,coef]@rome-feature[26317,coef]+feature[13475,coef]@rome-feature[13475,coef]+feature[20296,coef]@rome-feature[20296,coef]': write feature[ID], feature[ID,coef], error, recon or bias, [@RUN], with *X, joined by + or -
+(mdb) compare {"a": "L20.h_out=-feature[25654,coef]-feature[27749,coef]-feature[29239,coef] add", "b": "L20.h_out=feature[26317,coef]@rome+feature[13475,coef]@rome+feature[20296,coef]@rome add", "consumer": "M[9625,15344]"}  [1.15s]
+compare A: L20.h_out=-feature[25654,coef]-feature[27749,coef]-feature[29239,coef] add  B: L20.h_out=feature[26317,coef]@rome+feature[13475,coef]@rome+feature[20296,coef]@rome add  -> t17.M[9625,15344]
+  base 8.25 [measured]  A 7.25 [measured]  B 5.5 [measured]  A+B 3 [measured]
+  effects A -1 [measured]  B -2.75 [measured]  A+B -5.25 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.5 [measured P20])  B effect (floor 0.5 [measured P20])  A+B effect (floor 0.5 [measured P20])
+  interaction (A+B) - A - B + base = -1.5 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
+  session unchanged at t17.logits
+(mdb) whatif {"target": "L21.h_out", "value": "feature[25554,coef]@rome-feature[25554,coef]+feature[10111,coef]@rome-feature[10111,coef]+feature[8405,coef]@rome-feature[8405,coef]+feature[29974,coef]@rome-feature[29974,coef]+feature[5202,coef]@rome-feature[5202,coef]+feature[27579,coef]@rome-feature[27579,coef]", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (bad-args): cannot read feature term at '[25554,coef]+feature[10111,coef]@rome-feature[10111,coef]+feature[8405,coef]@rome-feature[8405,coef]+feature[29974,coef]@rome-feature[29974,coef]+feature[5202,coef]@rome-feature[5202,coef]+feature[27579,coef]@rome-feature[27579,coef]': write feature[ID], feature[ID,coef], error, recon or bias, [@RUN], with *X, joined by + or -
+(mdb) compare {"a": "L21.h_out=-feature[25554,coef]-feature[10111,coef]-feature[8405,coef] add", "b": "L21.h_out=feature[29974,coef]@rome+feature[5202,coef]@rome+feature[27579,coef]@rome add", "consumer": "M[9625,15344]"}  [1.10s]
+compare A: L21.h_out=-feature[25554,coef]-feature[10111,coef]-feature[8405,coef] add  B: L21.h_out=feature[29974,coef]@rome+feature[5202,coef]@rome+feature[27579,coef]@rome add  -> t17.M[9625,15344]
+  base 8.25 [measured]  A 5.125 [measured]  B 3.375 [measured]  A+B -2.75 [measured]
+  effects A -3.125 [measured]  B -4.875 [measured]  A+B -11 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.5 [measured P20])  B effect (floor 0.5 [measured P20])  A+B effect (floor 0.5 [measured P20])
+  interaction (A+B) - A - B + base = -3 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
+  session unchanged at t17.logits
+(mdb) whatif {"target": "L22.h_out", "value": "feature[1077,coef]@rome-feature[1077,coef]+feature[19276,coef]@rome-feature[19276,coef]+feature[13320,coef]@rome-feature[13320,coef]+feature[15296,coef]@rome-feature[15296,coef]+feature[406,coef]@rome-feature[406,coef]+feature[11805,coef]@rome-feature[11805,coef]", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (bad-args): cannot read feature term at '[1077,coef]+feature[19276,coef]@rome-feature[19276,coef]+feature[13320,coef]@rome-feature[13320,coef]+feature[15296,coef]@rome-feature[15296,coef]+feature[406,coef]@rome-feature[406,coef]+feature[11805,coef]@rome-feature[11805,coef]': write feature[ID], feature[ID,coef], error, recon or bias, [@RUN], with *X, joined by + or -
+(mdb) compare {"a": "L22.h_out=-feature[1077,coef]-feature[19276,coef]-feature[13320,coef] add", "b": "L22.h_out=feature[15296,coef]@rome+feature[406,coef]@rome+feature[11805,coef]@rome add", "consumer": "M[9625,15344]"}  [1.06s]
+compare A: L22.h_out=-feature[1077,coef]-feature[19276,coef]-feature[13320,coef] add  B: L22.h_out=feature[15296,coef]@rome+feature[406,coef]@rome+feature[11805,coef]@rome add  -> t17.M[9625,15344]
+  base 8.25 [measured]  A 4.5 [measured]  B 2.375 [measured]  A+B -4.5 [measured]
+  effects A -3.75 [measured]  B -5.875 [measured]  A+B -12.75 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.5 [measured P20])  B effect (floor 0.5 [measured P20])  A+B effect (floor 0.5 [measured P20])
+  interaction (A+B) - A - B + base = -3.125 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
+  session unchanged at t17.logits
+(mdb) whatif {"target": "L23.h_out", "value": "feature[22014,coef]@rome-feature[22014,coef]+feature[22221,coef]@rome-feature[22221,coef]+feature[24939,coef]@rome-feature[24939,coef]+feature[29748,coef]@rome-feature[29748,coef]+feature[16861,coef]@rome-feature[16861,coef]+feature[31361,coef]@rome-feature[31361,coef]", "op": "add", "consumer": "M[9625,15344]"}  [0.00s]
+error (bad-args): cannot read feature term at '[22014,coef]+feature[22221,coef]@rome-feature[22221,coef]+feature[24939,coef]@rome-feature[24939,coef]+feature[29748,coef]@rome-feature[29748,coef]+feature[16861,coef]@rome-feature[16861,coef]+feature[31361,coef]@rome-feature[31361,coef]': write feature[ID], feature[ID,coef], error, recon or bias, [@RUN], with *X, joined by + or -
+(mdb) compare {"a": "L23.h_out=-feature[22014,coef]-feature[22221,coef]-feature[24939,coef] add", "b": "L23.h_out=feature[29748,coef]@rome+feature[16861,coef]@rome+feature[31361,coef]@rome add", "consumer": "M[9625,15344]"}  [1.02s]
+compare A: L23.h_out=-feature[22014,coef]-feature[22221,coef]-feature[24939,coef] add  B: L23.h_out=feature[29748,coef]@rome+feature[16861,coef]@rome+feature[31361,coef]@rome add  -> t17.M[9625,15344]
+  base 8.25 [measured]  A 5 [measured]  B 1.125 [measured]  A+B -5.875 [measured]
+  effects A -3.25 [measured]  B -7.125 [measured]  A+B -14.125 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.5 [measured P20])  B effect (floor 0.5 [measured P20])  A+B effect (floor 0.5 [measured P20])
+  interaction (A+B) - A - B + base = -3.75 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
+  session unchanged at t17.logits
+TOTAL 294.1s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:55.15
+	Maximum resident set size (kbytes): 17666860
+== jsonl bytes 1329144
+run.sh: line 15: MRUN_ARTIFACTS_DIR: unbound variable
+mrun: job-702270785e57 -> failed
+mrun: job-702270785e57 finished: failed result={'status': 'failed', 'returncode': 1, 'elapsed_s': 297.6, 'peak_rss_mb': 17034.1, 'peak_vram_mb': 3756.0}
+mrun: failure diagnostics: kind=process_exit phase=process.finalize message=child exited with return code 1 returncode=1
+mrun: failure class=unclassified retry=unknown
+mrun: failure log tail available via `mrun why job-702270785e57`

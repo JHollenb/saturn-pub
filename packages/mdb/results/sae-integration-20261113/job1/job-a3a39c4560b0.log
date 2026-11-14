@@ -1,0 +1,795 @@
+mrun: job-a3a39c4560b0 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 9bacf4b7e211815f5c85fe319092792117286e6e
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+ids1 [785, 468, 3092, 301, 21938, 374, 7407, 304, 279, 3283, 315] ids2 [785, 468, 3092, 301, 21938, 374, 7407, 304, 279, 3283, 315, 12095, 11, 1084, 374, 279, 6722, 315] Paris 12095 Rome 21718 France 9625 Italy 15344 paris_row 11
+decoded ['The', ' E', 'iff', 'el', ' Tower', ' is', ' located', ' in', ' the', ' city', ' of', ' Paris', ',', ' It', ' is', ' the', ' capital', ' of']
+cf Colosseum 18 11 18
+cf Roman Colosseum 19 12 18
+cf Trevi Fountain 17 10 18
+cf Pantheon 16 9 18
+CF The Colosseum is located in the city of Rome, It is the capital of
+table Eiffel Tower Paris 12095 France 9625
+table Colosseum Rome 21718 Italy 15344
+table Brandenburg Gate Berlin 19846 Germany 9856
+table Kremlin Moscow 22415 Russia 8359
+table Acropolis Athens 45826 Greece 24427
+table Forbidden City Beijing 26549 China 5616
+table Prado Museum Madrid 24081 Spain 17689
+table Big Ben London 7148 England 9448
+table Charles Bridge Prague 67289 Czech 33150
+table Schönbrunn Palace Vienna 46287 Austria 34898
+table Rijksmuseum Amsterdam 37741 Netherlands 25662
+table Belém Tower Lisbon 80701 Portugal 33311
+table Hungarian Parliament Building Budapest 69595 Hungary 42776
+table Tokyo Skytree Tokyo 26194 Japan 6323
+table Egyptian Museum Cairo 52550 Egypt 14867
+table Gyeongbokgung Palace Seoul 50189 Korea 11862
+table Little Mermaid statue Copenhagen 63061 Denmark 34340
+table Royal Palace of Stockholm Stockholm 52082 Sweden 23190
+table Wawel Castle Krakow None Poland 27602
+table Atomium Brussels 37169 Belgium 32961
+{
+ "ids1": [
+  785,
+  468,
+  3092,
+  301,
+  21938,
+  374,
+  7407,
+  304,
+  279,
+  3283,
+  315
+ ],
+ "ids2": [
+  785,
+  468,
+  3092,
+  301,
+  21938,
+  374,
+  7407,
+  304,
+  279,
+  3283,
+  315,
+  12095,
+  11,
+  1084,
+  374,
+  279,
+  6722,
+  315
+ ],
+ "paris_row": 11,
+ "cf": "The Colosseum is located in the city of Rome, It is the capital of",
+ "table": [
+  {
+   "landmark": "Eiffel Tower",
+   "city": "Paris",
+   "country": "France",
+   "city_id": 12095,
+   "country_id": 9625
+  },
+  {
+   "landmark": "Colosseum",
+   "city": "Rome",
+   "country": "Italy",
+   "city_id": 21718,
+   "country_id": 15344
+  },
+  {
+   "landmark": "Brandenburg Gate",
+   "city": "Berlin",
+   "country": "Germany",
+   "city_id": 19846,
+   "country_id": 9856
+  },
+  {
+   "landmark": "Kremlin",
+   "city": "Moscow",
+   "country": "Russia",
+   "city_id": 22415,
+   "country_id": 8359
+  },
+  {
+   "landmark": "Acropolis",
+   "city": "Athens",
+   "country": "Greece",
+   "city_id": 45826,
+   "country_id": 24427
+  },
+  {
+   "landmark": "Forbidden City",
+   "city": "Beijing",
+   "country": "China",
+   "city_id": 26549,
+   "country_id": 5616
+  },
+  {
+   "landmark": "Prado Museum",
+   "city": "Madrid",
+   "country": "Spain",
+   "city_id": 24081,
+   "country_id": 17689
+  },
+  {
+   "landmark": "Big Ben",
+   "city": "London",
+   "country": "England",
+   "city_id": 7148,
+   "country_id": 9448
+  },
+  {
+   "landmark": "Charles Bridge",
+   "city": "Prague",
+   "country": "Czech",
+   "city_id": 67289,
+   "country_id": 33150
+  },
+  {
+   "landmark": "Sch\u00f6nbrunn Palace",
+   "city": "Vienna",
+   "country": "Austria",
+   "city_id": 46287,
+   "country_id": 34898
+  },
+  {
+   "landmark": "Rijksmuseum",
+   "city": "Amsterdam",
+   "country": "Netherlands",
+   "city_id": 37741,
+   "country_id": 25662
+  },
+  {
+   "landmark": "Bel\u00e9m Tower",
+   "city": "Lisbon",
+   "country": "Portugal",
+   "city_id": 80701,
+   "country_id": 33311
+  },
+  {
+   "landmark": "Hungarian Parliament Building",
+   "city": "Budapest",
+   "country": "Hungary",
+   "city_id": 69595,
+   "country_id": 42776
+  },
+  {
+   "landmark": "Tokyo Skytree",
+   "city": "Tokyo",
+   "country": "Japan",
+   "city_id": 26194,
+   "country_id": 6323
+  },
+  {
+   "landmark": "Egyptian Museum",
+   "city": "Cairo",
+   "country": "Egypt",
+   "city_id": 52550,
+   "country_id": 14867
+  },
+  {
+   "landmark": "Gyeongbokgung Palace",
+   "city": "Seoul",
+   "country": "Korea",
+   "city_id": 50189,
+   "country_id": 11862
+  },
+  {
+   "landmark": "Little Mermaid statue",
+   "city": "Copenhagen",
+   "country": "Denmark",
+   "city_id": 63061,
+   "country_id": 34340
+  },
+  {
+   "landmark": "Royal Palace of Stockholm",
+   "city": "Stockholm",
+   "country": "Sweden",
+   "city_id": 52082,
+   "country_id": 23190
+  },
+  {
+   "landmark": "Atomium",
+   "city": "Brussels",
+   "country": "Belgium",
+   "city_id": 37169,
+   "country_id": 32961
+  }
+ ],
+ "ids": {
+  "Paris": 12095,
+  "Rome": 21718,
+  "France": 9625,
+  "Italy": 15344
+ }
+}
+== selfcheck
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 5607.41it/s]
+{"passed": true, "json": "selfcheck.json"}
+SELFCHECK_RC 0
+{"environment": {"attention_implementation": "eager", "cuda": "NVIDIA GeForce RTX 4080", "device": "cuda:0", "dtype": "torch.bfloat16", "family": "qwen3", "heads": 16, "hidden_size": 2048, "kv_heads": 8, "layers": 28, "model_identity": "94eb91df3ca7dd23fce741f201a1024b35a263ffea9bd6420f9ffbe8cd5516f4", "platform": "Linux-6.18.7-76061807-generic-x86_64-with-glibc2.39", "python": "3.14.6", "torch": "2.13.0+cu130", "torch_num_threads": 4, "transformers": "5.13.1"}, "exactness": {"cut_fingerprints_identical": true, "expected_layer_calls": 56, "generated_tokens": [12095, 11], "logits_byte_identical": true, "observed_layer_calls": 56, "receipts_byte_identical": true, "stepped_vs_hf_full_forward_max_abs_logit_diff": 0.25, "transitions": 66}, "passed": true}
+
+===== recall
+(mdb) source -k recall.mdb
+(mdb) start 785 468 3092 301 21938 374 7407 304 279 3283 315
+t10.L0.h  h = layer input (residual stream)  {P01}
+(mdb) where
+t10.L0.h  h = layer input (residual stream)  {P01}
+tokens: 785:"The" 468:" E" 3092:"iff" 301:"el" 21938:" Tower" 374:" is" 7407:" located" 304:" in" 279:" the" 3283:" city" 315:" of"
+staged edits: 0, lookahead none
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) print logits top=5
+t10.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 3984.9 min -1.4453 max 30.875 mean 9.6138 abs_max 30.875 [measured]
+  top |v|: [0,12095] 30.875 " Paris", [0,30743] 29.5 " ____", [0,1304] 29.375 " __", [0,32671] 28.625 " ______", [0,198] 28.25 "\n" [measured]
+  pointer occurrence ~stepped sha256 60c643354efcb07f
+(mdb) explain M[12095,21718]
+explain t10.M[12095,21718]  native 9.5 [measured P19]  float64 9.4189 [derived-exact P19]  eta 0.081067 [measured P19]
+  embedding          0.0031194 [derived-exact P19]
+  L0.attn            -0.0098531 [derived-exact P19]
+  L0.mlp             -0.016286 [derived-exact P19]
+  L1.attn            0.014202 [derived-exact P19]
+  L1.mlp             0.0020648 [derived-exact P19]
+  L2.attn            0.0018924 [derived-exact P19]
+  L2.mlp             -0.01022 [derived-exact P19]
+  L3.attn            0.0058735 [derived-exact P19]
+  L3.mlp             -0.0033536 [derived-exact P19]
+  L4.attn            -0.0026796 [derived-exact P19]
+  L4.mlp             -0.0037021 [derived-exact P19]
+  L5.attn            -0.00024414 [derived-exact P19]
+  L5.mlp             -0.039026 [derived-exact P19]
+  L6.attn            0.028108 [derived-exact P19]
+  L6.mlp             -0.01774 [derived-exact P19]
+  L7.attn            0.0077917 [derived-exact P19]
+  L7.mlp             0.018244 [derived-exact P19]
+  L8.attn            0.050973 [derived-exact P19]
+  L8.mlp             0.0091197 [derived-exact P19]
+  L9.attn            0.052727 [derived-exact P19]
+  L9.mlp             0.023231 [derived-exact P19]
+  L10.attn           0.00020546 [derived-exact P19]
+  L10.mlp            0.0067814 [derived-exact P19]
+  L11.attn           -0.0028111 [derived-exact P19]
+  L11.mlp            -0.052344 [derived-exact P19]
+  L12.attn           -0.027163 [derived-exact P19]
+  L12.mlp            -0.04794 [derived-exact P19]
+  L13.attn           -0.0072376 [derived-exact P19]
+  L13.mlp            0.091481 [derived-exact P19]
+  L14.attn           0.020899 [derived-exact P19]
+  L14.mlp            -0.064288 [derived-exact P19]
+  L15.attn           -0.020436 [derived-exact P19]
+  L15.mlp            0.044021 [derived-exact P19]
+  L16.attn           0.026643 [derived-exact P19]
+  L16.mlp            -0.31759 [derived-exact P19]
+  L17.attn           0.27239 [derived-exact P19]
+  L17.mlp            -0.39341 [derived-exact P19]
+  L18.attn           0.3524 [derived-exact P19]
+  L18.mlp            0.19741 [derived-exact P19]
+  L19.attn           -0.02045 [derived-exact P19]
+  L19.mlp            0.33974 [derived-exact P19]
+  L20.attn           2.4682 [derived-exact P19]
+  L20.mlp            0.90657 [derived-exact P19]
+  L21.attn           0.52641 [derived-exact P19]
+  L21.mlp            0.96547 [derived-exact P19]
+  L22.attn           0.297 [derived-exact P19]
+  L22.mlp            6.0673 [derived-exact P19]
+  L23.attn           0.21904 [derived-exact P19]
+  L23.mlp            2.2394 [derived-exact P19]
+  L24.attn           0.15399 [derived-exact P19]
+  L24.mlp            0.98324 [derived-exact P19]
+  L25.attn           0.33368 [derived-exact P19]
+  L25.mlp            -2.311 [derived-exact P19]
+  L26.attn           1.1479 [derived-exact P19]
+  L26.mlp            -0.81935 [derived-exact P19]
+  L27.attn           0.51449 [derived-exact P19]
+  L27.mlp            -4.7731 [derived-exact P19]
+  ~residual_rounding -0.012825 [measured P01]  scale 2.5579 [bound P19] k 1 within
+  ~unlisted          0 [derived-exact P19]
+  ~final_norm        -0.0011355 [measured P19]  scale 32.62 [derived-exact P19] k 2 within
+  ~head              0.082202 [measured P19]  bound refused (premise fails: CUDA allow_bf16_reduced_precision_reduction = True (numeric scope): cuBLAS may round partial sums to bf16, so every partial sum is taken as rounded to bf16 (u = 0.00391), any order; an 2048-term sum at u = 0.00391 has no gamma_n bound (n u = 8 >= 1))
+  listed_sum 9.4318 [derived-exact P19]  closure 1.7764e-15 [derived-exact P19]
+(mdb) circuit M[12095,21718] top=4 depth=2
+circuit 1  t10.M[12095,21718]  top 4 depth 2  (31 nodes, record 3e0d1191b1117d71)
+  t10.M[12095,21718]  9.5 [measured]
+    L22.mlp  t10.L22.m  6.0673 [derived-exact P19]
+      L22.f5773  t10.L22.f[i=5773]  4.6582 [derived-exact P15]
+      L22.f5488  t10.L22.f[i=5488]  0.64456 [derived-exact P15]
+      L22.f5557  t10.L22.f[i=5557]  0.63159 [derived-exact P15]
+      L22.f1928  t10.L22.f[i=1928]  0.17008 [derived-exact P15]
+      +6140 more  t10.L22.m (unlisted)  -0.039427 [derived-exact]
+      L22.mlp remainder  t10.L22.m  0.0022891 [measured]
+    L27.mlp  t10.L27.m  -4.7731 [derived-exact P19]
+      L27.f1477  t10.L27.f[i=1477]  -3.1979 [derived-exact P15]
+      L27.f1417  t10.L27.f[i=1417]  -0.86421 [derived-exact P15]
+      L27.f946  t10.L27.f[i=946]  0.42474 [derived-exact P15]
+      L27.f3227  t10.L27.f[i=3227]  -0.29337 [derived-exact P15]
+      +6140 more  t10.L27.m (unlisted)  -0.84921 [derived-exact]
+      L27.mlp remainder  t10.L27.m  0.0068245 [measured]
+    L20.attn  t10.L20.o  2.4682 [derived-exact P19]
+      L20.h13  t10.L20.A[h13]  1.8259 [derived-exact P07]
+      L20.h12  t10.L20.A[h12]  0.45154 [derived-exact P07]
+      L20.h4  t10.L20.A[h4]  0.30381 [derived-exact P07]
+      L20.h0  t10.L20.A[h0]  -0.063798 [derived-exact P07]
+      +12 more  t10.L20.o (unlisted)  -0.049574 [derived-exact]
+      L20.attn remainder  t10.L20.o  0.00026648 [measured]
+    L25.mlp  t10.L25.m  -2.311 [derived-exact P19]
+      L25.f3292  t10.L25.f[i=3292]  -1.1392 [derived-exact P15]
+      L25.f1726  t10.L25.f[i=1726]  -0.26814 [derived-exact P15]
+      L25.f3219  t10.L25.f[i=3219]  -0.14121 [derived-exact P15]
+      L25.f4026  t10.L25.f[i=4026]  -0.1319 [derived-exact P15]
+      +6140 more  t10.L25.m (unlisted)  -0.63157 [derived-exact]
+      L25.mlp remainder  t10.L25.m  0.0009893 [measured]
+    +53 more  t10.M[12095,21718] (unlisted)  7.9804 [derived-exact]
+    remainder  t10.M[12095,21718]  0.068242 [measured]
+  closure -5.3291e-15 [derived-exact P19] within 2.3567e-13 [bound] (zero by construction: float64 summation only)
+  remainders not all bounded (a bound was refused) their rounding bounds; 0 edit node(s)
+(mdb) reads t1 consumer=M[12095,21718] top=5 causal=false
+reads t1 at t10.logits  rows t10  consumer t10.M[12095,21718]  (448 reads)
+  t10.L22.h6 mass 0.020874 [measured]  effect -0.010821 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L25.h2 mass 0.041504 [measured]  effect -0.010123 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L18.h12 mass 0.12695 [measured]  effect -0.0087854 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L19.h2 mass 0.028442 [measured]  effect 0.008643 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L19.h3 mass 0.033203 [measured]  effect -0.0078304 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  +443 more: mass Σ 2.8867 [derived-exact]  effect Σ -0.02127 [derived-exact]
+  value_mix: eta_max_abs 0.11889 [measured P06] worst |eta|/bound 0.077205 [measured P06] within bound (28 layer rows)
+(mdb) reads t2 consumer=M[12095,21718] top=5 causal=false
+reads t2 at t10.logits  rows t10  consumer t10.M[12095,21718]  (448 reads)
+  t10.L20.h13 mass 0.73047 [measured]  effect 1.3871 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h12 mass 0.60938 [measured]  effect 0.34282 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h4 mass 0.41016 [measured]  effect 0.19574 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L17.h12 mass 0.4082 [measured]  effect 0.12354 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L18.h13 mass 0.16309 [measured]  effect 0.10944 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  +443 more: mass Σ 15.148 [derived-exact]  effect Σ 0.30568 [derived-exact]
+  value_mix: eta_max_abs 0.11889 [measured P06] worst |eta|/bound 0.077205 [measured P06] within bound (28 layer rows)
+(mdb) reads t3 consumer=M[12095,21718] top=5 causal=false
+reads t3 at t10.logits  rows t10  consumer t10.M[12095,21718]  (448 reads)
+  t10.L20.h13 mass 0.20898 [measured]  effect 0.39266 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L26.h0 mass 0.026733 [measured]  effect 0.13268 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h12 mass 0.1123 [measured]  effect 0.069526 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h4 mass 0.104 [measured]  effect 0.058211 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L18.h13 mass 0.077148 [measured]  effect 0.053392 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  +443 more: mass Σ 6.3582 [derived-exact]  effect Σ 0.23124 [derived-exact]
+  value_mix: eta_max_abs 0.11889 [measured P06] worst |eta|/bound 0.077205 [measured P06] within bound (28 layer rows)
+(mdb) reads t4 consumer=M[12095,21718] top=5 causal=false
+reads t4 at t10.logits  rows t10  consumer t10.M[12095,21718]  (448 reads)
+  t10.L17.h12 mass 0.29883 [measured]  effect 0.085373 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L18.h13 mass 0.18457 [measured]  effect 0.080333 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L26.h0 mass 0.011841 [measured]  effect 0.048428 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h13 mass 0.038574 [measured]  effect 0.043058 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t10.L20.h12 mass 0.12695 [measured]  effect 0.035749 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  +443 more: mass Σ 11.851 [derived-exact]  effect Σ 0.14052 [derived-exact]
+  value_mix: eta_max_abs 0.11889 [measured P06] worst |eta|/bound 0.077205 [measured P06] within bound (28 layer rows)
+(mdb) symbols consumer=M[12095,21718] limit=10
+symbols at t10.logits  consumer t10.M[12095,21718] = 9.5 [measured]  min_mass 0.1 [supplied]
+  mass: a sum over the heads and layers that read the binding (n reads, mean per read)
+  life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
+  t0 "The"    read   mass 281.7 [derived-exact] over 448 reads (mean 0.62878 [derived-exact])  to_consumer 0.47867 [derived-exact P19]  life t10:############################ (t10.L0..t10.L27)
+    defined t0.L*.k, t0.L*.v
+    readers t10.L26.h6 mass 0.63672 [measured] effect 0.045993 [derived-exact P19]; t10.L27.h8 mass 0.97656 [measured] effect 0.042036 [derived-exact P19]; t10.L27.h9 mass 0.86328 [measured] effect 0.040489 [derived-exact P19] (+445 more)
+  t1 " E"     read   mass 3.1377 [derived-exact] over 448 reads (mean 0.0070037 [derived-exact])  to_consumer -0.050187 [derived-exact P19]  life t10:.#................#......... (t10.L1..t10.L18)
+    defined t1.L*.k, t1.L*.v
+    readers t10.L22.h6 mass 0.020874 [measured] effect -0.010821 [derived-exact P19]; t10.L25.h2 mass 0.041504 [measured] effect -0.010123 [derived-exact P19]; t10.L18.h12 mass 0.12695 [measured] effect -0.0087854 [derived-exact P19] (+445 more)
+  t2 "iff"    read   mass 17.469 [derived-exact] over 448 reads (mean 0.038994 [derived-exact])  to_consumer 2.4643 [derived-exact P19]  life t10:.#......#.#########.###..... (t10.L1..t10.L22)
+    defined t2.L*.k, t2.L*.v
+    readers t10.L20.h13 mass 0.73047 [measured] effect 1.3871 [derived-exact P19]; t10.L20.h12 mass 0.60938 [measured] effect 0.34282 [derived-exact P19]; t10.L20.h4 mass 0.41016 [measured] effect 0.19574 [derived-exact P19] (+445 more)
+  t3 "el"     read   mass 6.8874 [derived-exact] over 448 reads (mean 0.015374 [derived-exact])  to_consumer 0.93772 [derived-exact P19]  life t10:.##.....#...#..#.#..##....#. (t10.L1..t10.L26)
+    defined t3.L*.k, t3.L*.v
+    readers t10.L20.h13 mass 0.20898 [measured] effect 0.39266 [derived-exact P19]; t10.L26.h0 mass 0.026733 [measured] effect 0.13268 [derived-exact P19]; t10.L20.h12 mass 0.1123 [measured] effect 0.069526 [derived-exact P19] (+445 more)
+  t4 " Tower" read   mass 12.511 [derived-exact] over 448 reads (mean 0.027927 [derived-exact])  to_consumer 0.43346 [derived-exact P19]  life t10:###..#.####.#######.#...#... (t10.L0..t10.L24)
+    defined t4.L*.k, t4.L*.v
+    readers t10.L17.h12 mass 0.29883 [measured] effect 0.085373 [derived-exact P19]; t10.L18.h13 mass 0.18457 [measured] effect 0.080333 [derived-exact P19]; t10.L26.h0 mass 0.011841 [measured] effect 0.048428 [derived-exact P19] (+445 more)
+  t5 " is"    read   mass 14.426 [derived-exact] over 448 reads (mean 0.0322 [derived-exact])  to_consumer 0.1531 [derived-exact P19]  life t10:###.##.##########........... (t10.L0..t10.L16)
+    defined t5.L*.k, t5.L*.v
+    readers t10.L26.h0 mass 0.033203 [measured] effect 0.10148 [derived-exact P19]; t10.L26.h1 mass 0.018799 [measured] effect -0.034941 [derived-exact P19]; t10.L24.h2 mass 0.091309 [measured] effect 0.013859 [derived-exact P19] (+445 more)
+  t6 " located"read   mass 13.952 [derived-exact] over 448 reads (mean 0.031143 [derived-exact])  to_consumer 0.14048 [derived-exact P19]  life t10:###.########.#######....#... (t10.L0..t10.L24)
+    defined t6.L*.k, t6.L*.v
+    readers t10.L24.h2 mass 0.13281 [measured] effect 0.028941 [derived-exact P19]; t10.L26.h0 mass 0.0061646 [measured] effect 0.026074 [derived-exact P19]; t10.L18.h15 mass 0.14648 [measured] effect 0.018509 [derived-exact P19] (+445 more)
+  t7 " in"    read   mass 20.634 [derived-exact] over 448 reads (mean 0.046058 [derived-exact])  to_consumer 0.76488 [derived-exact P19]  life t10:############.#######...###.# (t10.L0..t10.L27)
+    defined t7.L*.k, t7.L*.v
+    readers t10.L26.h0 mass 0.056641 [measured] effect 0.37303 [derived-exact P19]; t10.L27.h15 mass 0.097168 [measured] effect 0.1777 [derived-exact P19]; t10.L26.h1 mass 0.05957 [measured] effect -0.16581 [derived-exact P19] (+445 more)
+  t8 " the"   read   mass 16.108 [derived-exact] over 448 reads (mean 0.035956 [derived-exact])  to_consumer 0.29986 [derived-exact P19]  life t10:###.####.......###.......... (t10.L0..t10.L17)
+    defined t8.L*.k, t8.L*.v
+    readers t10.L26.h0 mass 0.033203 [measured] effect 0.22269 [derived-exact P19]; t10.L27.h15 mass 0.048828 [measured] effect 0.076443 [derived-exact P19]; t10.L26.h1 mass 0.025635 [measured] effect -0.074192 [derived-exact P19] (+445 more)
+  t9 " city"  read   mass 35.226 [derived-exact] over 448 reads (mean 0.078629 [derived-exact])  to_consumer 0.12327 [derived-exact P19]  life t10:#########################.## (t10.L0..t10.L27)
+    defined t9.L*.k, t9.L*.v
+    readers t10.L26.h1 mass 0.047852 [measured] effect -0.11214 [derived-exact P19]; t10.L22.h4 mass 0.1709 [measured] effect 0.084854 [derived-exact P19]; t10.L26.h0 mass 0.020142 [measured] effect 0.066964 [derived-exact P19] (+445 more)
+  Unbound     mass 25.988 [derived-exact]  readout 3.7544 [measured]
+    = embedding+mlp 3.0279 [derived-exact P19] + attention not listed 0.65833 [derived-exact P19] + remainder 0.068242 [measured] bound refused (accumulation premise fails)
+  accounting: 448 heads, listed mass 422.05 [derived-exact], max |sum p - 1| 0.0026741 [measured] <= 0.04297 [bound], partition gap 0 [derived-exact]
+  (bindings 1-10 of 11)
+RC_recall 0 seconds 11
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.16
+	Maximum resident set size (kbytes): 4349944
+===== followup
+(mdb) source -k followup.mdb
+(mdb) start 785 468 3092 301 21938 374 7407 304 279 3283 315 12095 11 1084 374 279 6722 315
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) where
+t17.L0.h  h = layer input (residual stream)  {P01}
+tokens (last 16): 3092:"iff" 301:"el" 21938:" Tower" 374:" is" 7407:" located" 304:" in" 279:" the" 3283:" city" 315:" of" 12095:" Paris" 11:"," 1084:" It" 374:" is" 279:" the" 6722:" capital" 315:" of"
+staged edits: 0, lookahead none
+(mdb) checkpoint pre
+checkpoint pre at t17.L0.h (737 bytes)
+(mdb) run name=rome The Colosseum is located in the city of Rome, It is the capital of
+stopped: no-breakpoints
+run rome
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) print logits top=3
+error (refused): t17.logits has not been computed at t17.L0.h
+(mdb) frame main:
+run main
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) restart pre
+t17.L0.h  h = layer input (residual stream)  {P01}
+(mdb) whatif cache.L0.v[row=11] = rome:cache.L0.v[row=11] consumer=M[9625,15344]
+whatif cache.L0.v[row=11] replace tensor 0689366e337e from rome:cache.L0.v[row=11] -> t17.M[9625,15344]  (mode pending, record 044bdc28eb577980)
+  sealed  linear ΔM = 0.029116 [derived-local P14]   exact ΔM = 0.028371 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear 0.029116 [derived-local P14] + nonlinear -0.00074529 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.15337 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM 0.028371 [derived-exact P20], residual -0.15337 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L1.v[row=11] = rome:cache.L1.v[row=11] consumer=M[9625,15344]
+whatif cache.L1.v[row=11] replace tensor 35cd09d51909 from rome:cache.L1.v[row=11] -> t17.M[9625,15344]  (mode pending, record c2820ae81fc40e9c)
+  sealed  linear ΔM = -0.00041499 [derived-local P14]   exact ΔM = -0.00058971 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -0.00041499 [derived-local P14] + nonlinear -0.00017472 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.12559 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM -0.00058971 [derived-exact P20], residual 0.12559 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L2.v[row=11] = rome:cache.L2.v[row=11] consumer=M[9625,15344]
+whatif cache.L2.v[row=11] replace tensor 2d559a184b38 from rome:cache.L2.v[row=11] -> t17.M[9625,15344]  (mode pending, record c1d6d0e5fade3a76)
+  sealed  linear ΔM = 0.0089179 [derived-local P14]   exact ΔM = 0.0089818 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.0089179 [derived-local P14] + nonlinear 6.3946e-05 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.0089818 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.0089818 [derived-exact P20], residual -0.0089818 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L3.v[row=11] = rome:cache.L3.v[row=11] consumer=M[9625,15344]
+whatif cache.L3.v[row=11] replace tensor e0c861cc83da from rome:cache.L3.v[row=11] -> t17.M[9625,15344]  (mode pending, record 94519623185fe707)
+  sealed  linear ΔM = -0.0055662 [derived-local P14]   exact ΔM = -0.0036329 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -0.0055662 [derived-local P14] + nonlinear 0.0019333 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.12863 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM -0.0036329 [derived-exact P20], residual 0.12863 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L4.v[row=11] = rome:cache.L4.v[row=11] consumer=M[9625,15344]
+whatif cache.L4.v[row=11] replace tensor ed92028c5896 from rome:cache.L4.v[row=11] -> t17.M[9625,15344]  (mode pending, record 3d747af84f54bc90)
+  sealed  linear ΔM = -0.0010704 [derived-local P14]   exact ΔM = -0.001049 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -0.0010704 [derived-local P14] + nonlinear 2.1438e-05 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.12605 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM -0.001049 [derived-exact P20], residual 0.12605 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L5.v[row=11] = rome:cache.L5.v[row=11] consumer=M[9625,15344]
+whatif cache.L5.v[row=11] replace tensor 436e376d9993 from rome:cache.L5.v[row=11] -> t17.M[9625,15344]  (mode pending, record 82cce0f27828762e)
+  sealed  linear ΔM = -0.007145 [derived-local P14]   exact ΔM = -0.0072742 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.007145 [derived-local P14] + nonlinear -0.00012923 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.0072742 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.0072742 [derived-exact P20], residual 0.0072742 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L6.v[row=11] = rome:cache.L6.v[row=11] consumer=M[9625,15344]
+whatif cache.L6.v[row=11] replace tensor 27d218a20d7f from rome:cache.L6.v[row=11] -> t17.M[9625,15344]  (mode pending, record 498385abb089ac1b)
+  sealed  linear ΔM = -0.062512 [derived-local P14]   exact ΔM = -0.0622 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.062512 [derived-local P14] + nonlinear 0.00031225 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.0622 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.0622 [derived-exact P20], residual 0.0622 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L7.v[row=11] = rome:cache.L7.v[row=11] consumer=M[9625,15344]
+whatif cache.L7.v[row=11] replace tensor 17414d94db4b from rome:cache.L7.v[row=11] -> t17.M[9625,15344]  (mode pending, record da192ca7c74bdfdb)
+  sealed  linear ΔM = -0.007775 [derived-local P14]   exact ΔM = -0.0081129 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.007775 [derived-local P14] + nonlinear -0.00033792 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.0081129 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.0081129 [derived-exact P20], residual 0.0081129 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L8.v[row=11] = rome:cache.L8.v[row=11] consumer=M[9625,15344]
+whatif cache.L8.v[row=11] replace tensor b1d1751c50ce from rome:cache.L8.v[row=11] -> t17.M[9625,15344]  (mode pending, record 22e3b8e6723389a1)
+  sealed  linear ΔM = -0.037931 [derived-local P14]   exact ΔM = -0.038812 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.037931 [derived-local P14] + nonlinear -0.00088078 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.038812 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.038812 [derived-exact P20], residual 0.038812 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L9.v[row=11] = rome:cache.L9.v[row=11] consumer=M[9625,15344]
+whatif cache.L9.v[row=11] replace tensor 739dc5cd6dfb from rome:cache.L9.v[row=11] -> t17.M[9625,15344]  (mode pending, record fe5292b0e2f9f587)
+  sealed  linear ΔM = -0.0022099 [derived-local P14]   exact ΔM = -0.0022824 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -0.0022099 [derived-local P14] + nonlinear -7.2436e-05 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.12728 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM -0.0022824 [derived-exact P20], residual 0.12728 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L10.v[row=11] = rome:cache.L10.v[row=11] consumer=M[9625,15344]
+whatif cache.L10.v[row=11] replace tensor 1ed3660771b9 from rome:cache.L10.v[row=11] -> t17.M[9625,15344]  (mode pending, record 0e862070e74f8e9f)
+  sealed  linear ΔM = -0.007779 [derived-local P14]   exact ΔM = -0.0081811 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.007779 [derived-local P14] + nonlinear -0.00040219 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.0081811 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.0081811 [derived-exact P20], residual 0.0081811 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L11.v[row=11] = rome:cache.L11.v[row=11] consumer=M[9625,15344]
+whatif cache.L11.v[row=11] replace tensor 00d4e0193bab from rome:cache.L11.v[row=11] -> t17.M[9625,15344]  (mode pending, record 130bb3911fd98538)
+  sealed  linear ΔM = 0.04615 [derived-local P14]   exact ΔM = 0.045668 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.04615 [derived-local P14] + nonlinear -0.00048198 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.045668 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.045668 [derived-exact P20], residual -0.045668 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L12.v[row=11] = rome:cache.L12.v[row=11] consumer=M[9625,15344]
+whatif cache.L12.v[row=11] replace tensor 26807a721d6f from rome:cache.L12.v[row=11] -> t17.M[9625,15344]  (mode pending, record 373027e7c70ab1bc)
+  sealed  linear ΔM = 0.013111 [derived-local P14]   exact ΔM = 0.01076 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.013111 [derived-local P14] + nonlinear -0.0023513 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.01076 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.01076 [derived-exact P20], residual -0.01076 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L13.v[row=11] = rome:cache.L13.v[row=11] consumer=M[9625,15344]
+whatif cache.L13.v[row=11] replace tensor 4b513fa38ee0 from rome:cache.L13.v[row=11] -> t17.M[9625,15344]  (mode pending, record 0c85c257a409cd79)
+  sealed  linear ΔM = -0.006614 [derived-local P14]   exact ΔM = -0.0070785 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear -0.006614 [derived-local P14] + nonlinear -0.00046447 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.11792 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.0070785 [derived-exact P20], residual -0.11792 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L14.v[row=11] = rome:cache.L14.v[row=11] consumer=M[9625,15344]
+whatif cache.L14.v[row=11] replace tensor d2b9ea39aed3 from rome:cache.L14.v[row=11] -> t17.M[9625,15344]  (mode pending, record fba70f1a30d88985)
+  sealed  linear ΔM = -0.000903 [derived-local P14]   exact ΔM = -0.0061551 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear -0.000903 [derived-local P14] + nonlinear -0.0052521 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.11884 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.0061551 [derived-exact P20], residual -0.11884 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L15.v[row=11] = rome:cache.L15.v[row=11] consumer=M[9625,15344]
+whatif cache.L15.v[row=11] replace tensor 62a24314fd8a from rome:cache.L15.v[row=11] -> t17.M[9625,15344]  (mode pending, record df00ac64f203133a)
+  sealed  linear ΔM = 0.049 [derived-local P14]   exact ΔM = 0.048354 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear 0.049 [derived-local P14] + nonlinear -0.00064553 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.076646 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM 0.048354 [derived-exact P20], residual 0.076646 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L16.v[row=11] = rome:cache.L16.v[row=11] consumer=M[9625,15344]
+whatif cache.L16.v[row=11] replace tensor 89201988a94e from rome:cache.L16.v[row=11] -> t17.M[9625,15344]  (mode pending, record 5ac7d58e74a4abda)
+  sealed  linear ΔM = 0.0013144 [derived-local P14]   exact ΔM = 0.001575 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear 0.0013144 [derived-local P14] + nonlinear 0.0002606 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.12658 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM 0.001575 [derived-exact P20], residual -0.12658 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L17.v[row=11] = rome:cache.L17.v[row=11] consumer=M[9625,15344]
+whatif cache.L17.v[row=11] replace tensor 4a93e3574106 from rome:cache.L17.v[row=11] -> t17.M[9625,15344]  (mode pending, record 73896427f3a856dc)
+  sealed  linear ΔM = -0.096317 [derived-local P14]   exact ΔM = -0.10446 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear -0.096317 [derived-local P14] + nonlinear -0.0081426 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.020541 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.10446 [derived-exact P20], residual -0.020541 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L18.v[row=11] = rome:cache.L18.v[row=11] consumer=M[9625,15344]
+whatif cache.L18.v[row=11] replace tensor 5a64cffa64a7 from rome:cache.L18.v[row=11] -> t17.M[9625,15344]  (mode pending, record 6a1fe12550ae6bd3)
+  sealed  linear ΔM = -0.060424 [derived-local P14]   exact ΔM = -0.062796 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear -0.060424 [derived-local P14] + nonlinear -0.0023714 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.1872 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.062796 [derived-exact P20], residual -0.1872 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L19.v[row=11] = rome:cache.L19.v[row=11] consumer=M[9625,15344]
+whatif cache.L19.v[row=11] replace tensor a208a0ab73a1 from rome:cache.L19.v[row=11] -> t17.M[9625,15344]  (mode pending, record f3acbeb661c90192)
+  sealed  linear ΔM = 0.026421 [derived-local P14]   exact ΔM = 0.024644 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear 0.026421 [derived-local P14] + nonlinear -0.0017774 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.10036 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM 0.024644 [derived-exact P20], residual 0.10036 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L20.v[row=11] = rome:cache.L20.v[row=11] consumer=M[9625,15344]
+whatif cache.L20.v[row=11] replace tensor 2686a3df15e0 from rome:cache.L20.v[row=11] -> t17.M[9625,15344]  (mode pending, record 1700c2157ad1f043)
+  sealed  linear ΔM = -0.77046 [derived-local P14]   exact ΔM = -0.91609 [derived-exact]
+  native  ΔM = -0.875 [measured]   (base 8.25 [measured] -> edited 7.375 [measured])
+  error split (P20): linear -0.77046 [derived-local P14] + nonlinear -0.14563 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.041093 [measured P20]
+  verdict (P20): effect  native ΔM -0.875 [measured P20], exact ΔM -0.91609 [derived-exact P20], residual 0.041093 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L21.v[row=11] = rome:cache.L21.v[row=11] consumer=M[9625,15344]
+whatif cache.L21.v[row=11] replace tensor 322103b325bd from rome:cache.L21.v[row=11] -> t17.M[9625,15344]  (mode pending, record 5f1e47b911c46eea)
+  sealed  linear ΔM = -0.13844 [derived-local P14]   exact ΔM = -0.1438 [derived-exact]
+  native  ΔM = -0.125 [measured]   (base 8.25 [measured] -> edited 8.125 [measured])
+  error split (P20): linear -0.13844 [derived-local P14] + nonlinear -0.0053547 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.018799 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.125 [measured P20], exact ΔM -0.1438 [derived-exact P20], residual 0.018799 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L22.v[row=11] = rome:cache.L22.v[row=11] consumer=M[9625,15344]
+whatif cache.L22.v[row=11] replace tensor 20ef33269a1a from rome:cache.L22.v[row=11] -> t17.M[9625,15344]  (mode pending, record f50d06ed1f8671f1)
+  sealed  linear ΔM = -0.31386 [derived-local P14]   exact ΔM = -0.36874 [derived-exact]
+  native  ΔM = -0.375 [measured]   (base 8.25 [measured] -> edited 7.875 [measured])
+  error split (P20): linear -0.31386 [derived-local P14] + nonlinear -0.054878 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.0062622 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.375 [measured P20], exact ΔM -0.36874 [derived-exact P20], residual -0.0062622 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L23.v[row=11] = rome:cache.L23.v[row=11] consumer=M[9625,15344]
+whatif cache.L23.v[row=11] replace tensor 2a2c55c89278 from rome:cache.L23.v[row=11] -> t17.M[9625,15344]  (mode pending, record 85e4f2c045566746)
+  sealed  linear ΔM = -0.032033 [derived-local P14]   exact ΔM = -0.037866 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.032033 [derived-local P14] + nonlinear -0.0058335 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.037866 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -0.037866 [derived-exact P20], residual 0.037866 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L24.v[row=11] = rome:cache.L24.v[row=11] consumer=M[9625,15344]
+whatif cache.L24.v[row=11] replace tensor 425910c90dfd from rome:cache.L24.v[row=11] -> t17.M[9625,15344]  (mode pending, record ba80bb74154a2e42)
+  sealed  linear ΔM = 0.036683 [derived-local P14]   exact ΔM = 0.036256 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.036683 [derived-local P14] + nonlinear -0.0004269 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.036256 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.036256 [derived-exact P20], residual -0.036256 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L25.v[row=11] = rome:cache.L25.v[row=11] consumer=M[9625,15344]
+whatif cache.L25.v[row=11] replace tensor 5cfb55d68bfa from rome:cache.L25.v[row=11] -> t17.M[9625,15344]  (mode pending, record a9c164f5e79e9844)
+  sealed  linear ΔM = -0.10336 [derived-local P14]   exact ΔM = -0.11177 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear -0.10336 [derived-local P14] + nonlinear -0.008414 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.13823 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.11177 [derived-exact P20], residual -0.13823 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L26.v[row=11] = rome:cache.L26.v[row=11] consumer=M[9625,15344]
+whatif cache.L26.v[row=11] replace tensor 1e874401b263 from rome:cache.L26.v[row=11] -> t17.M[9625,15344]  (mode pending, record 031e83ce76262255)
+  sealed  linear ΔM = 0.28871 [derived-local P14]   exact ΔM = 0.28091 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 8.25 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 0.28871 [derived-local P14] + nonlinear -0.0078026 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.03091 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.28091 [derived-exact P20], residual -0.03091 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L27.v[row=11] = rome:cache.L27.v[row=11] consumer=M[9625,15344]
+whatif cache.L27.v[row=11] replace tensor f5b8a7a2247a from rome:cache.L27.v[row=11] -> t17.M[9625,15344]  (mode pending, record 44f360d9bae0a5b0)
+  sealed  linear ΔM = 0.0061206 [derived-local P14]   exact ΔM = 0.0061266 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear 0.0061206 [derived-local P14] + nonlinear 6.0359e-06 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.0061266 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.0061266 [derived-exact P20], residual -0.0061266 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) whatif cache.L14.k[row=11] = rome:cache.L14.k[row=11] consumer=M[9625,15344]
+whatif cache.L14.k[row=11] replace tensor 531875ba8d5a from rome:cache.L14.k[row=11] -> t17.M[9625,15344]  (mode pending, record 198037112f474dc6)
+  sealed  linear ΔM = -0.032217 [derived-local P14]   exact ΔM = -0.020367 [derived-exact]
+  native  ΔM = 0.125 [measured]   (base 8.25 [measured] -> edited 8.375 [measured])
+  error split (P20): linear -0.032217 [derived-local P14] + nonlinear 0.011851 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 0.14537 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.125 [measured P20], exact ΔM -0.020367 [derived-exact P20], residual 0.14537 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t17.L0.h  (5 moves, restored)
+(mdb) until logits
+t17.logits  logits = lm_head(fn)
+(mdb) print logits top=5
+t17.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 4896.8 min 1.8984 max 32.75 mean 12.096 abs_max 32.75 [measured]
+  top |v|: [0,9625] 32.75 " France", [0,892] 32 " which", [0,279] 31.875 " the", [0,1128] 31.375 " what", [0,30743] 30 " ____" [measured]
+  pointer occurrence ~stepped sha256 6d799ac3bfd7f563
+(mdb) explain M[9625,15344]
+explain t17.M[9625,15344]  native 8.25 [measured P19]  float64 8.2045 [derived-exact P19]  eta 0.045455 [measured P19]
+  embedding          0.0023005 [derived-exact P19]
+  L0.attn            -0.0012081 [derived-exact P19]
+  L0.mlp             0.0113 [derived-exact P19]
+  L1.attn            0.013545 [derived-exact P19]
+  L1.mlp             0.0014202 [derived-exact P19]
+  L2.attn            -0.0062784 [derived-exact P19]
+  L2.mlp             0.0011846 [derived-exact P19]
+  L3.attn            -0.002792 [derived-exact P19]
+  L3.mlp             -0.017617 [derived-exact P19]
+  L4.attn            0.013659 [derived-exact P19]
+  L4.mlp             -0.017673 [derived-exact P19]
+  L5.attn            0.00187 [derived-exact P19]
+  L5.mlp             -0.025772 [derived-exact P19]
+  L6.attn            0.006997 [derived-exact P19]
+  L6.mlp             0.0051405 [derived-exact P19]
+  L7.attn            0.0021167 [derived-exact P19]
+  L7.mlp             0.044346 [derived-exact P19]
+  L8.attn            0.034511 [derived-exact P19]
+  L8.mlp             -0.020356 [derived-exact P19]
+  L9.attn            0.038955 [derived-exact P19]
+  L9.mlp             -0.029317 [derived-exact P19]
+  L10.attn           0.0078069 [derived-exact P19]
+  L10.mlp            -0.0070642 [derived-exact P19]
+  L11.attn           0.029833 [derived-exact P19]
+  L11.mlp            -0.00050094 [derived-exact P19]
+  L12.attn           -0.010311 [derived-exact P19]
+  L12.mlp            0.02904 [derived-exact P19]
+  L13.attn           -0.015006 [derived-exact P19]
+  L13.mlp            0.019999 [derived-exact P19]
+  L14.attn           0.0046743 [derived-exact P19]
+  L14.mlp            0.096958 [derived-exact P19]
+  L15.attn           0.029264 [derived-exact P19]
+  L15.mlp            -0.0085278 [derived-exact P19]
+  L16.attn           0.032284 [derived-exact P19]
+  L16.mlp            0.096038 [derived-exact P19]
+  L17.attn           0.070707 [derived-exact P19]
+  L17.mlp            0.029061 [derived-exact P19]
+  L18.attn           0.10021 [derived-exact P19]
+  L18.mlp            0.040543 [derived-exact P19]
+  L19.attn           -0.059028 [derived-exact P19]
+  L19.mlp            0.2519 [derived-exact P19]
+  L20.attn           1.6941 [derived-exact P19]
+  L20.mlp            0.62894 [derived-exact P19]
+  L21.attn           0.57246 [derived-exact P19]
+  L21.mlp            0.35412 [derived-exact P19]
+  L22.attn           0.11931 [derived-exact P19]
+  L22.mlp            2.8356 [derived-exact P19]
+  L23.attn           0.032641 [derived-exact P19]
+  L23.mlp            4.7137 [derived-exact P19]
+  L24.attn           -0.21396 [derived-exact P19]
+  L24.mlp            -0.37847 [derived-exact P19]
+  L25.attn           0.29397 [derived-exact P19]
+  L25.mlp            -0.34567 [derived-exact P19]
+  L26.attn           0.58105 [derived-exact P19]
+  L26.mlp            -1.0779 [derived-exact P19]
+  L27.attn           0.68718 [derived-exact P19]
+  L27.mlp            -3.083 [derived-exact P19]
+  ~residual_rounding -0.0038144 [measured P01]  scale 1.8239 [bound P19] k 1 within
+  ~unlisted          0 [derived-exact P19]
+  ~final_norm        -0.011082 [measured P19]  scale 26.11 [derived-exact P19] k 2 within
+  ~head              0.056536 [measured P19]  bound refused (premise fails: CUDA allow_bf16_reduced_precision_reduction = True (numeric scope): cuBLAS may round partial sums to bf16, so every partial sum is taken as rounded to bf16 (u = 0.00391), any order; an 2048-term sum at u = 0.00391 has no gamma_n bound (n u = 8 >= 1))
+  listed_sum 8.2084 [derived-exact P19]  closure 0 [derived-exact P19]
+(mdb) circuit M[9625,15344] top=4 depth=2
+circuit 1  t17.M[9625,15344]  top 4 depth 2  (31 nodes, record 2879ba45ea3d3ef4)
+  t17.M[9625,15344]  8.25 [measured]
+    L23.mlp  t17.L23.m  4.7137 [derived-exact P19]
+      L23.f2298  t17.L23.f[i=2298]  3.5379 [derived-exact P15]
+      L23.f3956  t17.L23.f[i=3956]  0.79066 [derived-exact P15]
+      L23.f3041  t17.L23.f[i=3041]  0.18921 [derived-exact P15]
+      L23.f75  t17.L23.f[i=75]  0.12805 [derived-exact P15]
+      +6140 more  t17.L23.m (unlisted)  0.067395 [derived-exact]
+      L23.mlp remainder  t17.L23.m  0.00043728 [measured]
+    L27.mlp  t17.L27.m  -3.083 [derived-exact P19]
+      L27.f1477  t17.L27.f[i=1477]  -2.8542 [derived-exact P15]
+      L27.f946  t17.L27.f[i=946]  0.92578 [derived-exact P15]
+      L27.f3309  t17.L27.f[i=3309]  -0.36606 [derived-exact P15]
+      L27.f3227  t17.L27.f[i=3227]  -0.28348 [derived-exact P15]
+      +6140 more  t17.L27.m (unlisted)  -0.51186 [derived-exact]
+      L27.mlp remainder  t17.L27.m  0.0068847 [measured]
+    L22.mlp  t17.L22.m  2.8356 [derived-exact P19]
+      L22.f5773  t17.L22.f[i=5773]  2.7369 [derived-exact P15]
+      L22.f1032  t17.L22.f[i=1032]  0.13564 [derived-exact P15]
+      L22.f5425  t17.L22.f[i=5425]  0.11793 [derived-exact P15]
+      L22.f421  t17.L22.f[i=421]  -0.11519 [derived-exact P15]
+      +6140 more  t17.L22.m (unlisted)  -0.038273 [derived-exact]
+      L22.mlp remainder  t17.L22.m  -0.0014078 [measured]
+    L20.attn  t17.L20.o  1.6941 [derived-exact P19]
+      L20.h13  t17.L20.A[h13]  1.5099 [derived-exact P07]
+      L20.h12  t17.L20.A[h12]  0.24543 [derived-exact P07]
+      L20.h0  t17.L20.A[h0]  -0.063787 [derived-exact P07]
+      L20.h1  t17.L20.A[h1]  0.016267 [derived-exact P07]
+      +12 more  t17.L20.o (unlisted)  -0.013251 [derived-exact]
+      L20.attn remainder  t17.L20.o  -0.00047497 [measured]
+    +53 more  t17.M[9625,15344] (unlisted)  2.0479 [derived-exact]
+    remainder  t17.M[9625,15344]  0.04164 [measured]
+  closure 1.7764e-15 [derived-exact P19] within 1.6105e-13 [bound] (zero by construction: float64 summation only)
+  remainders not all bounded (a bound was refused) their rounding bounds; 0 edit node(s)
+(mdb) reads t11 consumer=M[9625,15344] top=8 causal=false
+reads t11 at t17.logits  rows t17  consumer t17.M[9625,15344]  (448 reads)
+  t17.L20.h13 mass 0.38477 [measured]  effect 0.50714 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L26.h1 mass 0.094727 [measured]  effect -0.46014 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L22.h9 mass 0.31836 [measured]  effect 0.25045 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L26.h0 mass 0.029297 [measured]  effect 0.22261 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L21.h2 mass 0.125 [measured]  effect 0.17155 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L20.h12 mass 0.38086 [measured]  effect 0.12422 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L25.h4 mass 0.11816 [measured]  effect -0.11859 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  t17.L26.h7 mass 0.23047 [measured]  effect -0.065347 [derived-exact P19]
+    unresolved (causal=false: not measured)
+  +440 more: mass Σ 20.033 [derived-exact]  effect Σ 0.13527 [derived-exact]
+  value_mix: eta_max_abs 0.11355 [measured P06] worst |eta|/bound 0.047636 [measured P06] within bound (28 layer rows)
+(mdb) reads t11 consumer=M[9625,15344] top=4
+reads t11 at t17.logits  rows t17  consumer t17.M[9625,15344]  (448 reads)
+  t17.L20.h13 mass 0.38477 [measured]  effect 0.50714 [derived-exact P19]
+    not causal at this dose (no effect above the noise floor): Δ -0.375 [measured], predicted -0.24035 [derived-exact], residual -0.13465 [measured P20]; floor 0.5 [measured P20]
+  t17.L26.h1 mass 0.094727 [measured]  effect -0.46014 [derived-exact P19]
+    not causal at this dose (no effect above the noise floor): Δ 0.125 [measured], predicted 0.167 [derived-exact], residual -0.042002 [measured P20]; floor 0.5 [measured P20]
+  t17.L22.h9 mass 0.31836 [measured]  effect 0.25045 [derived-exact P19]
+    not causal at this dose (no effect above the noise floor): Δ -0.125 [measured], predicted -0.20614 [derived-exact], residual 0.08114 [measured P20]; floor 0.5 [measured P20]
+  t17.L26.h0 mass 0.029297 [measured]  effect 0.22261 [derived-exact P19]
+    not causal at this dose (no effect above the noise floor): Δ 0 [measured], predicted -0.038437 [derived-exact], residual 0.038437 [measured P20]; floor 0.5 [measured P20]
+  +444 more: mass Σ 20.888 [derived-exact]  effect Σ 0.24709 [derived-exact]
+  value_mix: eta_max_abs 0.11355 [measured P06] worst |eta|/bound 0.047636 [measured P06] within bound (28 layer rows)
+RC_followup 1 seconds 297
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:56.81
+	Maximum resident set size (kbytes): 4348364
+Command exited with non-zero status 1
+4 MiB, 16376 MiB
+mrun: job-a3a39c4560b0 -> succeeded
+mrun: job-a3a39c4560b0 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 324.8, 'peak_rss_mb': 3708.2, 'peak_vram_mb': 3620.0}

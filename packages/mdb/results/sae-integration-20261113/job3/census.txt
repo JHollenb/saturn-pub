@@ -1,0 +1,90 @@
+18 pairs
+
+(a)+(A) reader side at the best V-cell layer of the entity row (native, measured)
+pair                     base     cf   allKV  L*    cell   K@L*   Delta     Phi       E   sPhi     sE
+Paris->Rome              8.25  -8.25 -15.875  20   -8.25    0.0   -8.25    -8.0     0.0   0.97  -0.00
+Rome->Berlin             9.00 -12.12 -19.875  20 -14.375 -0.125 -14.375 -14.125   -1.25   0.98   0.09
+Berlin->Moscow          10.62  -7.88 -18.000  20   -11.5    0.0   -11.5   -12.5    0.75   1.09  -0.07
+Moscow->Athens          12.75 -11.50 -23.875  20   -16.5    0.0   -16.5  -14.75   -1.75   0.89   0.11
+Athens->Beijing         10.25 -14.38 -22.500  20 -12.875 -0.125 -12.875 -11.125  -0.625   0.86   0.05
+Beijing->Madrid         15.50 -12.88 -25.500  20  -13.25    0.0  -13.25 -10.625    -2.0   0.80   0.15
+Madrid->London           9.75  -9.62 -18.250  20  -12.75    0.0  -12.75 -13.875   0.375   1.09  -0.03
+London->Prague          12.38  -7.62 -18.875  20  -10.75  0.375  -10.75   -11.5   1.625   1.07  -0.15
+Prague->Vienna           6.88  -8.75 -14.625  20   -7.25    0.0   -7.25    -8.0   0.375   1.10  -0.05
+Vienna->Amsterdam       12.25  -7.75 -19.750  20  -14.25 -0.125  -14.25   -15.0  -0.625   1.05   0.04
+Amsterdam->Lisbon        7.75 -15.38 -22.125  20 -13.125 -0.125 -13.125  -10.75  -1.375   0.82   0.10
+Lisbon->Budapest        15.25 -13.12 -27.750  20  -17.75    0.0  -17.75 -14.125    -1.0   0.80   0.06
+Budapest->Tokyo         11.88 -15.12 -27.250  20  -21.25    0.0  -21.25  -20.25  -0.625   0.95   0.03
+Tokyo->Cairo            14.38 -12.12 -25.125  20 -19.375    0.0 -19.375  -19.75  -1.125   1.02   0.06
+Cairo->Seoul            14.50  -9.75 -24.125  20  -16.75  0.375  -16.75  -16.25   0.125   0.97  -0.01
+Seoul->Copenhagen        9.12 -14.00 -21.750  20  -13.75 -0.125  -13.75  -12.25    -2.0   0.89   0.15
+Copenhagen->Stockholm    6.12  -7.25 -12.500  20    -9.0 -0.125    -9.0    -5.5    -2.0   0.61   0.22
+Stockholm->Brussels     13.88 -12.00 -25.750  20  -18.25    0.0  -18.25 -17.875  -0.375   0.98   0.02
+P-A1 |Delta - cell| <= 0.5: 18/18;  median sigma_Phi 0.970, median sigma_E 0.046 over 18 pairs with |Delta| >= 1
+
+source side: entity-row residual at L.h_out carried as K/V of later layers (native, minus the null arm)
+  L4.h_out: n=18 median full -21.812 phi -20.312 E -0.438;  median phi/full 0.978 E/full 0.023 (n=18 with |full| >= 1)
+     Paris->Rome            full -15.625 phi -14.875 E  -0.375
+     Rome->Berlin           full -20.000 phi -19.125 E  -0.375
+     Berlin->Moscow         full -18.125 phi -18.500 E  -0.500
+     Moscow->Athens         full -23.750 phi -23.875 E  -0.500
+     Athens->Beijing        full -23.000 phi -22.750 E   0.375
+     Beijing->Madrid        full -25.000 phi -24.625 E  -0.125
+     Madrid->London         full -18.250 phi -19.000 E   0.000
+     London->Prague         full -19.125 phi -19.625 E  -0.625
+     Prague->Vienna         full -14.625 phi -13.250 E   0.250
+     Vienna->Amsterdam      full -19.750 phi -19.500 E  -1.000
+     Amsterdam->Lisbon      full -21.875 phi -19.125 E  -1.625
+     Lisbon->Budapest       full -27.625 phi -26.125 E  -1.625
+     Budapest->Tokyo        full -27.375 phi -26.375 E  -0.125
+     Tokyo->Cairo           full -25.125 phi -25.750 E  -0.750
+     Cairo->Seoul           full -24.250 phi -23.875 E   0.375
+     Seoul->Copenhagen      full -21.750 phi -21.000 E  -0.875
+     Copenhagen->Stockholm  full -12.125 phi -11.750 E  -0.875
+     Stockholm->Brussels    full -25.875 phi -25.125 E  -0.375
+  L10.h_out: n=18 median full -21.375 phi -19.875 E -0.812;  median phi/full 0.957 E/full 0.038 (n=18 with |full| >= 1)
+     Paris->Rome            full -15.250 phi -14.500 E   0.250
+     Rome->Berlin           full -19.875 phi -19.500 E  -0.375
+     Berlin->Moscow         full -17.750 phi -17.250 E  -1.000
+     Moscow->Athens         full -23.750 phi -22.500 E  -3.000
+     Athens->Beijing        full -22.375 phi -20.250 E   0.250
+     Beijing->Madrid        full -22.500 phi -22.125 E  -0.375
+     Madrid->London         full -18.250 phi -19.000 E   0.625
+     London->Prague         full -18.250 phi -18.375 E  -1.750
+     Prague->Vienna         full -14.250 phi -13.125 E  -0.875
+     Vienna->Amsterdam      full -19.375 phi -18.000 E  -0.250
+     Amsterdam->Lisbon      full -22.000 phi -20.375 E  -0.750
+     Lisbon->Budapest       full -27.000 phi -26.625 E  -1.750
+     Budapest->Tokyo        full -26.875 phi -25.875 E  -0.125
+     Tokyo->Cairo           full -23.750 phi -23.750 E  -1.000
+     Cairo->Seoul           full -24.375 phi -23.750 E  -1.125
+     Seoul->Copenhagen      full -20.750 phi -18.875 E  -0.625
+     Copenhagen->Stockholm  full -12.000 phi -11.000 E  -1.875
+     Stockholm->Brussels    full -25.875 phi -24.375 E  -1.250
+  L16.h_out: n=18 median full -21.250 phi -18.625 E -1.000;  median phi/full 0.936 E/full 0.045 (n=18 with |full| >= 1)
+     Paris->Rome            full -15.250 phi -14.250 E  -0.625
+     Rome->Berlin           full -19.375 phi -18.125 E  -1.125
+     Berlin->Moscow         full -17.875 phi -17.500 E   0.250
+     Moscow->Athens         full -23.875 phi -23.250 E  -2.625
+     Athens->Beijing        full -21.875 phi -18.625 E  -0.750
+     Beijing->Madrid        full -22.125 phi -20.000 E  -1.375
+     Madrid->London         full -18.875 phi -18.625 E  -0.250
+     London->Prague         full -17.375 phi -16.625 E  -1.250
+     Prague->Vienna         full -14.625 phi -11.250 E  -2.625
+     Vienna->Amsterdam      full -19.500 phi -17.125 E  -0.500
+     Amsterdam->Lisbon      full -22.000 phi -21.000 E  -0.750
+     Lisbon->Budapest       full -26.750 phi -24.500 E  -2.250
+     Budapest->Tokyo        full -27.625 phi -26.625 E  -1.375
+     Tokyo->Cairo           full -24.875 phi -24.250 E  -0.875
+     Cairo->Seoul           full -24.000 phi -22.500 E  -0.125
+     Seoul->Copenhagen      full -20.625 phi -18.500 E  -2.000
+     Copenhagen->Stockholm  full -12.125 phi  -9.875 E  -2.125
+     Stockholm->Brussels    full -25.500 phi -25.000 E  -0.500
+
+(B) causal error splice vs direct error share (A = native / -direct)
+  L8: median native 0.125  median |native| 0.312  |native| > 0.5 on 2/18  median |A| 6.82 (n=5)
+  L14: median native 1.250  median |native| 1.250  |native| > 0.5 on 15/18  median |A| 9.04 (n=14)
+  L18: median native -0.375  median |native| 0.562  |native| > 0.5 on 9/18  median |A| 2.93 (n=17)
+  L20: median native 0.125  median |native| 0.625  |native| > 0.5 on 9/18  median |A| 1.49 (n=16)
+  L22: median native 0.125  median |native| 0.812  |native| > 0.5 on 12/18  median |A| 0.51 (n=18)
+  L24: median native 0.312  median |native| 0.500  |native| > 0.5 on 9/18  median |A| 0.54 (n=18)
