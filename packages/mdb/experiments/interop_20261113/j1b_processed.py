@@ -12,6 +12,9 @@ warnings.filterwarnings("ignore")
 T0 = time.time()
 MODEL, OUT = sys.argv[1], sys.argv[2]
 DTYPE = sys.argv[3] if len(sys.argv) > 3 else "bf16"
+# weight processing of Qwen2.5-1.5B in bf16 on the 16 GB GPU ran out of memory (15.9 GB peak,
+# job-d133d104371f), so the whole comparison (native and processed) can run on the CPU
+DEV = sys.argv[4] if len(sys.argv) > 4 else "cuda"
 from transformers import AutoTokenizer  # noqa: E402
 
 import mdb  # noqa: E402
@@ -23,8 +26,8 @@ e = lambda s: tok.encode(s, add_special_tokens=False)  # noqa: E731
 paris = e("The Eiffel Tower is located in the city of Paris, It is the capital of")
 rome = e("The Colosseum is located in the city of Rome, It is the capital of")
 FR, IT = e(" France")[0], e(" Italy")[0]
-ids, rids = torch.tensor([paris], device="cuda"), torch.tensor([rome], device="cuda")
-model = load_local(MODEL, dtype=DTYPE, device="cuda")
+ids, rids = torch.tensor([paris], device=DEV), torch.tensor([rome], device=DEV)
+model = load_local(MODEL, dtype=DTYPE, device=DEV)
 L = model.config.num_hidden_layers
 
 
@@ -37,7 +40,7 @@ ports = [f"L{l}.{p}" for l in range(L) for p in ("p", "h_out", "a", "n", "v", "A
 with mdb.trace(model, ports=ports) as t, torch.no_grad():
     native_logits = model(ids).logits
 native = margin(native_logits)
-R = {"dtype": DTYPE, "M_native": native, "top1_native": int(native_logits[0, -1].argmax())}
+R = {"dtype": DTYPE, "device": DEV, "M_native": native, "top1_native": int(native_logits[0, -1].argmax())}
 before = model.model.layers[0].self_attn.v_proj.weight.detach().clone()
 bridge = tl.bridge(model, tok, in_place=True)
 bridge.enable_compatibility_mode(disable_warnings=True)
@@ -98,6 +101,6 @@ with torch.no_grad():
     R["patch_v_L22kv1_row11_sequence"] = margin(bridge.run_with_hooks(
         ids, fwd_hooks=[("blocks.22.attn.hook_v", vp)])) - R["M_processed"]
 R["seconds"] = time.time() - T0
-R["peak_vram_gb"] = torch.cuda.max_memory_allocated() / 2**30
+R["peak_vram_gb"] = torch.cuda.max_memory_allocated() / 2**30 if DEV == "cuda" else 0.0
 json.dump(R, open(OUT, "w"), indent=1, default=str)
 print(json.dumps(R, default=str)[:3000])
