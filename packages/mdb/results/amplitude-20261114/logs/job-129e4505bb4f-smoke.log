@@ -1,0 +1,59 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 9bf3f49 model Qwen3-1.7B-Base steps: native pools native A native B replica cuda
+== step [native pools] budget 570s
+[    4.0s] load Qwen3-1.7B-Base L_c=20 kv=6 phase=pools
+[    4.7s] pool correct L17 n=14 0.7s
+[    5.2s] pool correct L18 n=14 0.4s
+[    5.6s] pool correct L19 n=14 0.4s
+[    6.0s] pool correct L20 n=14 0.4s
+[    6.5s] pool correct L21 n=14 0.4s
+[    6.5s] pool wrong L20 n=2
+[    6.6s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.06
+	Maximum resident set size (kbytes): 4358232
+== step [native A] budget 562s
+[    4.0s] load Qwen3-1.7B-Base L_c=20 kv=6 phase=A
+[    8.9s] A d3-lm:the Astronomical Clock of the Old Town 4.9s
+[   13.5s] A d3-lm:Tivoli Gardens 4.5s
+[   14.1s] E1 currency:renminbi 0.6s
+[   14.7s] E1 currency:koruna 0.6s
+[   15.5s] E1 currency:forint 0.8s
+[   16.1s] E1 person:Antonin Dvorak 0.6s
+[   16.7s] E1 person:Hans Christian Andersen 0.6s
+[   17.4s] E1 person:Franz Liszt 0.6s
+[   18.0s] E1 landmark:the Forbidden City 0.6s
+[   18.6s] E1 city:Shanghai 0.6s
+[   19.2s] E1 city:Brno 0.6s
+[   19.9s] E1 city:Aarhus 0.6s
+[   20.5s] E1 d2:Prague 0.6s
+[   21.1s] E1 d2:Copenhagen 0.6s
+[   21.7s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.15
+	Maximum resident set size (kbytes): 4355872
+== step [native B] budget 539s
+[    4.0s] load Qwen3-1.7B-Base L_c=20 kv=6 phase=B
+[   66.3s] B d3-lm:the Astronomical Clock of the Old Town 33 arms 62.3s
+[   94.3s] B d3-lm:Tivoli Gardens 33 arms 28.0s
+[   94.3s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:35.78
+	Maximum resident set size (kbytes): 4356648
+== step [replica cuda] budget 443s
+[    6.0s] load fp32 cuda Qwen3-1.7B-Base
+[   11.7s] C d3-lm:the Astronomical Clock of the Old Town 5.6s
+STEP_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.94
+	Maximum resident set size (kbytes): 11098268
+Traceback (most recent call last):
+KeyError: 'value'
+Command exited with non-zero status 1
+1 MiB
+armA-Qwen3-1.7B-Base-0of1.jsonl
+armB-Qwen3-1.7B-Base-0of1.jsonl
+armC-Qwen3-1.7B-Base-0of1.jsonl
+armE1-Qwen3-1.7B-Base-0of1.jsonl
+pools-Qwen3-1.7B-Base.json
+records-native-A-Qwen3-1.7B-Base.jsonl
+records-native-pools-Qwen3-1.7B-Base.jsonl

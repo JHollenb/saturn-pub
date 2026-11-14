@@ -1,19 +1,23 @@
 {
- "name": "Amplitude law of latent hops (advisor memo 2026-11-14 open-problems §2.1 arms A/B/C, with §2.3 gate switching as the companion)",
- "memo": "obsidian/model-math/ADVISOR-2026-11-14-open-problems-we-could-solve.md §2.1, §2.3",
+ "name": "Amplitude law of latent hops (advisor memo 2026-11-14 open-problems \u00a72.1 arms A/B/C, with \u00a72.3 gate switching as the companion)",
+ "memo": "obsidian/model-math/ADVISOR-2026-11-14-open-problems-we-could-solve.md \u00a72.1, \u00a72.3",
  "sealed": "2026-11-14T15:19:56-0800 (from `date`), before any smoke or scored job of this programme; committed before the first mrun submission",
  "status": "owner-approved programme; single seed (20261114); predictions re-sealed from the memo with the changes and reasons listed under 'changes_from_memo'",
- "models": ["Qwen3-0.6B-Base (L_c 20, kv 6, 28 layers)", "Qwen3-1.7B-Base (L_c 20, kv 6, 28 layers)", "Qwen3-4B-Base (L_c 24, kv 6, 36 layers)"],
+ "models": [
+  "Qwen3-0.6B-Base (L_c 20, kv 6, 28 layers)",
+  "Qwen3-1.7B-Base (L_c 20, kv 6, 28 layers)",
+  "Qwen3-4B-Base (L_c 24, kv 6, 36 layers)"
+ ],
  "inputs": "scale study (results/scale-20261114): panel.json, panel_supp.json, score-*.json / supscore-*.json (correctness, carrier row row_at_item, country rank), copied into data/; exp5 named composer neurons (results/showcase-20261114/exp5/out/exp5-panels.json, Qwen3-1.7B only)",
  "context_measured": {
   "hopmath_operand_repair": "same-true-country mean cell repairs right-operand wrong items 5/9 (0.6B), 5/9 (1.7B; AUDIT-HOPMATH correction: d5-081 was already correct in the unedited replica, so 5/9 not 6/10), 3/8 (4B); readable 5/23, 12/17, 2/11",
-  "das_11b": "the country code at the 1.7B carrier cell (L20 KV6) is high-rank and mostly per-country: generic subspaces from other countries (DAS, class means, readout spans) flip 14-22/64 at k=32 and mean-difference k<=8 flips 0/64 (das/report.md, AUDIT-DAS.md, followup/AUDIT-FOLLOWUP.md). Memo §2.2's low-rank predictions are therefore already falsified and §2.2 is not rerun.",
+  "das_11b": "the country code at the 1.7B carrier cell (L20 KV6) is high-rank and mostly per-country: generic subspaces from other countries (DAS, class means, readout spans) flip 14-22/64 at k=32 and mean-difference k<=8 flips 0/64 (das/report.md, AUDIT-DAS.md, followup/AUDIT-FOLLOWUP.md). Memo \u00a72.2's low-rank predictions are therefore already falsified and \u00a72.2 is not rerun.",
   "self_backpatch": "the row's own h at L_c+4 written into L_c-4 repaired 1/64 (AUDIT-SCALE)"
  },
  "items": {
-  "wrong": "wrong items of d3-lm, d3-per, d4-work (main panel) and d5 (supplement), as hopmath §3: 0.6B 38 (readable 27, right-operand 11), 1.7B 32 (19 / 13), 4B 24 (15 / 9); stratum readable = carrier country rank > 3 or unranked (score files), right_operand = rank <= 3",
+  "wrong": "wrong items of d3-lm, d3-per, d4-work (main panel) and d5 (supplement), as hopmath \u00a73: 0.6B 38 (readable 27, right-operand 11), 1.7B 32 (19 / 13), 4B 24 (15 / 9); stratum readable = carrier country rank > 3 or unranked (score files), right_operand = rank <= 3",
   "excluded_from_P_arms": "items whose true country has no correct main-panel item (the Pool refuses the class mean): 0.6B 6, 1.7B 5, 4B 5; scored n (readable / right-operand): 0.6B 23/9, 1.7B 17/10, 4B 11/8 (= hopmath). Arm B runs on every wrong item; its amplitude probes exist only for non-excluded items",
-  "correct": "correct main-panel items (any block): 0.6B 84, 1.7B 100, 4B 113; correct base items with a donor for §2.3: 30 / 41 / 42 (minus donors whose country has no correct item)"
+  "correct": "correct main-panel items (any block): 0.6B 84, 1.7B 100, 4B 113; correct base items with a donor for \u00a72.3: 30 / 41 / 42 (minus donors whose country has no correct item)"
  },
  "objects": {
   "pools": "mdb Pools at cache.L<x>.v[kv<kv_c>,row=@carrier] over correct main-panel items, x in the band [L_c-3, L_c+1], label country (= country_token); and over the wrong items at L_c. Collected natively (bf16, mdb prefill path), sealed, saved, reloaded in every phase.",
@@ -47,14 +51,22 @@
   "P4": "Qwen3-1.7B, fp32 replica at alpha*_fp32: median Jaccard(S_N, exp5 composers of the true country, L21-L24) >= 0.15 against a random same-size median <= 0.01 (memo bar 0.3 reported).",
   "S_span": "Exploratory, sealed: P_span16 flips at least as many right-operand items as P_true by alpha = 8; P_span1 and P_span4 flip fewer than P_true.",
   "E1": "Exploratory, sealed: on correct items, removing the true-country component (alpha = 0) loses the argmax on <= 0.2 of items (a rank-1 removal of a high-rank code), with median M(0)/M(1) in [0.4, 0.9].",
-  "F_2.3": "(memo §2.3, kept) F2[32] median ratio to native >= 0.85 and flip-set mismatch <= 0.125 of items; F3[32] mismatch <= 0.0625 of items; on 1.7B the median MLP log-slope is 1.3-1.6 at L21-L24 and 0.9-1.1 at L25-L27; on 4B the re-read term's log-slope exceeds 1.5. Replication check: F1 median ratio in [0.45, 0.75] (memo measured 0.59)."
+  "F_2.3": "(memo \u00a72.3, kept) F2[32] median ratio to native >= 0.85 and flip-set mismatch <= 0.125 of items; F3[32] mismatch <= 0.0625 of items; on 1.7B the median MLP log-slope is 1.3-1.6 at L21-L24 and 0.9-1.1 at L25-L27; on 4B the re-read term's log-slope exceeds 1.5. Replication check: F1 median ratio in [0.45, 0.75] (memo measured 0.59)."
  },
  "falsifiers": {
   "amplitude": "P2 AUC < 0.6: the code's strength along the true direction is not what fails.",
   "threshold": "P1: alpha* scattered over the whole grid with non-monotone M(alpha) on > 0.3 of right-operand items: no threshold.",
   "timing_vs_amplification": "P3: arm-B repairs equal across strata (ratio < 1.25), or >= 0.5 of repairing arms with no amplitude rise (a_after - a_native < 0.1): back-patching is not amplification and the timing account stands.",
-  "gate_switch": "§2.3: F2[128] median ratio < 0.75 (the gap is dense, not a few switched gates), or the MLP log-slope is flat across layers (|L21-24 slope - L25-27 slope| < 0.1)."
+  "gate_switch": "\u00a72.3: F2[128] median ratio < 0.75 (the gap is dense, not a few switched gates), or the MLP log-slope is flat across layers (|L21-24 slope - L25-27 slope| < 0.1)."
  },
  "custody": "every sealed record (pools, branches, core files) carries custody: amp.py and prereg.json sha256 via dbg.custody(script=, prereg=), library versions, kernel path; records stream to records-*.jsonl. Payload = git archive of HEAD; REVISION and the amp.py sha256 are in the job note. One Beast job at a time, submitted only when no job is running or queued. Smoke job first (separate OUTROOT, SMOKE=2), scored jobs after its data are verified.",
- "limits_declared": "single seed; arm A and C are on the answer-row footing (later rows' K/V fixed, as in hop-math), arm B recomputes every row from the carrier row; P_true and the span arms are test-informed (labelled); composer sets exist for 1.7B only and were nominated for capital answers."
+ "limits_declared": "single seed; arm A and C are on the answer-row footing (later rows' K/V fixed, as in hop-math), arm B recomputes every row from the carrier row; P_true and the span arms are test-informed (labelled); composer sets exist for 1.7B only and were nominated for capital answers.",
+ "amendments": [
+  {
+   "at": "2026-11-14T15:41:19-0800",
+   "before": "any scored job (after smoke job-129e4505bb4f, 1.7B, SMOKE=2: 2 wrong items)",
+   "text": "Kernel-path near-ties: a wrong item (score files) whose mdb native base argmax on an arm's own path is already the truth (smoke: d3-lm:Tivoli Gardens, M0 = +0.25 = 0.5 floor on the prefill=last path, 0.0 on the prefill=row path) cannot be 'repaired'. Such items are excluded from that arm's flip/repair counts and from alpha*, and reported separately with their M0 in floors (the hop-math audit's d5-081 replica-null artefact is the same case). P2 amplitudes still include them (the amplitude is defined on the pool's native value).",
+   "also": "smoke fixes, no rule change: Branches.seal() calls restored (a refactor had dropped them, so smoke branches records were not emitted); val() returns None for an unresolved share instead of raising."
+  }
+ ]
 }

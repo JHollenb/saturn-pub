@@ -106,7 +106,8 @@ def lab(x, authority="measured"):
 
 
 def val(x):
-    return x["value"] if isinstance(x, dict) else x
+    """A labelled number's value (None for an unresolved entry)."""
+    return x.get("value") if isinstance(x, dict) else x
 
 
 # ---- directions from a correct-items pool (Pool LOO means; the item is never in its own mean) -----
@@ -253,6 +254,7 @@ if MODE == "native":
             br.add_null("null_rnd8", "random", like="T8", seed=SEED + 1)
             br.add_null("null_self", "self", like="T2")
             nulls = br.run_arms(["null_rnd3", "null_rnd8", "null_self"])
+            br.seal()                                  # emitted to the records sink
 
             def slim(row):
                 return {"M": val(row["M"]), "dM": val(row["dM"]), "argmax": row["argmax"],
@@ -294,6 +296,7 @@ if MODE == "native":
                 br.add(f"T{al:g}", [edit(cell_addr(LC, r), code.dose(v, al).reshape(shape).to(torch.bfloat16),
                                          origin={"kind": "amplitude-dose", "subspace": "true", "alpha": al})])
             rows = br.run(mode="batched")
+            br.seal()
             rec.update(amp=code.amp(v), code_norm=code.N, n_class=code.n_class, M0=br.M0, floor=br.floor,
                        base_argmax=br.base_argmax, b=b,
                        batched={rw["name"]: {"M": val(rw["M"]), "argmax": rw["argmax"],
@@ -332,6 +335,7 @@ if MODE == "native":
                     br.add_null(f"R{s}_{tl}", "random", like=f"B{s}_{tl}", seed=SEED + s * 100 + tl)
             br.add_null("self", "self", like=f"B{LC + 4}_{LC - 4}")
             rows = br.run_arms()
+            br.seal()
             rec = {"id": it["id"], "family": it["family"], "stratum": it["stratum"], "rank": it["rank"],
                    "b": b, "M0": br.M0, "floor": br.floor, "base_argmax": br.base_argmax,
                    "base_probes": {k: (val(v) if not isinstance(v, list) else [val(x) for x in v])
