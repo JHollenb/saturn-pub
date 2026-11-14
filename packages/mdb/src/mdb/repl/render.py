@@ -842,6 +842,9 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
         line += f"  [ablated: {marks[node['id']]}]"
     lines = [line]
     for child in node.get("children", ()):
+    if node.get("unexamined"):
+        line += (f"  (not examined, {int(node['unexamined_count']['value'])} subtree(s) "
+                 "not expanded)")
         lines += _walk(child, depth + 1, marks, texts)
     return lines
 
@@ -880,7 +883,10 @@ def _circuit_lines(result: dict[str, Any]) -> list[str]:
     state = ("all within their rounding bounds" if within
              else "NOT all within their rounding bounds" if within is not None
              else "not all bounded (a rounding bound was refused)")
-    lines.append(f"  remainders {state}; {body['edits']['count']} edit node(s)")
+    if body.get("unexamined") and within is not False:
+        state = (f"{int(body['unexamined_count']['value'])} dropped subtree(s) not examined; no claim "
+                 "about their rounding bounds")
+    lines.append(f"  remainders: {state}; {body['edits']['count']} edit node(s)")
     for test in result.get("tests", ()):
         lines += ["  " + line for line in _circuit_test_lines(test)]
     if result.get("stored"):

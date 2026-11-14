@@ -107,6 +107,7 @@ class Node:
     note: str | None = None
     bound: Any = None
     ref: str | None = None
+    unexamined: int = 0   # ``more`` only: members dropped whose own subtree was never built
     grow: Callable[[], list[Node]] | None = field(default=None, repr=False)
 
     @property
@@ -127,6 +128,9 @@ class Node:
             out["within"] = self.within
         if self.note:
             out["note"] = self.note
+        if self.unexamined:
+            out["unexamined"] = True
+            out["unexamined_count"] = num(self.unexamined, EXACT)
         if self.children:
             out["children"] = [child.view(ids) for child in self.children]
         return out
@@ -162,7 +166,9 @@ def _group(children: list[Any], top: int, parent: str,
            promote: Callable[[Member], Node] | None = None) -> list[Node]:
     """Keep the ``top`` largest exact children; the rest become one ``+N more`` node holding
     them as ``Member`` tuples. A kept ``Member`` becomes its ``Node`` (``promote``) and a kept
-    node's subtree is built now: nothing is built for a child that is not kept."""
+    node's subtree is built now: nothing is built for a child that is not kept. A dropped child
+    that has a subtree at this depth is counted in the group's ``unexamined``: a refusal its
+    expansion would raise (a premise failing, a port not computed) was never seen."""
     exact = [c for c in children if c.kind not in _FIXED]
     fixed = [c for c in children if c.kind in _FIXED]
     exact.sort(key=lambda c: -size(c.value))
@@ -175,9 +181,13 @@ def _group(children: list[Any], top: int, parent: str,
         total = sum((c.value for c in rest[1:]), rest[0].value)
         members = [c if isinstance(c, Member) else Member(c.name, c.kind, c.port, c.index,
                                                             c.value) for c in rest]
+        expands = getattr(promote, "expands", False)
+        skipped = sum(1 for c in rest if (c.grow is not None if isinstance(c, Node) else expands))
+        note = f"+{len(rest)} more, sum of their exact contributions"
+        if skipped:
+            note += f"; {skipped} have subtrees that were not expanded (not examined)"
         kept.append(Node(f"+{len(rest)} more", "more", f"{parent} (unlisted)", total, EXACT,
-                         members=members,
-                         note=f"+{len(rest)} more, sum of their exact contributions"))
+                         members=members, note=note, unexamined=skipped))
     return kept + fixed
 
 
@@ -200,6 +210,7 @@ def _promoter(proof: str, grow: Callable[[Member], Any] | None = None
                     proof, port=m.port, index=m.index,
                     grow=None if grow is None else (lambda: grow(m)))
 
+    promote.expands = grow is not None  # type: ignore[attr-defined]
     return promote
 
 
@@ -503,6 +514,7 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
     ids = [0]
     tree = root.view(ids)
     remainders = _remainders(root)
+    unexamined = sum(g.unexamined for g in _groups(root))
     body = {"schema": SCHEMA, "consumer": reader.text, "kind": reader.kind,
             "where": run.where, "k": top, "depth": depth, "count": ids[0], "root": tree,
             "closure": {"value": claim(closure, EXACT, "P19" if reader.scalar else "P14"),
@@ -512,9 +524,13 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
                         "meaning": "native consumer minus the sum of the depth-1 nodes: zero "
                                    "by construction (the remainders are defined as native "
                                    "minus the listed terms), so this checks float64 summation "
-                                   "only; remainders_within is the rounding check"},
-            "remainders_within": (None if any(n.within is None for n in remainders)
-                                  else all(n.within for n in remainders)),
+                                   "only; remainders_within is the rounding check"
+                                   + ("; subtrees under the unexamined `+N more` groups were "
+                                      "never expanded, so nothing here covers them"
+                                      if unexamined else "")},
+            "remainders_within": _within(remainders, unexamined),
+            "unexamined": unexamined > 0,
+            "unexamined_count": num(unexamined, EXACT),
             "edits": {"count": sum(1 for n in _walk(root) if n.kind == "edit"),
                       "meaning": "edit nodes: displacements edits wrote, never in a remainder"},
             "premises": reader.premises}
@@ -530,6 +546,16 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
                       complement=_fold_members(root))
     entries[ident] = circuit
     return circuit
+
+
+def _within(remainders: list[Node], unexamined: int) -> bool | None:
+    """Every examined remainder within its bound: False if one is outside, None when a bound is
+    refused or a dropped subtree was never expanded (its remainders were not looked at)."""
+    if any(n.within is False for n in remainders):
+        return False
+    if unexamined or any(n.within is None for n in remainders):
+        return None
+    return True
 
 
 def _fold_members(root: Node) -> Any:
