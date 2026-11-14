@@ -1,0 +1,31 @@
+{
+ "frozen_at": "2026-11-14 (2026-11-13 ~23:20 PST), before any run of this job (FT1). Already known: the para families answer ' The' on 74/76 items (Y2 jobs job-2b124c6f555b; the prompts are two shot lines that each begin 'The capital of ...', then 'Question: ... Answer:'); t0 ' The' had mass 210 and to_consumer 0.34 in an earlier table; the sink holds 36-54% of mass in pythia/ch25. Audit of Z1/Z2 (ext/AUDIT-Z1-Z2.md) applied: no flip prediction from measured terms is called a forecast here.",
+ "question": "Owner: when the bridge read is weak, does the shared sink-row payload win, so the model emits the prompt's first token or a format token?",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA; single seed; one model load",
+ "items": "next/ft_items.json: 32 'default' items (16 para-currency + 16 para-city, random seed 0 among the 74 that answer ' The') and 32 'correct' items (8 per family of the entry-1 panel, first in panel order). All 64 prompts begin with the word 'The'.",
+ "arms": {
+  "a_contrast": "native run to the answer row's logits; consumer = margin between the answer row's top-2 logits. For every (layer, head, source row) of the answer row's reads: share = c . p W_O v_s (today's to_consumer term) and contrast = c . p W_O (v_s - A_h) = share - p * c . W_O A_h (computed from o_parts; symbols.py unchanged). Per source row: sums over layers and heads; the rank of t0 by |value| among all rows under both forms.",
+  "b_first_word": "replace only the prompt's first word 'The' by 'A', 'In', 'Which' (3 variants); plus one exploratory variant 'A' at the start of BOTH shot lines (labelled exploratory, not judged). Re-tokenised, native run, argmax at the answer row.",
+  "c_sink_cuts": "at the answer row only, all 28 layers, all heads: zero cut of t0 (p[., 0] = 0, no renormalise) and mask cut of t0 (s[., 0] = -1e4, softmax recomputed natively). Measured: native margin change (fixed top-2 tokens), argmax. Closed forms (P09) checked at one layer L* (largest |sum_h share_t0|) with single-layer cuts: predicted c . Delta o_L* = -sum_h share_t0[h] (zero) and sum_h -contrast_t0[h] / (1 - p_t0[h]) (mask), against the measured c . (o_edit - o_native) at L* (exact up to bf16, since L*'s input at the answer row is unchanged).",
+  "baseline": "random non-sink rows (not t0, not descriptor span, not the answer row) cut at matched mass: per (layer, head), rows drawn in a seeded random order until their summed p reaches p_t0 for that head (all available if short; achieved mass ratio reported); zero and mask versions, all layers."
+ },
+ "metrics": {
+  "follows_first_word": "default items: argmax at the answer row == the first token of ' ' + new first word",
+  "default_kept": "default items: argmax is still ' The' (or the variant's own default)",
+  "correct_unchanged": "correct items: argmax unchanged under each first-word variant",
+  "cut_moves_default": "default items: argmax != ' The' after the cut",
+  "cut_moves_correct": "correct items: argmax changes after the cut",
+  "closed_form_error": "|predicted - measured| at L*, against 2 bf16 spacings of the measured value"
+ },
+ "predictions": {
+  "S1": "the t0 row ranks first by |share| on >= 0.75 of items, but its rank by |contrast| is lower (median rank >= 3): the sink's payload is mostly the shared part that the contrast form removes",
+  "S2": "default items: the argmax follows the new first word on >= 0.50 of (item, variant) pairs, pooled over A/In/Which (guess 0.40 for 'A'-type function words, lower for 'In'); correct items: answer unchanged on >= 0.90 of pairs",
+  "S3": "zero cut of t0 at all layers changes the default ' The' on >= 0.50 of default items and changes the correct answer on >= 0.50 of correct items (removing the sink payload is destructive); the mask cut changes far fewer (<= 0.25 on correct items)",
+  "S4": "matched-mass random row cuts move the correct answer on <= 0.10 (zero) and <= 0.10 (mask)",
+  "S5": "closed forms at L*: |error| within 2 bf16 spacings on >= 0.90 of items for both cut types"
+ },
+ "falsifier": "the default output does not track the first word (follows on <= 0.50 of default (item, variant) pairs) AND neither the zero nor the mask t0 cut moves the default output (cut_moves_default <= 0.50 for both): the sink/first-token reading of the default ' The' is then refuted for these prompts",
+ "note_on_prompt_format": "the default ' The' may also be a copy of the shot lines' line-initial 'The' (the format). The first-word-only swap leaves line 2's 'The' in place; the exploratory both-lines variant separates 'first token' from 'line-initial format token'. Reported, not judged.",
+ "budget": "one mrun job, smoke on 3 items first, <= 10 min; priority 70; vram 5000",
+ "rules": "single seed; unknown is not negative"
+}
