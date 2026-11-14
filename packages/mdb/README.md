@@ -444,6 +444,10 @@ client's file, and Ctrl-C interrupts the op the server is running. From Python:
 The server has no authentication and binds loopback; use a tunnel (`ssh -L 8799:127.0.0.1:8799
 host`). `--allow-remote` and `--allow-host` exist but add no authentication.
 
+## TransformerLens and nnsight
+
+`mdb.interop` (extra `interop`) maps every port to its TransformerLens 4 bridge hook and nnsight path, imports a TL cache or nnsight saves as an origin (`tlrome:cache.L22.v[kv1,row=11]`, values labelled `supplied`), runs mdb edits batched over many prompts through nnsight, and re-measures another tool's claim with `whatif`. On Qwen2.5-1.5B every mapped port was bitwise equal across `mdb.trace`, the unprocessed bridge and nnsight (job-e1d53061001a). See [docs/INTEROP.md](docs/INTEROP.md).
+
 ## Lanes
 
 The experiment code is the `mdb-lanes` distribution (`mdb_lanes`); the engine never imports it.
