@@ -1,0 +1,38 @@
+{
+ "experiment": "11b: DAS at the exp7 carrier cell vs the symbol-table readout subspace, the SAE subspace, a supervised mean-difference subspace and random",
+ "written": "2026-11-14T13:06:22-0800 (from `date`; the seal is this file's commit, which precedes the first scored job)",
+ "owner_approval": "\"Run DAS\" (training allowed for the DAS arm only)",
+ "status": "sealed after smoke job-7ad594cb5b00 (auto-retried as job-c4c4834e3110 after an mrun RAM clamp); single seed 20261114",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA (Beast, mrun)",
+ "cell": "L20 KV6 value (head_dim 128) at the frozen R_argmax carrier row (common.CARRIER), as exp7",
+ "test_set": "exp7's 64 Run 1a pairs (recipient = base item, source = its different-bridge donor), consumer M[answer, donor answer]. None of their 28 countries (recipients or donors) occurs in any training item; the 64 pairs and their items are never used to train or build any basis (held out by country).",
+ "train_set": "das/train_candidates.json (gen_train.py): the Run 1a templates and few-shot prefix over 42 other countries (130 candidates), admitted when mdb's native argmax at the answer row is the capital token (das.py admit, carrier row by the same frozen rule). DAS pairs: all ordered pairs of admitted items with different answers, shuffled with seed 20261114.",
+ "arms": {
+  "whole": "donor cell value (reference; exp7 44/64)",
+  "das{k}": "pyvene 0.1.8 LowRankRotatedSpaceIntervention, component head_value_output, unit h.pos, KV head 6, low_rank_dimension k; CE on the source capital at the base's last row; Adam lr 1e-2, batch 32, 300 steps per k, k in 1,2,4,8,16,32; basis = the trained rotate_layer.weight (orthonormal columns)",
+  "symtab{k}": "top-k PCA (centred) of the cell-space country readout directions W_g^T (gamma_F * W_U[country token]) over every country token of the Run 1 panel + training panel (training-free, derived-exact)",
+  "symcap{k}": "the same over the capital (answer) tokens (secondary)",
+  "meandiff{k}": "top-k PCA of the centred per-country class means of training-item cell values (supervised baseline, training countries only)",
+  "random{k}": "QR of a seed-20261114 Gaussian (128 x 32), first k columns",
+  "sae": "exp7's per-pair SAE pushforward subspace (L19 Qwen-Scope country features active in recipient or donor; recomputed in the same job)"
+ },
+ "interchange": "every arm scored through mdb's stepped engine exactly as exp7: prefill = carrier row, checkpoint at t<crow>.L20.h, set v[kv6] = v + Q Q^T (v_donor - v), run to logits; DAS also scored through pyvene (batched, right-padded) as a kernel-path cross-check",
+ "scoring": {
+  "flip": "M0 > floor and M_after < -floor, floor = 2 bf16 spacings at the larger |logit| (exp7 rule)",
+  "flip_4floor": "M0 > 4*floor and M_after < -4*floor (the audit's stable-verdict margin), reported beside it",
+  "fraction_of_whole": "IIA_arm / IIA_whole at the same margin",
+  "angles": "principal angles (degrees) between das{k} and symtab{k}, meandiff{k}, and each pair's SAE subspace (median over pairs, for k >= the SAE rank use all SAE angles)",
+  "train_fit": "flips on 256 training pairs (in-sample) per k, reported to separate fitting failure from generalisation failure"
+ },
+ "predictions": {
+  "D1": "DAS IIA is non-decreasing in k up to noise (allow one dip of <= 3 pairs) and some k <= 16 reaches >= 0.5 of whole-cell IIA (>= 22/64 if whole reproduces 44/64)",
+  "D1_falsifier": "DAS at k = 32 is below 0.25 of whole-cell IIA (held-out-country generalisation fails)",
+  "D2": "the symbol-table country readout subspace is below DAS at every k >= 4 and below 0.5 of whole at every k <= 8",
+  "D3": "meandiff lies between symtab and DAS at k = 8 and 16",
+  "D4": "random <= 0.1 of whole for k <= 16",
+  "D5": "the smallest principal angle between das8 and symtab8 is > 30 degrees (mostly different subspaces)",
+  "D6": "whole-cell IIA reproduces exp7 exactly (44/64) and the SAE arm 4/64 (same pairs, same code path; smoke reproduced both on 2 pairs bitwise)"
+ },
+ "deviations_allowed": "if admission yields < 60 training items, add none (report as is); scoring jobs split by pair ranges to keep each job <= 10 min",
+ "not_run": "same-bridge null pairs; other seeds; k = 64/128"
+}

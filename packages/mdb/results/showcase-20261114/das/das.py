@@ -125,7 +125,7 @@ if MODE == "train":
 
     KS = [int(k) for k in sys.argv[3].split(",")]
     STEPS = int(sys.argv[4])
-    BS, LR = 32, 5e-3
+    BS, LR = 32, 1e-2
     qwen3_shim()
     tr = train_items()
     log(f"train items {len(tr)} countries {len({i['bridge'] for i in tr})}")
