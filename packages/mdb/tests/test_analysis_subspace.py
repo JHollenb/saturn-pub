@@ -102,7 +102,8 @@ def test_interchange_full_basis_is_whole_cell_and_table_reports(debugger):
     src = _value(debugger, SOURCE, layer, kv, row)
     full = subspace.subspace_binding("full", layer, kv, torch.eye(ad.head_dim, dtype=torch.float64))
     margin = Margin(4, 4, 9)
-    out = subspace.interchange(debugger, full, PROMPT, row, src, margin)
+    out = subspace.interchange(debugger, full, PROMPT, row, src, margin, floor=0.5)
+    assert out["M_floors"]["value"] == out["M"]["value"] / 0.5
     assert out["M"]["value"] == out["M_whole"]["value"]
     assert out["M0"]["authority"] == "measured"
     run = debugger.run(PROMPT)
@@ -130,3 +131,22 @@ def test_interchange_full_basis_is_whole_cell_and_table_reports(debugger):
     assert abs(rows[0]["mass_native"]["value"] + rows[1]["mass_native"]["value"] - 1) < 1e-9
     with pytest.raises(Refusal):
         subspace.table_row(run, part, margin)                                  # template, no row
+
+
+def test_decompose_is_a_component_binding_that_closes(debugger):
+    from mdb.analysis import components
+
+    ad = debugger.adapter
+    run = debugger.run(PROMPT)
+    run.until("t4.logits")
+    g = torch.Generator().manual_seed(4)
+    sb = subspace.subspace_binding("s", 1, 0, torch.randn(ad.head_dim, 2, generator=g,
+                                                          dtype=torch.float64)).bound(2)
+    cb = sb.decompose(run)
+    assert [c.name for c in cb.components] == ["subspace", "complement"]
+    assert cb.closure()["max_gap"]["value"] < 1e-12
+    tab = components.component_table(run, cb, Margin(4, 4, 9))
+    parts = [float(r["to_consumer"]["value"]) for r in tab["components"]]
+    assert abs(sum(parts) - tab["cell_to_consumer"]["value"]) < 1e-9
+    row = subspace.table_row(run, sb, Margin(4, 4, 9))
+    assert abs(parts[0] - row["subspace_to_consumer"]["value"]) < 1e-12

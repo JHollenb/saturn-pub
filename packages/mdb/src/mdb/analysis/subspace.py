@@ -128,6 +128,26 @@ class SubspaceBinding(Binding):
         """Attach a result (e.g. ``iia``) as a label ``(value, authority)``."""
         self.labels[name] = (value, authority)
 
+    def decompose(self, run: Any) -> Any:
+        """This bound subspace as a ``components.ComponentBinding`` of the native cell at the cursor:
+        parts ``subspace`` (``Q Q^T v``) and ``complement`` (``v - Q Q^T v``, the residual), with
+        ``linear = native = v`` (no residual-stream image). One decomposition family: the result
+        feeds ``components.component_table`` / ``symbols.table(components=...)`` unchanged; its
+        ``basis`` carries this binding's description (authority, provenance, digest)."""
+        from .components import Component, ComponentBinding
+
+        if self.row is None:
+            raise Refusal(f"subspace {self.name} is a template: bind it to a row first (bound(row))")
+        v = f64(run.read_cache(self.layer, "v", staged=False)[0, self.kv, self.row]).cpu()
+        inside = self.project(v)
+        parts = [Component("subspace", None, None, None, inside),
+                 Component("complement", None, None, None, v - inside)]
+        return ComponentBinding(self.name, "component", [], [], row=self.row, layer=self.layer,
+                                kv=self.kv, basis={**self.describe(), "kind": "subspace"},
+                                components=parts, native=v, linear=v,
+                                provenance={"decomposition": "subspace", "basis_authority": self.authority,
+                                            **self.provenance})
+
     def describe(self) -> dict[str, Any]:
         return {"schema": SCHEMA, "name": self.name, "cell": self.cell, "k": self.k,
                 "authority": self.authority, "provenance": self.provenance,
@@ -239,7 +259,7 @@ def from_pyvene(intervention: Any, name: str, layer: int, kv: int, *,
 
 
 def interchange(debugger: Any, sb: SubspaceBinding, ids: list[int], row: int, source_value: Any,
-                consumer: Any) -> dict[str, Any]:
+                consumer: Any, floor: float | None = None) -> dict[str, Any]:
     """Measure the subspace interchange on an mdb branch: a run of ``ids`` with prefill = ``row``
     stepped to ``t<row>.L<layer>.h``, checkpointed; the cell set to its native value (``M0``),
     to ``swap(native, source_value)`` (``M``) and to ``source_value`` (``M_whole``), each run to
@@ -272,6 +292,10 @@ def interchange(debugger: Any, sb: SubspaceBinding, ids: list[int], row: int, so
         out[key] = num(score(), MEASURED)
         run.restore(ck)
     out["mass_of_delta"] = sb.mass(f64(source_value) - native)
+    if floor:                                  # effect in floors: the numeric column the
+        out["floor"] = num(float(floor), EXACT)   # kernel-sensitive band derives from
+        for key in ("M0", "M", "M_whole"):
+            out[f"{key}_floors"] = num(out[key]["value"] / float(floor), MEASURED)
     return out
 
 
