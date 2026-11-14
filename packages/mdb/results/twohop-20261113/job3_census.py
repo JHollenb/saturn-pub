@@ -25,6 +25,7 @@ from mdb.analysis import sae as saemod
 from mdb.repl.__main__ import _load
 
 MODEL, SAE, CAND, PANEL, GTF, OUT = sys.argv[1:7]
+START, STOP = int(sys.argv[7]), int(sys.argv[8])
 T0 = time.monotonic()
 torch.set_grad_enabled(False)
 dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
@@ -33,6 +34,7 @@ L, KV, D = dbg.adapter.layers, dbg.adapter.num_kv_heads, dbg.adapter.head_dim
 cand = {i["id"]: i for i in json.load(open(CAND))["items"]}
 panel = {p["id"]: p for p in json.load(open(PANEL))["panel"]}
 gts = json.load(open(GTF))
+gts = {k: gts[k] for k in sorted(gts)[START:STOP]}
 need = sorted({g["layer"] - 1 for g in gts.values() if g["layer"] >= 1})
 saes = saemod.open_set("qs", SAE, layers=need, cache=3)
 print(f"load {time.monotonic() - T0:.1f}s; {len(gts)} carriers; SAE layers {need}", flush=True)
@@ -141,4 +143,20 @@ for rid in order:
                                   "feat": [[x["f"], round(x["along"], 3), x["lens"][:3]]
                                            for x in rec["pairs"][0]["top_features"][:3]],
                                   "s": round(rec["seconds"], 1)}), flush=True)
+# the symbol table with the declared descriptor symbol, through the ops (for the record)
+from mdb.ops import dispatch  # noqa: E402
+
+for rid in sorted(gts)[:3]:
+    item = cand[rid]
+    d0 = cand[panel[rid]["donors"][0]]
+    ctx = dbg.ops(None)
+    try:
+        dispatch(ctx, "start", {"prompt": item["prompt"], "name": "sym"})
+        dispatch(ctx, "until", {"target": "logits"})
+        dispatch(ctx, "symbol", {"name": "desc", "addresses": ",".join(f"t{r}" for r in item["span"])})
+        tab = dispatch(ctx, "symbols", {"consumer": f"M[{item['answer']},{d0['answer']}]", "limit": 4})
+        OUTF.write(json.dumps({"symbols_table": rid, "table": tab}, default=str) + "\n")
+        print("SYMBOLS " + json.dumps(tab, default=str)[:4000], flush=True)
+    except Exception as error:  # noqa: BLE001
+        print("SYMBOLS error", type(error).__name__, error, flush=True)
 print(f"TOTAL {time.monotonic() - T0:.1f}s", flush=True)
