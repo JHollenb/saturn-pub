@@ -84,10 +84,32 @@ def test_bind_r_argmax_matches_a_hand_argmax_and_the_table_still_partitions(debu
     assert report["slots"]["desc"] == [f"t{r}" for r in [1, 2, 3, 4] if r != hand]
     assert report["table"]["accounting"]["within_bound"] is True
     assert symbols.declared(run) == {}                   # the slots are released
-    frozen = cm.freeze(m, [report, report], ["table.bindings.0.symbol"])
+    frozen = cm.freeze(m, [report, report], ["table.bindings.carrier.symbol"])
     mode = frozen.constants["modes"][0]
     assert mode["mode"] == "carrier" and mode["count"] == 2
     assert frozen.constants["summary"]["n"] == 2
+
+
+def test_freeze_lines_up_slots_by_name_when_an_item_binds_no_row_for_a_slot():
+    """``bind`` skips a slot that binds no row, so page position is not a slot identity: the
+    summary must key table bindings by symbol name (review 2026-11-14, summary.py positional
+    paths)."""
+    def claim(x):
+        return {"value": x, "authority": "measured"}
+
+    full = {"table": {"bindings": [{"symbol": "carrier", "mass": claim(1.0)},
+                                   {"symbol": "desc", "mass": claim(5.0)}]}}
+    no_carrier = {"table": {"bindings": [{"symbol": "desc", "mass": claim(7.0)}]}}
+    frozen = cm.freeze(_map(), [full, no_carrier, full], ["table.bindings.desc.symbol"])
+    paths = {row["path"]: row for row in frozen.constants["summary"]["numeric"]}
+    assert "table.bindings.0.mass" not in paths
+    assert "table.bindings.desc.mass" in paths              # present in every report
+    assert "table.bindings.carrier.mass" not in paths       # present in only some: partial
+    assert frozen.constants["summary"]["partial"] >= 1
+    desc = paths["table.bindings.desc.mass"]
+    vals = [v["value"] if isinstance(v, dict) else v for k, v in desc.items() if k in ("min", "max")]
+    assert vals and min(vals) >= 5.0                         # never mixes the carrier's 1.0
+    assert frozen.constants["modes"][0]["mode"] == "desc"
 
 
 def test_cell_census_equals_a_hand_projection_of_each_cells_unit_write(debugger):
