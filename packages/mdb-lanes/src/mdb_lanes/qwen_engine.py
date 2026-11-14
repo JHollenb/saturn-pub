@@ -58,9 +58,13 @@ def expressible(arm, rows_table, panel=None, *, staged=False):
     what-if, else ``(None, reason)``. The native arm maps to ``([], None)`` (nothing cut).
 
     The engine's cut writes ``p[h, s] = 0`` and lets eager attention recompute the head mix, which
-    is the lane's ``zero_method="recompute"`` (MEASURED bit for bit on tiny Qwen2 FP32, CPU,
-    ``tests/test_qwen_engine.py``); the lane's default ``delta`` method subtracts ``P[cut] @ V[cut]``
-    from the native output and rounds again, so a ``delta`` arm stays on the lane path. With
+    is the lane's ``zero_method="recompute"`` in real arithmetic. Bits: equal on tiny Qwen2 FP32 CPU
+    (``tests/test_qwen_engine.py``); on Qwen2.5-1.5B FP32 CUDA equal in 4 of 24 single cuts and 3 of
+    5 sets, otherwise within 5.7e-6 of the margin, the size of the lane's own delta/recompute twin
+    gap, with no verdict changed (MEASURED, job-0fcdf8414918,
+    ``experiments/engine_equivalence_20261114/FINDINGS.md``). The lane's default ``delta`` method
+    (``native_out - P[cut] @ V[cut]``, rounded again) is a different arithmetic, so a ``delta`` arm
+    stays on the lane path. With
     ``panel`` the plan's default zero method is used; without it ``delta`` is assumed.
 
     ``staged``: also accept a set over several layers or source rows (measured natively by

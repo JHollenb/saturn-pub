@@ -54,3 +54,27 @@ relative to the repository root. Each line says MEASURED (read in the code or ru
   one FP32 smoke job.
 - 4c: emit v2 for the arms v2 can express; keep reading v1.
 - 4d, 4e: lane-only changes (no engine files involved).
+
+## What was done (appended 2026-11-14 11:03 PST)
+
+- 4a done: `mdb lanes qwen-panels` / `mdb lanes flux-read-panels` (`mdb_lanes/panel_lanes.py`;
+  `lanes_compat.PANEL_VERBS`; pyproject + stub, 48 verbs). MEASURED: plans rebuilt through the verb
+  are byte-identical to the sealed value plans (sha256 6e62c42c…, bdba6c57…).
+- 4b done for Qwen, with a measured caveat: `mdb_lanes/qwen_engine.py` (trace, contributions,
+  `whatif_many` single cuts, staged multi-layer sets, `engine_rows` scored by the panel's own
+  `read_results` / `verdicts`). Smoke job-0fcdf8414918 (FP32 CUDA): base logits and attention
+  weights bit-equal to the lane; cuts within 5.7e-6 of the lane's recompute arithmetic but bit-equal
+  in only 4/24 single cuts and 3/5 sets; no verdict changes. Renormalising cuts, delta-method arms,
+  keep arms of sealed plans, BF16 and FLUX stay on `attention_port`.
+  `experiments/engine_equivalence_20261114/FINDINGS.md`.
+- 4c done: `qwen_engine.v2_checkpoint` writes replay recipe v2 through the engine's project (edits,
+  masks, cell `mix` doses); `qwen_engine.read_recipe` reads v1 and v2; `qwen_engine.V2_GAPS` lists
+  what v2 does not express (renormalising cut, delta zero cut, FP32 blend dose arithmetic, FLUX,
+  other row groupings). v1 `native_replay_recipe` is unchanged and still read.
+- 4d done: `predicted_write.receiver_write_scores`, `pw_shares`, `clean_random_draws` (plus the
+  existing `gated_unit_mass`); docs `packages/mdb/docs/FLUX-READ-PANELS.md` ("Ranking heads") and
+  `ATTENTION-PANELS.md`. MEASURED: reproduces the experiment's addendum-2 selection exactly.
+- 4e done: `mdb_lanes/flux_nnsight.py` (import-guarded; extra `nnsight = ["nnsight==0.8.2"]`); its
+  functions are `bridge.py`'s verbatim (tested), so job-8fd7bb3b1604's parity applies to them for the
+  one cell it measured; nothing else is covered (see the module docstring).
+- No engine file was changed.
