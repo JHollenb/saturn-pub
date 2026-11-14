@@ -1,0 +1,275 @@
+mrun: job-e17f88fa1b7f -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision d9ad731 script exp3_hop3.py
+[    4.3s] load
+[    4.9s] P1 d2:Amsterdam 0.62s
+[    5.2s] P1 d2:Ankara 0.35s
+[    5.6s] P1 d2:Athens 0.36s
+[    6.0s] P1 d2:Bangkok 0.35s
+[    6.3s] P1 d2:Berlin 0.36s
+[    6.7s] P1 d2:Budapest 0.35s
+[    7.0s] P1 d2:Cairo 0.36s
+[    7.4s] P1 d2:Copenhagen 0.36s
+[    7.7s] P1 d2:Helsinki 0.37s
+[    8.1s] P1 d2:Lisbon 0.37s
+[    8.5s] P1 d2:London 0.37s
+[    8.9s] P1 d2:Madrid 0.37s
+[    9.2s] P1 d2:Moscow 0.37s
+[    9.6s] P1 d2:Oslo 0.36s
+[    9.9s] P1 d2:Paris 0.36s
+[   10.3s] P1 d2:Prague 0.36s
+[   10.7s] P1 d2:Rome 0.36s
+[   11.0s] P1 d2:Seoul 0.36s
+[   11.4s] P1 d2:Stockholm 0.36s
+[   11.7s] P1 d2:Tokyo 0.36s
+[   12.1s] P1 d2:Vienna 0.36s
+[   12.4s] P1 d2:Warsaw 0.36s
+[   12.8s] P1 d3-lm:Anitkabir 0.37s
+[   13.2s] P1 d3-lm:Big Ben 0.36s
+[   13.5s] P1 d3-lm:Buckingham Palace 0.36s
+[   13.9s] P1 d3-lm:Fisherman's Bastion 0.37s
+[   14.3s] P1 d3-lm:Gyeongbokgung Palace 0.37s
+[   14.7s] P1 d3-lm:Notre-Dame Cathedral 0.37s
+[   15.0s] P1 d3-lm:Red Square 0.36s
+[   15.4s] P1 d3-lm:Retiro Park 0.37s
+[   15.8s] P1 d3-lm:Saint Basil's Cathedral 0.37s
+[   16.3s] P1 d3-lm:Schonbrunn Palace 0.51s
+[   16.6s] P1 d3-lm:Shibuya Crossing 0.36s
+[   17.0s] P1 d3-lm:St. Stephen's Cathedral 0.37s
+[   17.4s] P1 d3-lm:Suomenlinna fortress 0.37s
+[   17.7s] P1 d3-lm:Tivoli Gardens 0.37s
+[   18.1s] P1 d3-lm:Tower Bridge 0.36s
+[   18.5s] P1 d3-lm:Wat Arun 0.36s
+[   18.8s] P1 d3-lm:the Acropolis 0.36s
+[   19.2s] P1 d3-lm:the Anne Frank House 0.36s
+[   19.6s] P1 d3-lm:the Astronomical Clock of the Old Town 0.38s
+[   19.9s] P1 d3-lm:the Belem Tower 0.37s
+[   20.3s] P1 d3-lm:the Belvedere palace 0.37s
+[   20.7s] P1 d3-lm:the Brandenburg Gate 0.36s
+[   21.0s] P1 d3-lm:the Charles Bridge 0.36s
+[   21.4s] P1 d3-lm:the Colosseum 0.37s
+[   21.8s] P1 d3-lm:the Eiffel Tower 0.37s
+[   22.1s] P1 d3-lm:the Grand Palace 0.36s
+[   22.5s] P1 d3-lm:the Jeronimos Monastery 0.37s
+[   22.9s] P1 d3-lm:the Khan el-Khalili bazaar 0.37s
+[   23.2s] P1 d3-lm:the Kremlin 0.36s
+[   23.6s] P1 d3-lm:the Little Mermaid statue 0.37s
+[   24.0s] P1 d3-lm:the Louvre 0.37s
+[   24.3s] P1 d3-lm:the Meiji Shrine 0.37s
+[   24.7s] P1 d3-lm:the Palace of Culture and Science 0.37s
+[   25.1s] P1 d3-lm:the Pantheon 0.36s
+[   25.4s] P1 d3-lm:the Parthenon 0.37s
+[   25.8s] P1 d3-lm:the Prado Museum 0.37s
+[   26.2s] P1 d3-lm:the Reichstag building 0.37s
+[   26.5s] P1 d3-lm:the Rijksmuseum 0.37s
+[   26.9s] P1 d3-lm:the Senso-ji temple 0.37s
+[   27.3s] P1 d3-lm:the Szechenyi thermal bath 0.37s
+[   27.7s] P1 d3-lm:the Trevi Fountain 0.37s
+[   28.0s] P1 d3-lm:the Vasa Museum 0.37s
+[   28.4s] P1 d3-lm:the Vigeland sculpture park 0.37s
+[   28.8s] P1 d3-per:Alexander Pushkin 0.37s
+[   29.1s] P1 d3-per:Alexander von Humboldt 0.37s
+[   29.5s] P1 d3-per:August Strindberg 0.37s
+[   29.9s] P1 d3-per:Baruch Spinoza 0.37s
+[   30.2s] P1 d3-per:Charlie Chaplin 0.37s
+[   30.6s] P1 d3-per:Claude Monet 0.37s
+[   31.0s] P1 d3-per:Edith Piaf 0.37s
+[   31.3s] P1 d3-per:Ennio Morricone 0.37s
+[   31.7s] P1 d3-per:Erno Rubik 0.37s
+[   32.1s] P1 d3-per:Fernando Pessoa 0.37s
+[   32.5s] P1 d3-per:Franz Kafka 0.37s
+[   32.8s] P1 d3-per:Franz Schubert 0.37s
+[   33.2s] P1 d3-per:Fyodor Dostoevsky 0.38s
+[   33.6s] P1 d3-per:Georges Bizet 0.37s
+[   33.9s] P1 d3-per:Greta Garbo 0.37s
+[   34.3s] P1 d3-per:Harry Houdini 0.37s
+[   34.7s] P1 d3-per:Hokusai 0.37s
+[   35.0s] P1 d3-per:Johann Strauss II 0.37s
+[   35.4s] P1 d3-per:John Keats 0.37s
+[   35.8s] P1 d3-per:Julius Caesar 0.37s
+[   36.2s] P1 d3-per:Lope de Vega 0.37s
+[   36.5s] P1 d3-per:Ludwig Wittgenstein 0.37s
+[   36.9s] P1 d3-per:Marie Curie 0.37s
+[   37.3s] P1 d3-per:Marlene Dietrich 0.37s
+[   37.6s] P1 d3-per:Mikhail Lermontov 0.37s
+[   38.0s] P1 d3-per:Naguib Mahfouz 0.37s
+[   38.4s] P1 d3-per:Natsume Soseki 0.37s
+[   38.7s] P1 d3-per:Niels Bohr 0.37s
+[   39.1s] P1 d3-per:Pedro Calderon de la Barca 0.38s
+[   39.5s] P1 d3-per:Pericles 0.37s
+[   39.9s] P1 d3-per:Plato 0.36s
+[   40.2s] P1 d3-per:Rainer Maria Rilke 0.38s
+[   40.6s] P1 d3-per:Sophia Loren 0.37s
+[   41.0s] P1 d3-per:Soren Kierkegaard 0.37s
+[   41.3s] P1 d3-per:Virginia Woolf 0.37s
+[   41.7s] P1 d3-per:Voltaire 0.37s
+[   42.1s] P1 d3-per:Walter Benjamin 0.37s
+[   42.4s] P1 d3-per:Yukio Mishima 0.37s
+[   42.8s] P1 d4-work:Candide 0.37s
+[   43.2s] P1 d4-work:Eugene Onegin 0.37s
+[   43.6s] P1 d4-work:The Arcades Project 0.37s
+[   43.9s] P1 d4-work:The Blue Danube waltz 0.38s
+[   44.3s] P1 d4-work:The Book of Disquiet 0.38s
+[   44.7s] P1 d4-work:The Great Wave off Kanagawa 0.38s
+[   45.1s] P1 d4-work:The Metamorphosis 0.38s
+[   45.5s] P1 d4-work:The Republic 0.37s
+[   45.8s] P1 d4-work:the Commentaries on the Gallic War 0.38s
+[   46.2s] P1 d4-work:the Duino Elegies 0.38s
+[   46.6s] P1 d4-work:the Rubik's Cube 0.38s
+[   47.0s] P1 d4-work:the Tractatus Logico-Philosophicus 0.39s
+[   47.4s] P1 d4-work:the Unfinished Symphony 0.37s
+[   47.7s] P1 d4-work:the book Either/Or 0.38s
+[   48.1s] P1 d4-work:the book Fear and Trembling 0.38s
+[   48.5s] P1 d4-work:the film The Great Dictator 0.38s
+[   48.9s] P1 d4-work:the novel A Hero of Our Time 0.38s
+[   49.3s] P1 d4-work:the novel Crime and Punishment 0.38s
+[   49.6s] P1 d4-work:the novel Kokoro 0.38s
+[   50.0s] P1 d4-work:the novel Mrs Dalloway 0.38s
+[   50.4s] P1 d4-work:the novel Palace Walk 0.38s
+[   50.8s] P1 d4-work:the novel The Sound of Waves 0.38s
+[   51.1s] P1 d4-work:the novel The Trial 0.37s
+[   51.5s] P1 d4-work:the opera Carmen 0.37s
+[   51.9s] P1 d4-work:the painting Impression, Sunrise 0.38s
+[   52.3s] P1 d4-work:the play Fuenteovejuna 0.38s
+[   52.7s] P1 d4-work:the play Life Is a Dream 0.38s
+[   53.0s] P1 d4-work:the play Miss Julie 0.38s
+[   53.4s] P1 d4-work:the poem Ode to a Nightingale 0.38s
+[   53.4s] NOMINATED 63
+[   55.0s] P2 d2:Amsterdam 1.53s
+[   55.0s] P2 d2:Ankara 0.0s
+[   56.8s] P2 d2:Athens 1.86s
+[   58.4s] P2 d2:Bangkok 1.54s
+[   60.1s] P2 d2:Berlin 1.71s
+[   61.9s] P2 d2:Budapest 1.79s
+[   63.5s] P2 d2:Cairo 1.67s
+[   64.9s] P2 d2:Copenhagen 1.39s
+[   64.9s] P2 d2:Helsinki 0.0s
+[   66.6s] P2 d2:Lisbon 1.67s
+[   68.4s] P2 d2:London 1.77s
+[   70.1s] P2 d2:Madrid 1.78s
+[   71.8s] P2 d2:Moscow 1.66s
+[   71.8s] P2 d2:Oslo 0.0s
+[   73.6s] P2 d2:Paris 1.78s
+[   75.0s] P2 d2:Prague 1.44s
+[   76.8s] P2 d2:Rome 1.77s
+[   76.8s] P2 d2:Seoul 0.0s
+[   78.2s] P2 d2:Stockholm 1.44s
+[   80.0s] P2 d2:Tokyo 1.78s
+[   81.5s] P2 d2:Vienna 1.46s
+[   82.9s] P2 d2:Warsaw 1.44s
+[   82.9s] P2 d3-lm:Anitkabir 0.0s
+[   84.7s] P2 d3-lm:Big Ben 1.79s
+[   86.5s] P2 d3-lm:Buckingham Palace 1.79s
+[   86.5s] P2 d3-lm:Fisherman's Bastion 0.0s
+[   86.5s] P2 d3-lm:Gyeongbokgung Palace 0.0s
+[   88.3s] P2 d3-lm:Notre-Dame Cathedral 1.84s
+[   90.0s] P2 d3-lm:Red Square 1.69s
+[   92.0s] P2 d3-lm:Retiro Park 1.96s
+[   93.7s] P2 d3-lm:Saint Basil's Cathedral 1.71s
+[   95.3s] P2 d3-lm:Schonbrunn Palace 1.62s
+[   97.1s] P2 d3-lm:Shibuya Crossing 1.82s
+[   98.7s] P2 d3-lm:St. Stephen's Cathedral 1.62s
+[   98.7s] P2 d3-lm:Suomenlinna fortress 0.0s
+[  100.1s] P2 d3-lm:Tivoli Gardens 1.35s
+[  101.9s] P2 d3-lm:Tower Bridge 1.79s
+[  103.4s] P2 d3-lm:Wat Arun 1.47s
+[  105.1s] P2 d3-lm:the Acropolis 1.78s
+[  106.5s] P2 d3-lm:the Anne Frank House 1.36s
+[  107.9s] P2 d3-lm:the Astronomical Clock of the Old Town 1.39s
+[  109.5s] P2 d3-lm:the Belem Tower 1.6s
+[  111.0s] P2 d3-lm:the Belvedere palace 1.51s
+[  112.6s] P2 d3-lm:the Brandenburg Gate 1.62s
+[  114.1s] P2 d3-lm:the Charles Bridge 1.47s
+[  115.9s] P2 d3-lm:the Colosseum 1.84s
+[  117.8s] P2 d3-lm:the Eiffel Tower 1.84s
+[  119.2s] P2 d3-lm:the Grand Palace 1.47s
+[  121.0s] P2 d3-lm:the Jeronimos Monastery 1.76s
+[  122.6s] P2 d3-lm:the Khan el-Khalili bazaar 1.63s
+[  124.3s] P2 d3-lm:the Kremlin 1.69s
+[  125.7s] P2 d3-lm:the Little Mermaid statue 1.35s
+[  127.5s] P2 d3-lm:the Louvre 1.82s
+[  129.3s] P2 d3-lm:the Meiji Shrine 1.83s
+[  130.8s] P2 d3-lm:the Palace of Culture and Science 1.51s
+[  132.5s] P2 d3-lm:the Pantheon 1.73s
+[  134.4s] P2 d3-lm:the Parthenon 1.8s
+[  136.2s] P2 d3-lm:the Prado Museum 1.85s
+[  137.8s] P2 d3-lm:the Reichstag building 1.63s
+[  139.2s] P2 d3-lm:the Rijksmuseum 1.4s
+[  141.1s] P2 d3-lm:the Senso-ji temple 1.87s
+[  142.7s] P2 d3-lm:the Szechenyi thermal bath 1.63s
+[  144.5s] P2 d3-lm:the Trevi Fountain 1.83s
+[  146.0s] P2 d3-lm:the Vasa Museum 1.5s
+[  146.0s] P2 d3-lm:the Vigeland sculpture park 0.0s
+[  147.8s] P2 d3-per:Alexander Pushkin 1.74s
+[  149.3s] P2 d3-per:Alexander von Humboldt 1.54s
+[  150.8s] P2 d3-per:August Strindberg 1.51s
+[  152.4s] P2 d3-per:Baruch Spinoza 1.55s
+[  154.1s] P2 d3-per:Charlie Chaplin 1.71s
+[  156.0s] P2 d3-per:Claude Monet 1.86s
+[  157.8s] P2 d3-per:Edith Piaf 1.88s
+[  159.7s] P2 d3-per:Ennio Morricone 1.86s
+[  161.2s] P2 d3-per:Erno Rubik 1.51s
+[  162.8s] P2 d3-per:Fernando Pessoa 1.61s
+[  164.3s] P2 d3-per:Franz Kafka 1.5s
+[  166.0s] P2 d3-per:Franz Schubert 1.65s
+[  167.8s] P2 d3-per:Fyodor Dostoevsky 1.78s
+[  169.5s] P2 d3-per:Georges Bizet 1.76s
+[  171.0s] P2 d3-per:Greta Garbo 1.51s
+[  172.6s] P2 d3-per:Harry Houdini 1.62s
+[  174.5s] P2 d3-per:Hokusai 1.86s
+[  176.1s] P2 d3-per:Johann Strauss II 1.64s
+[  178.0s] P2 d3-per:John Keats 1.84s
+[  179.6s] P2 d3-per:Julius Caesar 1.63s
+[  181.5s] P2 d3-per:Lope de Vega 1.87s
+[  183.2s] P2 d3-per:Ludwig Wittgenstein 1.68s
+[  184.7s] P2 d3-per:Marie Curie 1.51s
+[  186.3s] P2 d3-per:Marlene Dietrich 1.65s
+[  188.1s] P2 d3-per:Mikhail Lermontov 1.75s
+[  189.7s] P2 d3-per:Naguib Mahfouz 1.64s
+[  191.6s] P2 d3-per:Natsume Soseki 1.88s
+[  193.0s] P2 d3-per:Niels Bohr 1.38s
+[  194.9s] P2 d3-per:Pedro Calderon de la Barca 1.9s
+[  196.7s] P2 d3-per:Pericles 1.82s
+[  198.5s] P2 d3-per:Plato 1.8s
+[  200.0s] P2 d3-per:Rainer Maria Rilke 1.53s
+[  201.9s] P2 d3-per:Sophia Loren 1.83s
+[  203.3s] P2 d3-per:Soren Kierkegaard 1.39s
+[  205.1s] P2 d3-per:Virginia Woolf 1.84s
+[  207.0s] P2 d3-per:Voltaire 1.86s
+[  208.5s] P2 d3-per:Walter Benjamin 1.52s
+[  210.3s] P2 d3-per:Yukio Mishima 1.87s
+[  211.9s] P2 d4-work:Candide 1.5s
+[  213.8s] P2 d4-work:Eugene Onegin 1.91s
+[  215.3s] P2 d4-work:The Arcades Project 1.56s
+[  216.9s] P2 d4-work:The Blue Danube waltz 1.58s
+[  216.9s] P2 d4-work:The Book of Disquiet 0.0s
+[  218.8s] P2 d4-work:The Great Wave off Kanagawa 1.93s
+[  220.4s] P2 d4-work:The Metamorphosis 1.54s
+[  221.7s] P2 d4-work:The Republic 1.35s
+[  223.4s] P2 d4-work:the Commentaries on the Gallic War 1.71s
+[  224.9s] P2 d4-work:the Duino Elegies 1.43s
+[  226.4s] P2 d4-work:the Rubik's Cube 1.54s
+[  228.0s] P2 d4-work:the Tractatus Logico-Philosophicus 1.6s
+[  229.6s] P2 d4-work:the Unfinished Symphony 1.56s
+[  231.0s] P2 d4-work:the book Either/Or 1.41s
+[  232.4s] P2 d4-work:the book Fear and Trembling 1.41s
+[  234.0s] P2 d4-work:the film The Great Dictator 1.62s
+[  235.8s] P2 d4-work:the novel A Hero of Our Time 1.8s
+[  237.6s] P2 d4-work:the novel Crime and Punishment 1.79s
+[  239.5s] P2 d4-work:the novel Kokoro 1.9s
+[  241.4s] P2 d4-work:the novel Mrs Dalloway 1.9s
+[  243.0s] P2 d4-work:the novel Palace Walk 1.64s
+[  243.0s] P2 d4-work:the novel The Sound of Waves 0.0s
+[  244.6s] P2 d4-work:the novel The Trial 1.54s
+[  246.1s] P2 d4-work:the opera Carmen 1.51s
+[  247.8s] P2 d4-work:the painting Impression, Sunrise 1.7s
+[  249.7s] P2 d4-work:the play Fuenteovejuna 1.93s
+[  249.7s] P2 d4-work:the play Life Is a Dream 0.0s
+[  249.7s] P2 d4-work:the play Miss Julie 0.0s
+[  251.6s] P2 d4-work:the poem Ode to a Nightingale 1.9s
+[  251.6s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:13.10
+	Maximum resident set size (kbytes): 8479888
+mrun: job-e17f88fa1b7f -> succeeded
+mrun: job-e17f88fa1b7f finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 253.44, 'peak_rss_mb': 8323.1, 'peak_vram_mb': 7726.0}
