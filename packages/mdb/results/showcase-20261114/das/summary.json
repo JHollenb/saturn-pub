@@ -379,7 +379,7 @@
     "median_pk_norm": 0.046136512252945044,
     "n": 63
    },
-   "das_prev_nested_min_deg": 6.26780734985292
+   "das_prev_in_k_max_deg": 6.26780734985292
   },
   "k4": {
    "symtab": {
@@ -411,7 +411,7 @@
     "median_pk_norm": 0.08085037514343793,
     "n": 63
    },
-   "das_prev_nested_min_deg": 6.416129959602439
+   "das_prev_in_k_max_deg": 6.416129959602439
   },
   "k8": {
    "symtab": {
@@ -443,7 +443,7 @@
     "median_pk_norm": 0.1179537568123197,
     "n": 63
    },
-   "das_prev_nested_min_deg": 9.765350140154707
+   "das_prev_in_k_max_deg": 9.765350140154707
   },
   "k16": {
    "symtab": {
@@ -475,7 +475,7 @@
     "median_pk_norm": 0.1565750744127429,
     "n": 63
    },
-   "das_prev_nested_min_deg": 11.579735362737416
+   "das_prev_in_k_max_deg": 11.579735362737416
   },
   "k32": {
    "symtab": {
@@ -507,7 +507,7 @@
     "median_pk_norm": 0.16887487144808627,
     "n": 63
    },
-   "das_prev_nested_min_deg": 9.846257880213656
+   "das_prev_in_k_max_deg": 9.846257880213656
   }
  },
  "das": {
