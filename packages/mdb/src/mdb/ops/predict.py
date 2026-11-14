@@ -329,8 +329,8 @@ register(Op("forecast", "Seal a prediction of the next stop (or a later stop of 
             (Arg("target", "address"),), "mutate", True, _forecast,
             usage="forecast [ADDR|M[a,b]]"), replace=True)
 register(Op("verify", "Compare open forecasts whose target the cursor has passed with the "
-            "native values (confirmed or not by the measured residual, shown in dtype spacings, "
-            "against its floor 3 x sqrt(rounded ops) x spacing; order)",
+            "native values (confirmed, not confirmed or unresolved: native against the sealed "
+            "emulated prediction, floor 1 dtype spacing; rounding effect against exact; order)",
             (Arg("ids", "ints"),), "mutate", True, _verify, usage="verify [ID ...]"),
          replace=True)
 register(Op("whatif", "Predicted, then natively measured change of a consumer under one edit; "
