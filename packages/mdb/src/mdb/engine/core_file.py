@@ -96,8 +96,9 @@ def dump(run: Any, path: str | Path, *, row: int | None = None,
                      "measured"),
         "custody": custody("mdb-stepped"),
     }
-    from mdb.core.pointers import seal_digest
     from saturn_pub.values import digest
+
+    from mdb.core.pointers import seal_digest
 
     session = session_id or "mdb-run:" + seal_digest({"model": adapter.model_identity,
                                                       "prompt": digest(run.tokens)})[:32]
@@ -210,10 +211,10 @@ class CoreFile:
 
 def load(path: str | Path) -> CoreFile:
     """Read a core file, verifying the record seal and every tensor's sha256."""
+    import json
+
     from mdb.core.kinds import CORE_FILE  # noqa: F401 (declares the kind)
     from mdb.core.records import verify_record
-
-    import json
 
     data = torch.load(str(path), map_location="cpu", weights_only=True)
     if data.get("schema") != SCHEMA:

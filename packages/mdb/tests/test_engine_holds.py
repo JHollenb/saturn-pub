@@ -13,7 +13,7 @@ pytest.importorskip("transformers")
 
 from mdb.engine import holds  # noqa: E402
 from mdb.engine.models import tiny_model  # noqa: E402
-from mdb.ops.debugger import attach, open_tiny  # noqa: E402
+from mdb.ops.debugger import attach  # noqa: E402
 
 P = [1, 5, 9, 3, 7]
 LAST = len(P) - 1
