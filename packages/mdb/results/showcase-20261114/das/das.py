@@ -279,6 +279,12 @@ if MODE == "score":
     tests = test_pairs()
     if pick:
         tests = [tests[int(k)] for k in pick.split(",")]
+    if "symtr" in ARMS:   # exploratory: readout span of the TRAINING countries' tokens only (no test vocabulary)
+        tr_tokens = sorted({i["country_token"] for i in TRAIN["items"] if i.get("country_token")})
+        St, _ = pca(symtab_rows(tr_tokens), max(KS))
+        for k in KS:
+            BASES[f"symtr{k}"] = St[:, :k]
+        log(f"symtr from {len(tr_tokens)} training-country tokens")
     if "sae" in ARMS:
         B19 = sae.open_set("qwen-scope", SAE_DIR, layers=[19], cache=2).get(19)
         COUNTRY = {int(f) for f in json.load(open("census.json"))["features"]}
