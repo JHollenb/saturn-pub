@@ -1,0 +1,17 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 3bc7b3b model Qwen3-1.7B-Base steps: native B 0/3
+== step [native B 0/3] budget 570s
+[    4.1s] load Qwen3-1.7B-Base L_c=20 kv=6 phase=B
+STEP_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:21.81
+	Maximum resident set size (kbytes): 4356284
+Traceback (most recent call last):
+mdb.core.pointers.RecordError: record is 66110 bytes (> 65536); store it by pointer
+Command exited with non-zero status 1
+1 MiB
+armA-Qwen3-1.7B-Base-0of1.jsonl
+armB-Qwen3-1.7B-Base-0of3.jsonl
+armE1-Qwen3-1.7B-Base-0of1.jsonl
+pools-Qwen3-1.7B-Base.json
+records-native-A-Qwen3-1.7B-Base.jsonl
+records-native-pools-Qwen3-1.7B-Base.jsonl

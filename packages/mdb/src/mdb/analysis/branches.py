@@ -616,9 +616,26 @@ class Branches:
             "procedure": procedure(run),
             "custody": custody(self.kernel_path),
         }
-        return seal_record(session_id=session_id or run_session_id(run), kind="branches",
-                           model_identity=run.adapter.model_identity,
-                           execution=dict(run.adapter.execution), authority=MEASURED, body=body)
+        def sealed(b):
+            return seal_record(session_id=session_id or run_session_id(run), kind="branches",
+                               model_identity=run.adapter.model_identity,
+                               execution=dict(run.adapter.execution), authority=MEASURED, body=b)
+        from mdb.core.pointers import RecordError
+
+        try:
+            return sealed(body)
+        except RecordError:
+            # too large for one record (many arms with edits/probes): the full rows by pointer
+            # (bounded.put_json, held on the run), a compact per-arm table in the record
+            from mdb.core.bounded import put_json
+
+            body["arms_payload"] = put_json(measured, run=run)
+            body["arms"] = [{"name": r["name"], "kind": r["kind"], "M": r["M"], "dM": r["dM"],
+                             "argmax": r["argmax"], "stability": r.get("stability"),
+                             "effect_floors": r.get("effect_floors"),
+                             "kernel_path": r["kernel_path"]} for r in measured[:_CAP]]
+            body["arms_compact"] = True
+            return sealed(body)
 
 
 def branches(run: Any, consumer: Any, **options: Any) -> Branches:

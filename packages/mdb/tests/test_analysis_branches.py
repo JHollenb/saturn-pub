@@ -156,3 +156,22 @@ def test_probes_read_each_arm_before_restore(dbg, donor):
     rec = br.seal()
     verify_record(rec)
     assert rec["body"]["probes"] == ["n", "v"] and "probes" in rec["body"]["base"]
+
+
+def test_seal_large_branches_by_pointer(dbg, donor):
+    """Many arms with probes exceed one record: the record keeps a compact arm table and the full
+    rows by pointer (amplitude programme, arm B had 33 arms x 6 probes)."""
+    from mdb.core.bounded import load_json
+
+    run = dbg.run(P, name="big", prefill=2)
+    br = Branches(run, Margin(LAST, 3, 7), at="t2.L0.h",
+                  probes={f"p{i}": (lambda r: [0.125] * 40) for i in range(6)})
+    for i in range(24):
+        br.add_null(f"n{i}", "self", like=br.add("H", []).name) if i == 0 else \
+            br.add_null(f"n{i}", "random", like="H", seed=i)
+    br.run()
+    rec = br.seal()
+    verify_record(rec)
+    assert rec["body"].get("arms_compact") is True
+    full = load_json(rec["body"]["arms_payload"], run=run)
+    assert len(full) == len(rec["body"]["arms"]) == 25 and "probes" in full[0]

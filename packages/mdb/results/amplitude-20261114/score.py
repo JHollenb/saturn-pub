@@ -54,8 +54,11 @@ def frac(a, b):
 def armA(model):
     A = [r for r in rows(model, "armA") if "excluded" not in r]
     res = {}
+    ties = [r for r in A if r["stepped"]["T1"]["argmax"] == ITEM[r["id"]]["answer"]]
+    res["near_ties"] = [{"id": r["id"], "stratum": r["stratum"], "M0": r["M0"], "floor": r["floor"]} for r in ties]
+    tie_ids = {r["id"] for r in ties}
     for stratum in ("right_operand", "readable"):
-        it = [r for r in A if r["stratum"] == stratum]
+        it = [r for r in A if r["stratum"] == stratum and r["id"] not in tie_ids]
         mono, flips, stars, crit, stable_flip = 0, 0, [], [], 0
         span = {k: 0 for k in ("1", "4", "16")}
         tb = 0
@@ -121,6 +124,8 @@ def armB(model, LC):
     key = f"amp_L{LC}"
     strata = {}
     arms_all = []
+    out["near_ties"] = [r["id"] for r in B if r["base_argmax"] == ITEM[r["id"]]["answer"]]
+    B = [r for r in B if r["base_argmax"] != ITEM[r["id"]]["answer"]]
     for r in B:
         a = ITEM[r["id"]]["answer"]
         true = {k: v for k, v in r["arms"].items() if k.startswith("B")}
@@ -181,7 +186,11 @@ def _spearman(x, y):
 def armC(model):
     C = rows(model, "armC")
     A = {r["id"]: r for r in rows(model, "armA")}
-    out = {"n": len(C), "flipped_fp32": sum(r["alpha_star"] is not None for r in C)}
+    out = {"near_ties": [r["id"] for r in C if r["ladder"]["1"]["argmax"] == ITEM[r["id"]]["answer"]]}
+    C = [r for r in C if r["id"] not in out["near_ties"]]
+    out.update(n=len(C), flipped_fp32=sum(r["alpha_star"] is not None for r in C),
+               flipped_by_stratum={s_: frac(sum(r["alpha_star"] is not None for r in C if r["stratum"] == s_),
+                                            sum(1 for r in C if r["stratum"] == s_)) for s_ in ("right_operand", "readable")})
     agree = 0
     for r in C:
         a = ITEM[r["id"]]["answer"]
