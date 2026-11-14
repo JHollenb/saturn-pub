@@ -1,0 +1,147 @@
+mrun: job-6aa7bc89a6ed -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision cddb4f667ebb008f037ec56602e8a9e877741d73 npairs 9
+(mdb) sae {"action": "load", "name": "qs", "path": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "cache": 28}  [0.05s]
+sae qs: /mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50  site L<l>.h_out  k 50  layers 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27  revision ce1a79d9c5163932d65c417380e53230e1086370  cache 28
+19 entries, 9 pairs; load 5.5s
+===== pair Paris (France) <- Rome (Italy)
+(mdb) features {"address": "L*.h_out", "consumer": "M[9625,15344]"}  [12.46s]
+features profile  SAE qs  consumer t7.M[9625,15344] = 8.25 [measured P19]
+  layer  direct(skip path)  features   bias      ERROR     error/direct  |error| share  ||e||/||x||  closure
+  L0.h_out    0.014748    0.011297 0.0032158 0.00023537    0.015959   0.0039576     0.39986  0
+  L1.h_out     0.02817    0.018843 0.0073884 0.0019389    0.068827    0.021779      0.3587  0
+  L2.h_out    0.023126    0.013653  0.012141 -0.0026679    -0.11537    0.028426     0.39949  0
+  L3.h_out     0.00483   0.0024654   0.01369 -0.011325     -2.3447     0.10949     0.37903  0
+  L4.h_out    0.012289  -0.0038609  0.014231 0.0019192     0.15617    0.017309     0.31524  0
+  L5.h_out   -0.035253   -0.045513  0.015062 -0.0048018     0.13621    0.030913     0.35823  0
+  L6.h_out     -0.0201   -0.049406  0.024656 0.0046508    -0.23139    0.027486     0.38669  0
+  L7.h_out    0.020399    0.012864  0.023906  -0.01637    -0.80245    0.095394     0.42808  0
+  L8.h_out    0.056696   0.0002012   0.01745  0.039045     0.68866     0.15814     0.47837  0
+  L9.h_out    0.065831    0.055281  0.017913 -0.0073634    -0.11185    0.029313     0.43398  0
+  L10.h_out   0.072099    0.075079  0.010022 -0.013002    -0.18033     0.03967     0.41377  0
+  L11.h_out   0.084137    0.028014  0.015747  0.040376     0.47988      0.1262     0.43006  0
+  L12.h_out   0.034356    0.067009  0.012976 -0.045629     -1.3281     0.11621     0.42332  0
+  L13.h_out   0.091774      0.1108  0.010517 -0.029542     -0.3219    0.075186     0.42406  0
+  L14.h_out    0.14196     0.16435 0.0080607 -0.030447    -0.21448    0.068824     0.46404  -1.7764e-15
+  L15.h_out    0.13277     0.22707 0.0085621  -0.10286    -0.77476      0.1619     0.45743  0
+  L16.h_out     0.2349     0.17234  0.010483  0.052079     0.22171    0.082664     0.41751  0
+  L17.h_out    0.35042     0.36143   0.01013 -0.021139   -0.060326    0.028738     0.38854  0
+  L18.h_out    0.59234     0.20657  0.036829   0.34894     0.58908     0.25959     0.41042  0
+  L19.h_out    0.71454     0.26688  0.082431   0.36523     0.51114     0.23884     0.39125  -1.7764e-15
+  L20.h_out     3.1739      2.9965   0.14604  0.031348   0.0098768   0.0070412     0.38231  1.7764e-15
+  L21.h_out      4.026       3.603   0.13384   0.28915     0.07182    0.054942     0.40997  -1.7764e-15
+  L22.h_out     6.7991      5.8281   0.10922    0.8617     0.12674     0.09719     0.37628  3.5527e-15
+  L23.h_out     11.852      11.158   0.10139    0.5922    0.049967     0.04442     0.34421  3.5527e-15
+  L24.h_out     11.417      10.533   0.19645   0.68795    0.060256    0.050131     0.34773  1.0658e-14
+  L25.h_out     11.221      10.705   0.24712   0.26922    0.023992    0.021698     0.30594  -8.8818e-15
+  L26.h_out     10.789      11.017   0.52532   -0.7536   -0.069851    0.057542     0.26297  0
+  L27.h_out     8.3353      8.7958   0.46403  -0.92452    -0.11092    0.081582     0.27063  1.5987e-14
+  [derived-exact P19 except native (measured) and remainder (measured)]
+(mdb) whatif {"target": "L8.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [4.26s]
+whatif t7.L8.h_out add tensor f910735ec1c3 from error*-1 (SAE qs L8) -> t7.M[9625,15344]  (mode rewind, record e3f832aeb69c46c0)
+  sealed  linear ΔM = 0.10254 [derived-local P14]   exact ΔM = 0.46378 [derived-exact]
+  native  ΔM = 0.375 [measured]   (base 8.25 [measured] -> edited 8.625 [measured])
+  error split (P20): linear 0.10254 [derived-local P14] + nonlinear 0.36124 [derived-exact P20] + realisation -0.00047494 [derived-exact P20] + rounding -0.088307 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.375 [measured P20], exact ΔM 0.46331 [derived-exact P20], residual -0.088307 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L14.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [3.00s]
+whatif t7.L14.h_out add tensor 916748cb43dc from error*-1 (SAE qs L14) -> t7.M[9625,15344]  (mode rewind, record b4c48af202a7a19b)
+  sealed  linear ΔM = 1.7406 [derived-local P14]   exact ΔM = 1.7223 [derived-exact]
+  native  ΔM = 1.875 [measured]   (base 8.25 [measured] -> edited 10.125 [measured])
+  error split (P20): linear 1.7406 [derived-local P14] + nonlinear -0.018288 [derived-exact P20] + realisation -9.802e-05 [derived-exact P20] + rounding 0.1528 [measured P20]
+  verdict (P20): effect  native ΔM 1.875 [measured P20], exact ΔM 1.7222 [derived-exact P20], residual 0.1528 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L18.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.42s]
+whatif t7.L18.h_out add tensor 9cec764039b1 from error*-1 (SAE qs L18) -> t7.M[9625,15344]  (mode rewind, record f09cdfb0b0d9b6b0)
+  sealed  linear ΔM = 0.011452 [derived-local P14]   exact ΔM = -0.61493 [derived-exact]
+  native  ΔM = -0.5 [measured]   (base 8.25 [measured] -> edited 7.75 [measured])
+  error split (P20): linear 0.011452 [derived-local P14] + nonlinear -0.62638 [derived-exact P20] + realisation -0.00086959 [derived-exact P20] + rounding 0.1158 [measured P20]
+  verdict (P20): unresolved  native ΔM -0.5 [measured P20], exact ΔM -0.6158 [derived-exact P20], residual 0.1158 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])  [native Δ -0.5 is within the floor 0.5 but the exact Δ -0.6158 is not]
+  session unchanged at t7.logits  (5 moves, restored)
+state: unresolved
+(mdb) whatif {"target": "L20.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [2.12s]
+whatif t7.L20.h_out add tensor 694d155de21f from error*-1 (SAE qs L20) -> t7.M[9625,15344]  (mode rewind, record e385c7cb2b0a8399)
+  sealed  linear ΔM = 0.76644 [derived-local P14]   exact ΔM = 0.24674 [derived-exact]
+  native  ΔM = 0.25 [measured]   (base 8.25 [measured] -> edited 8.5 [measured])
+  error split (P20): linear 0.76644 [derived-local P14] + nonlinear -0.51969 [derived-exact P20] + realisation -0.00078845 [derived-exact P20] + rounding 0.0040448 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0.25 [measured P20], exact ΔM 0.24596 [derived-exact P20], residual 0.0040448 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L22.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.95s]
+whatif t7.L22.h_out add tensor 836ff143dde1 from error*-1 (SAE qs L22) -> t7.M[9625,15344]  (mode rewind, record 08141da425e22438)
+  sealed  linear ΔM = 1.0108 [derived-local P14]   exact ΔM = 0.90906 [derived-exact]
+  native  ΔM = 1 [measured]   (base 8.25 [measured] -> edited 9.25 [measured])
+  error split (P20): linear 1.0108 [derived-local P14] + nonlinear -0.10175 [derived-exact P20] + realisation -0.0014048 [derived-exact P20] + rounding 0.092347 [measured P20]
+  verdict (P20): effect  native ΔM 1 [measured P20], exact ΔM 0.90765 [derived-exact P20], residual 0.092347 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L24.h_out", "value": "error*-1", "op": "add", "consumer": "M[9625,15344]"}  [1.55s]
+whatif t7.L24.h_out add tensor af2e86215246 from error*-1 (SAE qs L24) -> t7.M[9625,15344]  (mode rewind, record b99f974b3e042c6f)
+  sealed  linear ΔM = 0.29512 [derived-local P14]   exact ΔM = -0.097896 [derived-exact]
+  native  ΔM = -0.25 [measured]   (base 8.25 [measured] -> edited 8 [measured])
+  error split (P20): linear 0.29512 [derived-local P14] + nonlinear -0.39302 [derived-exact P20] + realisation 0.0014873 [derived-exact P20] + rounding -0.15359 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM -0.25 [measured P20], exact ΔM -0.096409 [derived-exact P20], residual -0.15359 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "recon@T-recon", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t7.L20.h_out add tensor 646871efe3a3 from recon@T-recon (SAE qs L20) -> t7.M[9625,15344]  (mode rewind, record 349a9e7122333720)
+  sealed  linear ΔM = -3.3681 [derived-local P14]   exact ΔM = -8.1022 [derived-exact]
+  native  ΔM = -8 [measured]   (base 8.25 [measured] -> edited 0.25 [measured])
+  error split (P20): linear -3.3681 [derived-local P14] + nonlinear -4.7341 [derived-exact P20] + realisation -0.007696 [derived-exact P20] + rounding 0.10988 [measured P20]
+  verdict (P20): effect  native ΔM -8 [measured P20], exact ΔM -8.1099 [derived-exact P20], residual 0.10988 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) whatif {"target": "L20.h_out", "value": "error@T-error", "op": "add", "consumer": "M[9625,15344]"}  [2.17s]
+whatif t7.L20.h_out add tensor 0b7e6ec658f4 from error@T-error (SAE qs L20) -> t7.M[9625,15344]  (mode rewind, record 296b73584365a0c8)
+  sealed  linear ΔM = -0.023891 [derived-local P14]   exact ΔM = 0.017007 [derived-exact]
+  native  ΔM = 0 [measured]   (base 8.25 [measured] -> edited 8.25 [measured])
+  error split (P20): linear -0.023891 [derived-local P14] + nonlinear 0.040899 [derived-exact P20] + realisation -0.0034159 [derived-exact P20] + rounding -0.013591 [measured P20]
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM 0.013591 [derived-exact P20], residual -0.013591 [measured P20]; floor 0.5 [measured P20] = max(|residual|, 2 x spacing 0.25 [measured P20])
+  session unchanged at t7.logits  (5 moves, restored)
+(mdb) features {"address": "L20.h_out", "consumer": "M[9625,15344]", "top": 8, "lens": 4}  [0.15s]
+features t7.L20.h_out  SAE qs L20 (L20.h_out, k 50, 50 active)  ||x|| 930.26 [measured]
+  f25654  act 171.02 [derived-exact]  ||d|| 1  effect 2.1633 [derived-exact P19]  promotes "\u6cd5\u56fd" " French" " France" "French" [derived-local]
+  f27749  act 79.7 [derived-exact]  ||d|| 1  effect 0.26276 [derived-exact P19]  promotes " whom" "ships" " who" "who" [derived-local]
+  f23469  act 29.621 [derived-exact]  ||d|| 1  effect 0.24653 [derived-exact P19]  promotes " d\u00e9" "R\u00e9" " sous" " suiv" [derived-local]
+  f29239  act 147.32 [derived-exact]  ||d|| 1  effect 0.15148 [derived-exact P19]  promotes " ____" "____" " ______" " __" [derived-local]
+  f14546  act 35.306 [derived-exact]  ||d|| 1  effect 0.13371 [derived-exact P19]  promotes "\u5317\u4eac\u5e02" "\u5317\u4eac" "\u5728\u5317\u4eac" "\u6d77\u6dc0\u533a" [derived-local]
+  f20296  act 122.55 [derived-exact]  ||d|| 1  effect -0.11441 [derived-exact P19]  promotes "\u9996\u90fd" " bordered" "\u4eba\u53e3" "\u4e2d\u90e8" [derived-local]
+  f6371   act 40.477 [derived-exact]  ||d|| 1  effect -0.076086 [derived-exact P19]  promotes " \u20ac" "\u4e07\u6b27\u5143" "\u6b27\u76df" " Spain" [derived-local]
+  f9102   act 27.76 [derived-exact]  ||d|| 1  effect 0.064563 [derived-exact P19]  promotes " royal" " palace" " monarchy" " monarch" [derived-local]
+  +42 more  act Σ 1994.8  effect Σ 0.16474 [derived-exact P19]
+  b_dec    ||b|| 579.38  effect 0.14604 [derived-exact P19]
+  ERROR    ||e|| 355.65 [derived-exact]  ||e||/||x|| 0.38231  energy 0.14616  effect 0.031348 [derived-exact P19]
+  identity x = b_dec + Σ a_f d_f + e closes to 1.7764e-15 [derived-exact]
+  t7.M[9625,15344] 8.25 [measured P19] = direct 3.1739 [derived-exact P19] (features 2.9965 + bias 0.14604 + error 0.031348) + later layers 5.1611 [derived-exact P19] + head bias 0 + remainder -0.085027 [measured P19]
+  error/direct 0.0098768  |error| share 0.0070412  closure 1.7764e-15 [derived-exact P19]
+ROW {"pair": "Paris->Rome", "consumer": "M[9625,15344]", "cf_margin": -8.25, "cf_argmax": 15344, "argmax": 9625, "base": 8.25, "argmax_text": " France", "splice": {"8": {"native": 0.375, "error_direct": 0.039044592919675256}, "14": {"native": 1.875, "error_direct": -0.030447005032090017}, "18": {"native": -0.5, "error_direct": 0.34893709122193983}, "20": {"native": 0.25, "error_direct": 0.031348202350020296}, "22": {"native": 1.0, "error_direct": 0.8617000856967092}, "24": {"native": -0.25, "error_direct": 0.6879506738738301}}, "cell": {"16": 0.0, "18": -0.125, "19": 0.125, "20": -8.25, "21": -0.75, "22": -0.875}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -8.25, "phi": -8.0, "E": 0.0}, "source": {"4": {"null": 0.0, "full": -15.625, "phi": -14.875, "E": -0.375}, "10": {"null": 0.0, "full": -15.25, "phi": -14.5, "E": 0.25}, "16": {"null": 0.0, "full": -15.25, "phi": -14.25, "E": -0.625}}, "all_cells": -15.875, "seconds": 51.82004620000225}
+T 57.3s
+===== pair Rome (Italy) <- Berlin (Germany)
+ROW {"pair": "Rome->Berlin", "consumer": "M[15344,9856]", "cf_margin": -12.125, "cf_argmax": 9856, "argmax": 15344, "base": 9.0, "argmax_text": " Italy", "splice": {"8": {"native": -0.5, "error_direct": 0.0732663516099409}, "14": {"native": 0.5, "error_direct": 0.1553955414097848}, "18": {"native": -0.375, "error_direct": 0.5386317843040226}, "20": {"native": -0.875, "error_direct": 0.5871081561050825}, "22": {"native": 0.875, "error_direct": 0.8977137725368012}, "24": {"native": 1.0, "error_direct": -0.5441934561809462}}, "cell": {"16": 0.0, "18": 0.0, "19": 0.0, "20": -14.375, "21": -1.125, "22": -1.125}, "cell_k": {"20": -0.125}, "best_cell_layer": 20, "reader": {"delta": -14.375, "phi": -14.125, "E": -1.25}, "source": {"4": {"null": 0.0, "full": -20.0, "phi": -19.125, "E": -0.375}, "10": {"null": 0.0, "full": -19.875, "phi": -19.5, "E": -0.375}, "16": {"null": 0.0, "full": -19.375, "phi": -18.125, "E": -1.125}}, "all_cells": -19.875, "seconds": 18.10790065600304}
+T 75.4s
+===== pair Berlin (Germany) <- Moscow (Russia)
+ROW {"pair": "Berlin->Moscow", "consumer": "M[9856,8359]", "cf_margin": -7.875, "cf_argmax": 8359, "argmax": 9856, "base": 10.625, "argmax_text": " Germany", "splice": {"8": {"native": 0.125, "error_direct": -0.012615124603870282}, "14": {"native": 1.375, "error_direct": 0.0792720517265509}, "18": {"native": -1.0, "error_direct": 0.12871370444777475}, "20": {"native": 0.0, "error_direct": 0.3316954902349845}, "22": {"native": 0.25, "error_direct": 0.7838363872980213}, "24": {"native": 0.375, "error_direct": 1.676130403549967}}, "cell": {"16": 0.25, "18": -0.5, "19": 0.0, "20": -11.5, "21": -0.75, "22": -1.125}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -11.5, "phi": -12.5, "E": 0.75}, "source": {"4": {"null": 0.125, "full": -18.0, "phi": -18.375, "E": -0.375}, "10": {"null": 0.0, "full": -17.75, "phi": -17.25, "E": -1.0}, "16": {"null": 0.0, "full": -17.875, "phi": -17.5, "E": 0.25}}, "all_cells": -18.0, "seconds": 18.438160482000967}
+T 93.8s
+===== pair Moscow (Russia) <- Athens (Greece)
+ROW {"pair": "Moscow->Athens", "consumer": "M[8359,24427]", "cf_margin": -11.5, "cf_argmax": 24427, "argmax": 8359, "base": 12.75, "argmax_text": " Russia", "splice": {"8": {"native": -0.125, "error_direct": 0.03539846303875241}, "14": {"native": 2.125, "error_direct": 0.01395337264354611}, "18": {"native": -0.625, "error_direct": 0.11545260427647885}, "20": {"native": 0.5, "error_direct": 0.03205454392179269}, "22": {"native": -1.0, "error_direct": 2.003676672152938}, "24": {"native": 0.25, "error_direct": 2.027494570419396}}, "cell": {"16": 0.0, "18": -0.625, "19": 0.0, "20": -16.5, "21": -1.625, "22": -1.25}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -16.5, "phi": -14.75, "E": -1.75}, "source": {"4": {"null": -0.125, "full": -23.875, "phi": -24.0, "E": -0.625}, "10": {"null": -0.125, "full": -23.875, "phi": -22.625, "E": -3.125}, "16": {"null": -0.125, "full": -24.0, "phi": -23.375, "E": -2.75}}, "all_cells": -23.875, "seconds": 18.763519173997338}
+T 112.6s
+===== pair Athens (Greece) <- Beijing (China)
+ROW {"pair": "Athens->Beijing", "consumer": "M[24427,5616]", "cf_margin": -14.375, "cf_argmax": 5616, "argmax": 24427, "base": 10.25, "argmax_text": " Greece", "splice": {"8": {"native": -0.5, "error_direct": 0.08437197184223003}, "14": {"native": 1.125, "error_direct": 0.22915745984180283}, "18": {"native": -0.25, "error_direct": 0.4501260860066034}, "20": {"native": -1.75, "error_direct": 1.181383775821661}, "22": {"native": 0.0, "error_direct": 1.9599845948068493}, "24": {"native": -2.125, "error_direct": 2.6865590317200994}}, "cell": {"16": 0.0, "18": -0.125, "19": 0.125, "20": -12.875, "21": -0.25, "22": -0.75}, "cell_k": {"20": -0.125}, "best_cell_layer": 20, "reader": {"delta": -12.875, "phi": -11.125, "E": -0.625}, "source": {"4": {"null": 0.0, "full": -23.0, "phi": -22.75, "E": 0.375}, "10": {"null": 0.25, "full": -22.125, "phi": -20.0, "E": 0.5}, "16": {"null": -0.125, "full": -22.0, "phi": -18.75, "E": -0.875}}, "all_cells": -22.5, "seconds": 18.143647816999874}
+T 130.8s
+===== pair Beijing (China) <- Madrid (Spain)
+ROW {"pair": "Beijing->Madrid", "consumer": "M[5616,17689]", "cf_margin": -12.875, "cf_argmax": 17689, "argmax": 5616, "base": 15.5, "argmax_text": " China", "splice": {"8": {"native": 0.125, "error_direct": 0.0005681976724516164}, "14": {"native": 0.125, "error_direct": 0.0811163949718009}, "18": {"native": -1.75, "error_direct": 0.5559436630772004}, "20": {"native": -1.0, "error_direct": 0.5080961073240119}, "22": {"native": 2.25, "error_direct": -0.6355787597315423}, "24": {"native": 0.125, "error_direct": 1.328006424830766}}, "cell": {"16": -0.125, "18": -0.75, "19": -0.375, "20": -13.25, "21": -1.0, "22": -0.375}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -13.25, "phi": -10.625, "E": -2.0}, "source": {"4": {"null": -0.125, "full": -25.125, "phi": -24.75, "E": -0.25}, "10": {"null": -0.25, "full": -22.75, "phi": -22.375, "E": -0.625}, "16": {"null": -0.125, "full": -22.25, "phi": -20.125, "E": -1.5}}, "all_cells": -25.5, "seconds": 18.14779210699635}
+T 148.9s
+===== pair Madrid (Spain) <- London (England)
+ROW {"pair": "Madrid->London", "consumer": "M[17689,9448]", "cf_margin": -9.625, "cf_argmax": 279, "argmax": 17689, "base": 9.75, "argmax_text": " Spain", "splice": {"8": {"native": 0.875, "error_direct": -0.02315925668627717}, "14": {"native": 2.25, "error_direct": 0.09401827782987447}, "18": {"native": 1.25, "error_direct": 0.18344266204873813}, "20": {"native": 1.375, "error_direct": 0.3507308282787914}, "22": {"native": 1.0, "error_direct": 0.8506938246962635}, "24": {"native": 2.0, "error_direct": 1.6140319318372607}}, "cell": {"16": 0.0, "18": -0.5, "19": 0.375, "20": -12.75, "21": -1.0, "22": -1.125}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -12.75, "phi": -13.875, "E": 0.375}, "source": {"4": {"null": 0.125, "full": -18.125, "phi": -18.875, "E": 0.125}, "10": {"null": 0.0, "full": -18.25, "phi": -19.0, "E": 0.625}, "16": {"null": 0.0, "full": -18.875, "phi": -18.625, "E": -0.25}}, "all_cells": -18.25, "seconds": 21.445396533999883}
+T 170.3s
+===== pair London (England) <- Prague (Czech)
+ROW {"pair": "London->Prague", "consumer": "M[9448,33150]", "cf_margin": -7.625, "cf_argmax": 279, "argmax": 279, "base": 12.375, "argmax_text": " the", "splice": {"8": {"native": 1.125, "error_direct": 0.06946766355986045}, "14": {"native": 1.5, "error_direct": 0.21644208447792057}, "18": {"native": -2.125, "error_direct": -0.055838203790329444}, "20": {"native": -0.125, "error_direct": 0.7769920784609085}, "22": {"native": -1.0, "error_direct": 2.2003516430501002}, "24": {"native": -1.375, "error_direct": 2.812986099505047}}, "cell": {"16": 0.5, "18": -0.125, "19": 0.0, "20": -10.75, "21": -1.5, "22": -1.0}, "cell_k": {"20": 0.375}, "best_cell_layer": 20, "reader": {"delta": -10.75, "phi": -11.5, "E": 1.625}, "source": {"4": {"null": 0.125, "full": -19.0, "phi": -19.5, "E": -0.5}, "10": {"null": 0.25, "full": -18.0, "phi": -18.125, "E": -1.5}, "16": {"null": 0.0, "full": -17.375, "phi": -16.625, "E": -1.25}}, "all_cells": -18.875, "seconds": 24.80203341000015}
+T 195.2s
+===== pair Prague (Czech) <- Vienna (Austria)
+ROW {"pair": "Prague->Vienna", "consumer": "M[33150,34898]", "cf_margin": -8.75, "cf_argmax": 34898, "argmax": 279, "base": 6.875, "argmax_text": " the", "splice": {"8": {"native": -0.5, "error_direct": -0.00997368731932443}, "14": {"native": 0.375, "error_direct": 0.13912798393849435}, "18": {"native": -0.375, "error_direct": 0.09158394406403372}, "20": {"native": 0.5, "error_direct": -0.21727174292919177}, "22": {"native": -0.75, "error_direct": 1.0136500286112038}, "24": {"native": 0.25, "error_direct": 1.3445377250696948}}, "cell": {"16": -0.125, "18": -0.375, "19": -0.125, "20": -7.25, "21": -0.75, "22": -0.875}, "cell_k": {"20": 0.0}, "best_cell_layer": 20, "reader": {"delta": -7.25, "phi": -8.0, "E": 0.375}, "source": {"4": {"null": 0.0, "full": -14.625, "phi": -13.25, "E": 0.25}, "10": {"null": -0.125, "full": -14.375, "phi": -13.25, "E": -1.0}, "16": {"null": 0.0, "full": -14.625, "phi": -11.25, "E": -2.625}}, "all_cells": -14.625, "seconds": 28.946942406000744}
+T 224.1s
+TOTAL 224.1s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:45.53
+	Maximum resident set size (kbytes): 17364444
+mrun: job-6aa7bc89a6ed -> failed
+mrun: job-6aa7bc89a6ed finished: failed result={'status': 'failed', 'returncode': 1, 'elapsed_s': 225.94, 'peak_rss_mb': 16723.5, 'peak_vram_mb': 3744.0}
+mrun: failure diagnostics: kind=process_exit phase=process.finalize message=child exited with return code 1 returncode=1
+mrun: failure class=unclassified retry=unknown
+mrun: failure log tail available via `mrun why job-6aa7bc89a6ed`

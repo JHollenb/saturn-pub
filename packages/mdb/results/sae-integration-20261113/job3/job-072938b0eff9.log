@@ -1,0 +1,33 @@
+mrun: job-072938b0eff9 -> queued
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+smoke_gate_cmd: smoke NPAIRS=1 DETAIL=1 BUDGET=240 bash run.sh
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/beast/domains/mrun/src/mrun/smoke_gate_cmd.py", line 83, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/beast/domains/mrun/src/mrun/smoke_gate_cmd.py", line 68, in main
+    rc = subprocess.call(smoke)
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/subprocess.py", line 396, in call
+    with Popen(*popenargs, **kwargs) as p:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'NPAIRS=1'
+mrun: job-072938b0eff9 -> running
+mrun: job-072938b0eff9 -> failed
+mrun: job-072938b0eff9 finished: failed result={'status': 'failed', 'returncode': 1, 'elapsed_s': 0.82, 'peak_rss_mb': 7.5, 'peak_vram_mb': 0.0}
+mrun: failure diagnostics: kind=process_exit phase=process.finalize message=child exited with return code 1 returncode=1
+mrun: failure class=unclassified retry=unknown
+mrun: failure log tail available via `mrun why job-072938b0eff9`

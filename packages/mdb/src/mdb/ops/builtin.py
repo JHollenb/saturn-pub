@@ -1195,10 +1195,17 @@ def _edit_json(record: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def value_source(ctx, value):
-    """A scalar, or the tensor at another computed address of the same run."""
+def value_source(ctx, value, target: Target | None = None):
+    """A scalar, the tensor at another computed address of the same run, or (with the edited
+    ``target``) an SAE feature expression (``feature[ID]*X``, ``feature[ID,coef]``, ``error``,
+    ``recon``, ``bias``; ``mdb.ops.features.feature_value``)."""
     if not isinstance(value, str):
         return value, None
+    if target is not None:
+        from .features import feature_value, is_feature_expression
+
+        if is_feature_expression(value):
+            return feature_value(ctx, target, value)
     try:
         return float(value), None
     except ValueError:
@@ -1360,7 +1367,7 @@ def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
         value, origin = origin_port_value(ctx, value)
         source = origin["address"]
     else:
-        value, source = value_source(ctx, value)
+        value, source = value_source(ctx, value, found)
     finite_limit(run, value)
     shape = tuple(run.port_shape(found.layer_port[1]))
     mask = selection = None

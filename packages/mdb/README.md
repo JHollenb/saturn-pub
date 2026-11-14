@@ -390,6 +390,8 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
 | `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
 | `export` | `export` | not built yet | Export a walkthrough bundle of records and pointers |
+| `feature` | `feature ID layer=L [sae=NAME] [top=K]` | read | Life of one SAE feature along the cursor's row: its encoder probe at every residual port (h, r, h_out), where it first crosses the site's top-k threshold, and which attention/MLP (heads, neurons) write it |
+| `features` | `features ADDR [top=K] [sae=NAME] [consumer=M[a,b]] [lens=N] [circuit=true] [match=UNIT] \| features L*.h_out consumer=M[a,b]` | navigate | SAE features at a residual port with the error row; with a consumer, each feature's, the bias's and the error's exact direct effect and the closure (L*.h_out: per-layer profile of what the SAE drops) |
 | `finish` | `finish` | navigate | From a port inside a layer: run to that layer's h_out. From h_out or a token-level stop: run to this row's sample |
 | `forecast` | `forecast [ADDR\|M[a,b]]` | mutate | Seal a prediction of the next stop (or a later stop of this row, or a margin M[a,b]) from values at the cursor, before native code runs |
 | `frame` | `frame [ADDR \| cursor \| NAME:]` | navigate | Show or set the focus address (print/list/backtrace default to it); NAME: switches to the named run |
@@ -407,6 +409,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `reverse-step` | `reverse-step [N] [unit] [budget=ROWS]` | navigate | Step back one port (or N units; layer/token units enter at most `budget` rows) |
 | `run` | `run [name=NAME] [prefill=K] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
 | `seek` | `seek ADDR \| seek ORIGIN:ADDR \| seek POINTER-JSON` | navigate | Move the session to an occurrence: forward, backward, or by replaying a stored recipe (ORIGIN:ADDR or an occurrence pointer) |
+| `sae` | `sae load NAME PATH [layers=A:B] [k=K] [cache=N] [verify=true] \| sae list \| sae drop NAME` | mutate | Load, list or drop SAE feature bases (per-layer residual SAEs) |
 | `set` | `set ADDR = VALUE\|ADDR\|ORIGIN:ADDR [replace\|add\|scale\|mix DOSE]` | mutate | Stage an edit at a port of the pending layer, or of a state cell (cache.L<i>.k\|v[kv,row,d]): set ADDR = VALUE [op] |
 | `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
@@ -846,6 +849,26 @@ run = mdb.attach(model, tok, project="runs/t").restart("pre")  # later, another 
 
 The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is attached;
 `mdb.resolve(pointer, project=..., session=dbg)` turns an occurrence pointer into a tensor.
+
+## SAE feature bases: `sae`, `features`, `feature`
+
+`sae load qs DIR` reads a per-layer residual SAE set (Qwen-Scope layout: `config.json` with `k`
+and `hook_point`, files `layer{L}.sae.pt` with `W_enc b_enc W_dec b_dec`); `resid_post` of layer
+`L` is the port `L<L>.h_out` (same value as `L<L+1>.h`). At a native value `x` the basis gives
+the exact identity `x = b_dec + sum_f a_f d_f + e`: the active set by the published rule (top-k
+of `relu(W_enc x + b_enc)` in float32), activations recomputed in float64 from the native bits,
+and the error `e` = native minus reconstruction, always listed. `features ADDR consumer=M[a,b]`
+splits the direct path `rho c.x` (P19) over the features, `b_dec` and `e` and closes on the
+native margin with the later layers' terms and the measured remainder; `features L*.h_out
+consumer=...` is the per-layer profile (`shift=` applies each SAE off its site, a site-alignment
+check: only the error fraction shows a misalignment); `circuit=true` stores a circuit record
+whose error node is never folded; `match=L22.f[i=5773]` (or `L20.A[h13]`, `L20.A[h13,src=11]`)
+names an mdb unit by the decoder directions closest to its write, with the fraction outside
+their span. Feature values ride the edit path (`set`, `whatif`, `compare`):
+`feature[ID]*X` (add `X d_ID`), `feature[ID,coef]*-1` (remove `a_ID d_ID`), `error*-1` (splice
+in the reconstruction), `recon`, `bias`, and `@RUN` for another run's value at the same site
+(`recon@rome-recon` swaps in the other run's feature part and keeps this run's error).
+Evidence on Qwen3-1.7B-Base: `results/sae-integration-20261113/`.
 
 ## Live and remote sessions: `mdb serve`
 

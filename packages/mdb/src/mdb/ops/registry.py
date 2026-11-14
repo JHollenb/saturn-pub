@@ -35,7 +35,7 @@ INTEGER_KEYS = frozenset({
     "count", "hits", "n", "k", "offset", "tokens_total", "bytes", "level", "transition",
     "layers", "hidden_size", "heads", "kv_heads", "head_dim", "vocab_size", "intermediate_size",
     "max_positions", "budget", "ignore", "deleted", "numel", "argmax", "argmax_index",
-    "position", "prompt_tokens", "staged", "committed", "token", "step",
+    "position", "prompt_tokens", "feature", "d_sae", "d_model", "active", "cache", "loaded", "sae_layer", "shift", "staged", "committed", "token", "step",
     "total", "limit", "omitted", "hits_total", "nan", "posinf", "neginf", "edits_total",
     "deleted_total", "mask_count", "mask_shape", "under_edits_total", "staged_total", "committed_total", "depth", "line", "lines",
     "kv", "d", "staged_at", "staged_cells", "committed_cells", "realised_in_layer",
