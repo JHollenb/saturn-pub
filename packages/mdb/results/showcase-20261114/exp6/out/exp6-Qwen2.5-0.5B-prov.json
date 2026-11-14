@@ -1,0 +1,47 @@
+{
+ "processing": {
+  "U16": {
+   "processed": false,
+   "normalization_type": "RMS",
+   "final_rms": true,
+   "residual_centred": false,
+   "norm_gains_folded": false
+  },
+  "P16": {
+   "processed": true,
+   "normalization_type": "RMS",
+   "final_rms": true,
+   "residual_centred": false,
+   "norm_gains_folded": true
+  },
+  "U32": {
+   "processed": false,
+   "normalization_type": "RMS",
+   "final_rms": true,
+   "residual_centred": false,
+   "norm_gains_folded": false
+  },
+  "P32": {
+   "processed": true,
+   "normalization_type": "RMS",
+   "final_rms": true,
+   "residual_centred": false,
+   "norm_gains_folded": true
+  }
+ },
+ "tl": "4.4.0",
+ "hooks": {
+  "A": {
+   "21": "blocks.21.attn.hook_z",
+   "22": "blocks.22.attn.hook_z"
+  },
+  "v": "blocks.21.attn.v.hook_out",
+  "p": "blocks.21.attn.hook_pattern"
+ },
+ "heads": 14,
+ "kv": 2,
+ "carrier": [
+  21,
+  0
+ ]
+}

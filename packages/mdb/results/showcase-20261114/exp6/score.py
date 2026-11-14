@@ -34,6 +34,20 @@ for path in sys.argv[1:-1]:
             else:
                 n_small += 1
                 flips_small += (pro * nat < 0)
+    # split: kernel path alone (U16 batched vs mdb stepped) and reparametrisation alone (P16 vs U16)
+    k_flip = r_flip = k_in = 0
+    for r in R:
+        fl = 2 * sp(r["max_abs_logit"])
+        for k in range(1, len(r["mdb"])):
+            nat = r["mdb"][k] - r["mdb"][0]
+            unp = r["U16"][k] - r["U16"][0]
+            pro = r["P16"][k] - r["P16"][0]
+            k_in += abs(unp - nat) <= fl
+            if abs(nat) > fl:
+                k_flip += (unp * nat < 0) or abs(unp) <= fl
+            if abs(unp) > fl:
+                r_flip += (pro * unp < 0) or abs(pro) <= fl
+    n_unp_eff = sum(1 for r in R for k in range(1, len(r["mdb"])) if abs(r["U16"][k] - r["U16"][0]) > 2 * sp(r["max_abs_logit"]))
     sp_units.sort()
     p95 = sp_units[int(0.95 * (len(sp_units) - 1))]
     kern = sorted(abs((r["U16"][k] - r["U16"][0]) - (r["U16_b1"][k] - r["U16_b1"][0])) / sp(r["max_abs_logit"])
@@ -55,6 +69,9 @@ for path in sys.argv[1:-1]:
         "nulls": {"U16_batch1_base_bitwise_eq_mdb": f"{parity}/{len(R)}",
                   "kernel_path_p95_spacings": kern[int(0.95 * (len(kern) - 1))],
                   "kernel_path_max_spacings": kern[-1]},
+        "split": {"unprocessed_batched_vs_mdb_within_floor": f"{k_in}/{tot}",
+                  "mdb_effects_flipped_or_lost_by_kernel_path_alone": f"{k_flip}/{n_eff}",
+                  "unprocessed_effects_flipped_or_lost_by_processing_alone": f"{r_flip}/{n_unp_eff}"},
         "falsifier_fires": p95 > 4,
         "claims_judged_native_effect": sum(1 for r in R for j in r["judged"] if j["native_effect"]),
     }

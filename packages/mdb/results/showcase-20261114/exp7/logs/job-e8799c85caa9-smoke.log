@@ -1,0 +1,13 @@
+mrun: job-e8799c85caa9 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 7b125f4 script exp7_iia.py
+[    4.8s] load
+[    7.8s] G city:Barcelona 2.92s
+[   11.0s] G city:Busan 3.21s
+[   14.4s] G city:Gdansk 3.41s
+[   14.4s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.99
+	Maximum resident set size (kbytes): 4354276
+mrun: job-e8799c85caa9 -> succeeded
+mrun: job-e8799c85caa9 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 16.3, 'peak_rss_mb': 2605.1, 'peak_vram_mb': 3836.0}

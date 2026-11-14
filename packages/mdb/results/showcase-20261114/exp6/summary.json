@@ -1,0 +1,78 @@
+{
+ "Qwen3-0.6B-Base": {
+  "items": 48,
+  "R1": {
+   "fp32_base_within_1e-4": "48/48",
+   "max_abs": 2.288818359375e-05,
+   "holds": true
+  },
+  "R2": {
+   "base_within_floor": "40/48",
+   "patch_within_floor": "1517/1584",
+   "p95_processed_minus_unprocessed_spacings": 2.0,
+   "holds": false
+  },
+  "R3": {
+   "effects_flipped_or_lost": "60/274",
+   "below_floor_sign_changed": "195/1310",
+   "holds": false
+  },
+  "R4": {
+   "fp32_items_with_pattern_change_ge_0.1": 0,
+   "bf16_items_with_pattern_change_ge_0.1": 0,
+   "max_pattern_diff_fp32": 2.8014183044433594e-06,
+   "max_pattern_diff_bf16": 0.05859375,
+   "holds": true
+  },
+  "nulls": {
+   "U16_batch1_base_bitwise_eq_mdb": "13/48",
+   "kernel_path_p95_spacings": 2.0,
+   "kernel_path_max_spacings": 10.0
+  },
+  "split": {
+   "unprocessed_batched_vs_mdb_within_floor": "1539/1584",
+   "mdb_effects_flipped_or_lost_by_kernel_path_alone": "60/274",
+   "unprocessed_effects_flipped_or_lost_by_processing_alone": "46/257"
+  },
+  "falsifier_fires": false,
+  "claims_judged_native_effect": 274
+ },
+ "Qwen2.5-0.5B": {
+  "items": 48,
+  "R1": {
+   "fp32_base_within_1e-4": "48/48",
+   "max_abs": 1.811981201171875e-05,
+   "holds": true
+  },
+  "R2": {
+   "base_within_floor": "40/48",
+   "patch_within_floor": "1198/1392",
+   "p95_processed_minus_unprocessed_spacings": 3.5,
+   "holds": false
+  },
+  "R3": {
+   "effects_flipped_or_lost": "66/228",
+   "below_floor_sign_changed": "248/1164",
+   "holds": false
+  },
+  "R4": {
+   "fp32_items_with_pattern_change_ge_0.1": 0,
+   "bf16_items_with_pattern_change_ge_0.1": 0,
+   "max_pattern_diff_fp32": 1.6689300537109375e-06,
+   "max_pattern_diff_bf16": 0.052734375,
+   "holds": true
+  },
+  "nulls": {
+   "U16_batch1_base_bitwise_eq_mdb": "7/48",
+   "kernel_path_p95_spacings": 1.5,
+   "kernel_path_max_spacings": 6.5
+  },
+  "split": {
+   "unprocessed_batched_vs_mdb_within_floor": "1378/1392",
+   "mdb_effects_flipped_or_lost_by_kernel_path_alone": "16/228",
+   "unprocessed_effects_flipped_or_lost_by_processing_alone": "82/249"
+  },
+  "falsifier_fires": false,
+  "claims_judged_native_effect": 228
+ }
+}

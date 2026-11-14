@@ -1,0 +1,58 @@
+mrun: job-c5a45f9c2811 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 7b125f4 script exp6_tlnull.py
+[    8.5s] load
+[   14.7s] F city:Aarhus 6.21s
+[   20.6s] F city:Alexandria 5.87s
+[   26.5s] F city:Antwerp 5.92s
+[   32.2s] F city:Brno 5.64s
+[   38.1s] F city:Chicago 5.9s
+[   43.7s] F city:Liverpool 5.6s
+[   49.2s] F city:Melbourne 5.56s
+[   55.1s] F city:Plovdiv 5.83s
+[   60.7s] F city:Salzburg 5.61s
+[   66.3s] F city:Shanghai 5.58s
+[   71.8s] F city:Toronto 5.58s
+[   77.8s] F city:Valparaiso 5.99s
+[   84.0s] F currency:afghani 6.22s
+[   89.9s] F currency:dollar 5.86s
+[   95.8s] F currency:forint 5.91s
+[  101.9s] F currency:koruna 6.12s
+[  107.8s] F currency:lev 5.87s
+[  113.4s] F currency:pound sterling 5.61s
+[  119.3s] F currency:renminbi 5.93s
+[  125.0s] F currency:rial 5.63s
+[  130.6s] F currency:rupiah 5.64s
+[  136.2s] F currency:shekel 5.62s
+[  141.8s] F currency:shilling 5.61s
+[  147.4s] F currency:yen 5.57s
+[  153.5s] F landmark:Babylon 6.07s
+[  159.5s] F landmark:Borobudur 5.98s
+[  165.4s] F landmark:Mount Rushmore 5.93s
+[  171.7s] F landmark:Neuschwanstein Castle 6.3s
+[  177.9s] F landmark:Niagara Falls 6.2s
+[  184.1s] F landmark:Persepolis 6.26s
+[  190.4s] F landmark:Schonbrunn Palace 6.3s
+[  196.6s] F landmark:Stonehenge 6.13s
+[  202.2s] F landmark:Uluru 5.6s
+[  207.8s] F landmark:the Acropolis 5.64s
+[  213.5s] F landmark:the Forbidden City 5.63s
+[  219.1s] F landmark:the Sphinx 5.61s
+[  225.0s] F person:Antonin Dvorak 5.93s
+[  230.8s] F person:Charles Dickens 5.83s
+[  237.0s] F person:Confucius 6.16s
+[  243.1s] F person:Fidel Castro 6.08s
+[  248.6s] F person:Franz Liszt 5.56s
+[  254.5s] F person:Goethe 5.83s
+[  260.3s] F person:Hans Christian Andersen 5.86s
+[  265.9s] F person:James Joyce 5.53s
+[  271.8s] F person:Jean Sibelius 5.91s
+[  277.6s] F person:Mozart 5.79s
+[  283.1s] F person:Pablo Neruda 5.58s
+[  288.9s] F person:Plato 5.8s
+[  288.9s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:50.71
+	Maximum resident set size (kbytes): 14232320
+mrun: job-c5a45f9c2811 -> succeeded
+mrun: job-c5a45f9c2811 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 291.27, 'peak_rss_mb': 12747.5, 'peak_vram_mb': 11980.0}
