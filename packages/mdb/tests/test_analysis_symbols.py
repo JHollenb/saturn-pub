@@ -205,6 +205,13 @@ def test_content_readout_equals_a_hand_projection_of_the_bindings_write(debugger
     strip = view["content_lifetime"]["small"]
     assert len(strip) == run.adapter.layers and strip[0] == "-" and strip[1] in "C"
     check_bounded(table.report)
+    # the scalar (vectorised, lazy-mix) path and the no-consumer path build the same writes
+    free = symbols.table(run, sets=sets)
+    assert free.tensors["write"].keys() == table.tensors["write"].keys()
+    for key, w in table.tensors["write"].items():
+        assert torch.allclose(free.tensors["write"][key], w, rtol=0, atol=1e-15)
+    loose = next(b for b in free.report["bindings"] if b["symbol"] == "cell")
+    assert loose["content"]["small"]["best"] == view["content"]["small"]["best"]
 
 
 def test_content_is_absent_without_sets_and_hop_reports_the_indirect_share(debugger):

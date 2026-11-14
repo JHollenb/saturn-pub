@@ -295,6 +295,7 @@ def _row_ablation(run: Any, cache: Any, tokens: list[int], cols: list[int], ids:
     for layer in cache.layers:
         layer.values[:, :, index] = 0
     neg = torch.finfo(next(base.parameters()).dtype).min
+    arm = set(cols)
     try:
         for a in range(0, T, chunk):
             b = min(T, a + chunk)
@@ -304,7 +305,11 @@ def _row_ablation(run: Any, cache: Any, tokens: list[int], cols: list[int], ids:
             mask[:, :T] = torch.where(torch.arange(T, device=device)[None, :] < rows[:, None],
                                       0.0, neg)
             mask[torch.arange(C, device=device), T + torch.arange(C, device=device)] = 0.0
-            with torch.no_grad():
+            # a row inside the arm reads its own value cell on the diagonal (the freshly
+            # appended V, which the zeroed cache rows do not cover): zero it there too, so the
+            # row's read of its own column is ablated like the stepped p-zero (AUDIT-B2)
+            own = [i for i in range(C) if a + i in arm]
+            with torch.no_grad(), _zero_appended_values(cache, own):
                 o = base(input_ids=torch.tensor([tokens[a:b]], device=device),
                          past_key_values=cache, attention_mask=mask[None, None],
                          position_ids=rows[None], use_cache=True)
@@ -315,6 +320,37 @@ def _row_ablation(run: Any, cache: Any, tokens: list[int], cols: list[int], ids:
         for layer, keep in zip(cache.layers, saved):
             layer.values[:, :, index] = keep
     return out
+
+
+class _zero_appended_values:
+    """While active, each cache layer's ``update`` zeroes the appended value rows ``own``
+    (positions within the appended chunk) before they are stored and read, leaving the keys
+    (so the row's weights, and the softmax, are unchanged: p-zero, no renormalisation)."""
+
+    def __init__(self, cache: Any, own: list[int]):
+        self.cache, self.own = cache, own
+
+    def __enter__(self):
+        if not self.own:
+            return self
+        own = self.own
+
+        def wrap(update):
+            def patched(key_states, value_states, *args, **kwargs):
+                value_states = value_states.clone()
+                value_states[:, :, own] = 0
+                return update(key_states, value_states, *args, **kwargs)
+            return patched
+
+        for layer in self.cache.layers:
+            layer.update = wrap(layer.update)
+        return self
+
+    def __exit__(self, *exc):
+        if self.own:
+            for layer in self.cache.layers:
+                del layer.update            # back to the class method
+        return False
 
 
 def _check_against_symbols(run: Any, binds: dict[str, list[int]], ids: list[int], xi: int,

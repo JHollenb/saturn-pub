@@ -149,6 +149,23 @@ def test_row_table_matches_symbols_and_stepped_ablation(dbg):
                     b["to_consumer"]["value"], abs=1e-9)
 
 
+def test_row_table_ablation_inside_the_arm_zeroes_the_rows_own_read(dbg):
+    """A row inside the arm's columns reads its own (freshly appended) value cell too; the
+    stepped p-zero reference zeroes that diagonal read, so row_table must as well
+    (AUDIT-B2: off by 0.0135 at hint rows 6-9 before the fix)."""
+    run = dbg.run(IDS[:N_PROMPT])
+    trace = rows.row_table(run, dict(BINDS), letters=LETTERS, X="B", R="C",
+                           arms={"hint": BINDS["hint"]}, chunk=3)
+    for t in BINDS["hint"]:
+        abl = _stepped(dbg, IDS[: t + 1], [c for c in BINDS["hint"] if c <= t])
+        assert trace.records[t]["ablated"]["hint"] == pytest.approx(
+            float(abl[1] - abl[2]), abs=1e-5), t
+    # rows before the arm are untouched by it
+    for t in range(BINDS["hint"][0]):
+        assert trace.records[t]["ablated"]["hint"] == pytest.approx(
+            trace.records[t]["margin"], abs=1e-5)
+
+
 # --------------------------------------------------------------------------- suffix_sweep
 
 

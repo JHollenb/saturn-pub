@@ -448,12 +448,12 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
         order = effect.abs().argsort(descending=True)
         top = order[:top_neurons]
         rest = order[top_neurons:]
-        neurons = [{"name": f"L{layer}.f{int(i)}", "da": num(float(g1[i] - g0[i]), EXACT),
-                    "db": num(float(db[i]), EXACT), "df": num(float(df[i]), EXACT),
-                    "b0_ds": num(float(terms[0, i]), EXACT),
-                    "s0_db": num(float(terms[1, i]), EXACT),
-                    "ds_db": num(float(terms[2, i]), EXACT),
-                    "effect": num(float(effect[i]), EXACT, "P15")} for i in top]
+        listed = [{"name": f"L{layer}.f{int(i)}", "da": num(float(g1[i] - g0[i]), EXACT),
+                   "db": num(float(db[i]), EXACT), "df": num(float(df[i]), EXACT),
+                   "b0_ds": num(float(terms[0, i]), EXACT),
+                   "s0_db": num(float(terms[1, i]), EXACT),
+                   "ds_db": num(float(terms[2, i]), EXACT),
+                   "effect": num(float(effect[i]), EXACT, "P15")} for i in top]
         entry = {"layer": layer,
                  "exact": num(exact, EXACT, "P15"),
                  "captured": num(captured, MEASURED),
@@ -468,7 +468,7 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                      "cos_da": num(float(da_true @ da_lin) / da_den if da_den else 0.0, EXACT),
                      "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) "
                                 "against the captured Delta n and Delta a"},
-                 "neurons": neurons,
+                 "neurons": listed,
                  "omitted": {"count": int(rest.numel()),
                              "effect": num(float(effect[rest].sum()), EXACT, "P15")},
                  "top_share": num(float(effect[top].abs().sum() / effect.abs().sum())

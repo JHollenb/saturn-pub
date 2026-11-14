@@ -160,6 +160,19 @@ def test_hop_edge_cell_consumer_closes_on_the_cells_native_change(debugger):
     d_m = sum(edited.read(f"t3.L{x}.m").double().reshape(-1) - run.read(f"t3.L{x}.m").double().reshape(-1)
               for x in range(top))
     assert edge["totals"]["mlp"]["value"] == pytest.approx(float(c @ d_m), rel=1e-9, abs=1e-12)
+    # The ladder's terms are a decomposition of c . Delta h at the consumer's layer: the
+    # upstream change, the cell layer's direct write, every later layer's re-read and every
+    # layer's captured MLP write. Recomputed by hand from the ports (residual adds h + o + m),
+    # this checks that no layer term is missing or counted twice, which the closure (an
+    # identity, AUDIT-B1 §5) cannot.
+    dh = (edited.read(f"t3.L{top}.h").double().reshape(-1)
+          - run.read(f"t3.L{top}.h").double().reshape(-1))
+    terms = (edge["upstream"]["value"] + edge["direct"]["value"]
+             + edge["totals"]["reread"]["value"] + edge["totals"]["mlp"]["value"])
+    assert terms == pytest.approx(float(c @ dh), rel=1e-4 if fp32 else 5e-2,
+                                  abs=1e-6 if fp32 else 5e-2)
+    assert abs(edge["residual_add_rounding"]["value"]) <= (1e-4 if fp32 else 5e-2) * max(
+        1.0, abs(float(c @ dh)))
     fast = symbols.hop_edge(run, edited, reader, cell_layer=0, neurons=False)
     for key in ("direct", "upstream", "norm", "rounding"):
         assert fast[key]["value"] == edge[key]["value"]
@@ -189,3 +202,30 @@ def test_cell_readout_is_affine_under_a_v_bias():
     assert reader.bias != 0.0
     h = run.read("t3.L1.h").double().reshape(-1)
     assert float(reader.vector @ h) + reader.bias == pytest.approx(reader.native, rel=1e-4, abs=1e-6)
+
+
+def test_hop_edge_top_neurons_zero_keeps_every_layer_on_the_neuron_path(debugger):
+    """``top_neurons=0`` lists no neurons but still splits every layer exactly (AUDIT-SCALE:
+    the list of listed neurons once shadowed the ``neurons`` flag, so an empty list sent every
+    layer after the first down the ``neurons=False`` path)."""
+    from mdb.analysis.reads import readout
+
+    run = debugger.run(PROMPT, prefill=2)
+    if run.adapter.layers < 2:
+        pytest.skip("needs two layers")
+    run.until("t5.logits")
+    reader = readout(run, Margin(5, 4, 9))
+    donor = debugger.run([2, 7, 9, 3, 7, 2])
+    value = donor.read_cache(0, "v", staged=False).clone()[:, 0:1, 1:2]
+    edited = debugger.run(PROMPT, prefill=2)
+    edited.set_cell(0, "v", value, rows=[1], kv=[0])
+    edited.until("t5.logits")
+    none = symbols.hop_edge(run, edited, reader, cell_layer=0, top_neurons=0)
+    some = symbols.hop_edge(run, edited, reader, cell_layer=0, top_neurons=2)
+    layers = run.adapter.layers
+    assert [e["layer"] for e in none["mlp"]] == list(range(layers))
+    for a, b in zip(none["mlp"], some["mlp"]):
+        assert a["neurons"] == [] and "exact" in a and "linear" in a
+        assert a["exact"]["value"] == b["exact"]["value"]
+        assert a["omitted"]["count"] == b["omitted"]["count"] + len(b["neurons"])
+    assert none["totals"]["mlp_exact"]["value"] == some["totals"]["mlp_exact"]["value"]
