@@ -62,8 +62,9 @@ from .reads import (
 
 SCHEMA = "mdb-circuit-v1"
 KINDS = ("consumer", "embedding", "attn", "mlp", "head", "neuron", "source", "bias",
-         "remainder", "edit", "more")
-_FIXED = ("remainder", "bias", "edit")
+         "remainder", "edit", "more", "residual", "feature", "error")
+# fixed children are never ranked into "+N more": an SAE error node is always listed
+_FIXED = ("remainder", "bias", "edit", "error")
 
 
 def _torch():

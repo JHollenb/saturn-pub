@@ -910,6 +910,132 @@ _INSPECT = {"reads": _reads_lines, "symbols": _symbols_lines, "symbol": _symbol_
             "circuit": _circuit_lines, "compare": _compare_lines, "seek": _seek_lines}
 
 
+def _promo(item: dict[str, Any]) -> str:
+    promotes = item.get("promotes")
+    if not promotes:
+        return ""
+    texts = [json.dumps(t) if t is not None else str(i)
+             for i, t in zip(promotes["ids"], promotes["texts"])]
+    return f"  promotes {' '.join(texts)} [derived-local]"
+
+
+def _features_lines(result: dict[str, Any]) -> list[str]:
+    if result.get("mode") == "profile":
+        lines = [f"features profile  SAE {result['sae']}  consumer {result['consumer']} = "
+                 f"{_short(result['native'])}" + (f"  (each SAE applied {result['shift']:+d} "
+                                                  "layers off its site)" if result.get("shift")
+                                                  else ""),
+                 "  layer  direct(skip path)  features   bias      ERROR     error/direct  "
+                 "|error| share  ||e||/||x||  closure"]
+        for row in result["layers"]:
+            share = row["error_share_of_direct"]
+            share = fmt(share["value"]) if "value" in share else share.get("state", "?")
+            lines.append(
+                f"  {row['site']:<9} {fmt(row['direct']['value']):>10}  "
+                f"{fmt(row['features_sum']['value']):>10} {fmt(row['bias']['value']):>9} "
+                f"{fmt(row['error']['value']):>9}  {share:>10}  "
+                f"{fmt(row['error_share_of_abs']['value']):>10}  "
+                f"{fmt(row['error_fraction_of_norm']['value']):>10}  "
+                f"{fmt(row['closure']['value'])}")
+        lines.append("  [derived-exact P19 except native (measured) and remainder (measured)]")
+        return lines
+    sae = result["sae"]
+    stats_x = result["value"]["norm"]
+    lines = [f"features {result['target']}  SAE {sae['name']} L{sae['layer']} ({sae['site']}, "
+             f"k {sae['k']}, {result['active']} active)  ||x|| {_short(stats_x)}"]
+    for item in result["features"]:
+        line = (f"  f{item['feature']:<6} act {_short(item['activation'])}  "
+                f"||d|| {fmt(item['decoder_norm']['value'])}")
+        if "effect" in item:
+            line += f"  effect {_short(item['effect'])}"
+        lines.append(line + _promo(item))
+    more = result["more"]
+    if more["count"]:
+        line = f"  +{more['count']} more  act Σ {fmt(more['activation_sum']['value'])}"
+        if "effect_sum" in more:
+            line += f"  effect Σ {_short(more['effect_sum'])}"
+        lines.append(line)
+    bias = result["bias"]
+    lines.append(f"  b_dec    ||b|| {fmt(bias['norm']['value'])}"
+                 + (f"  effect {_short(bias['effect'])}" if "effect" in bias else ""))
+    err = result["error"]
+    line = (f"  ERROR    ||e|| {_short(err['norm'])}  ||e||/||x|| "
+            f"{fmt(err['fraction_of_norm']['value'])}  energy "
+            f"{fmt(err['fraction_of_energy']['value'])}")
+    if "effect" in err:
+        line += f"  effect {_short(err['effect'])}"
+    lines.append(line)
+    lines.append(f"  identity x = b_dec + Σ a_f d_f + e closes to "
+                 f"{fmt(result['identity_closure']['value'])} [derived-exact]")
+    acc = result.get("accounting")
+    if acc:
+        share = acc["error_share_of_direct"]
+        share = fmt(share["value"]) if "value" in share else share.get("state", "?")
+        lines.append(f"  {acc['consumer']} {_short(acc['native'])} = direct {_short(acc['direct'])}"
+                     f" (features {fmt(acc['features_sum']['value'])} + bias "
+                     f"{fmt(acc['bias']['value'])} + error {fmt(acc['error']['value'])}) + later "
+                     f"layers {_short(acc['later_layers'])} + head bias "
+                     f"{fmt(acc['head_bias']['value'])} + remainder {_short(acc['remainder'])}")
+        lines.append(f"  error/direct {share}  |error| share {fmt(acc['error_share_of_abs']['value'])}"
+                     f"  closure {_short(acc['closure'])}")
+    if result.get("match"):
+        m = result["match"]
+        lines.append(f"  match {m['unit']}: {m['meaning']}  ||v|| {fmt(m['norm']['value'])}  "
+                     f"outside listed span {fmt(m['outside_fraction']['value'])} [derived-exact]")
+        for item in m["features"]:
+            act = (f"  active here, act {fmt(item['activation']['value'])}"
+                   if item["active_here"] else "  not active here")
+            lines.append(f"    f{item['feature']:<6} cos {_short(item['cos'])}  coef "
+                         f"{fmt(item['coef']['value'])}{act}" + _promo(item))
+    if result.get("circuit"):
+        lines.append(f"  circuit {result['circuit']['id']} stored (record "
+                     f"{result['circuit']['record'][:16]}): circuit show {result['circuit']['id']}")
+    if result.get("under_edits"):
+        lines.append(f"  value under edits: {', '.join(result['under_edits'])}")
+    return lines
+
+
+def _sae_lines(result: dict[str, Any]) -> list[str]:
+    if "loaded" in result:
+        s = result["loaded"]
+        return [f"sae {s['name']}: {s['path']}  site L<l>.{s['site_port']}  k {s['k']}  layers "
+                f"{','.join(map(str, s['layers']))}  revision {s['revision']}  cache {s['cache']}"]
+    if "dropped" in result:
+        return [f"sae {result['dropped']} dropped"]
+    lines = [f"{len(result['saes'])} SAE set(s)"]
+    for s in result["saes"]:
+        lines.append(f"  {s['name']}: {s['path']}  site L<l>.{s['site_port']}  k {s['k']}  "
+                     f"{len(s['layers'])} layers, loaded {s['loaded']}")
+        for layer, info in s["files"].items():
+            sha = info.get("sha256") or info.get("sha256_manifest")
+            lines.append(f"    L{layer} {info['file']} sha256 {sha}")
+    return lines
+
+
+def _feature_trace_lines(result: dict[str, Any]) -> list[str]:
+    lines = [f"feature f{result['feature']} of {result['site']} (SAE {result['sae']}): "
+             f"{'active' if result['active_at_site'] else 'NOT active'} at its site, cutoff "
+             f"{_short(result['cutoff'])}; first above cutoff {result['first_above']}, last "
+             f"{result['last_above']}",
+             "  layer   probe h     probe r   probe h_out   write attn   write mlp"]
+    for p, w in zip(result["probe"], result["writers"]):
+        lines.append(f"  L{p['layer']:<5} {fmt(p['h']['value']):>9} {fmt(p['r']['value']):>9} "
+                     f"{fmt(p['h_out']['value']):>11}  {fmt(w['attn']['value']):>11} "
+                     f"{fmt(w['mlp']['value']):>11}")
+    heads = ", ".join(f"h{i['index']} {fmt(i['share']['value'])}"
+                      for i in result["heads"]["items"])
+    neurons = ", ".join(f"f{i['index']} {fmt(i['share']['value'])}"
+                        for i in result["neurons"]["items"])
+    lines.append(f"  top heads of L{result['heads']['layer']}.attn: {heads} [derived-exact P07]")
+    lines.append(f"  top neurons of L{result['neurons']['layer']}.mlp: {neurons} "
+                 "[derived-exact P15]")
+    return lines
+
+
+_INSPECT.update({"features": _features_lines, "sae": _sae_lines,
+                 "feature": _feature_trace_lines})
+
+
 def render_error(error: Any) -> str:
     data = error.to_json() if hasattr(error, "to_json") else {"type": "error",
                                                               "message": str(error)}

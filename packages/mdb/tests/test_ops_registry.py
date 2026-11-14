@@ -151,6 +151,8 @@ def _fuzz_args(ctx, name):
         "compare": {"a": f"t{row}.L1.h_out=0.01 add", "b": "fz",
                     "consumer": f"t{row}.M[0,1]"},
         "seek": {"target": ahead},
+        "features": {"address": f"t{row}.L0.h_out", "top": 2},
+        "feature": {"feature": 0, "layer": 0},
     }[name]
 
 
@@ -184,7 +186,7 @@ def test_fuzz_read_and_navigate_ops_return_bounded_labelled_results(debugger):
                 assert any(word in str(error) for word in (
                     "not been computed", "not ahead", "no frame", "no consumer",
                     "cannot reverse", "needs a layer", "explain reads",
-                    "not downstream")), (name, ctx.run.where, str(error))
+                    "not downstream", "no SAE")), (name, ctx.run.where, str(error))
                 continue
             assert check_bounded(result, name) == result
             assert _unlabelled(result) == [], (name, ctx.run.where, _unlabelled(result))

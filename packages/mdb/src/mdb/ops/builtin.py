@@ -1106,10 +1106,17 @@ def _edit_json(record: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def value_source(ctx, value):
-    """A scalar, or the tensor at another computed address of the same run."""
+def value_source(ctx, value, target: Target | None = None):
+    """A scalar, the tensor at another computed address of the same run, or (with the edited
+    ``target``) an SAE feature expression (``feature[ID]*X``, ``feature[ID,coef]``, ``error``,
+    ``recon``, ``bias``; ``mdb.ops.features.feature_value``)."""
     if not isinstance(value, str):
         return value, None
+    if target is not None:
+        from .features import feature_value, is_feature_expression
+
+        if is_feature_expression(value):
+            return feature_value(ctx, target, value)
     try:
         return float(value), None
     except ValueError:
@@ -1248,7 +1255,7 @@ def _op_set(ctx, target, value, op, dose=None):
     if isinstance(value, str) and ":" in value.partition("[")[0]:
         raise Refused(f"{value}: a value from another run goes into a state cell "
                       "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
+    value, source = value_source(ctx, value, found)
     finite_limit(run, value)
     kwargs: dict[str, Any] = {}
     if found.selector:

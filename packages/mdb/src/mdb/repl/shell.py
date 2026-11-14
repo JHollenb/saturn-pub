@@ -375,6 +375,7 @@ SPECIAL = {
     "reads": _with_consumer("reads"),
     "symbols": _with_consumer("symbols"),
     "circuit": _with_consumer("circuit"),
+    "features": _with_consumer("features"),
     "compare": _compare_args,
     "symbol": _symbol_args,
 }

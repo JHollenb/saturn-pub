@@ -207,7 +207,7 @@ def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None)
     if isinstance(value, str) and ":" in value.partition("[")[0]:
         raise Refused(f"{value}: a value from another run goes into a state cell "
                       "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
+    value, source = value_source(ctx, value, found)
     finite_limit(run, value)
     mask = selection = None
     if found.selector:
