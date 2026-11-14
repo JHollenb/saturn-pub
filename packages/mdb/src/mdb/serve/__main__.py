@@ -110,8 +110,9 @@ def main(argv=None):
     mode = f"live session {live.sid}" if live else "read-only"
     print(f"mdb serve: http://{args.host}:{args.port}/  (project {args.project}; {mode})",
           file=sys.stderr)
-    try:
-        uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    try:  # one SIGTERM/SIGINT ends it: app.py's lifespan closes the event sockets first
+        uvicorn.run(app, host=args.host, port=args.port, log_level="warning",
+                    timeout_graceful_shutdown=5)
     finally:
         if live is not None:
             live.interrupt()

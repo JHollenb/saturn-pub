@@ -22,7 +22,10 @@ response, no-traceback 500s) as the outermost ASGI layer.
 # No ``from __future__ import annotations`` here: FastAPI resolves route annotations at
 # runtime, and ``WebSocket`` is imported inside ``create_app`` (FastAPI stays an optional extra).
 import asyncio
+import contextlib
 import inspect
+import signal
+import threading
 import time
 from pathlib import Path
 
@@ -54,6 +57,7 @@ from .views.common import ViewError
 
 STATIC = Path(__file__).resolve().parent / "static"
 MAX_BRANCH_NODES = 256
+TICK = 0.2  # seconds between looks at the shutdown flag in the event sockets
 WRITE_EFFECTS = ("navigate", "mutate", "native")
 
 
@@ -71,15 +75,47 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
 
     from .live import Busy, Interrupted
 
+    stopping = threading.Event()  # set by ``app.state.stop()``: the event sockets say goodbye
+
     if live is not None:
         read_only = False
     recorded = Recorded(project_path)
     reducer = Reducer()
     contexts = {}  # session id -> mdb.ops.Context (no debugger attached: recorded project)
     static = Path(static_dir) if static_dir else STATIC
-    app = FastAPI(title="mdb serve", docs_url=None, redoc_url=None, openapi_url=None)
+    @contextlib.asynccontextmanager
+    async def lifespan(_app):
+        """Under uvicorn, tell the event sockets to close the moment SIGTERM/SIGINT arrives:
+        uvicorn's graceful exit waits for open websockets, so an open browser tab made the
+        first signal look ignored (M39). Uvicorn installs its handlers before the lifespan
+        starts; each is wrapped, not replaced. Off the main thread (tests) nothing is wrapped."""
+        wrapped = []
+        if threading.current_thread() is threading.main_thread():
+            for name in ("SIGTERM", "SIGINT"):
+                number = getattr(signal, name)
+                previous = signal.getsignal(number)
+                if not callable(previous):
+                    continue
+
+                def handler(sig, frame, previous=previous):
+                    stopping.set()
+                    previous(sig, frame)
+
+                signal.signal(number, handler)
+                wrapped.append((number, handler, previous))
+        try:
+            yield
+        finally:
+            stopping.set()
+            for number, handler, previous in wrapped:
+                if signal.getsignal(number) is handler:
+                    signal.signal(number, previous)
+
+    app = FastAPI(title="mdb serve", docs_url=None, redoc_url=None, openapi_url=None,
+                  lifespan=lifespan)
     app.state.recorded, app.state.read_only = recorded, read_only
     app.state.reducer, app.state.live = reducer, live
+    app.state.stop = stopping.set  # the server is going down: close the event sockets
 
     roots = sorted({str(Path(project_path)), str(Path(project_path).expanduser().resolve()),
                     *((str(live.debugger.project.root),) if live is not None
@@ -404,13 +440,20 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                 await send("hello", {"session": sid,
                                      "live": "running" if live.running else "paused",
                                      "seq": live.seq, "running": live.running})
+                quiet = time.monotonic()
                 while True:
                     try:
-                        event = await asyncio.wait_for(events.get(), timeout=heartbeat)
+                        event = await asyncio.wait_for(events.get(), timeout=min(heartbeat, TICK))
                     except asyncio.TimeoutError:
-                        await send("heartbeat", {"session": sid})
+                        if stopping.is_set():
+                            await websocket.close(code=1001)  # going away: lets the server stop
+                            return
+                        if time.monotonic() - quiet >= heartbeat:
+                            await send("heartbeat", {"session": sid})
+                            quiet = time.monotonic()
                         continue
                     await send("op", event)
+                    quiet = time.monotonic()
             except (WebSocketDisconnect, RuntimeError):
                 return
             finally:
@@ -424,9 +467,15 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                 return
             await send("hello", {"session": sid, "live": "offline",
                                  "note": "recorded project; heartbeats only"})
+            quiet = time.monotonic()
             while True:
-                await asyncio.sleep(heartbeat)
-                await send("heartbeat", {"session": sid})
+                await asyncio.sleep(min(heartbeat, TICK))
+                if stopping.is_set():
+                    await websocket.close(code=1001)
+                    return
+                if time.monotonic() - quiet >= heartbeat:
+                    await send("heartbeat", {"session": sid})
+                    quiet = time.monotonic()
         except (WebSocketDisconnect, RuntimeError):
             return
 

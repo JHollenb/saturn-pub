@@ -508,8 +508,9 @@ The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is atta
 torch (it needs the `serve` extra). The browser at `/` shows the project's sessions with an
 address bar and a command line, and these views: Timeline (token by layer, with a branch
 rail), Graph, Symbols, Records and an Inspector whose reductions (`POST /api/v1/s/SID/reduce`)
-never send a whole tensor. Every response is at most 64 KiB. The recorded browser still reads
-lane-era projects; an engine-native recorded fixture is not built (issue M14).
+never send a whole tensor. Every response is at most 64 KiB. The recorded browser reads lane-era
+projects and engine-native ones (circuit and symbol-table records, no state cuts; the fixture
+is built by `tests/test_serve_recorded.py`, issue M20).
 
 With `--tiny FAMILY` or `--model DIR` the server also holds one live debugger, attached with
 that project. The page gets a Live view with four tabs and an architecture strip:
