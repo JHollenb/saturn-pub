@@ -42,7 +42,7 @@ def put_json(obj: Any, *, store: Any = None, run: Any = None,
                 "tensor": tensor_pointer(stored["ref"], sha256=stored["sha256"],
                                          shape=stored["shape"], dtype=stored["dtype"])}
     if run is not None:
-        _HELD.setdefault(run, {})[digest] = obj
+        _HELD.setdefault(run, {})[digest] = raw     # the bytes, so a held copy cannot change
     return {"state": "absent", "sha256": digest,
             "reason": absent_reason or "no project store: the full list is held in memory on "
                                        "the run (bounded.load_json), not stored"}
@@ -64,7 +64,9 @@ def load_json(pointer: Mapping[str, Any], *, store: Any = None, run: Any = None,
     held = _HELD.get(run, {}).get(pointer["sha256"]) if run is not None else None
     if held is None:
         raise ValueError("the full list is not held: " + pointer.get("reason", "absent"))
-    return held
+    if hashlib.sha256(held).hexdigest() != pointer["sha256"]:
+        raise ValueError("the held list differs from the pointer's sha256")
+    return json.loads(held)
 
 
 def keep_indices(items: Sequence[Any], cap: int,
