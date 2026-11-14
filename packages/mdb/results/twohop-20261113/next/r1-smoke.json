@@ -1,0 +1,77 @@
+[
+ {
+  "id": "currency:yen",
+  "n": 38,
+  "construct_s": 0.306102322996594,
+  "to_logits_s": 0.26673915299761575,
+  "fresh_arm_s": 0.31056262100173626,
+  "to_L20_s": 0.18402893700113054,
+  "checkpoint_s": 2.9575996450148523e-05,
+  "restore_arm_s": [
+   0.0978146009874763,
+   0.1036177280038828,
+   0.10120415600249544
+  ],
+  "restore_equals_fresh": [
+   true,
+   true,
+   true
+  ],
+  "restore_L4_arm_s": 0.23553614699630998,
+  "sweep_arms": 192,
+  "sweep_s": 0.06920551299117506,
+  "capture_s": 0.78,
+  "capture_bytes": 5687278,
+  "capture_bytes_raw": 8784384
+ },
+ {
+  "id": "city:Shanghai",
+  "n": 38,
+  "construct_s": 0.03379741600656416,
+  "to_logits_s": 0.2659934399998747,
+  "fresh_arm_s": 0.3020836609939579,
+  "to_L20_s": 0.1781320739974035,
+  "checkpoint_s": 2.392400347162038e-05,
+  "restore_arm_s": [
+   0.09465003499644808,
+   0.09920637200411875,
+   0.10190436500124633
+  ],
+  "restore_equals_fresh": [
+   true,
+   true,
+   true
+  ],
+  "restore_L4_arm_s": 0.23450473899720237,
+  "sweep_arms": 192,
+  "sweep_s": 0.06809921500098426,
+  "capture_s": 0.78,
+  "capture_bytes": 5685678,
+  "capture_bytes_raw": 8784384
+ },
+ {
+  "id": "long-city:Novosibirsk",
+  "n": 209,
+  "construct_s": 0.05581101500138175,
+  "to_logits_s": 0.5361955160042271,
+  "fresh_arm_s": 0.5959062600013567,
+  "to_L20_s": 0.36070533000747673,
+  "checkpoint_s": 2.826299169100821e-05,
+  "restore_arm_s": [
+   0.1859600070019951,
+   0.2004890349926427,
+   0.20124091001343913
+  ],
+  "restore_equals_fresh": [
+   true,
+   true,
+   true
+  ],
+  "restore_L4_arm_s": 0.5821227650012588,
+  "sweep_arms": 768,
+  "sweep_s": 0.48985717800678685,
+  "capture_s": 2.7,
+  "capture_bytes": 21119829,
+  "capture_bytes_raw": 28702464
+ }
+]
