@@ -1,0 +1,4093 @@
+{
+ "d5": [
+  {
+   "template": "teacher-of-author",
+   "descriptor": "the teacher of the author of the Republic",
+   "chain": [
+    {
+     "relation": "author of the Republic",
+     "entity": "Plato"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Socrates"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the author of the Republic is"
+  },
+  {
+   "template": "teacher-of-author",
+   "descriptor": "the teacher of the author of the Anabasis",
+   "chain": [
+    {
+     "relation": "author of the Anabasis",
+     "entity": "Xenophon"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Socrates"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "medium",
+   "doubts": "Xenophon was a pupil of Socrates; 'the teacher' is canonical but less famous than Plato's. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the author of the Anabasis is"
+  },
+  {
+   "template": "teacher-of-teacher",
+   "descriptor": "the teacher of the teacher of Aristotle",
+   "chain": [
+    {
+     "relation": "teacher of Aristotle",
+     "entity": "Plato"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Socrates"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of Aristotle is"
+  },
+  {
+   "template": "teacher-of-author",
+   "descriptor": "the teacher of the author of the Nicomachean Ethics",
+   "chain": [
+    {
+     "relation": "author of the Nicomachean Ethics",
+     "entity": "Aristotle"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Plato"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "Plato's birthplace: Athens in most sources, a minority say Aegina.",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the author of the Nicomachean Ethics is"
+  },
+  {
+   "template": "teacher-of-teacher",
+   "descriptor": "the teacher of the teacher of Alexander the Great",
+   "chain": [
+    {
+     "relation": "teacher of Alexander the Great",
+     "entity": "Aristotle"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Plato"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "Plato birthplace Athens vs Aegina (minority).",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of Alexander the Great is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the comedy in which women refuse their husbands to end a war",
+   "chain": [
+    {
+     "relation": "comedy described",
+     "entity": "Lysistrata"
+    },
+    {
+     "relation": "author",
+     "entity": "Aristophanes"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "medium",
+   "doubts": "Aristophanes born in Athens (deme Kydathenaion); a minor tradition links him to Aegina.",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the comedy in which women refuse their husbands to end a war is"
+  },
+  {
+   "template": "parent-of-composer",
+   "descriptor": "the father of the composer of The Blue Danube",
+   "chain": [
+    {
+     "relation": "composer of The Blue Danube",
+     "entity": "Johann Strauss II"
+    },
+    {
+     "relation": "father",
+     "entity": "Johann Strauss I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the composer of The Blue Danube is"
+  },
+  {
+   "template": "parent-of-composer",
+   "descriptor": "the father of the composer of the operetta Die Fledermaus",
+   "chain": [
+    {
+     "relation": "composer of Die Fledermaus",
+     "entity": "Johann Strauss II"
+    },
+    {
+     "relation": "father",
+     "entity": "Johann Strauss I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "high",
+   "doubts": "Same chain as the Blue Danube item (surface variant). shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the composer of the operetta Die Fledermaus is"
+  },
+  {
+   "template": "spouse-of-composer",
+   "descriptor": "the wife of the composer of Das Lied von der Erde",
+   "chain": [
+    {
+     "relation": "composer of Das Lied von der Erde",
+     "entity": "Gustav Mahler"
+    },
+    {
+     "relation": "wife",
+     "entity": "Alma Mahler"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Alma Mahler is less famous than Gustav; Mahler himself was born in Bohemia (Czech), a useful wrong-shortcut discriminator.",
+   "prompt": "The official language of the country whose capital is the birthplace of the wife of the composer of Das Lied von der Erde is"
+  },
+  {
+   "template": "teacher-of-composer",
+   "descriptor": "the teacher of the composer of the opera Wozzeck",
+   "chain": [
+    {
+     "relation": "composer of Wozzeck",
+     "entity": "Alban Berg"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Arnold Schoenberg"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the composer of the opera Wozzeck is"
+  },
+  {
+   "template": "teacher-of-composer",
+   "descriptor": "the teacher of the composer of the Hungarian Rhapsodies",
+   "chain": [
+    {
+     "relation": "composer of the Hungarian Rhapsodies",
+     "entity": "Franz Liszt"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Carl Czerny"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Liszt also studied with Salieri (composition); Czerny is the canonical piano teacher.",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the composer of the Hungarian Rhapsodies is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the opera based on Georg Buchner's play Woyzeck",
+   "chain": [
+    {
+     "relation": "opera based on Woyzeck",
+     "entity": "Wozzeck"
+    },
+    {
+     "relation": "composer",
+     "entity": "Alban Berg"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Manfred Gurlitt also wrote a Wozzeck opera (1926); Berg's is the famous one.",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the opera based on Georg Buchner's play Woyzeck is"
+  },
+  {
+   "template": "child-of-author",
+   "descriptor": "the youngest daughter of the author of The Interpretation of Dreams",
+   "chain": [
+    {
+     "relation": "author of The Interpretation of Dreams",
+     "entity": "Sigmund Freud"
+    },
+    {
+     "relation": "youngest daughter",
+     "entity": "Anna Freud"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Freud was born in Pribor (Czech): wrong-shortcut discriminator.",
+   "prompt": "The official language of the country whose capital is the birthplace of the youngest daughter of the author of The Interpretation of Dreams is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the second wife of the emperor defeated at Waterloo",
+   "chain": [
+    {
+     "relation": "emperor defeated at Waterloo",
+     "entity": "Napoleon"
+    },
+    {
+     "relation": "second wife",
+     "entity": "Marie Louise"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Marie Louise is less famous; born at the Hofburg, Vienna.",
+   "prompt": "The official language of the country whose capital is the birthplace of the second wife of the emperor defeated at Waterloo is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the wife of the grandson and successor of Louis XV",
+   "chain": [
+    {
+     "relation": "grandson and successor of Louis XV",
+     "entity": "Louis XVI"
+    },
+    {
+     "relation": "wife",
+     "entity": "Marie Antoinette"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the wife of the grandson and successor of Louis XV is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the husband of the empress assassinated in Geneva in 1898",
+   "chain": [
+    {
+     "relation": "empress assassinated in Geneva 1898",
+     "entity": "Empress Elisabeth (Sisi)"
+    },
+    {
+     "relation": "husband",
+     "entity": "Franz Joseph I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Franz Joseph born at Schonbrunn Palace, Vienna.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the empress assassinated in Geneva in 1898 is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on the novel Professor Unrat",
+   "chain": [
+    {
+     "relation": "film based on Professor Unrat",
+     "entity": "The Blue Angel"
+    },
+    {
+     "relation": "director",
+     "entity": "Josef von Sternberg"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Sternberg's Vienna birth is not widely known; film made in Germany (distractor).",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on the novel Professor Unrat is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Thea von Harbou's novel Metropolis",
+   "chain": [
+    {
+     "relation": "film based on Metropolis",
+     "entity": "Metropolis (1927)"
+    },
+    {
+     "relation": "director",
+     "entity": "Fritz Lang"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Novel and film were written in parallel; 'based on' is loose. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Thea von Harbou's novel Metropolis is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the score of the film based on the novel Gone with the Wind",
+   "chain": [
+    {
+     "relation": "film based on Gone with the Wind",
+     "entity": "Gone with the Wind (1939)"
+    },
+    {
+     "relation": "score composer",
+     "entity": "Max Steiner"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Steiner's birthplace is not widely known. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the score of the film based on the novel Gone with the Wind is"
+  },
+  {
+   "template": "author-of-source",
+   "descriptor": "the author of the novella on which the film Eyes Wide Shut is based",
+   "chain": [
+    {
+     "relation": "source novella of Eyes Wide Shut",
+     "entity": "Traumnovelle (Dream Story)"
+    },
+    {
+     "relation": "author",
+     "entity": "Arthur Schnitzler"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novella on which the film Eyes Wide Shut is based is"
+  },
+  {
+   "template": "partner-of-author",
+   "descriptor": "the lifelong partner of the author of The Second Sex",
+   "chain": [
+    {
+     "relation": "author of The Second Sex",
+     "entity": "Simone de Beauvoir"
+    },
+    {
+     "relation": "partner",
+     "entity": "Jean-Paul Sartre"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the lifelong partner of the author of The Second Sex is"
+  },
+  {
+   "template": "partner-of-author",
+   "descriptor": "the lifelong partner of the author of the novel Nausea",
+   "chain": [
+    {
+     "relation": "author of Nausea",
+     "entity": "Jean-Paul Sartre"
+    },
+    {
+     "relation": "partner",
+     "entity": "Simone de Beauvoir"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the lifelong partner of the author of the novel Nausea is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the husband of the first woman to win a Nobel Prize",
+   "chain": [
+    {
+     "relation": "first woman Nobel laureate",
+     "entity": "Marie Curie"
+    },
+    {
+     "relation": "husband",
+     "entity": "Pierre Curie"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "high",
+   "doubts": "Marie Curie born in Warsaw: wrong-shortcut gives Poland.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the first woman to win a Nobel Prize is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the opera adapted into the musical Carmen Jones",
+   "chain": [
+    {
+     "relation": "opera adapted as Carmen Jones",
+     "entity": "Carmen"
+    },
+    {
+     "relation": "composer",
+     "entity": "Georges Bizet"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the opera adapted into the musical Carmen Jones is"
+  },
+  {
+   "template": "partner-of-composer",
+   "descriptor": "the lover of the composer of the Minute Waltz",
+   "chain": [
+    {
+     "relation": "composer of the Minute Waltz",
+     "entity": "Frederic Chopin"
+    },
+    {
+     "relation": "lover",
+     "entity": "George Sand"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "'lover' is canonical for Sand (1838-47) but Chopin had earlier attachments; Chopin born in Poland (discriminator).",
+   "prompt": "The official language of the country whose capital is the birthplace of the lover of the composer of the Minute Waltz is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the husband of the actress murdered by the Manson Family",
+   "chain": [
+    {
+     "relation": "actress murdered by the Manson Family",
+     "entity": "Sharon Tate"
+    },
+    {
+     "relation": "husband",
+     "entity": "Roman Polanski"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Polanski is strongly associated with Poland; Paris birth is a known but secondary fact.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the actress murdered by the Manson Family is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Wladyslaw Szpilman's memoir The Pianist",
+   "chain": [
+    {
+     "relation": "film based on The Pianist",
+     "entity": "The Pianist (2002)"
+    },
+    {
+     "relation": "director",
+     "entity": "Roman Polanski"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Polanski-Poland association; Paris birth secondary. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Wladyslaw Szpilman's memoir The Pianist is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Ira Levin's novel Rosemary's Baby",
+   "chain": [
+    {
+     "relation": "film based on Rosemary's Baby",
+     "entity": "Rosemary's Baby (1968)"
+    },
+    {
+     "relation": "director",
+     "entity": "Roman Polanski"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Ira Levin's novel Rosemary's Baby is"
+  },
+  {
+   "template": "teacher-of-teacher",
+   "descriptor": "the teacher of the teacher of Maurice Ravel",
+   "chain": [
+    {
+     "relation": "teacher of Ravel",
+     "entity": "Gabriel Faure"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Camille Saint-Saens"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Ravel also studied with Gedalge and Beriot; Faure is the canonical composition teacher.",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of Maurice Ravel is"
+  },
+  {
+   "template": "employer-of-author",
+   "descriptor": "the sculptor for whom the author of the Duino Elegies worked as secretary",
+   "chain": [
+    {
+     "relation": "author of the Duino Elegies",
+     "entity": "Rainer Maria Rilke"
+    },
+    {
+     "relation": "employer (secretary to)",
+     "entity": "Auguste Rodin"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Rilke born in Prague: wrong-shortcut gives Czech.",
+   "prompt": "The official language of the country whose capital is the birthplace of the sculptor for whom the author of the Duino Elegies worked as secretary is"
+  },
+  {
+   "template": "child-of-person",
+   "descriptor": "the only legitimate son of the emperor defeated at Waterloo",
+   "chain": [
+    {
+     "relation": "emperor defeated at Waterloo",
+     "entity": "Napoleon"
+    },
+    {
+     "relation": "only legitimate son",
+     "entity": "Napoleon II"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Napoleon II (born Tuileries, Paris) is less known; Napoleon born in Corsica.",
+   "prompt": "The official language of the country whose capital is the birthplace of the only legitimate son of the emperor defeated at Waterloo is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Henri-Pierre Roche's novel Jules and Jim",
+   "chain": [
+    {
+     "relation": "film based on Jules and Jim",
+     "entity": "Jules et Jim (1962)"
+    },
+    {
+     "relation": "director",
+     "entity": "Francois Truffaut"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Henri-Pierre Roche's novel Jules and Jim is"
+  },
+  {
+   "template": "author-of-source",
+   "descriptor": "the author of the novel on which the musical The Phantom of the Opera is based",
+   "chain": [
+    {
+     "relation": "source novel",
+     "entity": "Le Fantome de l'Opera"
+    },
+    {
+     "relation": "author",
+     "entity": "Gaston Leroux"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Leroux birthplace Paris is not widely known.",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel on which the musical The Phantom of the Opera is based is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the 1859 opera based on Goethe's Faust",
+   "chain": [
+    {
+     "relation": "1859 opera based on Faust",
+     "entity": "Faust (Gounod)"
+    },
+    {
+     "relation": "composer",
+     "entity": "Charles Gounod"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the 1859 opera based on Goethe's Faust is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the comedy whose main character is the miser Harpagon",
+   "chain": [
+    {
+     "relation": "comedy featuring Harpagon",
+     "entity": "The Miser"
+    },
+    {
+     "relation": "author",
+     "entity": "Moliere"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the comedy whose main character is the miser Harpagon is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the novel cycle featuring Charles Swann",
+   "chain": [
+    {
+     "relation": "novel cycle featuring Swann",
+     "entity": "In Search of Lost Time"
+    },
+    {
+     "relation": "author",
+     "entity": "Marcel Proust"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Born in Auteuil (Paris, 16th arr.). the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel cycle featuring Charles Swann is"
+  },
+  {
+   "template": "adoptive-parent",
+   "descriptor": "the adoptive father of the victor of the Battle of Actium",
+   "chain": [
+    {
+     "relation": "victor of Actium",
+     "entity": "Octavian (Augustus)"
+    },
+    {
+     "relation": "adoptive father",
+     "entity": "Julius Caesar"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "high",
+   "doubts": "Agrippa commanded the fleet; Octavian is the conventional victor. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the adoptive father of the victor of the Battle of Actium is"
+  },
+  {
+   "template": "adoptive-parent",
+   "descriptor": "the adoptive father of the emperor during whose reign Jesus was crucified",
+   "chain": [
+    {
+     "relation": "emperor at the crucifixion",
+     "entity": "Tiberius"
+    },
+    {
+     "relation": "adoptive father",
+     "entity": "Augustus"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the adoptive father of the emperor during whose reign Jesus was crucified is"
+  },
+  {
+   "template": "parent-of-person",
+   "descriptor": "the father of the emperor who is the villain of the film Gladiator",
+   "chain": [
+    {
+     "relation": "villain emperor of Gladiator",
+     "entity": "Commodus"
+    },
+    {
+     "relation": "father",
+     "entity": "Marcus Aurelius"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Commodus born in Lanuvium, not Rome, so no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the emperor who is the villain of the film Gladiator is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the western remade from the film Yojimbo",
+   "chain": [
+    {
+     "relation": "western remake of Yojimbo",
+     "entity": "A Fistful of Dollars"
+    },
+    {
+     "relation": "director",
+     "entity": "Sergio Leone"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Remake was unofficial (lawsuit); Last Man Standing (1996) is a later, non-western-in-name remake.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the western remade from the film Yojimbo is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the score of the western remade from the film Yojimbo",
+   "chain": [
+    {
+     "relation": "western remake of Yojimbo",
+     "entity": "A Fistful of Dollars"
+    },
+    {
+     "relation": "score composer",
+     "entity": "Ennio Morricone"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Same remake caveat as the Leone item.",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the score of the western remade from the film Yojimbo is"
+  },
+  {
+   "template": "spouse-of-producer",
+   "descriptor": "the second wife of the producer of the 1965 film Doctor Zhivago",
+   "chain": [
+    {
+     "relation": "producer of Doctor Zhivago (1965)",
+     "entity": "Carlo Ponti"
+    },
+    {
+     "relation": "second wife",
+     "entity": "Sophia Loren"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Loren was born in Rome but raised in Pozzuoli; models may answer Naples-region facts.",
+   "prompt": "The official language of the country whose capital is the birthplace of the second wife of the producer of the 1965 film Doctor Zhivago is"
+  },
+  {
+   "template": "child-of-child",
+   "descriptor": "the eldest son of the eldest daughter of Queen Victoria",
+   "chain": [
+    {
+     "relation": "eldest daughter of Victoria",
+     "entity": "Victoria, Princess Royal"
+    },
+    {
+     "relation": "eldest son",
+     "entity": "Wilhelm II"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Vicky was born in London: wrong-shortcut gives Britain.",
+   "prompt": "The official language of the country whose capital is the birthplace of the eldest son of the eldest daughter of Queen Victoria is"
+  },
+  {
+   "template": "child-of-person",
+   "descriptor": "the eldest son of the emperor who reigned for 99 days",
+   "chain": [
+    {
+     "relation": "99-day emperor",
+     "entity": "Frederick III"
+    },
+    {
+     "relation": "eldest son",
+     "entity": "Wilhelm II"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Frederick III born in Potsdam, so no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the eldest son of the emperor who reigned for 99 days is"
+  },
+  {
+   "template": "parent-of-person",
+   "descriptor": "the father of the king who built Sanssouci",
+   "chain": [
+    {
+     "relation": "builder of Sanssouci",
+     "entity": "Frederick the Great"
+    },
+    {
+     "relation": "father",
+     "entity": "Frederick William I"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the king who built Sanssouci is"
+  },
+  {
+   "template": "host-of-author",
+   "descriptor": "the king who hosted the author of Candide at Sanssouci",
+   "chain": [
+    {
+     "relation": "author of Candide",
+     "entity": "Voltaire"
+    },
+    {
+     "relation": "host king",
+     "entity": "Frederick the Great"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Relation 'host' is unique but unusual. Voltaire born in Paris: wrong-shortcut gives France.",
+   "prompt": "The official language of the country whose capital is the birthplace of the king who hosted the author of Candide at Sanssouci is"
+  },
+  {
+   "template": "spouse-of-widow",
+   "descriptor": "the second husband of the widow of Gustav Mahler",
+   "chain": [
+    {
+     "relation": "widow of Mahler",
+     "entity": "Alma Mahler"
+    },
+    {
+     "relation": "second husband",
+     "entity": "Walter Gropius"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Alma born in Vienna: wrong-shortcut gives Austria.",
+   "prompt": "The official language of the country whose capital is the birthplace of the second husband of the widow of Gustav Mahler is"
+  },
+  {
+   "template": "actor-of-adaptation",
+   "descriptor": "the lead actress of the film based on the novel Professor Unrat",
+   "chain": [
+    {
+     "relation": "film based on Professor Unrat",
+     "entity": "The Blue Angel"
+    },
+    {
+     "relation": "lead actress",
+     "entity": "Marlene Dietrich"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Emil Jannings is the top-billed lead; Dietrich the lead actress.",
+   "prompt": "The official language of the country whose capital is the birthplace of the lead actress of the film based on the novel Professor Unrat is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Charles Webb's novel The Graduate",
+   "chain": [
+    {
+     "relation": "film based on The Graduate",
+     "entity": "The Graduate (1967)"
+    },
+    {
+     "relation": "director",
+     "entity": "Mike Nichols"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Nichols's Berlin birth is a known but secondary fact. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Charles Webb's novel The Graduate is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Edward Albee's play Who's Afraid of Virginia Woolf?",
+   "chain": [
+    {
+     "relation": "film based on the play",
+     "entity": "Who's Afraid of Virginia Woolf? (1966)"
+    },
+    {
+     "relation": "director",
+     "entity": "Mike Nichols"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Descriptor mentions Virginia Woolf (London-born), a distractor. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Edward Albee's play Who's Afraid of Virginia Woolf? is"
+  },
+  {
+   "template": "parent-of-author",
+   "descriptor": "the mother of the author of Frankenstein",
+   "chain": [
+    {
+     "relation": "author of Frankenstein",
+     "entity": "Mary Shelley"
+    },
+    {
+     "relation": "mother",
+     "entity": "Mary Wollstonecraft"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the author of Frankenstein is"
+  },
+  {
+   "template": "spouse-of-author",
+   "descriptor": "the husband of the author of Mrs Dalloway",
+   "chain": [
+    {
+     "relation": "author of Mrs Dalloway",
+     "entity": "Virginia Woolf"
+    },
+    {
+     "relation": "husband",
+     "entity": "Leonard Woolf"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the author of Mrs Dalloway is"
+  },
+  {
+   "template": "parent-of-author",
+   "descriptor": "the father of the author of Mrs Dalloway",
+   "chain": [
+    {
+     "relation": "author of Mrs Dalloway",
+     "entity": "Virginia Woolf"
+    },
+    {
+     "relation": "father",
+     "entity": "Leslie Stephen"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the author of Mrs Dalloway is"
+  },
+  {
+   "template": "spouse-of-author",
+   "descriptor": "the husband of the author of Sonnets from the Portuguese",
+   "chain": [
+    {
+     "relation": "author of Sonnets from the Portuguese",
+     "entity": "Elizabeth Barrett Browning"
+    },
+    {
+     "relation": "husband",
+     "entity": "Robert Browning"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "EBB born in County Durham, so no shortcut. Descriptor contains 'Portuguese' (a LANG value for Portugal): distractor.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the author of Sonnets from the Portuguese is"
+  },
+  {
+   "template": "child-of-author",
+   "descriptor": "the only legitimate child of the author of Don Juan",
+   "chain": [
+    {
+     "relation": "author of Don Juan (poem)",
+     "entity": "Lord Byron"
+    },
+    {
+     "relation": "only legitimate child",
+     "entity": "Ada Lovelace"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "'Don Juan' is ambiguous (Moliere, Mozart, Zorrilla); use 'the poem Don Juan' if needed. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the only legitimate child of the author of Don Juan is"
+  },
+  {
+   "template": "in-law-of-author",
+   "descriptor": "the son-in-law of the author of Long Day's Journey into Night",
+   "chain": [
+    {
+     "relation": "author of Long Day's Journey into Night",
+     "entity": "Eugene O'Neill"
+    },
+    {
+     "relation": "son-in-law",
+     "entity": "Charlie Chaplin"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "O'Neill born in New York: no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the son-in-law of the author of Long Day's Journey into Night is"
+  },
+  {
+   "template": "parent-of-director",
+   "descriptor": "the father of the director of the 2009 film Moon",
+   "chain": [
+    {
+     "relation": "director of Moon (2009)",
+     "entity": "Duncan Jones"
+    },
+    {
+     "relation": "father",
+     "entity": "David Bowie"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "Duncan Jones also born in London (Bromley). shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the director of the 2009 film Moon is"
+  },
+  {
+   "template": "parent-of-person",
+   "descriptor": "the mother of the king after whom the Edwardian era is named",
+   "chain": [
+    {
+     "relation": "king of the Edwardian era",
+     "entity": "Edward VII"
+    },
+    {
+     "relation": "mother",
+     "entity": "Queen Victoria"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the king after whom the Edwardian era is named is"
+  },
+  {
+   "template": "executioner-of-author",
+   "descriptor": "the king who executed the author of Utopia",
+   "chain": [
+    {
+     "relation": "author of Utopia",
+     "entity": "Thomas More"
+    },
+    {
+     "relation": "king who executed him",
+     "entity": "Henry VIII"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "Henry VIII born at Greenwich Palace (Greenwich is in London today). shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the king who executed the author of Utopia is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the musical based on Old Possum's Book of Practical Cats",
+   "chain": [
+    {
+     "relation": "musical based on the book",
+     "entity": "Cats"
+    },
+    {
+     "relation": "composer",
+     "entity": "Andrew Lloyd Webber"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the musical based on Old Possum's Book of Practical Cats is"
+  },
+  {
+   "template": "composer-of-adaptation",
+   "descriptor": "the composer of the 1986 musical based on Gaston Leroux's novel The Phantom of the Opera",
+   "chain": [
+    {
+     "relation": "musical based on the novel",
+     "entity": "The Phantom of the Opera (musical)"
+    },
+    {
+     "relation": "composer",
+     "entity": "Andrew Lloyd Webber"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "high",
+   "doubts": "Leroux (Paris) named: France distractor. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the 1986 musical based on Gaston Leroux's novel The Phantom of the Opera is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the 1940 film based on Daphne du Maurier's novel Rebecca",
+   "chain": [
+    {
+     "relation": "film based on Rebecca",
+     "entity": "Rebecca (1940)"
+    },
+    {
+     "relation": "director",
+     "entity": "Alfred Hitchcock"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "high",
+   "doubts": "du Maurier also London-born. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1940 film based on Daphne du Maurier's novel Rebecca is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Christopher Priest's novel The Prestige",
+   "chain": [
+    {
+     "relation": "film based on The Prestige",
+     "entity": "The Prestige (2006)"
+    },
+    {
+     "relation": "director",
+     "entity": "Christopher Nolan"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Christopher Priest's novel The Prestige is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the novel whose hero is shipwrecked and meets Man Friday",
+   "chain": [
+    {
+     "relation": "novel with Man Friday",
+     "entity": "Robinson Crusoe"
+    },
+    {
+     "relation": "author",
+     "entity": "Daniel Defoe"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel whose hero is shipwrecked and meets Man Friday is"
+  },
+  {
+   "template": "spouse-of-singer",
+   "descriptor": "the widow of the singer of Imagine",
+   "chain": [
+    {
+     "relation": "singer of Imagine",
+     "entity": "John Lennon"
+    },
+    {
+     "relation": "widow",
+     "entity": "Yoko Ono"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "high",
+   "doubts": "Lennon born Liverpool: wrong-shortcut gives Britain.",
+   "prompt": "The official language of the country whose capital is the birthplace of the widow of the singer of Imagine is"
+  },
+  {
+   "template": "director-of-source",
+   "descriptor": "the director of the film remade as The Magnificent Seven",
+   "chain": [
+    {
+     "relation": "film remade as The Magnificent Seven",
+     "entity": "Seven Samurai"
+    },
+    {
+     "relation": "director",
+     "entity": "Akira Kurosawa"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film remade as The Magnificent Seven is"
+  },
+  {
+   "template": "director-of-source",
+   "descriptor": "the director of the film remade as A Fistful of Dollars",
+   "chain": [
+    {
+     "relation": "film remade as A Fistful of Dollars",
+     "entity": "Yojimbo"
+    },
+    {
+     "relation": "director",
+     "entity": "Akira Kurosawa"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "Remake was unofficial.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film remade as A Fistful of Dollars is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the animated film based on Diana Wynne Jones's novel Howl's Moving Castle",
+   "chain": [
+    {
+     "relation": "film based on the novel",
+     "entity": "Howl's Moving Castle (2004)"
+    },
+    {
+     "relation": "director",
+     "entity": "Hayao Miyazaki"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "high",
+   "doubts": "Diana Wynne Jones born in London: distractor. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the animated film based on Diana Wynne Jones's novel Howl's Moving Castle is"
+  },
+  {
+   "template": "parent-of-director",
+   "descriptor": "the father of the director of the film Tales from Earthsea",
+   "chain": [
+    {
+     "relation": "director of Tales from Earthsea",
+     "entity": "Goro Miyazaki"
+    },
+    {
+     "relation": "father",
+     "entity": "Hayao Miyazaki"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the director of the film Tales from Earthsea is"
+  },
+  {
+   "template": "author-of-source",
+   "descriptor": "the author of the stories on which the film Rashomon is based",
+   "chain": [
+    {
+     "relation": "source stories of Rashomon",
+     "entity": "Rashomon / In a Grove"
+    },
+    {
+     "relation": "author",
+     "entity": "Ryunosuke Akutagawa"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the stories on which the film Rashomon is based is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the novel narrated by a nameless cat",
+   "chain": [
+    {
+     "relation": "novel narrated by a cat",
+     "entity": "I Am a Cat"
+    },
+    {
+     "relation": "author",
+     "entity": "Natsume Soseki"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel narrated by a nameless cat is"
+  },
+  {
+   "template": "author-of-described-work",
+   "descriptor": "the author of the novel about the burning of the Golden Pavilion",
+   "chain": [
+    {
+     "relation": "novel about the Golden Pavilion",
+     "entity": "The Temple of the Golden Pavilion"
+    },
+    {
+     "relation": "author",
+     "entity": "Yukio Mishima"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "Golden Pavilion is in Kyoto (non-capital city distractor).",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel about the burning of the Golden Pavilion is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the 1968 film based on Pierre Boulle's novel Planet of the Apes",
+   "chain": [
+    {
+     "relation": "film based on the novel",
+     "entity": "Planet of the Apes (1968)"
+    },
+    {
+     "relation": "director",
+     "entity": "Franklin J. Schaffner"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "Obscure: Schaffner (American) was born in Tokyo to missionaries; expect low accuracy, an adversarial item.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1968 film based on Pierre Boulle's novel Planet of the Apes is"
+  },
+  {
+   "template": "parent-of-parent",
+   "descriptor": "the father of the father of Princess Aiko",
+   "chain": [
+    {
+     "relation": "father of Aiko",
+     "entity": "Naruhito"
+    },
+    {
+     "relation": "father",
+     "entity": "Akihito"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the father of Princess Aiko is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novel whose protagonist is Raskolnikov",
+   "chain": [
+    {
+     "relation": "novel with Raskolnikov",
+     "entity": "Crime and Punishment"
+    },
+    {
+     "relation": "author",
+     "entity": "Fyodor Dostoevsky"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "high",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel whose protagonist is Raskolnikov is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novel whose protagonist is Pechorin",
+   "chain": [
+    {
+     "relation": "novel with Pechorin",
+     "entity": "A Hero of Our Time"
+    },
+    {
+     "relation": "author",
+     "entity": "Mikhail Lermontov"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "high",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel whose protagonist is Pechorin is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the verse novel in which Lensky is killed in a duel",
+   "chain": [
+    {
+     "relation": "verse novel with Lensky",
+     "entity": "Eugene Onegin"
+    },
+    {
+     "relation": "author",
+     "entity": "Alexander Pushkin"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the verse novel in which Lensky is killed in a duel is"
+  },
+  {
+   "template": "author-of-source",
+   "descriptor": "the author of the novel on which the 1965 film whose score features Lara's Theme is based",
+   "chain": [
+    {
+     "relation": "1965 film with Lara's Theme",
+     "entity": "Doctor Zhivago (film)"
+    },
+    {
+     "relation": "author of source novel",
+     "entity": "Boris Pasternak"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "Film and novel share a title; the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel on which the 1965 film whose score features Lara's Theme is based is"
+  },
+  {
+   "template": "parent-of-person",
+   "descriptor": "the father of the founder of Saint Petersburg",
+   "chain": [
+    {
+     "relation": "founder of Saint Petersburg",
+     "entity": "Peter the Great"
+    },
+    {
+     "relation": "father",
+     "entity": "Alexis of Russia"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "Alexis is little known; shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the founder of Saint Petersburg is"
+  },
+  {
+   "template": "subject-of-poem",
+   "descriptor": "the poet mourned in The Death of the Poet by the author of A Hero of Our Time",
+   "chain": [
+    {
+     "relation": "author of A Hero of Our Time",
+     "entity": "Mikhail Lermontov"
+    },
+    {
+     "relation": "poet mourned",
+     "entity": "Alexander Pushkin"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "Descriptor names the poem; shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the poet mourned in The Death of the Poet by the author of A Hero of Our Time is"
+  },
+  {
+   "template": "executor-of-author",
+   "descriptor": "the literary executor of the author of The Trial",
+   "chain": [
+    {
+     "relation": "author of The Trial",
+     "entity": "Franz Kafka"
+    },
+    {
+     "relation": "literary executor",
+     "entity": "Max Brod"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the literary executor of the author of The Trial is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novella whose protagonist is Gregor Samsa",
+   "chain": [
+    {
+     "relation": "novella with Gregor Samsa",
+     "entity": "The Metamorphosis"
+    },
+    {
+     "relation": "author",
+     "entity": "Franz Kafka"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "high",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novella whose protagonist is Gregor Samsa is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novel about the good soldier Svejk",
+   "chain": [
+    {
+     "relation": "novel about Svejk",
+     "entity": "The Good Soldier Svejk"
+    },
+    {
+     "relation": "author",
+     "entity": "Jaroslav Hasek"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel about the good soldier Svejk is"
+  },
+  {
+   "template": "predecessor-chain",
+   "descriptor": "the predecessor of the predecessor of Condoleezza Rice as US Secretary of State",
+   "chain": [
+    {
+     "relation": "predecessor of Rice",
+     "entity": "Colin Powell"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Madeleine Albright"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "Powell born NYC: no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of Condoleezza Rice as US Secretary of State is"
+  },
+  {
+   "template": "spouse-of-widow",
+   "descriptor": "the third husband of the widow of Gustav Mahler",
+   "chain": [
+    {
+     "relation": "widow of Mahler",
+     "entity": "Alma Mahler"
+    },
+    {
+     "relation": "third husband",
+     "entity": "Franz Werfel"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "Werfel's Prague birth is secondary; Alma (Vienna) gives Austria if a hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the third husband of the widow of Gustav Mahler is"
+  },
+  {
+   "template": "employee-of-sculptor",
+   "descriptor": "the poet who worked as secretary to the sculptor of The Thinker",
+   "chain": [
+    {
+     "relation": "sculptor of The Thinker",
+     "entity": "Auguste Rodin"
+    },
+    {
+     "relation": "secretary",
+     "entity": "Rainer Maria Rilke"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "Rodin (Paris) gives France if a hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the poet who worked as secretary to the sculptor of The Thinker is"
+  },
+  {
+   "template": "parent-of-spouse",
+   "descriptor": "the mother of the wife of Frederic Joliot-Curie",
+   "chain": [
+    {
+     "relation": "wife of Joliot-Curie",
+     "entity": "Irene Joliot-Curie"
+    },
+    {
+     "relation": "mother",
+     "entity": "Marie Curie"
+    }
+   ],
+   "capital": "Warsaw",
+   "country": "Poland",
+   "language": "Polish",
+   "confidence": "medium",
+   "doubts": "Irene born in Paris: wrong-shortcut gives France.",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the wife of Frederic Joliot-Curie is"
+  },
+  {
+   "template": "spouse-of-person",
+   "descriptor": "the wife of the physicist after whom the Curie temperature is named",
+   "chain": [
+    {
+     "relation": "namesake of the Curie temperature",
+     "entity": "Pierre Curie"
+    },
+    {
+     "relation": "wife",
+     "entity": "Marie Curie"
+    }
+   ],
+   "capital": "Warsaw",
+   "country": "Poland",
+   "language": "Polish",
+   "confidence": "medium",
+   "doubts": "Pierre born in Paris: wrong-shortcut gives France.",
+   "prompt": "The official language of the country whose capital is the birthplace of the wife of the physicist after whom the Curie temperature is named is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film adapted from the play Everybody Comes to Rick's",
+   "chain": [
+    {
+     "relation": "film adapted from the play",
+     "entity": "Casablanca"
+    },
+    {
+     "relation": "director",
+     "entity": "Michael Curtiz"
+    }
+   ],
+   "capital": "Budapest",
+   "country": "Hungary",
+   "language": "Hungarian",
+   "confidence": "medium",
+   "doubts": "Curtiz's Budapest birth is secondary knowledge.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film adapted from the play Everybody Comes to Rick's is"
+  },
+  {
+   "template": "actor-of-adaptation",
+   "descriptor": "the female lead of the film adapted from the play Everybody Comes to Rick's",
+   "chain": [
+    {
+     "relation": "film adapted from the play",
+     "entity": "Casablanca"
+    },
+    {
+     "relation": "female lead",
+     "entity": "Ingrid Bergman"
+    }
+   ],
+   "capital": "Stockholm",
+   "country": "Sweden",
+   "language": "Swedish",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the female lead of the film adapted from the play Everybody Comes to Rick's is"
+  },
+  {
+   "template": "founder-of-prize",
+   "descriptor": "the founder of the prize that Marie Curie won twice",
+   "chain": [
+    {
+     "relation": "prize won twice by Marie Curie",
+     "entity": "Nobel Prize"
+    },
+    {
+     "relation": "founder",
+     "entity": "Alfred Nobel"
+    }
+   ],
+   "capital": "Stockholm",
+   "country": "Sweden",
+   "language": "Swedish",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the founder of the prize that Marie Curie won twice is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novels featuring Inspector Kurt Wallander",
+   "chain": [
+    {
+     "relation": "novel series",
+     "entity": "Wallander novels"
+    },
+    {
+     "relation": "author",
+     "entity": "Henning Mankell"
+    }
+   ],
+   "capital": "Stockholm",
+   "country": "Sweden",
+   "language": "Swedish",
+   "confidence": "medium",
+   "doubts": "Series node likely collapses (character -> author directly). the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novels featuring Inspector Kurt Wallander is"
+  },
+  {
+   "template": "fiancee-of-author",
+   "descriptor": "the fiancee of the author of Fear and Trembling",
+   "chain": [
+    {
+     "relation": "author of Fear and Trembling",
+     "entity": "Soren Kierkegaard"
+    },
+    {
+     "relation": "fiancee",
+     "entity": "Regine Olsen"
+    }
+   ],
+   "capital": "Copenhagen",
+   "country": "Denmark",
+   "language": "Danish",
+   "confidence": "medium",
+   "doubts": "Regine Olsen is obscure; shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the fiancee of the author of Fear and Trembling is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novel whose protagonist is Smilla Jaspersen",
+   "chain": [
+    {
+     "relation": "novel with Smilla",
+     "entity": "Smilla's Sense of Snow"
+    },
+    {
+     "relation": "author",
+     "entity": "Peter Hoeg"
+    }
+   ],
+   "capital": "Copenhagen",
+   "country": "Denmark",
+   "language": "Danish",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel whose protagonist is Smilla Jaspersen is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Robert Heinlein's novel Starship Troopers",
+   "chain": [
+    {
+     "relation": "film based on the novel",
+     "entity": "Starship Troopers (1997)"
+    },
+    {
+     "relation": "director",
+     "entity": "Paul Verhoeven"
+    }
+   ],
+   "capital": "Amsterdam",
+   "country": "Netherlands",
+   "language": "Dutch",
+   "confidence": "high",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Robert Heinlein's novel Starship Troopers is"
+  },
+  {
+   "template": "creator-of-described",
+   "descriptor": "the creator of the operating system kernel whose mascot is Tux",
+   "chain": [
+    {
+     "relation": "kernel with mascot Tux",
+     "entity": "Linux"
+    },
+    {
+     "relation": "creator",
+     "entity": "Linus Torvalds"
+    }
+   ],
+   "capital": "Helsinki",
+   "country": "Finland",
+   "language": "Finnish",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the creator of the operating system kernel whose mascot is Tux is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novels featuring detective Harry Hole",
+   "chain": [
+    {
+     "relation": "novel series",
+     "entity": "Harry Hole novels"
+    },
+    {
+     "relation": "author",
+     "entity": "Jo Nesbo"
+    }
+   ],
+   "capital": "Oslo",
+   "country": "Norway",
+   "language": "Norwegian",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novels featuring detective Harry Hole is"
+  },
+  {
+   "template": "actor-of-character",
+   "descriptor": "the actress who played the mother of Luke Skywalker in the prequel films",
+   "chain": [
+    {
+     "relation": "mother of Luke Skywalker",
+     "entity": "Padme Amidala"
+    },
+    {
+     "relation": "actress",
+     "entity": "Natalie Portman"
+    }
+   ],
+   "capital": "Jerusalem",
+   "country": "Israel",
+   "language": "Hebrew",
+   "confidence": "high",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the actress who played the mother of Luke Skywalker in the prequel films is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Amos Oz's memoir A Tale of Love and Darkness",
+   "chain": [
+    {
+     "relation": "film based on the memoir",
+     "entity": "A Tale of Love and Darkness (2015)"
+    },
+    {
+     "relation": "director",
+     "entity": "Natalie Portman"
+    }
+   ],
+   "capital": "Jerusalem",
+   "country": "Israel",
+   "language": "Hebrew",
+   "confidence": "medium",
+   "doubts": "Oz also born in Jerusalem. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Amos Oz's memoir A Tale of Love and Darkness is"
+  },
+  {
+   "template": "predecessor-chain",
+   "descriptor": "the predecessor of the prime minister who signed the Camp David Accords",
+   "chain": [
+    {
+     "relation": "PM who signed Camp David",
+     "entity": "Menachem Begin"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Yitzhak Rabin"
+    }
+   ],
+   "capital": "Jerusalem",
+   "country": "Israel",
+   "language": "Hebrew",
+   "confidence": "medium",
+   "doubts": "Begin born in Brest (Belarus): no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the prime minister who signed the Camp David Accords is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the novel in which the devil appears as Woland",
+   "chain": [
+    {
+     "relation": "novel with Woland",
+     "entity": "The Master and Margarita"
+    },
+    {
+     "relation": "author",
+     "entity": "Mikhail Bulgakov"
+    }
+   ],
+   "capital": "Kiev",
+   "country": "Ukraine",
+   "language": "Ukrainian",
+   "confidence": "medium",
+   "doubts": "Bulgakov is strongly associated with Moscow (Russia distractor).",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel in which the devil appears as Woland is"
+  },
+  {
+   "template": "founder-of-company",
+   "descriptor": "the founder of the company that makes the Black Hawk helicopter",
+   "chain": [
+    {
+     "relation": "Black Hawk maker",
+     "entity": "Sikorsky Aircraft"
+    },
+    {
+     "relation": "founder",
+     "entity": "Igor Sikorsky"
+    }
+   ],
+   "capital": "Kiev",
+   "country": "Ukraine",
+   "language": "Ukrainian",
+   "confidence": "medium",
+   "doubts": "Sikorsky Aircraft is now owned by Lockheed Martin (alternative reading).",
+   "prompt": "The official language of the country whose capital is the birthplace of the founder of the company that makes the Black Hawk helicopter is"
+  },
+  {
+   "template": "predecessor-chain",
+   "descriptor": "the predecessor of the predecessor of Ban Ki-moon as UN Secretary-General",
+   "chain": [
+    {
+     "relation": "predecessor of Ban",
+     "entity": "Kofi Annan"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Boutros Boutros-Ghali"
+    }
+   ],
+   "capital": "Cairo",
+   "country": "Egypt",
+   "language": "Arabic",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of Ban Ki-moon as UN Secretary-General is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the trilogy whose patriarch is al-Sayyid Ahmad Abd al-Jawad",
+   "chain": [
+    {
+     "relation": "trilogy",
+     "entity": "The Cairo Trilogy"
+    },
+    {
+     "relation": "author",
+     "entity": "Naguib Mahfouz"
+    }
+   ],
+   "capital": "Cairo",
+   "country": "Egypt",
+   "language": "Arabic",
+   "confidence": "medium",
+   "doubts": "Trilogy's common English name contains 'Cairo' (the capital) but the descriptor does not; obscure character name.",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the trilogy whose patriarch is al-Sayyid Ahmad Abd al-Jawad is"
+  },
+  {
+   "template": "singer-of-described",
+   "descriptor": "the singer of the first YouTube video to reach one billion views",
+   "chain": [
+    {
+     "relation": "first billion-view video",
+     "entity": "Gangnam Style"
+    },
+    {
+     "relation": "singer",
+     "entity": "Psy"
+    }
+   ],
+   "capital": "Seoul",
+   "country": "Korea",
+   "language": "Korean",
+   "confidence": "medium",
+   "doubts": "Avoids writing 'Gangnam' (a Seoul district).",
+   "prompt": "The official language of the country whose capital is the birthplace of the singer of the first YouTube video to reach one billion views is"
+  },
+  {
+   "template": "director-of-adaptation",
+   "descriptor": "the director of the film based on Sarah Waters's novel Fingersmith",
+   "chain": [
+    {
+     "relation": "film based on Fingersmith",
+     "entity": "The Handmaiden"
+    },
+    {
+     "relation": "director",
+     "entity": "Park Chan-wook"
+    }
+   ],
+   "capital": "Seoul",
+   "country": "Korea",
+   "language": "Korean",
+   "confidence": "medium",
+   "doubts": "BBC 2005 Fingersmith is a TV serial (dir. Aisling Walsh), so 'film' is unique.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film based on Sarah Waters's novel Fingersmith is"
+  },
+  {
+   "template": "child-of-founder",
+   "descriptor": "the son and successor of the founder of the Pahlavi dynasty",
+   "chain": [
+    {
+     "relation": "founder of the Pahlavi dynasty",
+     "entity": "Reza Shah"
+    },
+    {
+     "relation": "son and successor",
+     "entity": "Mohammad Reza Pahlavi"
+    }
+   ],
+   "capital": "Tehran",
+   "country": "Iran",
+   "language": "Persian",
+   "confidence": "medium",
+   "doubts": "Reza Shah born in Alasht: no shortcut.",
+   "prompt": "The official language of the country whose capital is the birthplace of the son and successor of the founder of the Pahlavi dynasty is"
+  },
+  {
+   "template": "successor-chain",
+   "descriptor": "the successor of the successor of Susilo Bambang Yudhoyono as president",
+   "chain": [
+    {
+     "relation": "successor of SBY",
+     "entity": "Joko Widodo"
+    },
+    {
+     "relation": "successor",
+     "entity": "Prabowo Subianto"
+    }
+   ],
+   "capital": "Jakarta",
+   "country": "Indonesia",
+   "language": "Indonesian",
+   "confidence": "medium",
+   "doubts": "Prabowo took office Oct 2024: may postdate Qwen training data. Prabowo born in Jakarta.",
+   "prompt": "The official language of the country whose capital is the birthplace of the successor of the successor of Susilo Bambang Yudhoyono as president is"
+  },
+  {
+   "template": "parent-of-singer",
+   "descriptor": "the father of the singer of Bailamos",
+   "chain": [
+    {
+     "relation": "singer of Bailamos",
+     "entity": "Enrique Iglesias"
+    },
+    {
+     "relation": "father",
+     "entity": "Julio Iglesias"
+    }
+   ],
+   "capital": "Madrid",
+   "country": "Spain",
+   "language": "Spanish",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the singer of Bailamos is"
+  },
+  {
+   "template": "author-of-character",
+   "descriptor": "the author of the play whose protagonist is the prince Segismundo",
+   "chain": [
+    {
+     "relation": "play with Segismundo",
+     "entity": "Life Is a Dream"
+    },
+    {
+     "relation": "author",
+     "entity": "Pedro Calderon de la Barca"
+    }
+   ],
+   "capital": "Madrid",
+   "country": "Spain",
+   "language": "Spanish",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the play whose protagonist is the prince Segismundo is"
+  },
+  {
+   "template": "creator-of-heteronym",
+   "descriptor": "the creator of the heteronym who wrote the Maritime Ode",
+   "chain": [
+    {
+     "relation": "author of Maritime Ode",
+     "entity": "Alvaro de Campos (heteronym)"
+    },
+    {
+     "relation": "creator",
+     "entity": "Fernando Pessoa"
+    }
+   ],
+   "capital": "Lisbon",
+   "country": "Portugal",
+   "language": "Portuguese",
+   "confidence": "medium",
+   "doubts": "Heteronym-as-entity is unusual.",
+   "prompt": "The official language of the country whose capital is the birthplace of the creator of the heteronym who wrote the Maritime Ode is"
+  },
+  {
+   "template": "predecessor-chain",
+   "descriptor": "the predecessor of the predecessor of Menachem Begin as prime minister",
+   "chain": [
+    {
+     "relation": "predecessor of Begin",
+     "entity": "Yitzhak Rabin"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Golda Meir"
+    }
+   ],
+   "capital": "Kiev",
+   "country": "Ukraine",
+   "language": "Ukrainian",
+   "confidence": "medium",
+   "doubts": "Golda Meir is strongly associated with Israel and Milwaukee; Kiev birth is secondary. Rabin (Jerusalem) gives Israel if a hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of Menachem Begin as prime minister is"
+  }
+ ],
+ "d6": [
+  {
+   "template": "teacher^2-of-author",
+   "descriptor": "the teacher of the teacher of the author of the Nicomachean Ethics",
+   "chain": [
+    {
+     "relation": "author",
+     "entity": "Aristotle"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Plato"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Socrates"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of the author of the Nicomachean Ethics is"
+  },
+  {
+   "template": "teacher^3",
+   "descriptor": "the teacher of the teacher of the teacher of Alexander the Great",
+   "chain": [
+    {
+     "relation": "teacher of Alexander",
+     "entity": "Aristotle"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Plato"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Socrates"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "high",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of the teacher of Alexander the Great is"
+  },
+  {
+   "template": "teacher^2-of-child",
+   "descriptor": "the teacher of the teacher of the son and successor of Philip II of Macedon",
+   "chain": [
+    {
+     "relation": "son and successor of Philip II",
+     "entity": "Alexander the Great"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Aristotle"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Plato"
+    }
+   ],
+   "capital": "Athens",
+   "country": "Greece",
+   "language": "Greek",
+   "confidence": "medium",
+   "doubts": "Plato birthplace Athens vs Aegina (minority).",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of the son and successor of Philip II of Macedon is"
+  },
+  {
+   "template": "teacher-of-composer-of-adaptation",
+   "descriptor": "the teacher of the composer of the opera based on Buchner's play Woyzeck",
+   "chain": [
+    {
+     "relation": "opera",
+     "entity": "Wozzeck"
+    },
+    {
+     "relation": "composer",
+     "entity": "Alban Berg"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Arnold Schoenberg"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Gurlitt's Wozzeck also exists. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the composer of the opera based on Buchner's play Woyzeck is"
+  },
+  {
+   "template": "teacher^2-of-composer",
+   "descriptor": "the teacher of the teacher of the composer of the opera Wozzeck",
+   "chain": [
+    {
+     "relation": "composer",
+     "entity": "Alban Berg"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Arnold Schoenberg"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Alexander Zemlinsky"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Zemlinsky was Schoenberg's only formal teacher but is obscure. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of the composer of the opera Wozzeck is"
+  },
+  {
+   "template": "parent-of-composer-of-adaptation",
+   "descriptor": "the father of the composer of the operetta based on the farce Le Reveillon",
+   "chain": [
+    {
+     "relation": "operetta",
+     "entity": "Die Fledermaus"
+    },
+    {
+     "relation": "composer",
+     "entity": "Johann Strauss II"
+    },
+    {
+     "relation": "father",
+     "entity": "Johann Strauss I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Le Reveillon (Meilhac & Halevy) is obscure. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the composer of the operetta based on the farce Le Reveillon is"
+  },
+  {
+   "template": "teacher-of-in-law",
+   "descriptor": "the teacher of the father-in-law of the composer of the Ring cycle",
+   "chain": [
+    {
+     "relation": "composer of the Ring",
+     "entity": "Richard Wagner"
+    },
+    {
+     "relation": "father-in-law",
+     "entity": "Franz Liszt"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Carl Czerny"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Father-in-law means via second wife Cosima; first wife Minna Planer's father is obscure. Liszt also studied with Salieri.",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the father-in-law of the composer of the Ring cycle is"
+  },
+  {
+   "template": "child-of-grandparent",
+   "descriptor": "the youngest daughter of the paternal grandfather of the painter Lucian Freud",
+   "chain": [
+    {
+     "relation": "father",
+     "entity": "Ernst L. Freud"
+    },
+    {
+     "relation": "father",
+     "entity": "Sigmund Freud"
+    },
+    {
+     "relation": "youngest daughter",
+     "entity": "Anna Freud"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Lucian Freud born in Berlin (Germany distractor); Ernst born in Vienna. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the youngest daughter of the paternal grandfather of the painter Lucian Freud is"
+  },
+  {
+   "template": "parent-of-spouse",
+   "descriptor": "the mother of the wife of the grandson and successor of Louis XV",
+   "chain": [
+    {
+     "relation": "grandson and successor",
+     "entity": "Louis XVI"
+    },
+    {
+     "relation": "wife",
+     "entity": "Marie Antoinette"
+    },
+    {
+     "relation": "mother",
+     "entity": "Maria Theresa"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the wife of the grandson and successor of Louis XV is"
+  },
+  {
+   "template": "spouse-of-parent",
+   "descriptor": "the husband of the mother of the crown prince who died at Mayerling",
+   "chain": [
+    {
+     "relation": "crown prince",
+     "entity": "Rudolf"
+    },
+    {
+     "relation": "mother",
+     "entity": "Empress Elisabeth (Sisi)"
+    },
+    {
+     "relation": "husband",
+     "entity": "Franz Joseph I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "husband-of-mother = father: a model may compress the hops. Rudolf born Laxenburg.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the mother of the crown prince who died at Mayerling is"
+  },
+  {
+   "template": "sibling-of-parent",
+   "descriptor": "the eldest brother of the father of the archduke assassinated in Sarajevo",
+   "chain": [
+    {
+     "relation": "archduke",
+     "entity": "Franz Ferdinand"
+    },
+    {
+     "relation": "father",
+     "entity": "Archduke Karl Ludwig"
+    },
+    {
+     "relation": "eldest brother",
+     "entity": "Franz Joseph I"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Karl Ludwig is obscure; Franz Ferdinand born in Graz.",
+   "prompt": "The official language of the country whose capital is the birthplace of the eldest brother of the father of the archduke assassinated in Sarajevo is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1930 film based on a novel by Heinrich Mann",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Professor Unrat"
+    },
+    {
+     "relation": "film",
+     "entity": "The Blue Angel"
+    },
+    {
+     "relation": "director",
+     "entity": "Josef von Sternberg"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Sternberg's Vienna birth secondary. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1930 film based on a novel by Heinrich Mann is"
+  },
+  {
+   "template": "composer-of-adaptation-by-author",
+   "descriptor": "the composer of the score of the 1939 film based on Margaret Mitchell's novel",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Gone with the Wind"
+    },
+    {
+     "relation": "film",
+     "entity": "Gone with the Wind (1939)"
+    },
+    {
+     "relation": "composer",
+     "entity": "Max Steiner"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the score of the 1939 film based on Margaret Mitchell's novel is"
+  },
+  {
+   "template": "author-of-source-of-film",
+   "descriptor": "the author of the novella on which the last film of Stanley Kubrick is based",
+   "chain": [
+    {
+     "relation": "last Kubrick film",
+     "entity": "Eyes Wide Shut"
+    },
+    {
+     "relation": "source novella",
+     "entity": "Traumnovelle"
+    },
+    {
+     "relation": "author",
+     "entity": "Arthur Schnitzler"
+    }
+   ],
+   "capital": "Vienna",
+   "country": "Austria",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novella on which the last film of Stanley Kubrick is based is"
+  },
+  {
+   "template": "teacher^2-of-composer",
+   "descriptor": "the teacher of the teacher of the composer of Bolero",
+   "chain": [
+    {
+     "relation": "composer of Bolero",
+     "entity": "Maurice Ravel"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Gabriel Faure"
+    },
+    {
+     "relation": "teacher",
+     "entity": "Camille Saint-Saens"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Ravel had several teachers; Faure is canonical for composition.",
+   "prompt": "The official language of the country whose capital is the birthplace of the teacher of the teacher of the composer of Bolero is"
+  },
+  {
+   "template": "partner-of-author-of-character",
+   "descriptor": "the lifelong partner of the author of the novel whose narrator is Antoine Roquentin",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Nausea"
+    },
+    {
+     "relation": "author",
+     "entity": "Jean-Paul Sartre"
+    },
+    {
+     "relation": "partner",
+     "entity": "Simone de Beauvoir"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the lifelong partner of the author of the novel whose narrator is Antoine Roquentin is"
+  },
+  {
+   "template": "spouse-of-parent-of-spouse",
+   "descriptor": "the husband of the mother of the wife of Frederic Joliot-Curie",
+   "chain": [
+    {
+     "relation": "wife",
+     "entity": "Irene Joliot-Curie"
+    },
+    {
+     "relation": "mother",
+     "entity": "Marie Curie"
+    },
+    {
+     "relation": "husband",
+     "entity": "Pierre Curie"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "husband-of-mother = father: may compress. Marie (Warsaw) gives Poland if the last hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the mother of the wife of Frederic Joliot-Curie is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 2002 film based on the memoir of the pianist Wladyslaw Szpilman",
+   "chain": [
+    {
+     "relation": "memoir",
+     "entity": "The Pianist"
+    },
+    {
+     "relation": "film",
+     "entity": "The Pianist (2002)"
+    },
+    {
+     "relation": "director",
+     "entity": "Roman Polanski"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Polanski-Poland association. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 2002 film based on the memoir of the pianist Wladyslaw Szpilman is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1968 film based on a novel by Ira Levin",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Rosemary's Baby"
+    },
+    {
+     "relation": "film",
+     "entity": "Rosemary's Baby (1968)"
+    },
+    {
+     "relation": "director",
+     "entity": "Roman Polanski"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1968 film based on a novel by Ira Levin is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1962 film based on a novel by Henri-Pierre Roche",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Jules et Jim"
+    },
+    {
+     "relation": "film",
+     "entity": "Jules et Jim (1962)"
+    },
+    {
+     "relation": "director",
+     "entity": "Francois Truffaut"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Roche is obscure. the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1962 film based on a novel by Henri-Pierre Roche is"
+  },
+  {
+   "template": "composer-of-adaptation-by-author",
+   "descriptor": "the composer of the opera based on a novella by Prosper Merimee",
+   "chain": [
+    {
+     "relation": "novella",
+     "entity": "Carmen"
+    },
+    {
+     "relation": "opera",
+     "entity": "Carmen"
+    },
+    {
+     "relation": "composer",
+     "entity": "Georges Bizet"
+    }
+   ],
+   "capital": "Paris",
+   "country": "France",
+   "language": "French",
+   "confidence": "medium",
+   "doubts": "Merimee's Colomba was also set (obscure). the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the opera based on a novella by Prosper Merimee is"
+  },
+  {
+   "template": "parent-of-author-of-character",
+   "descriptor": "the mother of the author of the novel whose protagonist is Victor Frankenstein",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Frankenstein"
+    },
+    {
+     "relation": "author",
+     "entity": "Mary Shelley"
+    },
+    {
+     "relation": "mother",
+     "entity": "Mary Wollstonecraft"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent; shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the author of the novel whose protagonist is Victor Frankenstein is"
+  },
+  {
+   "template": "parent-of-spouse-of-author",
+   "descriptor": "the mother of the second wife of the author of Ozymandias",
+   "chain": [
+    {
+     "relation": "author of Ozymandias",
+     "entity": "Percy Bysshe Shelley"
+    },
+    {
+     "relation": "second wife",
+     "entity": "Mary Shelley"
+    },
+    {
+     "relation": "mother",
+     "entity": "Mary Wollstonecraft"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "Horace Smith also wrote an 'Ozymandias' (obscure). Percy born Horsham. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the second wife of the author of Ozymandias is"
+  },
+  {
+   "template": "child-of-employer-of-author",
+   "descriptor": "the only legitimate child of the employer of the author of The Vampyre",
+   "chain": [
+    {
+     "relation": "author of The Vampyre",
+     "entity": "John Polidori"
+    },
+    {
+     "relation": "employer",
+     "entity": "Lord Byron"
+    },
+    {
+     "relation": "only legitimate child",
+     "entity": "Ada Lovelace"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "The Vampyre was first misattributed to Byron, so a model may skip Polidori. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the only legitimate child of the employer of the author of The Vampyre is"
+  },
+  {
+   "template": "spouse-of-author-of-character",
+   "descriptor": "the husband of the author of the novel featuring Septimus Warren Smith",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Mrs Dalloway"
+    },
+    {
+     "relation": "author",
+     "entity": "Virginia Woolf"
+    },
+    {
+     "relation": "husband",
+     "entity": "Leonard Woolf"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the author of the novel featuring Septimus Warren Smith is"
+  },
+  {
+   "template": "in-law-chain",
+   "descriptor": "the husband of the daughter of the author of Long Day's Journey into Night",
+   "chain": [
+    {
+     "relation": "author",
+     "entity": "Eugene O'Neill"
+    },
+    {
+     "relation": "daughter",
+     "entity": "Oona O'Neill"
+    },
+    {
+     "relation": "husband",
+     "entity": "Charlie Chaplin"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "Oona was O'Neill's only daughter. Oona born in Bermuda.",
+   "prompt": "The official language of the country whose capital is the birthplace of the husband of the daughter of the author of Long Day's Journey into Night is"
+  },
+  {
+   "template": "parent^3",
+   "descriptor": "the mother of the father of the father of Edward VIII",
+   "chain": [
+    {
+     "relation": "father",
+     "entity": "George V"
+    },
+    {
+     "relation": "father",
+     "entity": "Edward VII"
+    },
+    {
+     "relation": "mother",
+     "entity": "Queen Victoria"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the mother of the father of the father of Edward VIII is"
+  },
+  {
+   "template": "composer-of-adaptation-by-author",
+   "descriptor": "the composer of the 1981 musical based on a book of poems by T. S. Eliot",
+   "chain": [
+    {
+     "relation": "book",
+     "entity": "Old Possum's Book of Practical Cats"
+    },
+    {
+     "relation": "musical",
+     "entity": "Cats"
+    },
+    {
+     "relation": "composer",
+     "entity": "Andrew Lloyd Webber"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "Eliot born in St Louis (no shortcut).",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the 1981 musical based on a book of poems by T. S. Eliot is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1960 film based on a novel by Robert Bloch",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Psycho"
+    },
+    {
+     "relation": "film",
+     "entity": "Psycho (1960)"
+    },
+    {
+     "relation": "director",
+     "entity": "Alfred Hitchcock"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1960 film based on a novel by Robert Bloch is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 2006 film based on a novel by Christopher Priest",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "The Prestige"
+    },
+    {
+     "relation": "film",
+     "entity": "The Prestige (2006)"
+    },
+    {
+     "relation": "director",
+     "entity": "Christopher Nolan"
+    }
+   ],
+   "capital": "London",
+   "country": "Britain",
+   "language": "English",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 2006 film based on a novel by Christopher Priest is"
+  },
+  {
+   "template": "child^2-of-person",
+   "descriptor": "the eldest son of the eldest daughter of the queen after whom the Victorian era is named",
+   "chain": [
+    {
+     "relation": "queen",
+     "entity": "Queen Victoria"
+    },
+    {
+     "relation": "eldest daughter",
+     "entity": "Victoria, Princess Royal"
+    },
+    {
+     "relation": "eldest son",
+     "entity": "Wilhelm II"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Victoria and Vicky both London-born: dropping the last hop gives Britain.",
+   "prompt": "The official language of the country whose capital is the birthplace of the eldest son of the eldest daughter of the queen after whom the Victorian era is named is"
+  },
+  {
+   "template": "parent-of-host-of-author",
+   "descriptor": "the father of the king who hosted the author of Candide at Sanssouci",
+   "chain": [
+    {
+     "relation": "author of Candide",
+     "entity": "Voltaire"
+    },
+    {
+     "relation": "host king",
+     "entity": "Frederick the Great"
+    },
+    {
+     "relation": "father",
+     "entity": "Frederick William I"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the king who hosted the author of Candide at Sanssouci is"
+  },
+  {
+   "template": "spouse-of-widow-of-composer",
+   "descriptor": "the second husband of the wife of the composer of Das Lied von der Erde",
+   "chain": [
+    {
+     "relation": "composer",
+     "entity": "Gustav Mahler"
+    },
+    {
+     "relation": "wife",
+     "entity": "Alma Mahler"
+    },
+    {
+     "relation": "second husband",
+     "entity": "Walter Gropius"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "Alma (Vienna) gives Austria; Mahler (Bohemia) gives Czech.",
+   "prompt": "The official language of the country whose capital is the birthplace of the second husband of the wife of the composer of Das Lied von der Erde is"
+  },
+  {
+   "template": "actor-of-adaptation-by-author",
+   "descriptor": "the lead actress of the 1930 film based on a novel by Heinrich Mann",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Professor Unrat"
+    },
+    {
+     "relation": "film",
+     "entity": "The Blue Angel"
+    },
+    {
+     "relation": "lead actress",
+     "entity": "Marlene Dietrich"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the lead actress of the 1930 film based on a novel by Heinrich Mann is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1967 film based on the first novel of Charles Webb",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "The Graduate"
+    },
+    {
+     "relation": "film",
+     "entity": "The Graduate (1967)"
+    },
+    {
+     "relation": "director",
+     "entity": "Mike Nichols"
+    }
+   ],
+   "capital": "Berlin",
+   "country": "Germany",
+   "language": "German",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1967 film based on the first novel of Charles Webb is"
+  },
+  {
+   "template": "spouse-of-widow-of-composer",
+   "descriptor": "the third husband of the wife of the composer of Das Lied von der Erde",
+   "chain": [
+    {
+     "relation": "composer",
+     "entity": "Gustav Mahler"
+    },
+    {
+     "relation": "wife",
+     "entity": "Alma Mahler"
+    },
+    {
+     "relation": "third husband",
+     "entity": "Franz Werfel"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "Werfel's Prague birth is secondary.",
+   "prompt": "The official language of the country whose capital is the birthplace of the third husband of the wife of the composer of Das Lied von der Erde is"
+  },
+  {
+   "template": "predecessor^3",
+   "descriptor": "the predecessor of the predecessor of the predecessor of Hillary Clinton as US Secretary of State",
+   "chain": [
+    {
+     "relation": "predecessor",
+     "entity": "Condoleezza Rice"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Colin Powell"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Madeleine Albright"
+    }
+   ],
+   "capital": "Prague",
+   "country": "Czech",
+   "language": "Czech",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of the predecessor of Hillary Clinton as US Secretary of State is"
+  },
+  {
+   "template": "father^3",
+   "descriptor": "the father of the father of the father of Princess Aiko",
+   "chain": [
+    {
+     "relation": "father",
+     "entity": "Naruhito"
+    },
+    {
+     "relation": "father",
+     "entity": "Akihito"
+    },
+    {
+     "relation": "father",
+     "entity": "Hirohito"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the father of the father of Princess Aiko is"
+  },
+  {
+   "template": "spouse-of-singer-of-described",
+   "descriptor": "the widow of the singer of the song that begins 'Imagine there's no heaven'",
+   "chain": [
+    {
+     "relation": "song",
+     "entity": "Imagine"
+    },
+    {
+     "relation": "singer",
+     "entity": "John Lennon"
+    },
+    {
+     "relation": "widow",
+     "entity": "Yoko Ono"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "Lennon (Liverpool) gives Britain if the last hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the widow of the singer of the song that begins 'Imagine there's no heaven' is"
+  },
+  {
+   "template": "director-of-source-of-remake",
+   "descriptor": "the director of the film that was remade as the film that the 2016 film The Magnificent Seven remakes",
+   "chain": [
+    {
+     "relation": "remade film",
+     "entity": "The Magnificent Seven (1960)"
+    },
+    {
+     "relation": "source film",
+     "entity": "Seven Samurai"
+    },
+    {
+     "relation": "director",
+     "entity": "Akira Kurosawa"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "Awkward phrasing; a model can jump straight from the title to Seven Samurai.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the film that was remade as the film that the 2016 film The Magnificent Seven remakes is"
+  },
+  {
+   "template": "parent-of-director-of-adaptation",
+   "descriptor": "the father of the director of the film based on Ursula Le Guin's Earthsea books",
+   "chain": [
+    {
+     "relation": "film",
+     "entity": "Tales from Earthsea"
+    },
+    {
+     "relation": "director",
+     "entity": "Goro Miyazaki"
+    },
+    {
+     "relation": "father",
+     "entity": "Hayao Miyazaki"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "The 2004 Sci Fi Channel miniseries 'Legend of Earthsea' is TV, not film. shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the director of the film based on Ursula Le Guin's Earthsea books is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the animated film based on a novel by Diana Wynne Jones",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Howl's Moving Castle"
+    },
+    {
+     "relation": "film",
+     "entity": "Howl's Moving Castle (2004)"
+    },
+    {
+     "relation": "director",
+     "entity": "Hayao Miyazaki"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the animated film based on a novel by Diana Wynne Jones is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1950 film based on stories by Ryunosuke Akutagawa",
+   "chain": [
+    {
+     "relation": "stories",
+     "entity": "Rashomon / In a Grove"
+    },
+    {
+     "relation": "film",
+     "entity": "Rashomon"
+    },
+    {
+     "relation": "director",
+     "entity": "Akira Kurosawa"
+    }
+   ],
+   "capital": "Tokyo",
+   "country": "Japan",
+   "language": "Japanese",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent; shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1950 film based on stories by Ryunosuke Akutagawa is"
+  },
+  {
+   "template": "creator-of-kernel-of-product",
+   "descriptor": "the creator of the kernel used by the mobile operating system developed by Google",
+   "chain": [
+    {
+     "relation": "mobile OS",
+     "entity": "Android"
+    },
+    {
+     "relation": "kernel",
+     "entity": "Linux"
+    },
+    {
+     "relation": "creator",
+     "entity": "Linus Torvalds"
+    }
+   ],
+   "capital": "Helsinki",
+   "country": "Finland",
+   "language": "Finnish",
+   "confidence": "medium",
+   "doubts": "Android's original creator Andy Rubin is a possible confusion.",
+   "prompt": "The official language of the country whose capital is the birthplace of the creator of the kernel used by the mobile operating system developed by Google is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1997 film based on a novel by Robert Heinlein",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Starship Troopers"
+    },
+    {
+     "relation": "film",
+     "entity": "Starship Troopers (1997)"
+    },
+    {
+     "relation": "director",
+     "entity": "Paul Verhoeven"
+    }
+   ],
+   "capital": "Amsterdam",
+   "country": "Netherlands",
+   "language": "Dutch",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1997 film based on a novel by Robert Heinlein is"
+  },
+  {
+   "template": "subject-of-poem-by-author-of-character",
+   "descriptor": "the poet mourned in a famous elegy by the author of the novel whose hero is Pechorin",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "A Hero of Our Time"
+    },
+    {
+     "relation": "author",
+     "entity": "Mikhail Lermontov"
+    },
+    {
+     "relation": "poet mourned (The Death of the Poet)",
+     "entity": "Alexander Pushkin"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the poet mourned in a famous elegy by the author of the novel whose hero is Pechorin is"
+  },
+  {
+   "template": "parent^2-of-predecessor",
+   "descriptor": "the father of the father of the empress who preceded Peter III",
+   "chain": [
+    {
+     "relation": "empress before Peter III",
+     "entity": "Elizabeth of Russia"
+    },
+    {
+     "relation": "father",
+     "entity": "Peter the Great"
+    },
+    {
+     "relation": "father",
+     "entity": "Alexis of Russia"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "Elizabeth born in Kolomenskoye (now in Moscow). shortcut: an earlier chain person was also born in this capital, so skipping a hop still gives the right answer",
+   "prompt": "The official language of the country whose capital is the birthplace of the father of the father of the empress who preceded Peter III is"
+  },
+  {
+   "template": "author-of-source-by-director",
+   "descriptor": "the author of the novel on which David Lean's 1965 film is based",
+   "chain": [
+    {
+     "relation": "1965 Lean film",
+     "entity": "Doctor Zhivago (film)"
+    },
+    {
+     "relation": "novel",
+     "entity": "Doctor Zhivago"
+    },
+    {
+     "relation": "author",
+     "entity": "Boris Pasternak"
+    }
+   ],
+   "capital": "Moscow",
+   "country": "Russia",
+   "language": "Russian",
+   "confidence": "medium",
+   "doubts": "the work/adaptation node shares its title with the source or is often merged with the author; may collapse to one fewer latent",
+   "prompt": "The official language of the country whose capital is the birthplace of the author of the novel on which David Lean's 1965 film is based is"
+  },
+  {
+   "template": "predecessor^3",
+   "descriptor": "the predecessor of the predecessor of the predecessor of Antonio Guterres as UN Secretary-General",
+   "chain": [
+    {
+     "relation": "predecessor",
+     "entity": "Ban Ki-moon"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Kofi Annan"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Boutros Boutros-Ghali"
+    }
+   ],
+   "capital": "Cairo",
+   "country": "Egypt",
+   "language": "Arabic",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of the predecessor of Antonio Guterres as UN Secretary-General is"
+  },
+  {
+   "template": "predecessor^2-of-described",
+   "descriptor": "the predecessor of the predecessor of the prime minister who signed the Camp David Accords",
+   "chain": [
+    {
+     "relation": "PM who signed Camp David",
+     "entity": "Menachem Begin"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Yitzhak Rabin"
+    },
+    {
+     "relation": "predecessor",
+     "entity": "Golda Meir"
+    }
+   ],
+   "capital": "Kiev",
+   "country": "Ukraine",
+   "language": "Ukrainian",
+   "confidence": "medium",
+   "doubts": "Rabin (Jerusalem) gives Israel if the last hop is dropped.",
+   "prompt": "The official language of the country whose capital is the birthplace of the predecessor of the predecessor of the prime minister who signed the Camp David Accords is"
+  },
+  {
+   "template": "successor^3",
+   "descriptor": "the successor of the successor of the successor of Megawati Sukarnoputri as president",
+   "chain": [
+    {
+     "relation": "successor",
+     "entity": "Susilo Bambang Yudhoyono"
+    },
+    {
+     "relation": "successor",
+     "entity": "Joko Widodo"
+    },
+    {
+     "relation": "successor",
+     "entity": "Prabowo Subianto"
+    }
+   ],
+   "capital": "Jakarta",
+   "country": "Indonesia",
+   "language": "Indonesian",
+   "confidence": "medium",
+   "doubts": "Prabowo took office Oct 2024: may postdate Qwen training data.",
+   "prompt": "The official language of the country whose capital is the birthplace of the successor of the successor of the successor of Megawati Sukarnoputri as president is"
+  },
+  {
+   "template": "actor-of-parent-of-parent",
+   "descriptor": "the actress who played the mother of the mother of Kylo Ren",
+   "chain": [
+    {
+     "relation": "mother of Kylo Ren",
+     "entity": "Leia Organa"
+    },
+    {
+     "relation": "mother",
+     "entity": "Padme Amidala"
+    },
+    {
+     "relation": "actress",
+     "entity": "Natalie Portman"
+    }
+   ],
+   "capital": "Jerusalem",
+   "country": "Israel",
+   "language": "Hebrew",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the actress who played the mother of the mother of Kylo Ren is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 2016 film based on a novel by Sarah Waters",
+   "chain": [
+    {
+     "relation": "novel",
+     "entity": "Fingersmith"
+    },
+    {
+     "relation": "film",
+     "entity": "The Handmaiden"
+    },
+    {
+     "relation": "director",
+     "entity": "Park Chan-wook"
+    }
+   ],
+   "capital": "Seoul",
+   "country": "Korea",
+   "language": "Korean",
+   "confidence": "medium",
+   "doubts": "Different titles, so no collapse; Park's Seoul birth is secondary.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 2016 film based on a novel by Sarah Waters is"
+  },
+  {
+   "template": "director-of-adaptation-by-author",
+   "descriptor": "the director of the 1942 film based on the unproduced play by Murray Burnett and Joan Alison",
+   "chain": [
+    {
+     "relation": "play",
+     "entity": "Everybody Comes to Rick's"
+    },
+    {
+     "relation": "film",
+     "entity": "Casablanca"
+    },
+    {
+     "relation": "director",
+     "entity": "Michael Curtiz"
+    }
+   ],
+   "capital": "Budapest",
+   "country": "Hungary",
+   "language": "Hungarian",
+   "confidence": "medium",
+   "doubts": "Curtiz's Budapest birth secondary.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1942 film based on the unproduced play by Murray Burnett and Joan Alison is"
+  },
+  {
+   "template": "actor-of-adaptation-by-author",
+   "descriptor": "the female lead of the 1942 film based on the unproduced play by Murray Burnett and Joan Alison",
+   "chain": [
+    {
+     "relation": "play",
+     "entity": "Everybody Comes to Rick's"
+    },
+    {
+     "relation": "film",
+     "entity": "Casablanca"
+    },
+    {
+     "relation": "female lead",
+     "entity": "Ingrid Bergman"
+    }
+   ],
+   "capital": "Stockholm",
+   "country": "Sweden",
+   "language": "Swedish",
+   "confidence": "medium",
+   "doubts": "",
+   "prompt": "The official language of the country whose capital is the birthplace of the female lead of the 1942 film based on the unproduced play by Murray Burnett and Joan Alison is"
+  },
+  {
+   "template": "director-of-remake-of-author-work",
+   "descriptor": "the director of the 1964 western that remade a film by Akira Kurosawa",
+   "chain": [
+    {
+     "relation": "Kurosawa film",
+     "entity": "Yojimbo"
+    },
+    {
+     "relation": "remake",
+     "entity": "A Fistful of Dollars"
+    },
+    {
+     "relation": "director",
+     "entity": "Sergio Leone"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Unofficial remake. Kurosawa (Tokyo) gives Japan if the chain is truncated.",
+   "prompt": "The official language of the country whose capital is the birthplace of the director of the 1964 western that remade a film by Akira Kurosawa is"
+  },
+  {
+   "template": "composer-of-remake-of-author-work",
+   "descriptor": "the composer of the score of the 1964 western that remade a film by Akira Kurosawa",
+   "chain": [
+    {
+     "relation": "Kurosawa film",
+     "entity": "Yojimbo"
+    },
+    {
+     "relation": "remake",
+     "entity": "A Fistful of Dollars"
+    },
+    {
+     "relation": "composer",
+     "entity": "Ennio Morricone"
+    }
+   ],
+   "capital": "Rome",
+   "country": "Italy",
+   "language": "Italian",
+   "confidence": "medium",
+   "doubts": "Unofficial remake.",
+   "prompt": "The official language of the country whose capital is the birthplace of the composer of the score of the 1964 western that remade a film by Akira Kurosawa is"
+  }
+ ],
+ "native_city": [
+  {
+   "native": "München",
+   "english": "Munich",
+   "country": "Germany",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Köln",
+   "english": "Cologne",
+   "country": "Germany",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Nürnberg",
+   "english": "Nuremberg",
+   "country": "Germany",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Braunschweig",
+   "english": "Brunswick",
+   "country": "Germany",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Hannover",
+   "english": "Hanover",
+   "country": "Germany",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Hamburg",
+   "english": "Hamburg",
+   "country": "Germany",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Firenze",
+   "english": "Florence",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Napoli",
+   "english": "Naples",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Venezia",
+   "english": "Venice",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Milano",
+   "english": "Milan",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Torino",
+   "english": "Turin",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Genova",
+   "english": "Genoa",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Padova",
+   "english": "Padua",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Mantova",
+   "english": "Mantua",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Siracusa",
+   "english": "Syracuse",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Livorno",
+   "english": "Leghorn",
+   "country": "Italy",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Sevilla",
+   "english": "Seville",
+   "country": "Spain",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Zaragoza",
+   "english": "Saragossa",
+   "country": "Spain",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "A Coruña",
+   "english": "Corunna",
+   "country": "Spain",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Barcelona",
+   "english": "Barcelona",
+   "country": "Spain",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Porto",
+   "english": "Oporto",
+   "country": "Portugal",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Coimbra",
+   "english": "Coimbra",
+   "country": "Portugal",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Marseille",
+   "english": "Marseilles",
+   "country": "France",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Lyon",
+   "english": "Lyons",
+   "country": "France",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Dunkerque",
+   "english": "Dunkirk",
+   "country": "France",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Bordeaux",
+   "english": "Bordeaux",
+   "country": "France",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Plzeň",
+   "english": "Pilsen",
+   "country": "Czech",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Karlovy Vary",
+   "english": "Carlsbad",
+   "country": "Czech",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "České Budějovice",
+   "english": "Budweis",
+   "country": "Czech",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Brno",
+   "english": "Brno",
+   "country": "Czech",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Kraków",
+   "english": "Cracow",
+   "country": "Poland",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Wrocław",
+   "english": "Breslau",
+   "country": "Poland",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Gdańsk",
+   "english": "Danzig",
+   "country": "Poland",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Łódź",
+   "english": "Lodz",
+   "country": "Poland",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Sankt-Peterburg",
+   "english": "Saint Petersburg",
+   "country": "Russia",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Arkhangelsk",
+   "english": "Archangel",
+   "country": "Russia",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Odesa",
+   "english": "Odessa",
+   "country": "Ukraine",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Kharkiv",
+   "english": "Kharkov",
+   "country": "Ukraine",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Lviv",
+   "english": "Lviv",
+   "country": "Ukraine",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Helsingør",
+   "english": "Elsinore",
+   "country": "Denmark",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Aarhus",
+   "english": "Aarhus",
+   "country": "Denmark",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Göteborg",
+   "english": "Gothenburg",
+   "country": "Sweden",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Malmö",
+   "english": "Malmo",
+   "country": "Sweden",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Den Haag",
+   "english": "The Hague",
+   "country": "Netherlands",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Rotterdam",
+   "english": "Rotterdam",
+   "country": "Netherlands",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Kérkyra",
+   "english": "Corfu",
+   "country": "Greece",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Irákleio",
+   "english": "Heraklion",
+   "country": "Greece",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Ródos",
+   "english": "Rhodes",
+   "country": "Greece",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Thessaloníki",
+   "english": "Thessaloniki",
+   "country": "Greece",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Salzburg",
+   "english": "Salzburg",
+   "country": "Austria",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Innsbruck",
+   "english": "Innsbruck",
+   "country": "Austria",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Debrecen",
+   "english": "Debrecen",
+   "country": "Hungary",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Plovdiv",
+   "english": "Plovdiv",
+   "country": "Bulgaria",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Bergen",
+   "english": "Bergen",
+   "country": "Norway",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Tampere",
+   "english": "Tampere",
+   "country": "Finland",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Al-Iskandariyya",
+   "english": "Alexandria",
+   "country": "Egypt",
+   "differs_from_english": true,
+   "confidence": "high"
+  },
+  {
+   "native": "Bur Said",
+   "english": "Port Said",
+   "country": "Egypt",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Akko",
+   "english": "Acre",
+   "country": "Israel",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Hefa",
+   "english": "Haifa",
+   "country": "Israel",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "İstanbul",
+   "english": "Istanbul",
+   "country": "Turkey",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "İzmir",
+   "english": "Izmir",
+   "country": "Turkey",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Kyōto",
+   "english": "Kyoto",
+   "country": "Japan",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Ōsaka",
+   "english": "Osaka",
+   "country": "Japan",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Busan",
+   "english": "Busan",
+   "country": "Korea",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Chiang Mai",
+   "english": "Chiang Mai",
+   "country": "Thailand",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Esfahan",
+   "english": "Isfahan",
+   "country": "Iran",
+   "differs_from_english": true,
+   "confidence": "medium"
+  },
+  {
+   "native": "Shiraz",
+   "english": "Shiraz",
+   "country": "Iran",
+   "differs_from_english": false,
+   "confidence": "high"
+  },
+  {
+   "native": "Surabaya",
+   "english": "Surabaya",
+   "country": "Indonesia",
+   "differs_from_english": false,
+   "confidence": "high"
+  }
+ ],
+ "notes": "Draft 2026-11-14, written from model knowledge only: no model run, no web lookup; every fact is asserted, not measured. Countries are LANG keys of twohop-20261113/ext/gen_ext.py (which already include Indonesia and Iran); capital = CAP2 spelling (Ukraine = 'Kiev'). chain lists the latent entities from the descriptor to the person whose birthplace is asked; the capital and country are the last two latents. So d5 = 2 chain entities + city + country = 4 latents; d6 = 3 + 2 = 5. A script asserts these counts and that the descriptor never contains the capital, country or language string (other countries' names may appear as distractors and are flagged in doubts). Extra field 'prompt' = the d-panel prompt string. Caveats: (1) items marked 'shortcut' have an earlier person born in the same capital, so a model that skips a hop still scores; keep them apart or use them as a control. (2) '-of-adaptation' items whose source and adaptation share a title may collapse to one latent (effective depth one lower). (3) d6 'adaptation-by-author' items use a year plus author to make the work latent; uniqueness rests on that year. (4) Surface variants of one chain (Strauss: Blue Danube / Fledermaus; Plato/Socrates teacher chains; Polanski x3; Hitchcock; Kurosawa) are not independent items. (5) Thailand, Turkey and Bulgaria have no items; I found no well-known capital-born person reachable by a unique 2-3 hop relation. Countries are uneven: Austria, France, Britain and Japan dominate. native_city: all non-capitals in LANG countries; the capitals in the request (Praha, Wien, Lisboa, Kobenhavn, Warszawa, Moskva) and Bruxelles (Belgium not in LANG) are excluded. 'differs_from_english' = True when the native form is a different word or has diacritics/inflection that change tokenisation; same-name rows are controls. Weak 'differs' rows: Hannover/Hanover, Marseille/Marseilles, Lyon/Lyons, Porto/Oporto, Odesa/Odessa, Malmo, Lodz (spelling or diacritics only)."
+}

@@ -104,6 +104,164 @@
     ]
    },
    "n_items": 128
+  },
+  "Qwen3-4B-Base": {
+   "files": [
+    "capture-Qwen3-4B-Base-a.json",
+    "capture-Qwen3-4B-Base-b.json"
+   ],
+   "accuracy": {
+    "currency": [
+     11,
+     12
+    ],
+    "person": [
+     11,
+     12
+    ],
+    "landmark": [
+     8,
+     12
+    ],
+    "city": [
+     12,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     12,
+     14
+    ],
+    "d3-per": [
+     12,
+     14
+    ],
+    "d4-work": [
+     9,
+     14
+    ],
+    "dist-city": [
+     12,
+     12
+    ],
+    "obsc-city": [
+     12,
+     12
+    ],
+    "d3_pooled": [
+     24,
+     28
+    ]
+   },
+   "n_items": 128
+  },
+  "Qwen2.5-1.5B": {
+   "files": [
+    "capture-Qwen2.5-1.5B.json"
+   ],
+   "accuracy": {
+    "currency": [
+     8,
+     12
+    ],
+    "person": [
+     11,
+     12
+    ],
+    "landmark": [
+     9,
+     12
+    ],
+    "city": [
+     12,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     11,
+     14
+    ],
+    "d3-per": [
+     10,
+     14
+    ],
+    "d4-work": [
+     5,
+     14
+    ],
+    "dist-city": [
+     10,
+     12
+    ],
+    "obsc-city": [
+     12,
+     12
+    ],
+    "d3_pooled": [
+     21,
+     28
+    ]
+   },
+   "n_items": 128
+  },
+  "Qwen2.5-3B": {
+   "files": [
+    "capture-Qwen2.5-3B-a.json",
+    "capture-Qwen2.5-3B-b.json"
+   ],
+   "accuracy": {
+    "currency": [
+     10,
+     12
+    ],
+    "person": [
+     11,
+     12
+    ],
+    "landmark": [
+     9,
+     12
+    ],
+    "city": [
+     12,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     14,
+     14
+    ],
+    "d3-per": [
+     13,
+     14
+    ],
+    "d4-work": [
+     9,
+     14
+    ],
+    "dist-city": [
+     11,
+     12
+    ],
+    "obsc-city": [
+     11,
+     12
+    ],
+    "d3_pooled": [
+     27,
+     28
+    ]
+   },
+   "n_items": 128
   }
  }
 }
