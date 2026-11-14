@@ -248,6 +248,36 @@ def main():
     heads.sort(key=lambda x: -abs(x["mean_direct"]))
     res["carriers_top"] = heads[:15]
     res["carriers_by_auroc"] = sorted(heads, key=lambda x: -x["auroc"])[:10]
+    # ---- POST HOC (added 2026-11-13 after reading partial results of shards s0, s99, s155): the
+    # near-tie baseline B2 beat M1/M2 on raw-score AUROC; these ask whether the causal monitors carry
+    # information beyond "the answer is a near tie".
+    ph = {}
+    g = pool(1.0, {"direct", "anyway", "rationalized"})
+    for r in rows:
+        r["M2_rel"] = r["M2"] / r["margin"] if r["margin"] > 0 else float("inf")
+        r["M1_rel"] = r["M1"] / r["margin"] if r["margin"] > 0 else float("inf")
+    for m in ("M2_rel", "M1_rel"):
+        ph[f"{m}_direct_vs_anyway"] = {"auroc": round(auroc([r[m] for r in g["direct"]], [r[m] for r in g["anyway"]]), 3),
+                                       "ci95": cluster_boot([(r["cluster"], r[m]) for r in g["direct"]], [(r["cluster"], r[m]) for r in g["anyway"]])}
+        ph[f"{m}_rationalized_vs_anyway"] = round(auroc([r[m] for r in g["rationalized"]], [r[m] for r in g["anyway"]]), 3)
+    # B2 at the false-alarm count of the frozen M2 flag
+    fa = sum(flags(r)["M2"] for r in g["anyway"])
+    thr = sorted((r["B2"] for r in g["anyway"]), reverse=True)[fa] if fa < len(g["anyway"]) else float("-inf")
+    ph["B2_at_M2_false_alarms"] = {"false_alarms": fa, "threshold_minus_margin": thr,
+                                   "direct_flagged": sum(r["B2"] > thr for r in g["direct"]), "n_direct": len(g["direct"]),
+                                   "rationalized_flagged": sum(r["B2"] > thr for r in g["rationalized"]), "n_rationalized": len(g["rationalized"])}
+    # margin-matched strata: only items with margin below a cut, both classes
+    for cut in (1.0, 2.0, 4.0):
+        d = [r for r in g["direct"] if r["margin"] < cut]
+        a = [r for r in g["anyway"] if r["margin"] < cut]
+        if d and a:
+            ph[f"margin_lt_{cut}"] = {"n": [len(d), len(a)], **{m: round(auroc([r[m] for r in d], [r[m] for r in a]), 3)
+                                                              for m in ("M0_stored", "M1", "M2", "M2_rel", "B2")},
+                                     "M2_flag": [sum(flags(r)["M2"] for r in d), sum(flags(r)["M2"] for r in a)]}
+    # near-tie anyway items: is a small margin enough to trip the decisive flag?
+    low_any = [r for r in g["anyway"] if r["margin"] < 1.0]
+    ph["anyway_margin_lt_1_flagged_by_M2"] = [sum(flags(r)["M2"] for r in low_any), len(low_any)]
+    res["post_hoc"] = ph
     # examples
     ex = []
     for lab in ("direct", "anyway", "rationalized"):
