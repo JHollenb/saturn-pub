@@ -1,0 +1,9 @@
+{
+ "plan_sha256": "bdba6c579e528c6e66d4028261fc15d7ef74b7f515923df335d5d80711515f14",
+ "predictions": {
+  "note": "no numeric prediction; the 56-arm value_coalition.plan() panel, re-run"
+ },
+ "predictions_sha256": "121a5f6e29114506fe5eb8fced92f913f1e63c77fe7eff1ad05107344ff405c6",
+ "schema": "mdb-attention-panel-seal-v1",
+ "seal_sha256": "ee61d8c5338334e095d52bbf919067c811990e53c04b8d3790ed8663cef4279d"
+}
