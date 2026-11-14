@@ -89,7 +89,7 @@ tensor has another shape or sits at another position, so do not swap them blindl
 | head or path ablation | `set L<L>.A[h5] *= 0` (selector `[h5]`); `whatif` for the effect without leaving the stop |
 | direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
 | KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
-| `run_with_cache` over a batch, batched forward | not available: batch 1 (issue M22) |
+| a dataset of prompts, `run_with_cache` over a batch | a prompt set: `each SET: OP LINE` runs any verb on every prompt, one run per prompt, with a summary (see [Prompt sets](#prompt-sets)); no batched forward (the engine is batch 1) |
 | SAE features, dictionary units | none (issue M23) |
 
 Example: patch one head's output from a clean run into a corrupted run and read a logit
@@ -155,8 +155,9 @@ for every layer), as `tests/test_ops_port_origin.py` checks.
 
 mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
 split by cause (`forecast`, `verify`), an authority label and state on every number, and
-reversible stepping inside a layer (`reverse-step`, `restart`). It lacks batching (M22), model
-families beyond Qwen2 and Qwen3, and dictionary features (M23).
+reversible stepping inside a layer (`reverse-step`, `restart`). It lacks a batched forward
+(prompt sets run one prompt at a time), model families beyond Qwen2 and Qwen3, and dictionary
+features (M23).
 
 ## Embedding
 
@@ -296,6 +297,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `disable` | `disable [ID ...]` | mutate | Disable breakpoints and watches without deleting them (all when no ids) |
 | `display` | `display [ADDR]` | mutate | Show an address after every stop (no address: list displays) |
 | `down` | `down [N]` | navigate | Move the focus back toward its consumer, N times |
+| `each` | `each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]` | native | Run one op line on every prompt of a set (one run per prompt): one result per prompt and a summary (n, mean, min, max, sign agreement, verdict counts) |
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
 | `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
 | `export` | `export` | not built yet (B1) | Export a walkthrough bundle of records and pointers |
@@ -307,6 +309,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
 | `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
+| `promptset` | `set load NAME FILE \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file, show or list sets, read a stored each result (the REPL's set load / set show) |
 | `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
 | `reverse-continue` | `reverse-continue` | navigate | Run backwards to the previous breakpoint or watch hit |
@@ -489,6 +492,83 @@ compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
 
 `seek ADDR` moves the session to an occurrence: forward, backward, or by replaying a stored
 recipe when a project is attached.
+
+## Prompt sets
+
+Every verb above answers for one prompt. `each SET: OP LINE` runs one op line on every prompt of
+a set and adds a summary. The engine stays batch 1: each prompt gets its own run (`start`, then
+`until AT`, by default `t@last.logits`), the line goes through the same op registry as when you
+type it, and the run is released (`keep` holds the runs as `SET-ITEM`, for `frame recall-a:`).
+A set is a JSONL file of items (`tests/fixtures/prompt_set_tiny.jsonl`):
+
+```
+{"name": "a", "tokens": [1, 5, 9, 3], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "b"}
+```
+
+`prompt` (text, needs a tokenizer) or `tokens`; `roles` name rows (`@last` is always defined);
+`vars` name tokens (an id or a one-token text); `pair` names another item. A line uses them as a
+template, bound per item before dispatch, so each item's result holds plain addresses:
+`t@subject.L1.A[h1]` -> `t1.L1.A[h1]`, `[row=@subject]` and `rows=@subject` -> the row,
+`M[$answer,$foil]` -> `M[4,9]`, and `@pair:ADDR` -> the value at ADDR (roles of the paired item)
+in a clean run of the paired prompt at the same stop, the `ORIGIN:ADDR` of
+[State cells and other runs](#state-cells-and-other-runs). An item whose template does not bind
+(here `d` has no `subject`) or whose op is refused is listed with its reason and left out of the
+statistics; the others run. Real output on the tiny Qwen2 (`tests/repl_golden/prompt_set.out`):
+
+```
+(mdb) set load recall tests/fixtures/prompt_set_tiny.jsonl
+set recall: 4 items  (tests/fixtures/prompt_set_tiny.jsonl)
+  a         1 5 9 3  @subject=1 $answer=4 $foil=9 pair b
+...
+(mdb) each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
+each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
+  4 items at t@last.logits; runs released; result each2
+  item  native      exact       verdict
+  a     -0.0083008  -0.0078665  effect
+  b     0.0065918   0.006382    effect
+  c     0.034058    0.034175    effect
+  d     0.024658    0.024404    effect
+  labels: native measured, exact derived-exact
+summary: none refused; statistics over all 4 items
+  measured.delta  [measured]
+    n 4  mean 0.014252  min -0.0083008  max 0.034058  sign + 3/4
+  prediction.exact.value  [derived-exact]
+    n 4  mean 0.014274  min -0.0078665  max 0.034175  sign + 3/4
+  effect.verdict: effect 4
+  +28 more in the record (promptset result each2 [ITEM])
+(mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
+...
+  item  read      mass        effect      causal      verdict
+  a     t3.L1.h0  0.24902     0.011455    -0.015137   causal
+  b     t3.L1.h1  0.25195     -0.0082406  0.012207    causal
+  c     t4.L1.h1  0.19922     -0.0073077  0.0064697   causal
+  d     refused: no role 'subject' (roles: last)
+  labels: mass measured, effect derived-exact, causal measured
+summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
+...
+(mdb) each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
+...
+  a     0.0041504   0.0041846   effect
+```
+
+The result of `each` is one summary record (at most 64 KiB): a row per item (its key numbers,
+verdict, the sha256 of its result, the op's own record id when it seals one, the bytes its run
+held) and statistics for every labelled number found at the same result path in all items that
+ran: n, mean, min, max and how many share the most common sign, plus a count per value of every
+verdict and state field. A statistic keeps its inputs' label when all share it; inputs with
+different labels are summarised per label, never merged. The statistics are arithmetic on these
+items only. Each item's full result is kept in memory: `promptset result each2 a` prints it. A
+path such as `reads.0.mass` is "the first listed read", which can be a different head in each
+item. With a project attached the summary is also stored as a `prompt-set` record. After `each`
+the current run, its cursor, the run table and the session digest are what they were. From
+Python: `dbg.each("recall", "reads t@subject --consumer M[$answer,$foil]")` (a loaded set, a
+`.jsonl` path or a list of item dicts) returns `summary`, `results` (item -> result) and the
+uncapped `statistics`.
+
+Measured on the tiny Qwen2 (CPU, one process): a run holds 600 to 872 bytes at its logits, 1.4
+to 1.8 KB after `whatif` and 1.8 to 2.1 KB after `reads` (`Run.held_bytes()`); one item takes
+about 0.07 s for `whatif` or `reads`, 0.016 s for `print`; 40 items of `reads` took 3.7 s and
+gave a 27.7 KB summary.
 
 ## Durable checkpoints
 

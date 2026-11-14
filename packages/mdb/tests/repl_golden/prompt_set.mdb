@@ -1,0 +1,9 @@
+# Prompt sets (M22): one op line on every prompt of a set, roles and variables bound per item.
+set load recall tests/fixtures/prompt_set_tiny.jsonl
+each recall: print t@last.logits[i=$answer]
+each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
+each recall: reads t@subject --consumer M[$answer,$foil] top=2
+each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
+promptset result each2 a
+where
+info runs

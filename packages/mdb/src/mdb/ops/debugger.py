@@ -393,6 +393,21 @@ class Debugger:
         """A context for ``mdb.ops.dispatch`` bound to this model (and ``run``, if given)."""
         return Context(self, run)
 
+    def each(self, prompts: Any, line: str, *, at: str | None = None, keep: bool = False,
+             ctx: Context | None = None) -> Any:
+        """Run one op line on every prompt of a set (``mdb.ops.sets``): ``prompts`` is the name
+        of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
+        (kept as the set ``inline``). Returns ``EachResult(summary, results, statistics)``; the
+        live run and its cursor are left as they were."""
+        from .sets import define, load, run_each
+
+        if isinstance(prompts, str) and prompts.endswith(".jsonl"):
+            prompts = load(self, "file", prompts).name
+        elif not isinstance(prompts, str):
+            prompts = define(self, "inline", list(prompts)).name
+        return run_each(ctx if ctx is not None else self.ops(self.live), prompts, line, at=at,
+                        keep=keep)
+
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""
         from mdb.repl.shell import Shell  # sanctioned upward import: Debugger.repl convenience

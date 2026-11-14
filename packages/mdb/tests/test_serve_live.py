@@ -105,6 +105,8 @@ SCRIPT = [
     ("export", "export", {}),
     ("restart pre", "restart", {"name": "pre"}),
     ("where", "where", {}),
+    ("promptset list", "promptset", {"action": "list"}),
+    ("each recall: print", "each", {"set": "recall", "line": "print"}),
     ("run 1 5 9 3 budget=2", "run", {"prompt": PROMPT, "budget": 2}),
 ]
 FAMILIES = ("qwen2", "qwen3")

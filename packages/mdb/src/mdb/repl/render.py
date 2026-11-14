@@ -975,3 +975,123 @@ def render_error(error: Any) -> str:
     data = error.to_json() if hasattr(error, "to_json") else {"type": "error",
                                                               "message": str(error)}
     return f"error ({data['type']}): {data['message']}"
+
+
+# --------------------------------------------------------------------------- each / prompt sets
+
+
+def _cell(item: Any, labelled: bool) -> str:
+    if isinstance(item, dict) and item.get("state") in ("unresolved", "refused"):
+        return item["state"]
+    return num(item) if labelled else fmt(item["value"])
+
+
+def _stat_lines(stat: dict[str, Any]) -> list[str]:
+    def body(item: dict[str, Any]) -> str:
+        agree = item["agree"]
+        return (f"n {item['n']}  mean {fmt(item['mean']['value'])}  min "
+                f"{fmt(item['min']['value'])}  max {fmt(item['max']['value'])}  sign "
+                f"{agree['sign']} {agree['count']}/{item['n']}")
+
+    if stat.get("mixed"):
+        lines = [f"  {stat['path']}  (mixed labels, summarised per label)"]
+        for label, item in stat["by_authority"].items():
+            lines.append(f"    {tag(label)} {body(item)}")
+        return lines
+    return [f"  {stat['path']}  {tag(stat['mean']['authority'])}", f"    {body(stat)}"]
+
+
+def _each_lines(result: dict[str, Any]) -> list[str]:
+    """``each``: one row per item (name, key numbers, verdict), then the summary lines."""
+    rows = result["items"]
+    lines = [f"each {result['set']}: {result['line']}",
+             f"  {result['total']} items at {result['at']}; runs {result['runs'].split(' ')[0]}; "
+             f"result {result['id']}"]
+    columns: list[str] = []
+    for row in rows:
+        for name in row.get("key", {}).get("columns", {}):
+            if name not in columns:
+                columns.append(name)
+    labels: dict[str, set[str]] = {name: set() for name in columns}
+    for row in rows:
+        for name, item in row.get("key", {}).get("columns", {}).items():
+            labels[name].add(item.get("authority", item.get("state", "?")))
+    uniform = {name: next(iter(found)) for name, found in labels.items() if len(found) == 1}
+    width = max([4, *(len(row["name"]) for row in rows)]) + 2
+    wide = {name: max(len(name) + 2, 12 if name in uniform else 26) for name in columns}
+    has_label = any("label" in row.get("key", {}) for row in rows)
+    has_verdict = any("verdict" in row.get("key", {}) for row in rows)
+    head = f"  {'item':<{width}}" + ("read      " if has_label else "") + "".join(
+        f"{name:<{wide[name]}}" for name in columns) + ("verdict" if has_verdict else "")
+    lines.append(head.rstrip())
+    for row in rows:
+        text = f"  {row['name']:<{width}}"
+        if row["state"] == "refused":
+            lines.append(text + f"refused: {row['reason']}")
+            continue
+        key = row.get("key", {})
+        if has_label:
+            text += f"{key.get('label', '-'):<10}"
+        for name in columns:
+            item = key.get("columns", {}).get(name)
+            cell = "-" if item is None else _cell(item, name not in uniform)
+            text += f"{cell:<{wide[name]}}"
+        verdict = key.get("verdict", "")
+        if row["state"] != "resolved":
+            verdict = f"{verdict} ({row['state']})".strip()
+        lines.append((text + verdict).rstrip())
+    if uniform:
+        lines.append("  labels: " + ", ".join(f"{name} {uniform[name]}" for name in columns
+                                              if name in uniform))
+    statistics = result["statistics"]
+    lines.append(f"summary: {statistics['exclusion']}")
+    numeric = statistics["numeric"]
+    shown = numeric[:len(columns) or 2]
+    for stat in shown:
+        lines += _stat_lines(stat)
+    verdicts = [item for item in statistics["verdicts"]
+                if item["path"].rsplit(".", 1)[-1] == "verdict" or len(item["counts"]) > 1
+                or item["counts"][0]["label"] != "resolved"]
+    for item in verdicts[:4]:
+        counts = " / ".join(f"{c['label']} {c['count']}" for c in item["counts"])
+        lines.append(f"  {item['path']}: {counts}")
+    more = (len(numeric) - len(shown) + len(statistics["verdicts"]) - len(verdicts[:4])
+            + statistics["omitted"]["count"])
+    partial = statistics["partial"]["count"]
+    tail = []
+    if more:
+        tail.append(f"+{more} more in the record")
+    if partial:
+        tail.append(f"{partial} paths in some items only")
+    if tail:
+        lines.append("  " + "; ".join(tail) + f" (promptset result {result['id']} [ITEM])")
+    if "stored" in result:
+        stored = result["stored"]
+        lines.append(f"  stored record {stored[:16]}" if isinstance(stored, str)
+                     else f"  not stored: {stored['reason']}")
+    return lines
+
+
+def _promptset_lines(result: dict[str, Any]) -> list[str]:
+    if result["action"] == "list":
+        return [f"{item['set']:<12}{item['total']} items  ({item['source']})"
+                for item in result["sets"]] or ["no prompt sets"]
+    if result["action"] == "result":
+        if "result" in result:
+            return [f"{result['id']} item {result['item']}:", _render(result["result"])]
+        return _each_lines({**result["summary"], "id": result["id"]})
+    lines = [f"set {result['set']}: {result['total']} items  ({result['source']})"]
+    for item in result["items"]:
+        prompt = (json.dumps(item["prompt"]) if "prompt" in item
+                  else " ".join(map(str, item["ids"]))
+                  + (" ..." if item["prompt_tokens"] > len(item["ids"]) else ""))
+        roles = " ".join(f"@{r['name']}={r['row']}" for r in item["roles"])
+        variables = " ".join(f"${v['name']}={v.get('token', json.dumps(v.get('text')))}"
+                             for v in item["vars"])
+        pair = f" pair {item['pair']}" if "pair" in item else ""
+        lines.append(f"  {item['name']:<10}{prompt}  {roles} {variables}{pair}".rstrip())
+    return lines
+
+
+_INSPECT["each"] = _each_lines
+_INSPECT["promptset"] = _promptset_lines
