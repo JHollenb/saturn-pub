@@ -20,6 +20,7 @@ from mdb.repl.__main__ import _load
 
 MODEL, OUTDIR = sys.argv[1:3]
 PICK = sys.argv[3] if len(sys.argv) > 3 else ""
+TAG = sys.argv[4] if len(sys.argv) > 4 else ("-smoke" if PICK else "")
 T0 = time.monotonic()
 torch.set_grad_enabled(False)
 dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
@@ -28,7 +29,9 @@ L, H, KV, DH = ad.layers, ad.num_heads, ad.num_kv_heads, ad.head_dim
 P = json.load(open("panel.json"))
 items = P["items"]
 if PICK:
-    items = [items[int(k)] for k in PICK.split(",")]
+    sel = [int(k) for k in PICK.split(",")] if "," in PICK or "-" not in PICK else \
+        list(range(int(PICK.split("-")[0]), int(PICK.split("-")[1])))
+    items = [items[k] for k in sel]
 TOKS = sorted({t for v in P["sets"].values() for t in v} | {i["answer"] for i in P["items"]})
 OUT = Path(OUTDIR) / "cap"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -79,5 +82,5 @@ for item in items:
     del run, cap
     print("C " + json.dumps({"id": item["id"], "s": info["items"][item["id"]]["seconds"]}), flush=True)
 info["peak_alloc_mb"] = round(torch.cuda.max_memory_allocated() / 2**20)
-json.dump(info, open(f"capture-{name}{'-smoke' if PICK else ''}.json", "w"), indent=1)
+json.dump(info, open(f"capture-{name}{TAG}.json", "w"), indent=1)
 print(f"TOTAL {time.monotonic() - T0:.1f}s peak {info['peak_alloc_mb']} MB", flush=True)
