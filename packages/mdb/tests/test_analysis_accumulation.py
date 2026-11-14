@@ -107,7 +107,7 @@ def test_failed_accumulation_premise_refuses_every_matmul_bound(debugger, no_gam
     report = whatif(run, Edit("t3.L1.m", 1.5, "scale"), Margin(3, 4, 9)).report
     exact = report["prediction"]["exact"]
     assert "bound" not in exact and f"refused: {PREMISE_FAILS}" in exact["bound_note"], exact
-    rounding = next(t for t in report["split"]["terms"] if t["name"] == "rounding")
+    rounding = next(t for t in report["split"]["terms"] if t["name"] == "rounding effect")
     assert "bound" not in rounding and "refused" in rounding["bound_note"]
     assert report["state"] == report["effect"]["state"]      # the bound does not set the state
     run.until("t3.logits")

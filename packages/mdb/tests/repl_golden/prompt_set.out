@@ -36,7 +36,7 @@ summary: none refused; statistics over all 4 items
   prediction.exact.value  [derived-exact]
     n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
   effect.verdict: effect 4
-  +30 more in the record (promptset result each2 [ITEM])
+  +41 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 each recall: reads t@subject --consumer M[$answer,$foil] top=2
   4 items at t@last.logits; runs released; result each3
@@ -57,7 +57,7 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   reads.0.causal.verdict: causal 3
   reads.1.causal.effect.verdict: effect 3
   reads.1.causal.verdict: causal 3
-  +32 more in the record (promptset result each3 [ITEM])
+  +42 more in the record (promptset result each3 [ITEM])
 (mdb) each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
 each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
   4 items at t@last.logits; runs released; result each4
@@ -73,14 +73,14 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   prediction.exact.value  [derived-exact]
     n 3  mean 0.0067405  min -0.0039496  max 0.019549  sign + 2/3
   effect.verdict: effect 3
-  +28 more in the record (promptset result each4 [ITEM])
+  +39 more in the record (promptset result each4 [ITEM])
 (mdb) promptset result each2 a
 each2 item a:
-whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record 756d06d8d573b9d9)
-  sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound]
+whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record aec1d89c07597a81)
+  sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound]   emulated ΔM = -0.0083008 [derived-exact]
   native  ΔM = -0.0083008 [measured]   (base -0.11401 [measured] -> edited -0.12231 [measured])
-  error split (P20): linear -0.0079277 [derived-local P14] + nonlinear 0.00049298 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00086605 [measured P20] (within bound 0.045715 [bound])
-  verdict (P20): effect  native ΔM -0.0083008 [measured P20], exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20], residual -0.00086605 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear -0.0079277 [derived-local P14] + nonlinear 0.00049298 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00086605 [derived-exact P20] (within bound 0.045715 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM -0.0083008 [measured P20], emulated ΔM -0.0083008 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
   session unchanged at t3.logits  (5 moves, restored)
 (mdb) where
 t3.L0.h  h = layer input (residual stream)  {P01}

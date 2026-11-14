@@ -16,16 +16,16 @@ t3.L0.h  h = layer input (residual stream)  {P01}
 compare A: cache.L0.v[kv0,row=1]=boiling:cache.L0.v[kv0,row=1]  B: cache.L1.k[kv0,row=1]=boiling:cache.L1.k[kv0,row=1]  -> t3.M[4,9]
   base -0.11401 [measured]  A -0.10986 [measured]  B -0.11401 [measured]  A+B -0.10864 [measured]
   effects A 0.0041504 [measured]  B 0 [measured]  A+B 0.0053711 [measured]
-  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.00097656 [measured P20])  B no effect above the noise floor (floor 0.00097656 [measured P20])  A+B effect (floor 0.00097656 [measured P20])
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B no effect  A+B effect
   interaction (A+B) - A - B + base = 0.0012207 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.L0.h
 (mdb) whatif cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] --consumer M[4,9]
-whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record ce39f24cac7f66c8)
-  sealed  linear ΔM = 0.003647 [derived-local P14]   exact ΔM = 0.0046222 [derived-exact]  bound 38.057 [bound]  (operands forecast from t3.L0.h)
+whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record 8d72e25ae24070bf)
+  sealed  linear ΔM = 0.003647 [derived-local P14]   exact ΔM = 0.0046222 [derived-exact]  bound 38.057 [bound]  (operands forecast from t3.L0.h)   emulated ΔM = 0.0041504 [derived-exact]
   native  ΔM = 0.0041504 [measured]   (base -0.11401 [measured] -> edited -0.10986 [measured])
-  error split (P20): linear 0.003647 [derived-local P14] + nonlinear 0.00097522 [derived-exact P20] + operands -2.9045e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.0004715 [measured P20] (within bound 0.67658 [bound])
-  verdict (P20): effect  native ΔM 0.0041504 [measured P20], exact ΔM (written value, measured operands) 0.0046219 [derived-exact P20], residual -0.0004715 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 0.003647 [derived-local P14] + nonlinear 0.00097522 [derived-exact P20] + operands -2.9045e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.0004715 [derived-exact P20] (within bound 0.67658 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM 0.0041504 [measured P20], emulated ΔM 0.0041504 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.0046219 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
   session unchanged at t3.L0.h  (5 moves, restored)
 (mdb) set cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] mix 0.5
 staged cell cache.L0.v[kv0,row=1]: cache.L0.v mix 0.5 [supplied] tensor [1, 1, 1, 8] bfloat16 sha256 f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] (live) [before the read] (NOT realised exactly, max abs error 0.00024414 [measured] as bfloat16) on [kv0,row=1] changed 1 [measured]  (1 cell edit(s) staged)

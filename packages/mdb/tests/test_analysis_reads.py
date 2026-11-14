@@ -65,19 +65,21 @@ def _fresh_margin(debugger, edits, margin):
 
 
 def _rule(delta, entry):
-    """The P20 rule: floor = max(|residual|, 2 x spacing); causal when |native| > floor and
-    exact has its sign with |exact| > |residual|; not causal when native and exact are both
-    within the floor; else unresolved. ``delta`` is the fresh run's change."""
+    """The M51 rule: the native change against the emulated one within one spacing (supplied);
+    causal when they agree and native is not zero; not causal at this dose when native is zero
+    (the exact change, which the dtype cannot show, in the reason); else unresolved. ``delta``
+    is the fresh run's change."""
     effect = entry["causal"]["effect"]
     assert effect["native"]["value"] == delta and effect["native"]["authority"] == "measured"
-    floor, exact = effect["floor"]["value"], effect["exact"]["value"]
-    residual = effect["residual"]["value"]
-    assert floor == max(abs(residual), 2 * effect["spacing"]["value"])
-    assert "bound" not in str(effect["floor"]["authority"])
-    if abs(delta) > floor:
-        same = exact != 0 and (exact > 0) == (delta > 0)
-        return "causal" if same and abs(exact) > abs(residual) else "unresolved"
-    return "not causal at this dose" if abs(exact) <= floor else "unresolved"
+    floor, emulated = effect["floor"]["value"], effect["emulated"]["value"]
+    assert floor == effect["spacing"]["value"] and effect["floor"]["authority"] == "supplied"
+    assert emulated == delta and effect["residual"]["value"] == 0.0     # measured: bit-exact
+    if abs(delta - emulated) > floor:
+        return "unresolved"
+    if delta == 0:
+        assert "exact" in entry["causal"]["reason"]
+        return "not causal at this dose"
+    return "causal"
 
 
 def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
@@ -94,7 +96,7 @@ def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
         assert entry["causal"]["delta"]["value"] == float(edited - base)
         assert entry["causal"]["verdict"] == _rule(float(edited - base), entry)
         if entry["causal"]["verdict"] == "unresolved":
-            assert entry["causal"]["reason"].startswith("changed, ")
+            assert entry["causal"]["reason"].startswith("whatif ")
 
 
 def test_reads_at_other_rows_with_causal_verdicts_equal_fresh_runs(debugger):

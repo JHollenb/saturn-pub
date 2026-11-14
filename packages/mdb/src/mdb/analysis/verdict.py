@@ -1,23 +1,31 @@
-"""Effect verdicts from the P20 accounting, not from a worst-case rounding bound.
+"""Effect verdicts from the P20 accounting against an emulated prediction, not a noise floor.
 
 P20 (chapter 07, recursive error) and chapter 09 section 1 give the exact accounting of a native
-change: ``native delta = exact delta + residual``, with ``exact delta`` the float64 identity chain
-on the retained operands (``derived-exact``) and ``residual = native - exact`` the arithmetic
-discrepancy (``measured``). A verdict reads only these measured and derived-exact numbers:
+change: ``native delta = exact delta + rounding``, with ``exact delta`` the float64 identity chain
+on the retained operands (``derived-exact``). The emulated chains (``forecast.EmulatedRowModel``:
+the run's dtype rounding at every point where eager HF rounds, the backend's own kernels) split the
+rounding into ``rounding effect = emulated delta - exact delta`` (``derived-exact`` under the
+emulation premises) and ``residual = native delta - emulated delta`` (``measured``), which is 0
+when the emulation holds (measured bit-exact on tiny models and Qwen2.5-1.5B, M42/M51). A
+verdict reads:
 
-* ``floor = max(|residual|, 2 x spacing)``, ``spacing`` the gap between adjacent values of the
-  consumer's native dtype at the magnitude of the consumer (both logits of a margin, before and
-  after the edit; the logit; the largest element of a vector). A one-step difference is not
-  stable across cache-build procedures, hence two steps.
-* ``effect`` (resolved) when ``|native| > floor`` and ``exact`` has the sign of ``native`` with
-  ``|exact| > |residual|``; ``no effect above the noise floor`` (resolved) when ``|native| <=
-  floor`` and ``|exact| <= floor``; otherwise ``unresolved`` with the numbers.
-* No exact chain (the identity is refused, or the verb measures natively only): ``native``
-  against ``2 x spacing`` alone, said so in ``basis``.
+* ``floor = FLOOR_SPACINGS x spacing`` (``FLOOR_SPACINGS`` = 1, ``supplied``, the one constant
+  ``confirm`` uses too), ``spacing`` the gap between adjacent values of the consumer's dtype at
+  the consumer's magnitude (both logits of a margin, before and after the edit; the logit; the
+  largest element of a vector).
+* ``effect`` (resolved) when every element's ``|native - emulated|`` is within the floor and the
+  native delta is not zero; ``no effect`` (resolved) when they agree and the native delta is zero:
+  the dtype shows no change at the consumer. The exact delta is reported either way, as a fact
+  beside the verdict (``note``: an exact change the dtype cannot show; a native change that is
+  the dtype's rounding).
+* beyond the floor: what the caller found where emulation and native part (``parting``: ``not
+  confirmed`` when a stage does not reproduce its native value from its native operands within
+  its identity's bound, else ``unresolved``), or ``unresolved`` with the numbers.
+* No emulated chain (the prediction is refused, or the verb measures natively only, as
+  ``compare``): ``effect`` when the edited and base native values differ, ``no effect`` when they
+  are equal; ``basis`` says so.
 
-A vector consumer is judged at its element of largest ``|native delta|`` (the residual there,
-the floor from the largest ``|residual|`` over all elements). Every number is ``measured`` (or
-``derived-exact`` for the exact delta) with proof P20; no number here is a ``bound``.
+A vector consumer is reported at its element of largest ``|native delta|``.
 """
 
 from __future__ import annotations
@@ -28,14 +36,15 @@ from typing import Any
 from .finite import EXACT, MEASURED, SUPPLIED
 
 EFFECT = "effect"
-NO_EFFECT = "no effect above the noise floor"
+NO_EFFECT = "no effect"
 UNRESOLVED = "unresolved"
-CRITERION = ("effect when |native Δ| > floor and the exact Δ has its sign with |exact Δ| > "
-             "|residual|; no effect when |native Δ| <= floor and |exact Δ| <= floor; floor = "
-             "max(|residual|, 2 x dtype spacing at the consumer's magnitude); P20: native Δ = "
-             "exact Δ + residual")
-NATIVE_ONLY = ("effect when |native Δ| > floor = 2 x dtype spacing at the consumer's magnitude, "
-               "else no effect above the noise floor (no exact chain: native only)")
+CRITERION = ("effect when native Δ and emulated Δ agree within the floor (1 x dtype spacing at "
+             "the consumer, supplied) and native Δ != 0; no effect when they agree and native "
+             "Δ = 0; beyond the floor not confirmed or unresolved by where emulation and native "
+             "part; P20: native Δ = exact Δ + rounding effect (emulated - exact) + residual "
+             "(native - emulated)")
+NATIVE_ONLY = ("effect when the edited and base native values differ (native Δ != 0), no effect "
+               "when they are equal (no prediction: native only)")
 
 
 def _torch():
@@ -70,57 +79,69 @@ def _num(value: float, authority: str) -> dict[str, Any]:
     return {"value": float(value), "authority": authority, "proof": "P20"}
 
 
-def decide(native: Any, exact: Any, residual: Any, size: float, dtype: Any,
-           why_native_only: str | None = None) -> dict[str, Any]:
-    """The verdict on one change. ``native``, ``exact``, ``residual``: float64 tensors (scalar or
-    vector; ``exact``/``residual`` None when no exact chain exists, ``why_native_only`` saying
-    why); ``size`` the consumer magnitude; ``dtype`` its native dtype."""
+def decide(native: Any, emulated: Any, size: float, dtype: Any, *, exact: Any = None,
+           why_native_only: str | None = None, parting: dict[str, Any] | None = None
+           ) -> dict[str, Any]:
+    """The verdict on one change. ``native`` (measured), ``emulated`` (the emulated chains'
+    delta, None when there is none, ``why_native_only`` saying why) and ``exact`` (the float64
+    chain's delta, optional, reported): float64 tensors, scalar or vector; ``size`` the
+    consumer's magnitude; ``dtype`` its native dtype; ``parting``: the caller's finding where
+    emulation and native part (``verdict``, ``state``, ``reason`` and its details), used when
+    they disagree beyond the floor."""
     torch = _torch()
     native = torch.as_tensor(native, dtype=torch.float64).reshape(-1)
     k = int(native.abs().argmax())
     n = float(native[k])
     step = spacing(size, dtype)
-    out: dict[str, Any] = {"native": _num(n, MEASURED),
-                           "spacing": _num(step, MEASURED),
+    floor = FLOOR_SPACINGS * step
+    out: dict[str, Any] = {"native": _num(n, MEASURED), "spacing": _num(step, MEASURED),
+                           "floor": _num(floor, SUPPLIED),
+                           "floor_spacings": _num(FLOOR_SPACINGS, SUPPLIED),
                            "dtype": str(dtype).removeprefix("torch.")}
     if native.numel() > 1:
         out["index"] = k
-    if exact is None or residual is None:
-        floor = 2 * step
-        out.update(floor=_num(floor, MEASURED), criterion=NATIVE_ONLY,
-                   basis=f"native only: {why_native_only or 'no exact chain'}")
-        out["verdict"] = EFFECT if abs(n) > floor else NO_EFFECT
-        out["state"] = "resolved"
+    changed = bool((native != 0).any())
+    if exact is not None:
+        exact = torch.as_tensor(exact, dtype=torch.float64).reshape(-1)
+        out["exact"] = _num(float(exact[k]), EXACT)
+    if emulated is None:
+        out.update(criterion=NATIVE_ONLY,
+                   basis=f"native only: {why_native_only or 'no emulated chain'}",
+                   verdict=EFFECT if changed else NO_EFFECT, state="resolved")
         return out
-    exact = torch.as_tensor(exact, dtype=torch.float64).reshape(-1)
-    residual = torch.as_tensor(residual, dtype=torch.float64).reshape(-1)
-    e, r = float(exact[k]), float(residual[k])
-    floor = max(float(residual.abs().max()), 2 * step)
-    out.update(exact=_num(e, EXACT), residual=_num(r, MEASURED), floor=_num(floor, MEASURED),
-               criterion=CRITERION, basis="P20 accounting")
-    if abs(n) > floor:
-        if e != 0 and (e > 0) == (n > 0) and abs(e) > abs(r):
-            out.update(verdict=EFFECT, state="resolved")
-        elif e == 0 or (e > 0) != (n > 0):
-            out.update(verdict=UNRESOLVED, state="unresolved",
-                       reason=f"native Δ {n:.5g} is above the floor {floor:.5g} but the exact "
-                              f"Δ {e:.5g} has the other sign")
-        else:
-            out.update(verdict=UNRESOLVED, state="unresolved",
-                       reason=f"native Δ {n:.5g} is above the floor {floor:.5g} but |exact Δ| "
-                              f"{abs(e):.5g} <= |residual| {abs(r):.5g}")
-    elif abs(e) <= floor:
-        out.update(verdict=NO_EFFECT, state="resolved")
+    emulated = torch.as_tensor(emulated, dtype=torch.float64).reshape(-1)
+    residual = native - emulated
+    worst = float(residual.abs().max())
+    out.update(emulated=_num(float(emulated[k]), EXACT), residual=_num(float(residual[k]), MEASURED),
+               residual_spacings=_num(worst / step, MEASURED), criterion=CRITERION,
+               basis="P20: native against the emulated delta")
+    if exact is not None:
+        out["rounding_effect"] = _num(float(emulated[k] - exact[k]), EXACT)
+    if worst > floor:
+        found = parting or {"verdict": UNRESOLVED, "state": "unresolved",
+                            "reason": f"native and emulated Δ part by {worst / step:.3g} "
+                                      "spacings"}
+        out.update(found)
+        return out
+    out["state"] = "resolved"
+    if changed:
+        out["verdict"] = EFFECT
+        if exact is not None:
+            e = float(exact[k])
+            if e == 0 or (e > 0) != (n > 0):
+                out["note"] = (f"the native change is the dtype's rounding: exact Δ {e:.5g}")
     else:
-        out.update(verdict=UNRESOLVED, state="unresolved",
-                   reason=f"native Δ {n:.5g} is within the floor {floor:.5g} but the exact Δ "
-                          f"{e:.5g} is not")
+        out["verdict"] = NO_EFFECT
+        if exact is not None:
+            x = float(exact[int(exact.abs().argmax())])
+            out["note"] = (f"no change at {out['dtype']} resolution (spacing {step:g}); exact Δ "
+                           f"{x:.5g}" + (", which the dtype cannot show" if x != 0 else ""))
     return out
 
 
 CONFIRMED = "confirmed"
 NOT_CONFIRMED = "not confirmed"
-# The one supplied constant of `confirm`: the floor in spacings between the native value and the
+# The one supplied constant of `confirm` and `decide`: the floor in spacings between the native value and the
 # emulated prediction (`forecast.EmulatedRowModel`, the run's dtype rounding at every eager-HF
 # rounding point). Above it `forecast.verify` names where emulation and native part (not
 # confirmed, or unresolved for rounding drift); it does not widen.

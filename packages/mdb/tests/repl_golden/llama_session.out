@@ -22,20 +22,20 @@ explain t3.M[4,9]  native -0.25098 [measured P19]  float64 -0.2501 [derived-exac
 (mdb) reads t1 --consumer M[4,9] top=3
 reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (8 reads)
   t3.L0.h0   mass 0.24902 [measured]  effect 0.024495 [derived-exact P19]
-    causal: Δ -0.023438 [measured], predicted -0.025827 [derived-exact], residual 0.002389 [measured P20]; floor 0.002389 [measured P20]
+    causal: Δ -0.023438 [measured], emulated -0.023438 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.025827 [derived-exact]; floor 0.00097656 [supplied P20]
   t3.L1.h2   mass 0.25195 [measured]  effect 0.005885 [derived-exact P19]
-    causal: Δ -0.013672 [measured], predicted -0.014126 [derived-exact], residual 0.00045363 [measured P20]; floor 0.0019531 [measured P20]
+    causal: Δ -0.013672 [measured], emulated -0.013672 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.014126 [derived-exact]; floor 0.00097656 [supplied P20]
   t3.L0.h1   mass 0.24902 [measured]  effect -0.0058675 [derived-exact P19]
-    causal: Δ 0.0058594 [measured], predicted 0.0040912 [derived-exact], residual 0.0017682 [measured P20]; floor 0.0019531 [measured P20]
+    causal: Δ 0.0058594 [measured], emulated 0.0058594 [derived-exact], residual 0 [measured P20] = 0 spacings; exact 0.0040912 [derived-exact]; floor 0.00097656 [supplied P20]
   +5 more: mass Σ 1.2598 [derived-exact]  effect Σ -0.0035532 [derived-exact]
   value_mix: eta_max_abs 0.00036001 [measured P06] worst |eta|/bound 0.95802 [measured P06] within bound (2 layer rows)
   head_write: eta_max_abs 5.3515e-05 [measured P07] worst |eta|/bound 0.87309 [measured P07] within bound (2 layer rows)
 (mdb) whatif L1.m=0.5 add consumer=M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode rewind, record 4dec3ac417b88047)
-  sealed  linear ΔM = -2.2897 [derived-local P14]   exact ΔM = 0.13678 [derived-exact]  bound 0.054102 [bound]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode rewind, record 508358e18a26ea1c)
+  sealed  linear ΔM = -2.2897 [derived-local P14]   exact ΔM = 0.13678 [derived-exact]  bound 0.054102 [bound]   emulated ΔM = 0.13773 [derived-exact]
   native  ΔM = 0.13773 [measured]   (base -0.25098 [measured] -> edited -0.11325 [measured])
-  error split (P20): linear -2.2897 [derived-local P14] + nonlinear 2.4265 [derived-exact P20] + realisation 1.5398e-05 [derived-exact P20] + rounding 0.00093132 [measured P20] (within bound 0.037189 [bound])
-  verdict (P20): effect  native ΔM 0.13773 [measured P20], exact ΔM (written value, measured operands) 0.13679 [derived-exact P20], residual 0.00093132 [measured P20]; floor 0.0019531 [measured P20] = max(|residual|, 2 x spacing 0.00097656 [measured P20])
+  error split (P20): linear -2.2897 [derived-local P14] + nonlinear 2.4265 [derived-exact P20] + realisation 1.5398e-05 [derived-exact P20] + rounding effect 0.00093132 [derived-exact P20] (within bound 0.037189 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM 0.13773 [measured P20], emulated ΔM 0.13773 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.13679 [derived-exact P20]; floor 0.00097656 [supplied P20] = 1 bfloat16 spacing (supplied)
   session unchanged at t3.logits  (5 moves, restored)
 (mdb) info program
 llama (transformers.models.llama.modeling_llama), 2 layers, d_model 32, heads 4/2 x 8, vocab 32, bfloat16 on cpu, attention eager, lookahead none

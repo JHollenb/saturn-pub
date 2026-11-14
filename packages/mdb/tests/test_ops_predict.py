@@ -116,16 +116,32 @@ def test_whatif_measures_a_fresh_committed_run_bitwise_and_leaves_the_session(de
     prediction = report["prediction"]
     assert prediction["state"] == "resolved"
     assert prediction["exact"]["value"]  # the exact term exists on every site here
-    rounding = report["split"]["terms"][-1]
-    assert rounding["name"] == "rounding" and rounding["value"]
-    if rounding.get("within_bound") is not None:
-        assert rounding["within_bound"] is True
-    # the split adds up to the native change, element by element
     tensors = result.tensors
     exact, at_realised = tensors["exact"], tensors["at_realised"]
     native = tensors["native_delta"].reshape(exact.shape)
-    assert torch.allclose(exact + (at_realised - exact) + (native - at_realised), native,
-                          rtol=0, atol=1e-12)
+    if staged is not None:
+        # a staged edit ahead of the cursor: the emulated chains are refused, native decides
+        assert prediction["emulated"]["state"] == "refused"
+        assert "staged edit(s) at t3.L0.q" in prediction["emulated"]["reason"]
+        assert report["effect"]["basis"].startswith("native only")
+        assert report["split"]["terms"][-1]["name"] == "rounding"
+        return
+    rounding, residual = report["split"]["terms"][-2:]
+
+    def label(claim):       # a scalar's claim, or a vector's {max_abs, norm}
+        return claim.get("authority") or claim["max_abs"]["authority"]
+
+    assert rounding["name"] == "rounding effect" and label(rounding["value"]) == "derived-exact"
+    if rounding.get("within_bound") is not None:
+        assert rounding["within_bound"] is True
+    # M51: the emulated change is the native change, bit for bit, at every site and cursor
+    assert residual["name"] == "residual" and label(residual["value"]) == "measured"
+    assert torch.equal(tensors["emulated"].reshape(exact.shape), native)
+    assert report["effect"]["residual_spacings"]["value"] == 0.0
+    # the split adds up to the native change, element by element
+    emulated = tensors["emulated"].reshape(exact.shape)
+    assert torch.allclose(exact + (at_realised - exact) + (emulated - at_realised)
+                          + (native - emulated), native, rtol=0, atol=1e-12)
 
 
 def test_linear_term_matches_the_finite_difference_slope(debugger):

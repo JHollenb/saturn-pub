@@ -1333,8 +1333,23 @@ def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
         return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
                 "reason": "the emulated chain of the operands read now differs from the sealed "
                           "prediction: an operand is not the one sealed"}
+    return stage_parting(run, row, emulator, entry.label, label)
+
+
+def stage_parting(run: Any, row: int, emulator: EmulatedRowModel, target: str, label: str,
+                  skip: dict[str, str] | None = None) -> dict[str, Any]:
+    """Where an emulated row model of ``row`` (evaluated through ``target``) and the native
+    values of that row part, the cursor being at or past ``target`` in it (``_parting``; the
+    whatif checks of ``propagate`` use it inside the edited excursion). The first stop where they
+    part by more than ``verdict.FLOOR_SPACINGS`` spacings; from there to the target each stage
+    is evaluated by its identity on its native operands (``RowModel`` with bounds): a native
+    value outside that bound is ``not confirmed`` (the identity does not describe the native
+    step), else ``unresolved`` (rounding drift), naming native top-score ties where the emulated
+    softmax parts. ``skip``: stops that no identity writes (an edited port, a cell read), with
+    why; they are listed as not checked. ``label``: the authority of the native values."""
     dtype = run.adapter.dtype
     floor = _verdict.FLOOR_SPACINGS
+    skip = skip or {}
 
     def read(name: str) -> Any:
         return f64(run.read(f"t{row}.{name}")).reshape(emulator.shape(name))
@@ -1349,11 +1364,14 @@ def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
             first = name
             break
     if first is None:       # every stop within the floor; the target (margin, token) is not
-        first = chain[-1] if chain else entry.label
+        first = chain[-1] if chain else target
     unchecked, ties = [], []
     stages = (emulator.computed[emulator.computed.index(first):] if first in emulator.computed
-              else [entry.label])
+              else [target])
     for name in stages:
+        if name in skip:
+            unchecked.append(f"t{row}.{name} ({skip[name]})")
+            continue
         stage = RowModel(run, row, lambda n, at=name: None if n == at else run.read(
             f"t{row}.{n}"))
         value, bound = stage.get(name), stage.bound(name)
@@ -1386,7 +1404,7 @@ def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
         reason += "; at native ties: " + "; ".join(ties[:MAX_TIES]) + (
             f" (+{len(ties) - MAX_TIES} more)" if len(ties) > MAX_TIES else "")
     if unchecked:
-        reason += "; not checked (no bound): " + ", ".join(unchecked[:MAX_TIES]) + (
+        reason += "; not checked: " + ", ".join(unchecked[:MAX_TIES]) + (
             f" (+{len(unchecked) - MAX_TIES} more)" if len(unchecked) > MAX_TIES else "")
     return {"verdict": _verdict.UNRESOLVED, "state": "unresolved", "reason": reason,
             "parting": {"stop": f"t{row}.{first}", "spacings": num(parts, label),

@@ -169,7 +169,7 @@ def test_summary_statistics_are_exact_and_mixed_labels_are_never_merged():
         {"d": _claim(-2.0, "measured"), "m": _claim(2.0, "derived-exact"),
          "effect": {"verdict": "effect"}},
         {"d": _claim(0.5, "measured"), "m": _claim(4.0, "measured"),
-         "effect": {"verdict": "no effect above the noise floor"}},
+         "effect": {"verdict": "no effect"}},
     ]
     out = stats.summarize(results)
     d, m = out["numeric"]
@@ -181,8 +181,7 @@ def test_summary_statistics_are_exact_and_mixed_labels_are_never_merged():
     assert m["by_authority"]["measured"]["mean"] == _claim(2.5, "measured")
     assert m["by_authority"]["derived-exact"]["mean"] == _claim(2.0, "derived-exact")
     assert out["verdicts"] == [{"path": "effect.verdict", "counts": [
-        {"label": "effect", "count": 2}, {"label": "no effect above the noise floor",
-                                          "count": 1}]}]
+        {"label": "effect", "count": 2}, {"label": "no effect", "count": 1}]}]
     assert out["partial"] == 1   # "only" is in one item: counted, not summarised
 
 

@@ -13,13 +13,17 @@ point) as itself, and ``o`` of the read's own layer (the default consumer) as it
 The causal verdict of a read is a native measurement: the source's weight in that head is set to
 zero (``p[h, src] = 0``, a masked ``replace`` at the ``p`` port) through
 ``analysis.propagate.whatif``, which measures the consumer natively and restores the session.
-The verdict follows whatif's P20 verdict (``verdict.decide``: native change, exact float64
-change and measured rounding residual against the floor ``max(|residual|, 2 x dtype spacing)``):
-``causal`` when whatif finds an effect and the change exceeds ``min_effect`` (default 0); ``not
-causal at this dose`` when whatif finds no effect above the noise floor; ``unresolved`` (with the
-reason) otherwise, or when the measurement could not be made. No worst-case rounding bound
-gates it. Mass and
-effect are always reported side by side; a small mass never hides a read.
+The verdict follows whatif's P20 verdict (``verdict.decide``: the native change against the
+emulated change, the base and edited chains with the dtype's rounding where eager HF rounds,
+within one spacing at the consumer): ``causal`` when whatif finds an effect (the native change is
+not zero, as the emulation predicts) and the change exceeds ``min_effect`` (default 0); ``not
+causal at this dose`` when whatif finds no effect (the dtype shows no change at the consumer);
+``unresolved`` (with the reason) otherwise, or when the measurement could not be made. Both facts
+are kept when they differ: a read whose exact change is real but below the dtype's resolution
+at the consumer is ``not causal at this dose`` with the reason ``no change at bfloat16
+resolution; exact ΔM 0.33``, and a native change that is rounding only carries its exact change.
+No worst-case rounding bound gates it. Mass and effect are always reported side by side; a small
+mass never hides a read.
 """
 
 from __future__ import annotations
@@ -481,6 +485,10 @@ def _verdict(result: Any, min_effect: float) -> dict[str, Any]:
     prediction = result.report["prediction"]
     out["predicted"] = (prediction["exact"]["value"] if prediction["state"] == "resolved"
                         else {"state": prediction["state"], "reason": prediction["reason"]})
+    emulated = prediction.get("emulated")
+    if emulated is not None:   # the emulated change (M51): what the verdict holds native against
+        out["emulated"] = (emulated["value"] if "value" in emulated
+                           else {"state": emulated["state"], "reason": emulated["reason"]})
     if bound is not None:   # the worst-case interval bound: shown beside, never decides
         out["rounding_bound"] = claim(f64(bound).reshape(-1).max(), BOUND)
     effect = result.report["effect"]
@@ -504,15 +512,17 @@ def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
 
 def _decide(delta: Any, effect: dict[str, Any], min_effect: float) -> dict[str, Any]:
     """The read's verdict from whatif's P20 verdict ``effect`` (``verdict.decide``): ``causal``
-    on an effect beyond ``min_effect``; ``not causal at this dose`` on no effect above the
-    noise floor; else ``unresolved`` with the reason."""
+    on an effect beyond ``min_effect``; ``not causal at this dose`` on no effect (the reason
+    says the dtype shows no change and gives the exact change); else ``unresolved`` with the
+    whatif verdict and its reason (``not confirmed`` or ``unresolved``)."""
     if effect["verdict"] == NO_EFFECT:
-        return {"verdict": "not causal at this dose", "reason": NO_EFFECT}
+        return {"verdict": "not causal at this dose",
+                "reason": effect.get("note", f"no change at {effect['dtype']} resolution")}
     if effect["verdict"] == EFFECT:
         if size(delta) <= min_effect:
             return {"verdict": "unresolved", "reason": "changed, at or below min_effect"}
-        return {"verdict": "causal"}
-    return {"verdict": "unresolved", "reason": f"changed, {effect['reason']}"}
+        return {"verdict": "causal", **({"reason": effect["note"]} if "note" in effect else {})}
+    return {"verdict": "unresolved", "reason": f"whatif {effect['verdict']}: {effect['reason']}"}
 
 
 def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: Any = None,

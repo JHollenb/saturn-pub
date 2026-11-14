@@ -91,7 +91,7 @@ def consumer_value(consumer: Any, value: Any) -> Any:
 
 def _read(run: Any, consumer: Any) -> tuple[Any, str, tuple[float, Any]]:
     """The consumer's float64 value, its label, and ``(magnitude, dtype)`` of the native tensor
-    it came from (the noise floor of ``verdict.decide``)."""
+    it came from (the spacing of ``verdict.decide``)."""
     stop = consumer_stop(run, consumer)
     if run.parse(stop) > run.parse(run.where):
         run.until(stop)
@@ -302,13 +302,13 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
             found_joint = {"state": "refused", "reason": joint}
             report["measured"]["A+B"] = found_joint
             report["effects"]["A+B"] = found_joint
-    # each effect against the dtype-spacing floor (native only: compare has no exact chain)
+    # each effect natively: edited against base (compare has no exact or emulated chain)
     report["verdicts"] = {}
     for name in [n for n in ("A", "B", "A+B") if n in values]:
         size = max(found[name]["scale"][0], found["base"]["scale"][0])
-        report["verdicts"][name] = decide(values[name] - values["base"], None, None, size,
-                                          found["base"]["scale"][1],
-                                          "compare measures natively, with no exact chain")
+        report["verdicts"][name] = decide(
+            values[name] - values["base"], None, size, found["base"]["scale"][1],
+            why_native_only="compare measures natively, with no exact or emulated chain")
     report["kind"] = "vector" if vector else "scalar"
     return {"report": report, "values": values}
 

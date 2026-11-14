@@ -512,11 +512,11 @@ private branch, and restores the session (`tests/repl_golden/predict_whatif.out`
 
 ```
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6b04afb367ee5bf5)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 44035dcd7864d219)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
-  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding -0.00063376 [measured P20] (within bound 0.01905 [bound])
-  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM (written value, measured operands) 0.16512 [derived-exact P20], residual -0.00063376 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding effect -0.00063376 [derived-exact P20] (within bound 0.01905 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], emulated ΔM 0.16449 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.16512 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
   session unchanged at t3.L1.a  (5 moves, restored)
 ```
 
@@ -531,25 +531,43 @@ result; the label stays `derived-exact`: an exact identity on the operands captu
 cursor, not a linearisation). After the native run the chain is evaluated again at the consumer
 on the measured operands of the unedited run (`exact` in the result, `requested` and `written`;
 computed after the seal and never shown as sealed); the split gains `operands` (that value minus
-the sealed one) and `realisation` and `rounding` are taken on the measured operands. The verdict
-line says which exact change it holds native against: the written value on measured operands.
-That number, the residual and the verdict are the same wherever the cursor was (tested at three
-cursors for a port, a head-selected and a cross-run edit, to `spacing / 2^20`).
+the sealed one) and `realisation` is taken on the measured operands. That exact number is the
+same wherever the cursor was (tested at three cursors for a port, a head-selected and a cross-run
+edit, to `spacing / 2^20`). Beside the exact change the seal holds the emulated one (`emulated`:
+the forecast's `EmulatedRowModel` chains, the dtype's rounding where eager HF rounds, the edit
+written by the engine's own arithmetic), which predicts the native change itself: the split ends
+in `rounding effect` (emulated - exact, `derived-exact` under the emulation premises) and
+`residual` (native - emulated, `measured`), and the verdict holds native against emulated.
+Measured on the tiny models: the residual is 0 bit for bit for port, cross-run, head-selected and
+cache-cell edits at cursors ahead of the edit, between edit and consumer and past the consumer,
+and on a model whose rounded L0 scores tie (where exact is tens of spacings off).
 
 ### Verdicts (P20)
 
-`whatif`, `reads` and `compare` judge an effect from the P20 accounting
-(`mdb.analysis.verdict`): native change = exact change (float64 chain on the measured operands,
-written value, `derived-exact`) + residual (`measured`). The floor is
-`max(|residual|, 2 x spacing)`, spacing being the gap between
-adjacent values of the consumer's dtype at its magnitude. A change is an `effect` when the
-native change is above the floor and the exact change has its sign and exceeds the residual;
-`no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
-the numbers. With no exact chain (as in `compare`) the native change is held against `2 x
-spacing` alone and the line says so. Worst-case rounding bounds are still shown where they are
+`whatif` and `reads` judge an effect from the P20 accounting (`mdb.analysis.verdict`): native
+change = exact change (float64 chain on the measured operands, written value) + rounding effect
+(emulated - exact, both `derived-exact`) + residual (native - emulated, `measured`). The floor is
+one spacing of the consumer's dtype at its magnitude (`supplied`, `FLOOR_SPACINGS = 1`, the same
+constant `verify` uses). The rule, on the native and emulated changes:
+
+- `effect`: native and emulated agree within the floor and the native change is not zero at the
+  dtype's resolution. When the exact change is 0 or has the other sign, a note says the native
+  change is the dtype's rounding.
+- `no effect`: they agree and the native change is zero: the dtype cannot show the change. The
+  note gives the exact change the dtype cannot show (`no change at bfloat16 resolution (spacing
+  0.125); exact Δ 0.33, which the dtype cannot show`); `reads` prints this as `not causal at this
+  dose` with that note as its reason.
+- beyond the floor, `verify`'s rule: `not confirmed` when a stage of the edited or the base run
+  lies outside the bound of its identity on its native operands (the stop named), else
+  `unresolved` (rounding drift; a chain over several rows is not stage-checked and says so).
+
+The exact change is reported beside the verdict and never decides it. With no emulated change
+(the emulated chains refused, e.g. a staged edit ahead of the cursor, or `compare`, which has no
+chain) the verdict is native only: `effect` when the native edited and base values differ, else
+`no effect`, and the line says so. Worst-case rounding bounds are still shown where they are
 finite (`bound` label) and never decide a verdict. `verify` holds native against the emulated
-prediction (above): `confirmed` within one spacing, else `not confirmed` or `unresolved` by where
-emulation and native part, whatever the bound (`no-bound` is no longer a verdict).
+prediction the same way: `confirmed` within one spacing, else `not confirmed` or `unresolved` by
+where emulation and native part.
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 
@@ -563,7 +581,7 @@ who reads it), always with an `Unbound` row so the table sums to the whole. Curs
 (mdb) reads t1 --consumer M[4,9] top=3
 reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (4 reads)
   t3.L1.h0   mass 0.24902 [measured]  effect 0.011455 [derived-exact P19]
-    causal: Δ -0.015137 [measured], predicted -0.01456 [derived-exact], residual -0.00057636 [measured P20]; floor 0.00097656 [measured P20]
+    causal: Δ -0.015137 [measured], emulated -0.015137 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.014201 [derived-exact]; floor 0.00048828 [supplied P20]
 ...
 (mdb) symbol ctx = t1, cache.L1.v[row=2]
 symbol ctx = t1, cache.L1.v[row=2]  (declared: ctx)
@@ -630,7 +648,7 @@ circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record 0b1ad30b3f694bac)
 compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
   base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
   effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
-  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.00097656 [measured P20])  B effect (floor 0.00097656 [measured P20])  A+B effect (floor 0.00097656 [measured P20])
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B effect  A+B effect
   interaction (A+B) - A - B + base = -0.044128 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.logits
@@ -683,7 +701,7 @@ summary: none refused; statistics over all 4 items
   prediction.exact.value  [derived-exact]
     n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
   effect.verdict: effect 4
-  +30 more in the record (promptset result each2 [ITEM])
+  +41 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 ...
   item  read      mass     effect      causal     verdict
@@ -884,6 +902,19 @@ gives a mean delta of -4.6719 (min -5.1875, max -4.375), 4/4 negative; the other
 prompt row; M53 (851c41a) changed that to the paired item's last row, and it was not rerun on the
 real model. `each temp: reads t@last` found reads that are `unresolved` at the noise level (M51).
 
+Emulated verdicts (M51, job-a0deb81ce182, revision `4049b06` plus the M51 files): the three
+what-ifs above at both cursors (ahead and rewind) give emulated dM equal to native dM, residual 0
+spacings: `L20.m = clean:L20.m` native 0.625, emulated 0.625, exact 0.50742 (rounding effect
+0.11758), `effect`; `L20.A[h5] = clean:L20.A[h5]` native 4.375, emulated 4.375, exact 4.2145,
+`effect`; `L20.m *= 1` native 0, emulated 0, exact 0, `no effect`. `each temp: reads t@last
+--consumer M[$answer,$foil] top=3`: the top read of every prompt is `causal` (6/6; native deltas
+-0.25, 0.25, -0.3125, 0.125, -0.25, 0.25, each agreeing with the emulated delta within one
+spacing) where the old floor gave 3 `not causal at this dose`, 2 `unresolved`, 1 `causal`; the
+second reads are `causal` 6/6 (old: `not causal at this dose` 6/6). Cost (same job, medians):
+a what-if 6.90 s with the emulated chains vs 6.95 s without at `L0.h` and 2.43 s vs 2.40 s at
+`logits`; `reads t21 top=3` 6.39 s vs 6.12 s (sharing the emulated base: 6.12 s unshared, within
+the run-to-run spread of about 0.5 s).
+
 Other models: SmolLM2-360M (Llama family), bf16 CUDA on Beast, job-d16ba4fd134b (M24 resolution):
 the selfcheck passed with 576 stop probes and 0 mismatches, port step 3.0 ms, stepped against the
 full forward max |dlogit| 0.28. A real Mistral checkpoint was not run.
@@ -921,9 +952,10 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   the ledger states whether the two issues are closed.
 - A cell `whatif` is refused (prediction only; the native measurement runs) when the first
   affected row has not started at the cursor (M9).
-- Verdicts: the floor is `max(|residual|, 2 x spacing)` with the 2 supplied, and after M46 the
-  residual is edited-run rounding minus base-run rounding, so reads at the noise level are
-  `unresolved` (on the real model two of the top three reads for the hot/cold margin, M51). The
+- Verdicts: `whatif` and `reads` hold native against the emulated change (M51); the emulated
+  chains are refused when a staged edit lies ahead of the cursor (the verdict is then native
+  only), and a what-if whose chain spans several rows is not stage-checked when native and
+  emulated part (`unresolved`, said so). The
   accumulation premise is conservative: on bf16 CUDA every bound for sums of 256 or more terms is
   `bound refused`, although a measurement on an RTX 4080 found the linear stages bitwise equal with
   the flag on and off (M50). Bounds never decide a verdict.

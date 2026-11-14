@@ -697,9 +697,11 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         operands = exact.get("operands", {})
         if operands.get("source") == "forecast":
             bound += f"  (operands forecast from {operands['at']})"
+        emulated = prediction.get("emulated", {})
         lines.append(f"  sealed  linear {delta} = "
                      f"{_claimed(linear['value']) if 'value' in linear else num(linear)}   "
-                     f"exact {delta} = {_claimed(exact['value'])}{bound}")
+                     f"exact {delta} = {_claimed(exact['value'])}{bound}   emulated {delta} = "
+                     + (_claimed(emulated["value"]) if "value" in emulated else num(emulated)))
     measured = result["measured"]
     lines.append(f"  native  {delta} = {_claimed(measured['delta'])}   (base "
                  f"{_claimed(measured['base'])} -> edited {_claimed(measured['edited'])})")
@@ -725,20 +727,24 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
 
 
 def effect_line(effect: dict[str, Any], delta: str = "\u0394", exact_note: str = "") -> str:
-    """The P20 verdict: native, exact and residual against the floor (all measured /
-    derived-exact, never a bound). ``exact_note`` says which exact change the verdict used."""
-    floor = (f"floor {_claimed(effect['floor'])} = max(|residual|, 2 x spacing "
-             f"{_claimed(effect['spacing'])})" if "residual" in effect else
-             f"floor {_claimed(effect['floor'])} = 2 x spacing {_claimed(effect['spacing'])}")
+    """The P20 verdict: native against the emulated change within the floor (1 spacing,
+    supplied), the exact change beside it; ``exact_note`` says which exact change it is."""
     numbers = f"native {delta} {_claimed(effect['native'])}"
+    if "emulated" in effect:
+        numbers += (f", emulated {delta} {_claimed(effect['emulated'])}, residual "
+                    f"{_claimed(effect['residual'])} = "
+                    f"{effect['residual_spacings']['value']:.2g} spacings")
     if "exact" in effect:
-        numbers += (f", exact {delta}{exact_note} {_claimed(effect['exact'])}, residual "
-                    f"{_claimed(effect['residual'])}")
-    else:
+        numbers += f"; exact {delta}{exact_note} {_claimed(effect['exact'])}"
+    if "emulated" not in effect:
         numbers += f" ({effect['basis']})"
+    count = effect["floor_spacings"]["value"]
+    floor = (f"floor {_claimed(effect['floor'])} = {count:g} {effect['dtype']} "
+             f"spacing{'' if count == 1 else 's'} ({effect['floor_spacings']['authority']})")
     text = f"verdict (P20): {effect['verdict']}  {numbers}; {floor}"
-    if effect.get("reason"):
-        text += f"  [{effect['reason']}]"
+    for key in ("note", "reason"):
+        if effect.get(key):
+            text += f"  [{effect[key]}]"
     return text
 
 
@@ -762,13 +768,17 @@ def _verdict(causal: dict[str, Any]) -> str:
         return f"unresolved ({causal['reason']})"
     head = causal["verdict"] + (f" ({causal['reason']})" if causal.get("reason") else "")
     text = f"{head}: Δ {_short(causal['delta'])}"
+    effect = causal.get("effect") or {}
+    emulated = causal.get("emulated")
+    if isinstance(emulated, dict) and emulated.get("state") is None:
+        text += f", emulated {_short(emulated)}"
+    if "residual" in effect:
+        text += (f", residual {_claimed(effect['residual'])} = "
+                 f"{effect['residual_spacings']['value']:.2g} spacings")
     predicted = causal.get("predicted")
     if isinstance(predicted, dict) and predicted.get("state") is None:
-        text += f", predicted {_short(predicted)}"
-    effect = causal.get("effect")
-    if effect is not None:
-        if "residual" in effect:
-            text += f", residual {_claimed(effect['residual'])}"
+        text += f"; exact {_short(predicted)}"
+    if "floor" in effect:
         text += f"; floor {_claimed(effect['floor'])}"
     return text
 
@@ -1006,9 +1016,9 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
                                           for name, value in effects.items()))
     verdicts = result.get("verdicts") or {}
     if verdicts:
-        lines.append("  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): "
-                     + "  ".join(f"{name} {v['verdict']} (floor {_claimed(v['floor'])})"
-                                 for name, v in verdicts.items()))
+        lines.append("  verdicts (native only, no exact or emulated chain: effect when edited and "
+                     "base differ): " + "  ".join(f"{name} {v['verdict']}"
+                                                  for name, v in verdicts.items()))
     interaction = result["interaction"]
     if interaction.get("state"):
         lines.append(f"  interaction {num(interaction)}")

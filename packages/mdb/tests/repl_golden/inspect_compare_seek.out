@@ -6,7 +6,7 @@ t3.logits  logits = lm_head(fn)
 compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
   base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
   effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
-  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.00097656 [measured P20])  B effect (floor 0.00097656 [measured P20])  A+B effect (floor 0.00097656 [measured P20])
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B effect  A+B effect
   interaction (A+B) - A - B + base = -0.044128 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.logits
@@ -19,7 +19,7 @@ t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 
 compare A: here  B: L1.m=0.5 add  -> t3.M[4,9]
   base -0.11401 [measured]  A -0.11401 [measured]  B 0.050476 [measured]
   effects A 0 [measured]  B 0.16449 [measured]
-  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A no effect above the noise floor (floor 0.00097656 [measured P20])  B effect (floor 0.00097656 [measured P20])
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A no effect  B effect
   interaction refused (A+B needs both sides to be edits (a checkpoint is a whole session state, not a change that composes))
   session unchanged at t3.L0.p
 (mdb) seek t3.logits
