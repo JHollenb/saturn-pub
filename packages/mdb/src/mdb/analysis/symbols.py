@@ -593,6 +593,118 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     }
 
 
+def gate_switch_forecast(run: Any, edited: Any, reader: Any, *, cell_layer: int,
+                         ks: tuple[int, ...] = (8, 32, 128), switch_layers: Any = None,
+                         cache: dict | None = None) -> dict[str, Any]:
+    """First-order forecasts of a cell edit's consumer change, with and without exact gate
+    switches (advisor memo 2026-11-14-open-problems §2.3; the ``hop_edge`` ladder's ``linear``).
+
+    Same runs as ``hop_edge`` (``run`` native, ``edited`` with the cell edit, both run to the
+    consumer's logits; ``reader`` a margin or logit ``Readout``). Per MLP layer ``l >= cell_layer``
+    at the consumer row, from the base run's ports ``r0, g0, u0, sg0`` and the weights:
+
+    * ``F1`` = ``direct + sum_l c . W_down df_lin``: ``df_lin = b0 silu'(g0) da + s0 db`` with
+      ``(da, db) = (W_gate, W_up) J_RMS(r0) Delta r`` on the layer's ACTUAL input change (P14,
+      derived-local): the hop-math first-order total (direct + linear MLP).
+    * ``F2[k]`` = F1 with the ``k`` neurons per layer of largest ``|da|`` given the exact finite
+      SwiGLU of their Jacobian-predicted input: ``silu(g0 + da)(b0 + db) - s0 b0`` (no residual
+      recomputation; the inputs are still the actual ``Delta r``).
+    * ``F3[k]`` = the chained, passive version: the residual change at the row starts as the
+      cell layer's own attention write ``Delta o`` (exact, the direct term) and each layer's MLP
+      forecast (``F2``-style with ``k`` exact gates) is fed forward into the next layer's input;
+      later attention re-reads are not forecast (zero), so nothing native downstream of the edit
+      is used. ``F3`` = ``c . (Delta o_cell + sum_l Delta m_l^F3)``.
+
+    ``switch_layers`` (default every layer from ``cell_layer``) restricts where the exact gates
+    are applied (elsewhere ``k = 0``). Returns the three forecasts, the native delta, the per-layer
+    ``F1``/``F2`` MLP terms, and the per-layer count of base-run gate sign switches
+    (``sign(g1) != sign(g0)``) as measured on the edited run."""
+    torch = _torch()
+    from .reads import layer_module
+
+    if reader is None or not reader.scalar:
+        raise Refusal("gate_switch_forecast needs a scalar consumer (a margin or a logit)")
+    j, layers = reader.row, run.adapter.layers
+    if not 0 <= cell_layer < layers:
+        raise Refusal(f"cell layer {cell_layer} outside 0..{layers - 1}")
+    c = f64(reader.vector).reshape(-1)
+    t = reader.target
+    cache = {} if cache is None else cache
+
+    def port(r, layer, name):
+        return f64(r.read(f"t{j}.L{layer}.{name}")).reshape(-1)
+
+    def margin(r):
+        lg = r.read(f"t{j}.logits").reshape(-1)
+        return float(f64(lg[t.a]) - f64(lg[t.b])) if isinstance(t, Margin) else float(f64(lg[t.i]))
+
+    def weights(layer, module):
+        key = ("w", layer)
+        if key not in cache:
+            cache[key] = (f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight),
+                          f64(module.mlp.down_proj.weight))
+        return cache[key]
+
+    allowed = set(range(cell_layer, layers) if switch_layers is None else switch_layers)
+    native_delta = margin(edited) - margin(run)
+    d_o = port(edited, cell_layer, "o") - port(run, cell_layer, "o")
+    direct = float(c @ d_o)
+    f1, f2 = direct, {k: direct for k in ks}
+    chain = {k: d_o.clone() for k in (0, *ks)}          # Delta residual (F3), per k
+    rows = []
+    for layer in range(cell_layer, layers):
+        module = layer_module(run.adapter, layer)
+        gate, up, down = weights(layer, module)
+        norm = module.post_attention_layernorm
+        gamma_l, eps = f64(norm.weight).reshape(-1), float(norm.variance_epsilon)
+        r0 = port(run, layer, "r")
+        g0, b0, s0 = port(run, layer, "g"), port(run, layer, "u"), port(run, layer, "sg")
+        rho0 = float((r0.pow(2).mean() + eps) ** -0.5)
+        cd = c @ down
+
+        def mlp_change(dr, k):
+            dn = gamma_l * (rho0 * dr - (rho0 ** 3 / dr.numel()) * float(r0 @ dr) * r0)
+            da, db = gate @ dn, up @ dn
+            df = b0 * _silu_prime(g0) * da + s0 * db
+            if k and layer in allowed:
+                top = da.abs().argsort(descending=True)[:k]
+                g1 = g0[top] + da[top]
+                df[top] = torch.nn.functional.silu(g1) * (b0[top] + db[top]) - s0[top] * b0[top]
+            return df
+
+        dr = port(edited, layer, "r") - r0
+        df1 = mlp_change(dr, 0)
+        term1 = float(cd @ df1)
+        f1 += term1
+        entry = {"layer": layer, "F1": num(term1, "derived-local", "P14"), "F2": {}}
+        for k in ks:
+            term = float(cd @ mlp_change(dr, k))
+            f2[k] += term
+            entry["F2"][str(k)] = num(term, "derived-local")
+        for k, vec in chain.items():                  # re-reads of later layers: not forecast
+            chain[k] = vec + down @ mlp_change(vec, k)
+        g1n = port(edited, layer, "g")
+        entry["gate_sign_switches"] = int(((g1n > 0) != (g0 > 0)).sum())
+        entry["captured"] = num(float(c @ (port(edited, layer, "m") - port(run, layer, "m"))),
+                                MEASURED)
+        rows.append(entry)
+
+    def ratio(x):
+        return num(x / native_delta, MEASURED) if native_delta else None
+    f3 = {k: float(c @ v) for k, v in chain.items()}
+    return {"consumer": {"native_delta": num(native_delta, MEASURED), "text": reader.text},
+            "direct": num(direct, EXACT, "P19"),
+            "F1": num(f1, "derived-local"), "F1_ratio": ratio(f1),
+            "F2": {str(k): num(v, "derived-local") for k, v in f2.items()},
+            "F2_ratio": {str(k): ratio(v) for k, v in f2.items()},
+            "F3": {str(k): num(v, "derived-local") for k, v in f3.items()},
+            "F3_ratio": {str(k): ratio(v) for k, v in f3.items()},
+            "layers": rows,
+            "meaning": "F1 first order on actual layer inputs (direct + linear MLP); F2[k] the k "
+                       "largest |Jacobian Delta g| gates per layer exact; F3[k] chained from the "
+                       "direct write, re-reads not forecast"}
+
+
 def _token_rows(run: Any, here: int, users: list[Binding]) -> list[Binding]:
     """One binding per token row holding exactly the cells no declared symbol holds."""
     layers, kv = run.adapter.layers, run.adapter.num_kv_heads
@@ -1466,5 +1578,5 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]
 
 
-__all__ = ["Binding", "Candidates", "LEGEND", "content", "hop_edge", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
+__all__ = ["Binding", "Candidates", "LEGEND", "content", "gate_switch_forecast", "hop_edge", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",
            "declared", "table"]

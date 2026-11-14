@@ -423,3 +423,33 @@ def test_a_long_symbol_seals_with_row_ranges(debugger):
     assert len(chain["definitions"]) == 64 and chain["definitions"][-1] == "... +18 more"
     assert table.records and check_bounded(table.report)
     assert symbols._compact_rows(list(range(5))) == [0, 1, 2, 3, 4]
+
+
+def test_gate_switch_forecast_matches_hop_edge_first_order(debugger):
+    """F1 = hop_edge's direct + linear MLP; a tiny edit is first order (F1, F2, F3 ~ native);
+    k = 0 in F3 is the plain chained linear forecast and every k is finite."""
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    reader = readout(run, Margin(3, 4, 9))
+    donor = debugger.run([2, 7, 9, 3])
+    value = donor.read_cache(0, "v", staged=False).clone()[:, 0:1, 1:2]
+    edited = debugger.run(PROMPT)
+    edited.set_cell(0, "v", value, rows=[1], kv=[0])
+    edited.until("t3.logits")
+    edge = symbols.hop_edge(run, edited, reader, cell_layer=0)
+    fc = symbols.gate_switch_forecast(run, edited, reader, cell_layer=0, ks=(1, 4))
+    assert fc["F1"]["value"] == pytest.approx(
+        edge["direct"]["value"] + edge["totals"]["mlp_linear"]["value"], abs=1e-9)
+    assert set(fc["F3"]) == {"0", "1", "4"} and set(fc["F2"]) == {"1", "4"}
+    assert all(e["gate_sign_switches"] >= 0 for e in fc["layers"])
+    if run.adapter.model.lm_head.weight.dtype != torch.float32:
+        return
+    tiny = debugger.run(PROMPT)
+    tiny.set_cell(0, "v", run.read_cache(0, "v", staged=False).clone()[:, 0:1, 1:2] * 1.001,
+                  rows=[1], kv=[0])
+    tiny.until("t3.logits")
+    small = symbols.gate_switch_forecast(run, tiny, reader, cell_layer=0, ks=(4,))
+    tiny_edge = symbols.hop_edge(run, tiny, reader, cell_layer=0)
+    scope = tiny_edge["direct"]["value"] + tiny_edge["totals"]["mlp_exact"]["value"]
+    assert small["F1"]["value"] == pytest.approx(scope, rel=0.05)      # no re-reads in F1
+    assert small["F2"]["4"]["value"] == pytest.approx(small["F1"]["value"], rel=1e-3)
