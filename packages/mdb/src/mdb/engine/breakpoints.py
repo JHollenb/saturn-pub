@@ -550,6 +550,7 @@ class ConditionEnv:
     head_dim: int | None = None
     row: int | None = None
     tokenizer: Any = None
+    run: Any = None     # the run at the stop: predicates that read more than the port value
 
     def reduction(self, name: str, value: Any) -> Any:
         if not isinstance(value, Selection):
@@ -857,10 +858,13 @@ class Table:
 
     def add_break(
         self, pattern: str, program: Any, *, condition: str | None = None,
-        temporary: bool = False, adapter: Any = None,
+        temporary: bool = False, adapter: Any = None, compiled: Condition | None = None,
     ) -> Breakpoint:
+        """``compiled``: a prebuilt ``Condition`` (e.g. ``analysis.features.FeatureCondition``)
+        instead of ``condition`` text."""
         parsed = parse_pattern(pattern, program)
-        compiled = None if condition is None else Condition(condition)
+        if compiled is None:
+            compiled = None if condition is None else Condition(condition)
         validate_item(parsed, [compiled], program, adapter)
         item = Breakpoint(self._id(), addresses.format_pattern(parsed), parsed, compiled,
                           temporary)
@@ -869,14 +873,17 @@ class Table:
 
     def add_watch(
         self, pattern: str, program: Any, *, predicate: str | None = None, mode: str = "change",
-        adapter: Any = None,
+        adapter: Any = None, compiled: Condition | None = None,
     ) -> Watch:
+        """``compiled``: a prebuilt ``Condition`` (e.g. ``analysis.features.FeatureCondition``)
+        instead of ``predicate`` text."""
         if mode not in WATCH_MODES:
             raise ValueError(f"watch mode is one of {', '.join(WATCH_MODES)}")
-        if mode != "change" and predicate is None:
+        if mode != "change" and predicate is None and compiled is None:
             raise ValueError(f"a {mode} watch needs a predicate")
         parsed = parse_pattern(pattern, program)
-        compiled = None if predicate is None else Condition(predicate)
+        if compiled is None:
+            compiled = None if predicate is None else Condition(predicate)
         validate_item(parsed, [compiled], program, adapter)
         item = Watch(self._id(), addresses.format_pattern(parsed), parsed, compiled, mode)
         self.items[item.id] = item
@@ -983,7 +990,7 @@ class _Probe:
                                head_dim=self.run.adapter.head_dim, row=None,
                                tokenizer=self.tokenizer)
             return ConditionEnv(full, selection, CELL_AXES, self.run.adapter.head_dim, None,
-                                self.tokenizer)
+                                self.tokenizer, self.run)
         axes = stop_axes(self.run.program, self.label)
         full = self.value()
         row = None if self.label in ("start",) else self.row
@@ -991,7 +998,8 @@ class _Probe:
             row = None
         selection = select(full, axes, pattern.selector, head_dim=self.run.adapter.head_dim,
                            row=row, tokenizer=self.tokenizer)
-        return ConditionEnv(full, selection, axes, self.run.adapter.head_dim, row, self.tokenizer)
+        return ConditionEnv(full, selection, axes, self.run.adapter.head_dim, row, self.tokenizer,
+                            self.run)
 
 
 def _evaluate(item: Breakpoint | Watch, probe: _Probe, state: dict[str, Any]) -> dict | None:

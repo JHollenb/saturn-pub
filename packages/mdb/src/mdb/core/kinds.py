@@ -107,5 +107,15 @@ SWEEP = declare_kind(
                    *(p.replace("procedure", "origin_procedure") for p in PROCEDURE)),
 )
 
-__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+# ``supplied-forecast`` (advisor memo 2026-11-14 B-c): a scalar forecast made by a library
+# (nnsight gradient x activation, a transcoder edge, a TL patch) sealed beside mdb's own exact and
+# linear terms before the native arm runs. ``supplied`` is the library's number with its
+# library, version and the address map it used; ``exact``/``linear`` are mdb's, when computed.
+SUPPLIED_FORECAST = declare_kind(
+    "supplied-forecast",
+    required=("schema", "target", "edit", "supplied", "library", "address_map", "sealed_at"),
+    plain_numeric=("target.row", "target.indices", "edit.row", "edit.layer", *PROCEDURE),
+)
+
+__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

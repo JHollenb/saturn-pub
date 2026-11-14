@@ -116,6 +116,17 @@ class Binding:
     def covers(self, row: int, layer: int, kv: int, port: str) -> bool:
         return any(c.covers(layer, kv, port) for c in self.at(row))
 
+    @classmethod
+    def component(cls, run: Any, name: str, cell: str, basis: Any, *,
+                  features: list[int] | None = None) -> Any:
+        """A sub-cell binding: the value cell ``cell`` split over a residual feature basis into
+        per-feature components, the decoder bias and the error (``analysis.components``). It
+        holds no cells of its own (the partition of value cells is unchanged); its components
+        add up to the cell's float64 image exactly."""
+        from .components import component_binding
+
+        return component_binding(run, name, cell, basis, features=features)
+
 
 _DECLARED: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 
