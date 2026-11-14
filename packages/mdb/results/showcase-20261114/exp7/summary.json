@@ -1,0 +1,32 @@
+{
+ "pairs": 64,
+ "eligible_M0_above_floor": 64,
+ "IIA": {
+  "whole": "44/64",
+  "sae": "4/64",
+  "random": "0/64"
+ },
+ "I1": {
+  "whole_IIA": 0.6875,
+  "holds": false
+ },
+ "I2": {
+  "sae_over_whole": 0.09090909090909091,
+  "random_over_whole": 0.0,
+  "median_rank": 4.0,
+  "max_rank": 9,
+  "holds": false,
+  "falsifier_fires": true
+ },
+ "I3": {
+  "within_one_step": "54/64",
+  "max_abs_diff": 0.75,
+  "median_abs_diff": 0.125,
+  "kernel_path_clean_median": 0.125,
+  "kernel_path_clean_max": 0.375
+ },
+ "median_frac_moved": {
+  "sae": 0.3425684485006519,
+  "random": 0.010365198711063372
+ }
+}

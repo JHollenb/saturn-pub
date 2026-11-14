@@ -1,0 +1,16 @@
+{
+ "pyvene": "0.1.8",
+ "registered": [
+  "Qwen3ForCausalLM",
+  "Qwen3Model"
+ ],
+ "config": {
+  "layer": "20",
+  "component": "model.layers[20].self_attn.v_proj.output",
+  "unit": "pos",
+  "max_number_of_units": "1",
+  "intervention_type": "<class 'pyvene.models.interventions.VanillaIntervention'>",
+  "subspace_partition": "[[0, 128], [128, 256], [256, 384], [384, 512], [512, 640], [640, 768], [768, 896], [896, 1024]]",
+  "kv": "6"
+ }
+}
