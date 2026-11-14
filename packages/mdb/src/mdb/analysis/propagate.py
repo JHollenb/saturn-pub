@@ -49,6 +49,7 @@ from typing import Any
 
 from mdb.core.kinds import WHATIF
 from mdb.core.pointers import seal_digest
+from mdb.core.bounded import MAX_ITEMS, bound_list, load_json
 from mdb.core.records import num, seal_record
 
 from .accumulation import bound_state
@@ -791,7 +792,8 @@ def _measure_batch(run: Any, items: list[_Prepared]) -> list[dict[str, Any]]:
     return results
 
 
-def whatif_many(run: Any, requests: list[tuple[Edit, Any]]) -> list[WhatIf | Refusal]:
+def whatif_many(run: Any, requests: list[tuple[Edit, Any]], *, store: Any = None
+                ) -> list[WhatIf | Refusal]:
     """``whatif`` of each ``(edit, consumer)`` at the cursor, measured in one excursion: the
     predictions are sealed first (each needs the cursor's values), the native measurements share
     their rewinds and one final restore (``_measure_batch``), and each is then split and judged
@@ -802,7 +804,7 @@ def whatif_many(run: Any, requests: list[tuple[Edit, Any]]) -> list[WhatIf | Ref
     prepared: list[_Prepared | Refusal] = []
     for edit, consumer in requests:
         try:
-            prepared.append(_prepare(run, edit, consumer, before=before))
+            prepared.append(_prepare(run, edit, consumer, before=before, store=store))
         except Refusal as error:
             prepared.append(error)
     ready = [item for item in prepared if isinstance(item, _Prepared)]
@@ -930,9 +932,10 @@ class _Prepared:
 
 
 def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
-             before: str | None = None) -> _Prepared:
+             before: str | None = None, store: Any = None) -> _Prepared:
     """Plan, hold the edit tensors, predict and seal; nothing native runs. ``before``: the
-    ``state_digest`` of the cursor when the caller already has it."""
+    ``state_digest`` of the cursor when the caller already has it. ``store``: a project store
+    for the full operand list when it is over the record bound (see ``bound_operands``)."""
     p = plan(run, edit, consumer)
     if before is None:
         before = state_digest(run)
@@ -969,12 +972,23 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
                             "written at the edited port (rows chained through the cache)",
                    "linear": "forward-mode derivative of the same chain at the unedited point "
                              "(P14)"},
-        "operands": [] if reason else found["operands"],
     }
+    pointers: list[dict[str, Any]] = []
+    if reason:
+        body["operands"] = []
+    else:
+        body["operands"], summary = bound_list(
+            found["operands"], MAX_ITEMS, store=store, run=run,
+            keep=f"the first {MAX_ITEMS} in capture order (a row's ports, then its cache reads)")
+        if summary is not None:
+            tensor = summary["pointer"].pop("tensor", None)
+            pointers = [] if tensor is None else [tensor]
+            body["operands_summary"] = summary
     record = seal_record(session_id=run_session_id(run), kind="whatif",
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution),
-                         authority=LOCAL if reason is None else SUPPLIED, body=body)
+                         authority=LOCAL if reason is None else SUPPLIED, body=body,
+                         pointers=pointers)
     # An evidence writer can persist/flush the sealed forecast before the first
     # counterfactual measurement. Writer failure prevents native release.
     if before_native is not None:
@@ -982,13 +996,29 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
     return _Prepared(p, edit, checkpoint, found, prediction, body, record, before)
 
 
-def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) -> WhatIf:
+def load_operands(record: dict[str, Any], *, store: Any = None, run: Any = None
+                  ) -> list[dict[str, Any]]:
+    """The full operand list of a ``whatif`` record: ``body.operands`` itself within the record
+    bound, else the blob ``body.operands_summary.pointer`` names (project ``store``, or the
+    run's in-memory copy), checked against its sha256; ``ValueError`` if absent or changed."""
+    body = record["body"]
+    summary = body.get("operands_summary")
+    if summary is None:
+        return body["operands"]
+    pointer = summary["pointer"]
+    tensor = next((p for p in record["pointers"]
+                   if p.get("kind") == "tensor" and p.get("ref") == pointer.get("ref")), None)
+    return load_json(pointer, store=store, run=run, tensor=tensor)
+
+
+def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None,
+           store: Any = None) -> WhatIf:
     """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
     a stop address) under ``edit``; the session is left exactly where it was (checked by
     ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
     may persist and flush the sealed prediction; an exception prevents measurement.
     """
-    prep = _prepare(run, edit, consumer, before_native)
+    prep = _prepare(run, edit, consumer, before_native, store=store)
     native = _measure(run, prep.p, edit, prep.checkpoint)
     return _finish(run, prep, native, state_digest(run))
 

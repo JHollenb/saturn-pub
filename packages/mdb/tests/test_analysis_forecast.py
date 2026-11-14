@@ -353,7 +353,8 @@ def test_a_chain_longer_than_the_record_cap_is_summarised_without_a_project():
     entry, summary, result = _check_deep(run, view, None)
     assert summary["chain_pointer"]["state"] == "absent" and "no project" in summary["chain_pointer"]["reason"]
     assert entry.record["pointers"] == []
-    assert view["method"] == entry.chain and view["method_summary"] == summary
+    assert view["method"] == entry.chain[:forecast.MAX_ITEMS] and view["method_summary"] == summary
+    assert view["method_listed"]["count"] == len(entry.chain)      # M41: the view obeys the bound
     with pytest.raises(forecast.Refusal, match="no chain pointer"):
         forecast.load_chain(entry.record, None)
 

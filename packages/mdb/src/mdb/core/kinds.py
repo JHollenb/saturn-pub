@@ -19,7 +19,9 @@ FORECAST = declare_kind(
                    "edits_at_seal.*.row", "edits_at_seal.*.layer",
                    "method.summary.count", "method.summary.global_steps.count",
                    "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
-                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes"),
+                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes",
+                   "operands_summary.count", "operands_summary.listed",
+                   "operands_summary.rest.count", "operands_summary.pointer.bytes"),
 )
 
 WHATIF = declare_kind(
@@ -28,7 +30,8 @@ WHATIF = declare_kind(
     plain_numeric=("edit.row", "edit.layer", "edit.mask_count", "edit.shape", "consumer.row",
                    "consumer.index", "consumer.indices", "sealed_at.row", "sealed_at.index",
                    "sealed_at.transition", "operands.*.shape", "edit.cell.**",
-                   "edit.origin.shape"),
+                   "edit.origin.shape", "operands_summary.count", "operands_summary.listed",
+                   "operands_summary.rest.count", "operands_summary.pointer.bytes"),
 )
 
 CIRCUIT = declare_kind(

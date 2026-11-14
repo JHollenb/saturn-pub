@@ -10,13 +10,12 @@ numbers are ``derived-local`` and never presented as a decomposition. Every resu
 
 from __future__ import annotations
 
-import hashlib
-import json
 import math
-import weakref
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
+
+from mdb.core.bounded import keep_indices, load_json, put_json
 
 from . import finite
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64, f64_at, num
@@ -720,12 +719,6 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
 
 
 MAX_TERMS = 64          # listed terms in a result (the record's sequence bound)
-_FULL_TERMS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
-
-
-def _full_bytes(full: dict[str, Any]) -> bytes:
-    return json.dumps(full, sort_keys=True, separators=(",", ":")).encode()
-
 
 def _per_layer(result: dict[str, Any]) -> list[dict[str, Any]]:
     for rem in result["remainders"]:
@@ -753,31 +746,16 @@ def bound_terms(result: dict[str, Any], *, store: Any = None, run: Any = None,
     terms, per_layer = result["terms"], _per_layer(result)
     if len(terms) <= cap and len(per_layer) <= cap:
         return result
-    import numpy as np
-
-    from mdb.core.pointers import tensor_pointer
-
     full = {"terms": terms, "per_layer": per_layer}
-    raw = _full_bytes(full)
-    digest = hashlib.sha256(raw).hexdigest()
-    if store is not None:
-        stored = store.put_tensor(np.frombuffer(raw, dtype=np.uint8).copy())
-        pointer: dict[str, Any] = {
-            "state": "stored", "ref": stored["ref"], "bytes": len(raw), "sha256": digest,
-            "tensor": tensor_pointer(stored["ref"], sha256=stored["sha256"],
-                                     shape=stored["shape"], dtype=stored["dtype"])}
-    else:
-        if run is not None:
-            _FULL_TERMS.setdefault(run, {})[digest] = full
-        pointer = {"state": "absent", "sha256": digest,
-                   "reason": "no project store: the full lists are held in memory on the "
-                             "run (explain.load_full), not stored"}
+    pointer = put_json(full, store=store, run=run,
+                       absent_reason="no project store: the full lists are held in memory on "
+                                     "the run (explain.load_full), not stored")
 
     def top(items: list[dict[str, Any]], size: float) -> list[tuple[int, dict[str, Any]]]:
-        def rank(item: tuple[int, dict[str, Any]]) -> tuple[int, float]:
-            return (0, 0.0) if "value" not in item[1] else (1, -abs(item[1]["value"]["value"]))
+        def rank(item: dict[str, Any]) -> tuple[int, float]:
+            return (0, 0.0) if "value" not in item else (1, -abs(item["value"]["value"]))
 
-        return sorted(sorted(enumerate(items), key=rank)[:int(size)], key=lambda item: item[0])
+        return [(i, items[i]) for i in keep_indices(items, int(size), rank)]
 
     keep = top(terms, cap)
     kept = {index for index, _ in keep}
@@ -810,18 +788,7 @@ def load_full(summary: Mapping[str, Any], *, store: Any = None, run: Any = None
     """The full ``{"terms", "per_layer"}`` lists ``terms_summary`` points at: from ``store``
     (stored blob, checked against the summary's ``sha256``) or from the run's in-memory copy;
     ``ValueError`` if absent or changed."""
-    pointer = summary["pointer"]
-    if pointer["state"] == "stored":
-        from mdb.core.pointers import resolve_tensor
-
-        raw = resolve_tensor(pointer["tensor"], store=store, framework="numpy").tobytes()
-        if hashlib.sha256(raw).hexdigest() != pointer["sha256"]:
-            raise ValueError("the stored term list differs from the summary's sha256")
-        return json.loads(raw)
-    held = _FULL_TERMS.get(run, {}).get(pointer["sha256"]) if run is not None else None
-    if held is None:
-        raise ValueError("the full term list is not held: " + pointer["reason"])
-    return held
+    return load_json(summary["pointer"], store=store, run=run)
 
 
 def load_terms(summary: Mapping[str, Any], *, store: Any = None, run: Any = None

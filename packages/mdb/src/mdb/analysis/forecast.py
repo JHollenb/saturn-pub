@@ -24,13 +24,12 @@ of counting it as a failure. A forecast whose target was never reached stays ope
 
 from __future__ import annotations
 
-import hashlib
-import json
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
+from mdb.core.bounded import MAX_ITEMS, bound_list, load_json, put_json
 from mdb.core.pointers import occurrence_pointer, seal_digest
 from mdb.core.records import declare_kind, num, seal_record
 
@@ -54,7 +53,9 @@ FORECAST = declare_kind(
                    "edits_at_seal.*.row", "edits_at_seal.*.layer",
                    "method.summary.count", "method.summary.global_steps.count",
                    "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
-                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes"),
+                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes",
+                   "operands_summary.count", "operands_summary.listed",
+                   "operands_summary.rest.count", "operands_summary.pointer.bytes"),
 )
 
 # (function, proof) of the identity that computes each port from its producers
@@ -756,6 +757,13 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     body = _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
                  status, summary)
     pointers = [] if chain_pointer is None else [chain_pointer]
+    body["operands"], operands_summary = bound_list(
+        body["operands"], MAX_ITEMS, store=store, run=run,
+        keep=f"the first {MAX_ITEMS} in capture order (a row's ports, then its cache reads)")
+    if operands_summary is not None:       # M40: the operand list grows with the layers too
+        tensor = operands_summary["pointer"].pop("tensor", None)
+        pointers += [] if tensor is None else [tensor]
+        body["operands_summary"] = operands_summary
     if margin is None and label != "sample":
         from mdb.engine.ports import tensor_digest
 
@@ -814,18 +822,10 @@ EDGE_STEPS = 3          # identities kept at each end of the chain in the record
 MAX_LAYER_COUNTS = 64   # per-layer totals are listed only up to the record's sequence bound
 
 
-def _chain_bytes(chain: list[dict[str, Any]]) -> bytes:
-    return json.dumps(chain, sort_keys=True, separators=(",", ":")).encode()
-
-
 def _store_chain(chain: list[dict[str, Any]], store: Any) -> tuple[dict[str, Any], Any]:
     """``(summary, tensor pointer or None)``: the bounded summary the record holds (count, proof
     use, first and last identities, per-layer totals) and, with a store, the pointer to the full
     chain blob (JSON bytes as a uint8 tensor)."""
-    import numpy as np
-
-    from mdb.core.pointers import tensor_pointer
-
     proofs: dict[str, int] = {}
     for step in chain:
         for proof in {step["proof"], *step["proofs"]} - {None}:
@@ -846,35 +846,30 @@ def _store_chain(chain: list[dict[str, Any]], store: Any) -> tuple[dict[str, Any
     if layers and len(layers) <= MAX_LAYER_COUNTS:
         summary["layer_counts"] = [{"layer": i, "count": layers.get(i, 0)}
                                    for i in range(max(layers) + 1)]
-    raw = _chain_bytes(chain)
-    summary["chain_sha256"] = hashlib.sha256(raw).hexdigest()
-    if store is None:
-        summary["chain_pointer"] = {
-            "state": "absent",
-            "reason": "no project store: the full chain is held in memory on the forecast "
-                      "entry (Forecast.chain), not stored"}
+    held = put_json(chain, store=store, absent_reason=(
+        "no project store: the full chain is held in memory on the forecast entry "
+        "(Forecast.chain), not stored"))
+    summary["chain_sha256"] = held["sha256"]
+    if held["state"] != "stored":
+        summary["chain_pointer"] = {"state": "absent", "reason": held["reason"]}
         return summary, None
-    stored = store.put_tensor(np.frombuffer(raw, dtype=np.uint8).copy())
-    pointer = tensor_pointer(stored["ref"], sha256=stored["sha256"], shape=stored["shape"],
-                             dtype=stored["dtype"])
-    summary["chain_pointer"] = {"state": "stored", "ref": stored["ref"], "bytes": len(raw)}
-    return summary, pointer
+    summary["chain_pointer"] = {"state": "stored", "ref": held["ref"], "bytes": held["bytes"]}
+    return summary, held["tensor"]
 
 
 def load_chain(record: dict[str, Any], store: Any) -> list[dict[str, Any]]:
     """The full identity chain a forecast record points at, from ``store``; checked against the
     record's ``chain_sha256`` (``Unresolved`` or a refusal when absent or changed)."""
-    from mdb.core.pointers import resolve_tensor
-
     summary = record["body"]["method"]["summary"]
     if summary["chain_pointer"]["state"] != "stored":
         raise Refusal("the record holds no chain pointer: " + summary["chain_pointer"]["reason"])
     pointer = next(p for p in record["pointers"] if p.get("kind") == "tensor"
                    and p["ref"] == summary["chain_pointer"]["ref"])
-    raw = resolve_tensor(pointer, store=store, framework="numpy").tobytes()
-    if hashlib.sha256(raw).hexdigest() != summary["chain_sha256"]:
-        raise Refusal("the stored chain differs from the record's chain_sha256")
-    return json.loads(raw)
+    try:
+        return load_json({"state": "stored", "sha256": summary["chain_sha256"]}, store=store,
+                         tensor=pointer)
+    except ValueError:
+        raise Refusal("the stored chain differs from the record's chain_sha256") from None
 
 
 def _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
@@ -914,7 +909,9 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
                    **({"indices": [margin.a, margin.b]} if margin is not None else {})},
         "sealed_at": {"where": run.where, "cut": checkpoint["cut"], "row": here[0],
                       "index": here[1], "transition": int(checkpoint["transitions"]),
-                      "receipts": {"count": len(run.session.receipts)},
+                      "receipts": {"count": len(run.session.receipts),
+                                   "last": (run.session.receipts[-1].fingerprint
+                                            if run.session.receipts else None)},
                       "lookahead": status["lookahead"],
                       "computed_past_cursor": list(status["computed_past_cursor"])},
         "method": {"authority": EXACT, "summary": summary,
@@ -932,9 +929,14 @@ def view(entry: Forecast) -> dict[str, Any]:
     body = entry.record["body"]
     out = {"id": entry.id, "record": entry.record["id"], "target": body["target"]["address"],
            "status": entry.status, "sealed_at": body["sealed_at"]["where"],
-           "method": entry.chain, "method_summary": body["method"]["summary"],
+           "method": entry.chain[:MAX_ITEMS], "method_summary": body["method"]["summary"],
            "predicted": body["predicted"],
            "bound": body["bound"]}
+    if len(entry.chain) > MAX_ITEMS:       # M40: the view obeys the record bound too
+        out["method_listed"] = {
+            "count": len(entry.chain), "listed": MAX_ITEMS,
+            "keep": f"the first {MAX_ITEMS} identities; all of them are in Forecast.chain and "
+                    "(with a project) behind method_summary.chain_pointer (load_chain)"}
     if entry.verdict is not None:
         out["verdict"] = entry.verdict
     return out
@@ -949,7 +951,14 @@ def _lineage(run: Any, sealed: dict[str, Any]) -> dict[str, Any]:
     a descendant of it."""
     current = run.checkpoint()["cut"]
     reached = {sealed["cut"]}
-    receipts = run.session.receipts[sealed["receipts"]["count"]:]
+    held = run.session.receipts
+    # The session keeps only its last receipts (``engine.run._RECEIPTS``), so a count taken at
+    # seal time points past them on a deep model (M40): find the receipt the seal saw, and read
+    # every retained receipt when it has been pruned away.
+    last = sealed["receipts"].get("last")
+    seen = next((i + 1 for i in range(len(held) - 1, -1, -1) if held[i].fingerprint == last),
+                0) if last is not None else 0
+    receipts = held[seen:]
     for receipt in receipts:
         data = receipt.to_dict()
         if data.get("operation") == "continue" and data.get("parent") in reached:
