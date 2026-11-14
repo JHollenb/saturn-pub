@@ -369,6 +369,10 @@ def _features(ctx, address, top, sae, consumer, lens, circuit, match=None, shift
         "bias": {"norm": stats["bias_norm"]}, "reconstruction": {"norm": stats["recon_norm"]},
         "active": stats["active"], "identity_closure": stats["identity_closure"],
         "where": run.where}
+    if found_target.row == 0:
+        from mdb.analysis.sae import FIRST_ROW_CAVEAT
+
+        out["caveat"] = FIRST_ROW_CAVEAT
     if match:
         out["match"] = _match(ctx, run, found_target, basis, match, top, lens, dec)
     if info.get("upstream_edits"):

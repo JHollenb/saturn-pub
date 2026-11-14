@@ -192,3 +192,37 @@ def test_feature_trace_writers_sum_to_probe(debugger, sae_dir):
     tol = 0.05 * max(1.0, abs(p0["h_out"]["value"]))
     assert abs(p0["r"]["value"] - p0["h"]["value"] - w0["attn"]["value"]) < tol
     assert abs(p0["h_out"]["value"] - p0["r"]["value"] - w0["mlp"]["value"]) < tol
+
+
+def test_saelens_names_and_first_row_caveat(debugger, sae_dir):
+    ref = sae.saelens_ref("Qwen/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", 14, "h_out")
+    assert ref == {"hook_name": "blocks.14.hook_resid_post",
+                   "release": "qwen-scope-3-1.7b-base-w32k-l50", "sae_id": "layer14",
+                   "model": "Qwen/Qwen3-1.7B-Base"}
+    assert sae.saelens_ref(None, 3, "h") == {"hook_name": "blocks.3.hook_resid_pre"}
+    run = debugger.run(PROMPT[:1])
+    run.until("t0.logits")
+    ctx = debugger.ops(run)
+    dispatch(ctx, "sae", {"action": "load", "name": "s", "path": str(sae_dir)})
+    out = dispatch(ctx, "features", {"address": "L0.h_out"})
+    assert out["caveat"] == sae.FIRST_ROW_CAVEAT
+    ctx = _ctx(debugger, sae_dir)
+    assert "caveat" not in dispatch(ctx, "features", {"address": "L0.h_out"})
+
+
+def test_to_saelens_matches_the_identity(debugger, sae_dir):
+    """The same weights as a SAELens TopKSAE (strict load): same nonzero set, same
+    reconstruction (float32) as mdb's float64 identity."""
+    pytest.importorskip("sae_lens")
+    basis = sae.open_set("s", str(sae_dir)).get(1)
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    x = run.read("t3.L1.h_out").reshape(-1)
+    dec = basis.decompose(x)
+    theirs = basis.to_saelens()
+    assert theirs.cfg.metadata.hook_name == "blocks.1.hook_resid_post"
+    with torch.no_grad():
+        acts = theirs.encode(x.float()[None])
+        recon = theirs.decode(acts)[0]
+    assert sorted(acts[0].nonzero().reshape(-1).tolist()) == sorted(dec.ids)
+    assert torch.allclose(recon.double(), dec.recon, atol=1e-5)

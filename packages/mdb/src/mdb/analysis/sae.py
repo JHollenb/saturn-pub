@@ -8,7 +8,10 @@ site the basis gives the exact identity
     x = b_dec + sum_{f in S} a_f d_f + e
 
 where ``S`` is the set of active features (top-k of ``relu(W_enc x + b_enc)``, the published
-selection rule, computed in float32 exactly as the published encoder does), ``a_f`` the
+selection rule, computed in float32 exactly as the published encoder does: Qwen-Scope's
+``app.py`` ``topk_relu`` and SAELens ``TopK`` (top-k, then ReLU) give the same nonzero set; the
+model-card snippet omits the ReLU; no ``b_dec`` is subtracted from the input and no input
+normalisation is applied, as in SAELens's ``qwen_scope`` loader), ``a_f`` the
 activations recomputed in float64 from the native bits (rows of ``W_enc`` sliced before the
 cast), ``d_f = W_dec[:, f]`` the decoder directions (columns sliced before the cast) and
 ``e = x - b_dec - sum a_f d_f`` the error, defined as the remainder so the identity closes to
@@ -191,7 +194,67 @@ class FeatureBasis:
 
     def describe(self) -> dict[str, Any]:
         return {"name": self.name, "layer": self.layer, "site": self.site, "k": self.k,
-                "d_model": self.d_model, "d_sae": self.d_sae, "source": dict(self.source)}
+                "d_model": self.d_model, "d_sae": self.d_sae, "source": dict(self.source),
+                "saelens": saelens_ref(self.source.get("repo"), self.layer, self.port)}
+
+    def to_saelens(self, device: str = "cpu") -> Any:
+        """The same dictionary as a SAELens ``TopKSAE`` (``sae_lens`` 6.x), built the way SAELens's
+        own ``qwen_scope`` loader builds it (``architecture topk``, no input normalisation,
+        ``apply_b_dec_to_input`` False, ``W_enc``/``W_dec`` transposed to SAELens's
+        ``(d_in, d_sae)``/``(d_sae, d_in)``), with ``hook_name`` metadata and a strict
+        state-dict load (a missing or misnamed key is an error, not silent random weights).
+        Use it for SAELens's ecosystem (``SAETransformerBridge``, ``use_error_term``, evals,
+        Neuronpedia ids); mdb's own numbers stay the float64 identity above."""
+        from sae_lens import SAE
+
+        ref = saelens_ref(self.source.get("repo"), self.layer, self.port)
+        cfg = {"architecture": "topk", "d_in": self.d_model, "d_sae": self.d_sae, "k": self.k,
+               "dtype": "float32", "device": device, "apply_b_dec_to_input": False,
+               "normalize_activations": "none",
+               "metadata": {"hook_name": ref["hook_name"], "model_name": ref.get("model"),
+                            "prepend_bos": False, "sae_lens_training_version": None}}
+        sae = SAE.from_dict(cfg)
+        sae.load_state_dict({"W_enc": self.W_enc.T.contiguous(),
+                             "W_dec": self.W_dec.T.contiguous(),
+                             "b_enc": self.b_enc, "b_dec": self.b_dec}, strict=True)
+        return sae.to(device).eval()
+
+
+# SAELens 6.55.5 ``pretrained_saes.yaml`` releases of the Qwen-Scope residual suites
+# (``conversion_func: qwen_scope``; sae ids ``layer<L>``; hook ``blocks.<L>.hook_resid_post``).
+_SAELENS_RELEASES = {
+    "Qwen/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50": ("qwen-scope-3-1.7b-base-w32k-l50",
+                                                "Qwen/Qwen3-1.7B-Base"),
+    "Qwen/SAE-Res-Qwen3-1.7B-Base-W32K-L0_100": ("qwen-scope-3-1.7b-base-w32k-l100",
+                                                 "Qwen/Qwen3-1.7B-Base"),
+    "Qwen/SAE-Res-Qwen3-8B-Base-W64K-L0_50": ("qwen-scope-3-8b-base-w64k-l50",
+                                              "Qwen/Qwen3-8B-Base"),
+    "Qwen/SAE-Res-Qwen3-8B-Base-W64K-L0_100": ("qwen-scope-3-8b-base-w64k-l100",
+                                               "Qwen/Qwen3-8B-Base"),
+}
+
+
+def saelens_ref(repo: str | None, layer: int, port: str) -> dict[str, Any]:
+    """The SAELens / TransformerLens names of the SAE at ``L<layer>.<port>``: ``hook_name``
+    (``h_out`` = ``blocks.L.hook_resid_post``, ``h`` = ``blocks.L.hook_resid_pre``) and, for a
+    Qwen-Scope repo SAELens lists, its ``release`` and ``sae_id`` (for
+    ``SAE.from_pretrained(release, sae_id)``)."""
+    hook = {"h_out": "hook_resid_post", "h": "hook_resid_pre"}[port]
+    out: dict[str, Any] = {"hook_name": f"blocks.{layer}.{hook}"}
+    if repo in _SAELENS_RELEASES:
+        release, model = _SAELENS_RELEASES[repo]
+        out.update(release=release, sae_id=f"layer{layer}", model=model)
+    return out
+
+
+# Rows where a residual SAE is off its training distribution: Qwen-Scope's report (arXiv
+# 2605.11887, section 2.2) filters activations with extreme L2 norm from training, "especially
+# ... the first token of each input sequence" (the attention-sink row). mdb prompts carry no BOS,
+# so row 0 is the first text token.
+FIRST_ROW_CAVEAT = ("row 0 is the first token (the attention-sink row, massive norm); the SAE's "
+                    "training filtered extreme-norm activations, most of them first-token "
+                    "(Qwen-Scope report section 2.2), so features and error here are read off "
+                    "the training distribution")
 
 
 @dataclass
@@ -693,5 +756,5 @@ def trace_feature(run: Any, basis: FeatureBasis, feature: int, row: int, *,
             "neurons": neurons}
 
 
-__all__ = ["Decomposition", "FeatureBasis", "circuit", "match_unit", "trace_feature", "unit_vector", "SaeError", "SaeSet", "edit_vector", "is_expression",
+__all__ = ["Decomposition", "FIRST_ROW_CAVEAT", "FeatureBasis", "circuit", "saelens_ref", "match_unit", "trace_feature", "unit_vector", "SaeError", "SaeSet", "edit_vector", "is_expression",
            "logit_lens", "margin_split", "open_set", "parse_terms", "SCHEMA", "SUPPLIED", "LOCAL"]
