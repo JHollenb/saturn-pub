@@ -1,0 +1,109 @@
+{
+ "note": "answer argmax == item answer, from Job C capture logs only; written before any readout or arm is opened",
+ "models": {
+  "Qwen3-0.6B-Base": {
+   "files": [
+    "capture-Qwen3-0.6B-Base.json"
+   ],
+   "accuracy": {
+    "currency": [
+     5,
+     12
+    ],
+    "person": [
+     9,
+     12
+    ],
+    "landmark": [
+     7,
+     12
+    ],
+    "city": [
+     9,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     11,
+     14
+    ],
+    "d3-per": [
+     10,
+     14
+    ],
+    "d4-work": [
+     5,
+     14
+    ],
+    "dist-city": [
+     4,
+     12
+    ],
+    "obsc-city": [
+     10,
+     12
+    ],
+    "d3_pooled": [
+     21,
+     28
+    ]
+   },
+   "n_items": 128
+  },
+  "Qwen2.5-0.5B": {
+   "files": [
+    "capture-Qwen2.5-0.5B.json"
+   ],
+   "accuracy": {
+    "currency": [
+     7,
+     12
+    ],
+    "person": [
+     9,
+     12
+    ],
+    "landmark": [
+     7,
+     12
+    ],
+    "city": [
+     5,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     9,
+     14
+    ],
+    "d3-per": [
+     9,
+     14
+    ],
+    "d4-work": [
+     3,
+     14
+    ],
+    "dist-city": [
+     4,
+     12
+    ],
+    "obsc-city": [
+     3,
+     12
+    ],
+    "d3_pooled": [
+     18,
+     28
+    ]
+   },
+   "n_items": 128
+  }
+ }
+}

@@ -1,0 +1,1761 @@
+{
+ "model": "Qwen3-0.6B-Base",
+ "layers": 28,
+ "heads": 16,
+ "kv": 8,
+ "head_dim": 128,
+ "d_model": 1024,
+ "gqa_map": [
+  0,
+  0,
+  1,
+  1,
+  2,
+  2,
+  3,
+  3,
+  4,
+  4,
+  5,
+  5,
+  6,
+  6,
+  7,
+  7
+ ],
+ "tied_embeddings": true,
+ "v_bias": false,
+ "q_norm": true,
+ "tokens": [
+  328,
+  393,
+  422,
+  431,
+  434,
+  444,
+  472,
+  479,
+  730,
+  2876,
+  2925,
+  3089,
+  3128,
+  3199,
+  3616,
+  3757,
+  4509,
+  4716,
+  5016,
+  5159,
+  5616,
+  5938,
+  6156,
+  6323,
+  6364,
+  6515,
+  6569,
+  6778,
+  6864,
+  7148,
+  8330,
+  8359,
+  8446,
+  8522,
+  8585,
+  9625,
+  9740,
+  9856,
+  10259,
+  10769,
+  10882,
+  11093,
+  11862,
+  12095,
+  12193,
+  12623,
+  12839,
+  12886,
+  12989,
+  13224,
+  13928,
+  14648,
+  14811,
+  14867,
+  15154,
+  15344,
+  15893,
+  16134,
+  16171,
+  16663,
+  17009,
+  17689,
+  17860,
+  18753,
+  19846,
+  20042,
+  20500,
+  21718,
+  21890,
+  22415,
+  22950,
+  23190,
+  23234,
+  23734,
+  23833,
+  23968,
+  24081,
+  24427,
+  24927,
+  25296,
+  25445,
+  25662,
+  26194,
+  26212,
+  26392,
+  26549,
+  26649,
+  27602,
+  29062,
+  29311,
+  29467,
+  30109,
+  31503,
+  31677,
+  31984,
+  32016,
+  32166,
+  32205,
+  32877,
+  32961,
+  33000,
+  33150,
+  33311,
+  33625,
+  34117,
+  34340,
+  34898,
+  36255,
+  36266,
+  36666,
+  37169,
+  37741,
+  38501,
+  39271,
+  42188,
+  42482,
+  42776,
+  43680,
+  44621,
+  45826,
+  46287,
+  46300,
+  47568,
+  47747,
+  49861,
+  50189,
+  50385,
+  51190,
+  51350,
+  52082,
+  52355,
+  52550,
+  52695,
+  53653,
+  54578,
+  55218,
+  56564,
+  56769,
+  57023,
+  57025,
+  57663,
+  57853,
+  57858,
+  58719,
+  58829,
+  59016,
+  59357,
+  61450,
+  61625,
+  61953,
+  61978,
+  63033,
+  63061,
+  64606,
+  65520,
+  67289,
+  68061,
+  68790,
+  69245,
+  69595,
+  70244,
+  70315,
+  70371,
+  71530,
+  72176,
+  72437,
+  73477,
+  74330,
+  75300,
+  76334,
+  77476,
+  78563,
+  79576,
+  80701,
+  82176,
+  84450,
+  85875,
+  86545,
+  87309,
+  87864,
+  88624,
+  90750,
+  91432,
+  91451,
+  93411,
+  94004,
+  94259,
+  94311,
+  94628,
+  95744,
+  96525
+ ],
+ "items": {
+  "currency:afghani": {
+   "argmax": 91432,
+   "top5": [
+    91432,
+    86545,
+    88608,
+    68447,
+    34712
+   ],
+   "cache_rows": 40,
+   "seconds": 2.88
+  },
+  "currency:dollar": {
+   "argmax": 1532,
+   "top5": [
+    1532,
+    6515,
+    7148,
+    10557,
+    12270
+   ],
+   "cache_rows": 38,
+   "seconds": 1.27
+  },
+  "currency:pound sterling": {
+   "argmax": 7148,
+   "top5": [
+    7148,
+    40306,
+    24688,
+    1532,
+    32877
+   ],
+   "cache_rows": 39,
+   "seconds": 2.04
+  },
+  "currency:lev": {
+   "argmax": 67289,
+   "top5": [
+    67289,
+    69595,
+    444,
+    62205,
+    279
+   ],
+   "cache_rows": 38,
+   "seconds": 1.26
+  },
+  "currency:renminbi": {
+   "argmax": 26549,
+   "top5": [
+    26549,
+    37047,
+    5616,
+    19180,
+    1417
+   ],
+   "cache_rows": 40,
+   "seconds": 2.49
+  },
+  "currency:koruna": {
+   "argmax": 22878,
+   "top5": [
+    22878,
+    78563,
+    22415,
+    4882,
+    386
+   ],
+   "cache_rows": 39,
+   "seconds": 1.89
+  },
+  "currency:forint": {
+   "argmax": 78563,
+   "top5": [
+    78563,
+    63649,
+    52082,
+    76334,
+    431
+   ],
+   "cache_rows": 39,
+   "seconds": 1.87
+  },
+  "currency:rupiah": {
+   "argmax": 63033,
+   "top5": [
+    63033,
+    23968,
+    16936,
+    41548,
+    20539
+   ],
+   "cache_rows": 40,
+   "seconds": 2.5
+  },
+  "currency:rial": {
+   "argmax": 53368,
+   "top5": [
+    53368,
+    22415,
+    22878,
+    431,
+    63649
+   ],
+   "cache_rows": 39,
+   "seconds": 1.88
+  },
+  "currency:shekel": {
+   "argmax": 25445,
+   "top5": [
+    25445,
+    22836,
+    6778,
+    63649,
+    1260
+   ],
+   "cache_rows": 39,
+   "seconds": 1.87
+  },
+  "currency:yen": {
+   "argmax": 26194,
+   "top5": [
+    26194,
+    86985,
+    93536,
+    6323,
+    81022
+   ],
+   "cache_rows": 38,
+   "seconds": 1.42
+  },
+  "currency:shilling": {
+   "argmax": 7148,
+   "top5": [
+    7148,
+    32877,
+    54239,
+    24688,
+    42897
+   ],
+   "cache_rows": 39,
+   "seconds": 1.87
+  },
+  "person:Mozart": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    8211,
+    794,
+    34898,
+    14168
+   ],
+   "cache_rows": 36,
+   "seconds": 1.25
+  },
+  "person:Charles Dickens": {
+   "argmax": 7148,
+   "top5": [
+    7148,
+    25210,
+    910,
+    1532,
+    9448
+   ],
+   "cache_rows": 37,
+   "seconds": 1.86
+  },
+  "person:Pablo Neruda": {
+   "argmax": 54578,
+   "top5": [
+    54578,
+    24081,
+    61953,
+    68073,
+    41548
+   ],
+   "cache_rows": 38,
+   "seconds": 2.47
+  },
+  "person:Confucius": {
+   "argmax": 26549,
+   "top5": [
+    26549,
+    42426,
+    5616,
+    18360,
+    1417
+   ],
+   "cache_rows": 38,
+   "seconds": 2.49
+  },
+  "person:Fidel Castro": {
+   "argmax": 85875,
+   "top5": [
+    85875,
+    31677,
+    12270,
+    54578,
+    32671
+   ],
+   "cache_rows": 38,
+   "seconds": 2.47
+  },
+  "person:Antonin Dvorak": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    67289,
+    7828,
+    88618,
+    3240
+   ],
+   "cache_rows": 40,
+   "seconds": 3.85
+  },
+  "person:Hans Christian Andersen": {
+   "argmax": 63061,
+   "top5": [
+    63061,
+    34340,
+    52082,
+    279,
+    362
+   ],
+   "cache_rows": 38,
+   "seconds": 2.48
+  },
+  "person:Jean Sibelius": {
+   "argmax": 76334,
+   "top5": [
+    76334,
+    36255,
+    52082,
+    8705,
+    57858
+   ],
+   "cache_rows": 39,
+   "seconds": 3.11
+  },
+  "person:Goethe": {
+   "argmax": 13481,
+   "top5": [
+    13481,
+    55184,
+    467,
+    46204,
+    1205
+   ],
+   "cache_rows": 37,
+   "seconds": 1.86
+  },
+  "person:Plato": {
+   "argmax": 45826,
+   "top5": [
+    45826,
+    663,
+    576,
+    279,
+    3089
+   ],
+   "cache_rows": 36,
+   "seconds": 1.26
+  },
+  "person:Franz Liszt": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    46204,
+    19846,
+    86547,
+    67289
+   ],
+   "cache_rows": 38,
+   "seconds": 2.46
+  },
+  "person:James Joyce": {
+   "argmax": 32877,
+   "top5": [
+    32877,
+    14648,
+    1532,
+    7148,
+    54239
+   ],
+   "cache_rows": 37,
+   "seconds": 1.86
+  },
+  "landmark:Mount Rushmore": {
+   "argmax": 6515,
+   "top5": [
+    6515,
+    279,
+    10423,
+    422,
+    4229
+   ],
+   "cache_rows": 40,
+   "seconds": 2.63
+  },
+  "landmark:Uluru": {
+   "argmax": 68790,
+   "top5": [
+    68790,
+    21273,
+    29405,
+    94841,
+    49444
+   ],
+   "cache_rows": 39,
+   "seconds": 1.87
+  },
+  "landmark:Schonbrunn Palace": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    46204,
+    362,
+    92930,
+    758
+   ],
+   "cache_rows": 42,
+   "seconds": 3.88
+  },
+  "landmark:Stonehenge": {
+   "argmax": 91955,
+   "top5": [
+    91955,
+    25210,
+    467,
+    7148,
+    537
+   ],
+   "cache_rows": 40,
+   "seconds": 2.47
+  },
+  "landmark:Niagara Falls": {
+   "argmax": 14632,
+   "top5": [
+    14632,
+    32166,
+    1532,
+    77877,
+    31389
+   ],
+   "cache_rows": 39,
+   "seconds": 1.88
+  },
+  "landmark:the Forbidden City": {
+   "argmax": 26549,
+   "top5": [
+    26549,
+    5616,
+    42426,
+    26194,
+    279
+   ],
+   "cache_rows": 40,
+   "seconds": 2.49
+  },
+  "landmark:the Sphinx": {
+   "argmax": 14867,
+   "top5": [
+    14867,
+    52550,
+    576,
+    479,
+    26369
+   ],
+   "cache_rows": 39,
+   "seconds": 2.04
+  },
+  "landmark:Neuschwanstein Castle": {
+   "argmax": 46204,
+   "top5": [
+    46204,
+    76980,
+    794,
+    467,
+    468
+   ],
+   "cache_rows": 42,
+   "seconds": 3.74
+  },
+  "landmark:the Acropolis": {
+   "argmax": 45826,
+   "top5": [
+    45826,
+    21718,
+    24427,
+    279,
+    7313
+   ],
+   "cache_rows": 40,
+   "seconds": 2.51
+  },
+  "landmark:Borobudur": {
+   "argmax": 63033,
+   "top5": [
+    63033,
+    63228,
+    425,
+    7943,
+    356
+   ],
+   "cache_rows": 41,
+   "seconds": 3.11
+  },
+  "landmark:Persepolis": {
+   "argmax": 52695,
+   "top5": [
+    52695,
+    2160,
+    10259,
+    55218,
+    49256
+   ],
+   "cache_rows": 41,
+   "seconds": 3.28
+  },
+  "landmark:Babylon": {
+   "argmax": 25445,
+   "top5": [
+    25445,
+    16809,
+    356,
+    279,
+    21718
+   ],
+   "cache_rows": 38,
+   "seconds": 1.28
+  },
+  "city:Chicago": {
+   "argmax": 1532,
+   "top5": [
+    1532,
+    10557,
+    19761,
+    6515,
+    7148
+   ],
+   "cache_rows": 38,
+   "seconds": 1.26
+  },
+  "city:Melbourne": {
+   "argmax": 21273,
+   "top5": [
+    21273,
+    68790,
+    26437,
+    46235,
+    49201
+   ],
+   "cache_rows": 38,
+   "seconds": 1.24
+  },
+  "city:Salzburg": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    92930,
+    758,
+    8705,
+    444
+   ],
+   "cache_rows": 39,
+   "seconds": 1.88
+  },
+  "city:Antwerp": {
+   "argmax": 37169,
+   "top5": [
+    37169,
+    37741,
+    6755,
+    23908,
+    386
+   ],
+   "cache_rows": 39,
+   "seconds": 1.89
+  },
+  "city:Liverpool": {
+   "argmax": 24688,
+   "top5": [
+    24688,
+    7148,
+    19361,
+    54239,
+    42897
+   ],
+   "cache_rows": 38,
+   "seconds": 1.25
+  },
+  "city:Plovdiv": {
+   "argmax": 78563,
+   "top5": [
+    78563,
+    33278,
+    7828,
+    425,
+    53368
+   ],
+   "cache_rows": 40,
+   "seconds": 2.51
+  },
+  "city:Toronto": {
+   "argmax": 32166,
+   "top5": [
+    32166,
+    29513,
+    7148,
+    14632,
+    22575
+   ],
+   "cache_rows": 38,
+   "seconds": 1.26
+  },
+  "city:Valparaiso": {
+   "argmax": 54578,
+   "top5": [
+    54578,
+    1207,
+    61953,
+    13115,
+    5836
+   ],
+   "cache_rows": 41,
+   "seconds": 3.29
+  },
+  "city:Shanghai": {
+   "argmax": 26549,
+   "top5": [
+    26549,
+    26194,
+    37047,
+    19180,
+    64437
+   ],
+   "cache_rows": 38,
+   "seconds": 1.28
+  },
+  "city:Brno": {
+   "argmax": 67289,
+   "top5": [
+    67289,
+    3240,
+    9843,
+    46287,
+    2340
+   ],
+   "cache_rows": 39,
+   "seconds": 1.86
+  },
+  "city:Aarhus": {
+   "argmax": 63061,
+   "top5": [
+    63061,
+    386,
+    356,
+    362,
+    57858
+   ],
+   "cache_rows": 39,
+   "seconds": 1.89
+  },
+  "city:Alexandria": {
+   "argmax": 52550,
+   "top5": [
+    52550,
+    56133,
+    21718,
+    14867,
+    576
+   ],
+   "cache_rows": 38,
+   "seconds": 1.26
+  },
+  "d2:Vienna": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    56969,
+    56769,
+    33150,
+    6364
+   ],
+   "cache_rows": 42,
+   "seconds": 1.27
+  },
+  "d2:London": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    8585,
+    7855,
+    34117,
+    5938
+   ],
+   "cache_rows": 42,
+   "seconds": 1.29
+  },
+  "d2:Prague": {
+   "argmax": 33150,
+   "top5": [
+    33150,
+    5938,
+    8585,
+    6364,
+    31984
+   ],
+   "cache_rows": 42,
+   "seconds": 1.29
+  },
+  "d2:Copenhagen": {
+   "argmax": 43680,
+   "top5": [
+    43680,
+    6364,
+    30109,
+    23234,
+    5938
+   ],
+   "cache_rows": 42,
+   "seconds": 1.27
+  },
+  "d2:Cairo": {
+   "argmax": 34117,
+   "top5": [
+    34117,
+    32489,
+    6364,
+    8585,
+    23734
+   ],
+   "cache_rows": 42,
+   "seconds": 1.27
+  },
+  "d2:Helsinki": {
+   "argmax": 57853,
+   "top5": [
+    57853,
+    30109,
+    6364,
+    53323,
+    8522
+   ],
+   "cache_rows": 42,
+   "seconds": 1.32
+  },
+  "d2:Paris": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    6364,
+    14811,
+    15154,
+    5938
+   ],
+   "cache_rows": 42,
+   "seconds": 1.28
+  },
+  "d2:Berlin": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    6364,
+    8585,
+    23234,
+    8522
+   ],
+   "cache_rows": 42,
+   "seconds": 1.28
+  },
+  "d2:Athens": {
+   "argmax": 17860,
+   "top5": [
+    17860,
+    6364,
+    23734,
+    36950,
+    19458
+   ],
+   "cache_rows": 42,
+   "seconds": 1.29
+  },
+  "d2:Budapest": {
+   "argmax": 56769,
+   "top5": [
+    56769,
+    5938,
+    23734,
+    33150,
+    19458
+   ],
+   "cache_rows": 42,
+   "seconds": 1.3
+  },
+  "d2:Rome": {
+   "argmax": 14811,
+   "top5": [
+    14811,
+    6364,
+    8585,
+    19458,
+    15154
+   ],
+   "cache_rows": 42,
+   "seconds": 1.27
+  },
+  "d2:Tokyo": {
+   "argmax": 10769,
+   "top5": [
+    10769,
+    6364,
+    8453,
+    82771,
+    8585
+   ],
+   "cache_rows": 42,
+   "seconds": 1.27
+  },
+  "d2:Seoul": {
+   "argmax": 16134,
+   "top5": [
+    16134,
+    8453,
+    6364,
+    10769,
+    4882
+   ],
+   "cache_rows": 42,
+   "seconds": 1.31
+  },
+  "d2:Amsterdam": {
+   "argmax": 23234,
+   "top5": [
+    23234,
+    6364,
+    5938,
+    8585,
+    30109
+   ],
+   "cache_rows": 42,
+   "seconds": 1.43
+  },
+  "d3-lm:Schonbrunn Palace": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    6364,
+    8585,
+    56969,
+    14811
+   ],
+   "cache_rows": 48,
+   "seconds": 3.95
+  },
+  "d3-lm:Big Ben": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    8585,
+    7855,
+    5938,
+    14811
+   ],
+   "cache_rows": 45,
+   "seconds": 1.97
+  },
+  "d3-lm:the Astronomical Clock of the Old Town": {
+   "argmax": 34117,
+   "top5": [
+    34117,
+    8453,
+    6364,
+    43980,
+    8585
+   ],
+   "cache_rows": 52,
+   "seconds": 6.75
+  },
+  "d3-lm:Tivoli Gardens": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    8585,
+    43980,
+    23734,
+    8453
+   ],
+   "cache_rows": 47,
+   "seconds": 3.23
+  },
+  "d3-lm:the Khan el-Khalili bazaar": {
+   "argmax": 34117,
+   "top5": [
+    34117,
+    93335,
+    23734,
+    6364,
+    43980
+   ],
+   "cache_rows": 51,
+   "seconds": 5.87
+  },
+  "d3-lm:Suomenlinna fortress": {
+   "argmax": 57853,
+   "top5": [
+    57853,
+    30109,
+    6364,
+    40578,
+    53323
+   ],
+   "cache_rows": 48,
+   "seconds": 4.07
+  },
+  "d3-lm:Notre-Dame Cathedral": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    6364,
+    14811,
+    15154,
+    34117
+   ],
+   "cache_rows": 47,
+   "seconds": 3.24
+  },
+  "d3-lm:the Brandenburg Gate": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    6364,
+    8522,
+    8585,
+    23234
+   ],
+   "cache_rows": 47,
+   "seconds": 3.25
+  },
+  "d3-lm:the Acropolis": {
+   "argmax": 17860,
+   "top5": [
+    17860,
+    36950,
+    19458,
+    6364,
+    34117
+   ],
+   "cache_rows": 46,
+   "seconds": 2.57
+  },
+  "d3-lm:Fisherman's Bastion": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    8585,
+    43980,
+    8453,
+    5938
+   ],
+   "cache_rows": 48,
+   "seconds": 4.05
+  },
+  "d3-lm:the Colosseum": {
+   "argmax": 14811,
+   "top5": [
+    14811,
+    19458,
+    17860,
+    36950,
+    6364
+   ],
+   "cache_rows": 48,
+   "seconds": 3.89
+  },
+  "d3-lm:Shibuya Crossing": {
+   "argmax": 10769,
+   "top5": [
+    10769,
+    6364,
+    8453,
+    8585,
+    14811
+   ],
+   "cache_rows": 46,
+   "seconds": 2.6
+  },
+  "d3-lm:Gyeongbokgung Palace": {
+   "argmax": 16134,
+   "top5": [
+    16134,
+    8453,
+    10769,
+    6364,
+    43439
+   ],
+   "cache_rows": 51,
+   "seconds": 6.04
+  },
+  "d3-lm:the Anne Frank House": {
+   "argmax": 23234,
+   "top5": [
+    23234,
+    5938,
+    8585,
+    6364,
+    34117
+   ],
+   "cache_rows": 47,
+   "seconds": 3.23
+  },
+  "d3-per:Franz Schubert": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    8585,
+    14811,
+    6364,
+    8522
+   ],
+   "cache_rows": 49,
+   "seconds": 3.29
+  },
+  "d3-per:Charlie Chaplin": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    43980,
+    8585,
+    93335,
+    8453
+   ],
+   "cache_rows": 48,
+   "seconds": 2.62
+  },
+  "d3-per:Franz Kafka": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    33150,
+    8522,
+    23734,
+    8585
+   ],
+   "cache_rows": 47,
+   "seconds": 1.97
+  },
+  "d3-per:Niels Bohr": {
+   "argmax": 43680,
+   "top5": [
+    43680,
+    30109,
+    6364,
+    5938,
+    44621
+   ],
+   "cache_rows": 49,
+   "seconds": 3.42
+  },
+  "d3-per:Naguib Mahfouz": {
+   "argmax": 34117,
+   "top5": [
+    34117,
+    32489,
+    8585,
+    6364,
+    23734
+   ],
+   "cache_rows": 51,
+   "seconds": 4.44
+  },
+  "d3-per:Claude Monet": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    6364,
+    34117,
+    14811,
+    5938
+   ],
+   "cache_rows": 48,
+   "seconds": 2.51
+  },
+  "d3-per:Alexander von Humboldt": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    15154,
+    8522,
+    8585,
+    6364
+   ],
+   "cache_rows": 49,
+   "seconds": 3.58
+  },
+  "d3-per:Pericles": {
+   "argmax": 17860,
+   "top5": [
+    17860,
+    6364,
+    36950,
+    19458,
+    8585
+   ],
+   "cache_rows": 47,
+   "seconds": 1.92
+  },
+  "d3-per:Erno Rubik": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    56769,
+    8522,
+    6364,
+    23734
+   ],
+   "cache_rows": 49,
+   "seconds": 3.28
+  },
+  "d3-per:Ennio Morricone": {
+   "argmax": 14811,
+   "top5": [
+    14811,
+    15154,
+    6364,
+    8585,
+    5938
+   ],
+   "cache_rows": 50,
+   "seconds": 3.88
+  },
+  "d3-per:Hokusai": {
+   "argmax": 10769,
+   "top5": [
+    10769,
+    8453,
+    6364,
+    16134,
+    14747
+   ],
+   "cache_rows": 48,
+   "seconds": 2.62
+  },
+  "d3-per:Baruch Spinoza": {
+   "argmax": 36266,
+   "top5": [
+    36266,
+    8585,
+    23234,
+    34117,
+    15154
+   ],
+   "cache_rows": 50,
+   "seconds": 4.08
+  },
+  "d3-per:Marie Curie": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    31984,
+    8522,
+    5938,
+    6364
+   ],
+   "cache_rows": 48,
+   "seconds": 2.63
+  },
+  "d3-per:Fernando Pessoa": {
+   "argmax": 42188,
+   "top5": [
+    42188,
+    15154,
+    6364,
+    34983,
+    8585
+   ],
+   "cache_rows": 47,
+   "seconds": 1.95
+  },
+  "d4-work:The Blue Danube waltz": {
+   "argmax": 5938,
+   "top5": [
+    5938,
+    33150,
+    56769,
+    8522,
+    8585
+   ],
+   "cache_rows": 55,
+   "seconds": 5.3
+  },
+  "d4-work:the film The Great Dictator": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    6364,
+    14811,
+    5938,
+    8585
+   ],
+   "cache_rows": 54,
+   "seconds": 4.81
+  },
+  "d4-work:The Metamorphosis": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    6364,
+    5938,
+    14811,
+    8585
+   ],
+   "cache_rows": 53,
+   "seconds": 3.98
+  },
+  "d4-work:the book Either/Or": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    6364,
+    93335,
+    34117,
+    8585
+   ],
+   "cache_rows": 53,
+   "seconds": 4.0
+  },
+  "d4-work:the novel Palace Walk": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    6364,
+    93335,
+    34117,
+    49861
+   ],
+   "cache_rows": 52,
+   "seconds": 3.43
+  },
+  "d4-work:Candide": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    6364,
+    15154,
+    34117,
+    43980
+   ],
+   "cache_rows": 50,
+   "seconds": 2.01
+  },
+  "d4-work:The Arcades Project": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    10769,
+    8453,
+    34117,
+    15154
+   ],
+   "cache_rows": 52,
+   "seconds": 3.39
+  },
+  "d4-work:The Republic": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    6364,
+    93335,
+    34117,
+    8453
+   ],
+   "cache_rows": 50,
+   "seconds": 1.99
+  },
+  "d4-work:the Rubik's Cube": {
+   "argmax": 6364,
+   "top5": [
+    6364,
+    34117,
+    8453,
+    8585,
+    5938
+   ],
+   "cache_rows": 53,
+   "seconds": 3.98
+  },
+  "d4-work:the Commentaries on the Gallic War": {
+   "argmax": 8585,
+   "top5": [
+    8585,
+    19458,
+    34117,
+    17860,
+    6364
+   ],
+   "cache_rows": 56,
+   "seconds": 6.16
+  },
+  "d4-work:The Great Wave off Kanagawa": {
+   "argmax": 10769,
+   "top5": [
+    10769,
+    8453,
+    6364,
+    8585,
+    16134
+   ],
+   "cache_rows": 55,
+   "seconds": 5.55
+  },
+  "d4-work:The Book of Disquiet": {
+   "argmax": 43980,
+   "top5": [
+    43980,
+    34117,
+    93335,
+    6364,
+    8453
+   ],
+   "cache_rows": 53,
+   "seconds": 3.78
+  },
+  "d4-work:Eugene Onegin": {
+   "argmax": 8522,
+   "top5": [
+    8522,
+    8585,
+    6364,
+    33625,
+    23734
+   ],
+   "cache_rows": 51,
+   "seconds": 2.55
+  },
+  "d4-work:the play Fuenteovejuna": {
+   "argmax": 15154,
+   "top5": [
+    15154,
+    34117,
+    6364,
+    80844,
+    42188
+   ],
+   "cache_rows": 55,
+   "seconds": 5.07
+  },
+  "dist-city:Chicago": {
+   "argmax": 10557,
+   "top5": [
+    10557,
+    19761,
+    1532,
+    7148,
+    537
+   ],
+   "cache_rows": 49,
+   "seconds": 8.36
+  },
+  "dist-city:Melbourne": {
+   "argmax": 21273,
+   "top5": [
+    21273,
+    26437,
+    7148,
+    537,
+    46235
+   ],
+   "cache_rows": 49,
+   "seconds": 8.14
+  },
+  "dist-city:Salzburg": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    92930,
+    8211,
+    794,
+    89458
+   ],
+   "cache_rows": 51,
+   "seconds": 9.62
+  },
+  "dist-city:Antwerp": {
+   "argmax": 362,
+   "top5": [
+    362,
+    6755,
+    37741,
+    63061,
+    37169
+   ],
+   "cache_rows": 51,
+   "seconds": 9.4
+  },
+  "dist-city:Liverpool": {
+   "argmax": 663,
+   "top5": [
+    663,
+    24688,
+    7148,
+    45826,
+    82621
+   ],
+   "cache_rows": 52,
+   "seconds": 10.43
+  },
+  "dist-city:Plovdiv": {
+   "argmax": 35461,
+   "top5": [
+    35461,
+    393,
+    69595,
+    7828,
+    425
+   ],
+   "cache_rows": 53,
+   "seconds": 10.76
+  },
+  "dist-city:Toronto": {
+   "argmax": 14632,
+   "top5": [
+    14632,
+    21273,
+    32166,
+    7148,
+    22575
+   ],
+   "cache_rows": 49,
+   "seconds": 8.15
+  },
+  "dist-city:Valparaiso": {
+   "argmax": 356,
+   "top5": [
+    356,
+    61953,
+    18294,
+    279,
+    1207
+   ],
+   "cache_rows": 54,
+   "seconds": 11.74
+  },
+  "dist-city:Shanghai": {
+   "argmax": 22415,
+   "top5": [
+    22415,
+    4620,
+    37047,
+    26549,
+    26194
+   ],
+   "cache_rows": 52,
+   "seconds": 10.13
+  },
+  "dist-city:Brno": {
+   "argmax": 67289,
+   "top5": [
+    67289,
+    3240,
+    24560,
+    11959,
+    9843
+   ],
+   "cache_rows": 51,
+   "seconds": 9.75
+  },
+  "dist-city:Aarhus": {
+   "argmax": 63061,
+   "top5": [
+    63061,
+    362,
+    350,
+    34340,
+    386
+   ],
+   "cache_rows": 52,
+   "seconds": 10.13
+  },
+  "dist-city:Alexandria": {
+   "argmax": 52550,
+   "top5": [
+    52550,
+    1532,
+    56133,
+    14632,
+    7148
+   ],
+   "cache_rows": 49,
+   "seconds": 8.22
+  },
+  "obsc-city:Perth": {
+   "argmax": 68790,
+   "top5": [
+    68790,
+    21273,
+    49444,
+    49201,
+    26437
+   ],
+   "cache_rows": 38,
+   "seconds": 1.21
+  },
+  "obsc-city:Graz": {
+   "argmax": 46287,
+   "top5": [
+    46287,
+    92930,
+    88618,
+    444,
+    67289
+   ],
+   "cache_rows": 38,
+   "seconds": 1.19
+  },
+  "obsc-city:Ghent": {
+   "argmax": 23908,
+   "top5": [
+    23908,
+    6755,
+    37169,
+    14511,
+    3240
+   ],
+   "cache_rows": 39,
+   "seconds": 1.85
+  },
+  "obsc-city:Leeds": {
+   "argmax": 7148,
+   "top5": [
+    7148,
+    24688,
+    59829,
+    54239,
+    42897
+   ],
+   "cache_rows": 38,
+   "seconds": 1.21
+  },
+  "obsc-city:Varna": {
+   "argmax": 78563,
+   "top5": [
+    78563,
+    33278,
+    431,
+    45826,
+    425
+   ],
+   "cache_rows": 39,
+   "seconds": 1.79
+  },
+  "obsc-city:Calgary": {
+   "argmax": 45287,
+   "top5": [
+    45287,
+    37875,
+    32166,
+    22575,
+    51882
+   ],
+   "cache_rows": 38,
+   "seconds": 1.35
+  },
+  "obsc-city:Wuhan": {
+   "argmax": 26549,
+   "top5": [
+    26549,
+    37047,
+    36130,
+    32142,
+    1417
+   ],
+   "cache_rows": 39,
+   "seconds": 1.79
+  },
+  "obsc-city:Ostrava": {
+   "argmax": 67289,
+   "top5": [
+    67289,
+    3240,
+    506,
+    11959,
+    9843
+   ],
+   "cache_rows": 40,
+   "seconds": 2.38
+  },
+  "obsc-city:Odense": {
+   "argmax": 63061,
+   "top5": [
+    63061,
+    57858,
+    34340,
+    386,
+    356
+   ],
+   "cache_rows": 39,
+   "seconds": 1.85
+  },
+  "obsc-city:Luxor": {
+   "argmax": 52550,
+   "top5": [
+    52550,
+    56133,
+    14867,
+    576,
+    26369
+   ],
+   "cache_rows": 39,
+   "seconds": 1.8
+  },
+  "obsc-city:Turku": {
+   "argmax": 76334,
+   "top5": [
+    76334,
+    8705,
+    41102,
+    350,
+    472
+   ],
+   "cache_rows": 39,
+   "seconds": 1.78
+  },
+  "obsc-city:Dortmund": {
+   "argmax": 19846,
+   "top5": [
+    19846,
+    55184,
+    50462,
+    98675,
+    13481
+   ],
+   "cache_rows": 38,
+   "seconds": 1.2
+  }
+ },
+ "peak_alloc_mb": 1197
+}
