@@ -55,6 +55,9 @@ cfg = model.config
 L, H, KV, DH = cfg.num_hidden_layers, cfg.num_attention_heads, cfg.num_key_value_heads, cfg.head_dim
 nm = inn.wrap(shared_clone(model))
 prompts = json.load(open("tp1_prompts.json"))["prompts"]
+import os  # noqa: E402
+if os.environ.get("TP1_N"):
+    prompts = prompts[:int(os.environ["TP1_N"])]
 mark("load")
 
 # ------------------------------------------------------------------ nnsight forward + backward
