@@ -73,3 +73,15 @@ def rain_coherence(img):
     v = _box(hp, STREAK_Y, axis=0)
     m = STREAK_Y
     return float(np.sqrt(np.mean(v[m:-m, m:-m] ** 2)) / np.sqrt(np.mean(hp[m:-m, m:-m] ** 2)))
+
+
+def snow_ground_bright(img):
+    """POST HOC (added after the addendum-2 jobs): share of bottom-35% pixels with max(R,G,B) >= 0.60.
+
+    Brightness only, no saturation term. Added because ``snow_ground`` scored head cuts that keep a
+    bright but bluer snow ground (pw60, gmass60) as removing 0.7 of the snow: their ground keeps its
+    brightness and gains saturation, which the saturation term counts as "not snow". Not preregistered.
+    """
+    a = rgb(img)
+    g = a[int(round(GROUND_FROM * a.shape[0])):]
+    return float(np.mean(g.max(-1) >= SNOW_V))

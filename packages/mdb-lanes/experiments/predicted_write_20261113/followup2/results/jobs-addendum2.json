@@ -1,0 +1,5 @@
+[
+ {"job_id": "job-6d9fea396262", "role": "value-swap controls (vswap2_worker.py), 20 runs", "mrun_state": "succeeded", "worker_s": 20.3, "peak_vram_allocated_mb": 7991, "reservation_vram_mb": 11000, "priority": 70},
+ {"job_id": "job-c73f1d005af4", "role": "plan gm lease 0 (red, black, ball), 141 branches + 7 roots", "mrun_state": "succeeded", "worker_s": 77.9, "peak_vram_allocated_mb": 7991, "reservation_vram_mb": 11000, "priority": 70},
+ {"job_id": "job-57fe341aa4e2", "role": "plan gm lease 1 (snow, night, rain), 141 branches + 8 roots", "mrun_state": "succeeded", "worker_s": 78.6, "peak_vram_allocated_mb": 7991, "reservation_vram_mb": 11000, "priority": 70}
+]
