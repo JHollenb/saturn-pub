@@ -57,17 +57,21 @@ fh = open(f"{OUT}/exp7-items{'-smoke' if PICK else ''}.jsonl", "w")
 DON = {}
 
 
+# TODO(mdb-feature P5): run.set('t<crow>.L20.v[kv6]', donor_run.ref(...)) with origin recorded — donor cell passed as a bare tensor, origin lost; second run per donor cached in DON.
+# TODO(mdb-feature P6): pool of donor cells with origins — same.
 def native(item):
     ids, last = item["ids"], len(item["ids"]) - 1
     run = dbg.run(ids, name="nat", prefill=item["span"][0])
     run.until(f"t{last}.logits")
     crow = carrier_row(run, item)
     lg = run.read(f"t{last}.logits").reshape(-1).float()
+    # TODO(mdb): use symbols.table(consumer, sets=, content_layers=True) with a declared carrier instead of a one-off component_binding at the carrier (gap audit §0: symbol table never used in the showcase).
     cb = component_binding(run, "c", f"cache.L{CL}.v[kv{CG},row={crow}]", B19, features=[])
     acts = set(B19.encode(run.read(f"t{crow}.L{CL}.h"))["ids"])
     return run, crow, lg, cb, acts
 
 
+# TODO(mdb-feature P7): for item, run in pset.runs(...) — item loop and PICK slicing hand-rolled.
 for item in base:
     t0 = time.monotonic()
     a = item["answer"]
@@ -82,6 +86,8 @@ for item in base:
         DON[did] = (dcrow, dcb.native.clone(), acts_d)
         del drun
     dcrow, dv, acts_d = DON[did]
+    # TODO(mdb): use SubspaceBinding (analysis/subspace.py on branch mdb-sc-das) with SAE pushforward basis and provenance instead of the hand-built QR basis Q of cell images and the random-rank control (gap audit §6 Subspace; §3 exp7).
+    # TODO(mdb-feature P3): one 'decomposition of a site's value' interface shared by Subspace, ComponentBinding and transcoder bindings — exp7's Q is the same object as a component basis.
     feats = sorted((acts_r | acts_d) & COUNTRY)
     if feats:
         M = torch.stack([cb.image(B19.direction(f)) for f in feats], 1)        # (dh, n)
@@ -95,12 +101,14 @@ for item in base:
     arms_v = {"whole": dv.double().cpu(), "sae": v + Q @ (Q.T @ (dv.double().cpu() - v)),
               "random": v + Qr @ (Qr.T @ (dv.double().cpu() - v))}
     ids, last = item["ids"], len(item["ids"]) - 1
+    # TODO(mdb-feature P1): Subspace.interchange built on the P1 branch object so IIA and every other arm share one floor and one authority path — checkpoint + arms_v loop is a hand-rolled Branches run.
     run = dbg.run(ids, name="br", prefill=crow)
     run.until(f"t{crow}.L{CL}.h")
     ck = run.checkpoint("pre")
     shape = run.port_shape("v")
     out = {}
     for name, val in arms_v.items():
+        # TODO(mdb): use set_cell(rows=, kv=) (or P5 selectors) instead of a masked port set with hand-built full/mask tensors (gap audit §4 exp7 row).
         full = torch.zeros(shape, dtype=ad.dtype, device="cuda")
         mask = torch.zeros(shape, dtype=torch.bool, device="cuda")
         full.reshape(-1)[CG * DH:(CG + 1) * DH] = val.to("cuda", ad.dtype)
@@ -118,6 +126,7 @@ for item in base:
                    subspaces=[[[CG]]])
         lp = cf.logits[0, -1].float()
         lc = IM.model(bi).logits[0, -1].float()
+    # TODO(mdb-feature Q2.7): pyvene clean margin (kernel-path delta vs mdb stepped native) recorded in numeric_scope — M_clean is measured here and not attached to the run.
     rec = {"id": item["id"], "donor": did, "crow": crow, "donor_crow": dcrow, "M0": float(lg0[a] - lg0[b]),
            "floor": floor_of(lg0, a, b), "rank": rank, "features": feats, "arms": out,
            "pyvene": {"M": float(lp[a] - lp[b]), "M_clean": float(lc[a] - lc[b]), "argmax": int(lp.argmax())},

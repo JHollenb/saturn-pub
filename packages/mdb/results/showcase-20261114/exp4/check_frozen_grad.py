@@ -1,3 +1,4 @@
+# TODO(mdb-feature P4): run.hold('...p') / hold('...norm_scale') makes this bitwise check of the detach-based frozen gradient a debugger-mode test — hand-built nnsight freeze hooks live here and in exp4 (gap audit §2 P4).
 import torch, nnsight
 from transformers import Qwen3Config, Qwen3ForCausalLM
 from mdb.interop import nn

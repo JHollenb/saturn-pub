@@ -92,6 +92,7 @@ def top_country(rows):
     return max(cands, key=lambda r: r["e"]) if cands else None
 
 
+# TODO(mdb-feature P9): feature_lineage(f, layer, set) (decoder-cosine chain, labelled derived-local) as a binding column — feature lineage is hand-rolled over B[x].W_dec.
 def lineage(f19, acts_by_layer):
     """Backward chain of f19 by max decoder cosine; per layer (feature, cos, active)."""
     chain = {19: (f19, 1.0, f19 in acts_by_layer[19])}
@@ -113,6 +114,7 @@ def lineage(f19, acts_by_layer):
             "censored": onset == LINEAGE[0]}
 
 
+# TODO(mdb-feature P7): for item, run in pset.runs(...) — per-item run setup and the PICK/shard slicing below are hand-rolled.
 def run_item(item, full):
     global FIRST
     t = time.monotonic()
@@ -142,6 +144,8 @@ def run_item(item, full):
                correct=int(nat.reshape(-1).argmax()) == ans)
     M = Margin(last, ans, foil)
     cands = [Candidates("countries", tuple(COUNTRIES), truth=country)]
+    # TODO(mdb): use symbols.table(consumer, sets=, content_layers=True) with declared carrier/desc/t0/relay/question instead of component_table only (gap audit §4 exp2 first row: reader/mass/content columns and the memo's nulls were dropped).
+    # TODO(mdb): use MapTable permutation null (circuit_map.py:507) instead of dropped cross-item / shuffled-id nulls (gap audit §4 exp2).
     # L1 / partition: the carrier cell over the L19 basis
     cb = Binding.component(run, "carrier", f"cache.L{CL}.v[kv{CG},row={crow}]", B19)
     tab = component_table(run, cb, M, sets=cands)
@@ -163,6 +167,7 @@ def run_item(item, full):
         rec["l20_lastrow"] = {"cell_e": tl["cell_to_consumer"]["value"], "top": top_country(rl),
                               "error": [r for r in rl if r["c"] == "error"][0]}
     # strips
+    # TODO(mdb-feature P9): projection strip + lineage as binding columns over a layer-indexed FeatureContext — exact projection strip over layers is hand-computed from raw reads.
     hs = {x: run.read(f"t{crow}.L{x}.h_out").reshape(-1) for x in range(ad.layers)}
     top = rec["l20"]["top"]
     if top is not None:
@@ -171,6 +176,8 @@ def run_item(item, full):
         rec["projection_strip"] = [float(d @ hs[x].double().cpu()) for x in range(ad.layers)]
         acts_by = {x: set(B[x].encode(hs[x])["ids"]) for x in LINEAGE}
         rec["lineage"] = lineage(top["f"], acts_by)
+    # TODO(mdb): use symbols liveness() per layer with floors instead of remove-component arms per layer built by hand into cell_sweep (gap audit §4 exp2 'liveness() for L4').
+    # TODO(mdb-feature P1): br.add / br.add_null per (layer, arm) with floor attached — arm list + labels + floor bookkeeping are parallel hand-kept lists.
     # sweep arms over L15..L23 at the carrier row
     arms, labels = [], []
     per_layer = {}
@@ -188,6 +195,8 @@ def run_item(item, full):
         if tp is not None:
             arms.append([Cell(x, "v", crow, CG, cbx.edited(remove=(tp["c"],)).to(dt))])
             labels.append((x, "top"))
+            # TODO(mdb-feature P1): br.add_null('random', like='top', norm='matched', pool=active_nonfeature) — matched-norm random component arm drawn and rescaled by hand.
+            # TODO(mdb-feature P6): pool.random(matched_norm=..., seed=...) — same hand-coded random draw.
             if rnd is not None:
                 vr = cbx.get(rnd["c"]).value
                 scale = cbx.get(tp["c"]).value.norm() / (vr.norm() + 1e-30)
@@ -213,6 +222,7 @@ def run_item(item, full):
     return rec, time.monotonic() - t
 
 
+# TODO(mdb-feature P7): pset = dbg.prompt_set(...); pset.shard(K, N) — PICK / s0 / s1 slicing and JSONL loops below are hand-rolled.
 base = items("base")
 census_extra = [i for i in items("depth") if i["family"] in ("d1", "d2")]
 TAG = "-smoke" if PICK and PICK[0] != "s" else ""
@@ -236,5 +246,6 @@ with open(f"{OUT}/census-items{TAG}.jsonl", "w") as fh:
         fh.write(json.dumps(rec, default=float) + "\n")
         fh.flush()
         log(f"C {item['id']} {s:.2f}s")
+# TODO(mdb-feature P8): record sink / attached project — provenance and per-item records are not persisted as sealed records.
 dump(prov, f"{OUT}/provenance{TAG}.json")
 log("TOTAL")

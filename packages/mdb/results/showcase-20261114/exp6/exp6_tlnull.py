@@ -41,6 +41,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
 dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
 ad = dbg.adapter
 H, KV, DH = ad.num_heads, ad.num_kv_heads, ad.head_dim
+# TODO(mdb): use circuit_map.group_writers / slot per-model KV group instead of a hand-built query-head list for the KV group (gap audit §1 per-KV-group row).
 GH = [h for h in range(H) if h // (H // KV) == KVC]
 tok = AutoTokenizer.from_pretrained(MODEL)
 U16 = tl.bridge(ad.model, tok)
@@ -63,6 +64,7 @@ items = {i["id"]: i for i in panel["items"]}
 base = sorted([i for i in panel["items"] if i["block"] == "base"], key=lambda i: i["id"])
 if PICK:
     base = base[: int(PICK)]
+# TODO(mdb): use interop.names.to_tl (used here) and names.tl_hook (mdb-sc-das, SC7) for layout instead of per-hook layout handling in tl_arms/tl_donor_v (gap audit §6 tl_hook row).
 HZ = {x: names.to_tl(f"L{x}.A") for x in (LC, LC + 1)}
 HV = names.to_tl(f"L{LC}.v")
 HP = names.to_tl(f"L{LC}.p")
@@ -73,6 +75,8 @@ def ids_of(i):
     return i["ids"]
 
 
+# TODO(mdb): use cm.slot_rows with a per-model Slot (common.py:43-45) instead of crow_of re-implementing the carrier-row rule (gap audit §1 carrier-row row).
+# TODO(mdb-feature P11): Slot taking layers/kv from the map's model entry — exp6 needed the carrier per model, which Slot hard-codes.
 def crow_of(run, item):
     last = len(item["ids"]) - 1
     p = run.read(f"t{last}.L{LC}.p").float().reshape(H, -1)[GH].sum(0)
@@ -81,6 +85,7 @@ def crow_of(run, item):
     return best
 
 
+# TODO(mdb-feature P1): run.branches(at=ck): add one branch per head at L_c, L_c+1 plus the V interchange — checkpoint / zero head / until logits / restore loop written by hand.
 def mdb_item(item, donor_v):
     ids, last = item["ids"], len(item["ids"]) - 1
     run = dbg.run(ids, name="nat")
@@ -95,6 +100,7 @@ def mdb_item(item, donor_v):
     for x in (LC, LC + 1):
         for h in range(H):
             run.until(f"t{last}.L{x}.h")
+            # TODO(mdb-feature P5): run.set(f't{last}.L{x}.A[h{h}]', 0) selector instead of a hand-built head mask — 4 lines of mask construction per arm; same class as SC7's 4-D TL slice bug.
             shape = run.port_shape("A")
             mask = torch.zeros(shape, dtype=torch.bool, device="cuda")
             mask.reshape(-1)[h * DH:(h + 1) * DH] = True
@@ -106,6 +112,7 @@ def mdb_item(item, donor_v):
     return lg, crow, eff
 
 
+# TODO(mdb-feature P5): run.set(f't{crow}.L{LC}.v[kv{KVC}]', donor_ref) with the donor origin recorded — KV-group mask and donor tensor built by hand, origin lost.
 def mdb_vcell(item, crow, donor_v):
     ids, last = item["ids"], len(item["ids"]) - 1
     run = dbg.run(ids, name="vx", prefill=crow)
@@ -122,6 +129,7 @@ def mdb_vcell(item, crow, donor_v):
     return out
 
 
+# TODO(mdb-feature P6): pool of donor values with origins (cache.L<LC>.v[kv,row=@carrier]) — donor value fetched by a second run and cached in a dict.
 def mdb_donor_v(item):
     ids, last = item["ids"], len(item["ids"]) - 1
     run = dbg.run(ids, name="donor")
@@ -143,6 +151,8 @@ def tl_donor_v(bridge, item, crow):
     return got["v"]
 
 
+# TODO(mdb): use names.tl_hook (mdb-sc-das, SC7) to hide the (batch,pos,heads,d_head) vs flat layout split instead of x.dim()==4 branches in zero(), vx(), tl_donor_v (gap audit §6 tl_hook row).
+# TODO(mdb-feature P5): shared selector-to-index helper used by both the mdb side and the TL side — same class of indexing error on the library side.
 def tl_arms(bridge, item, crow, donor_v, batch=True):
     """[base, zero head h at LC (H), at LC+1 (H), V interchange] last-row logits; pattern at LC."""
     ids = torch.tensor([item["ids"]], device="cuda")
@@ -196,6 +206,7 @@ def tl_base(bridge, item):
     return lg, pat["p"]
 
 
+# TODO(mdb-feature P7): for item, run in pset.runs(...) — item loop and PICK slicing hand-rolled.
 recs = []
 fh = open(f"{OUT}/exp6-{Path(MODEL).name}{'-smoke' if PICK else ''}.jsonl", "w")
 dcache = {}
@@ -230,6 +241,7 @@ for item in base:
                               "fp32": float((pats["P32"] - pats["U32"]).abs().max())}
     rec["pattern_heads_ge_0.1"] = {k: [h for h in range(H) if float((pats[p] - pats[u])[h].abs().max()) >= 0.1]
                                    for k, p, u in (("bf16", "P16", "U16"), ("fp32", "P32", "U32"))}
+    # TODO(mdb-feature Q2.7): kernel-path deltas (TL vs mdb no-intervention) recorded in the run's numeric_scope as measured entries — U16_b1 and pattern_maxdiff are re-measured and stored only in this driver's JSONL.
     # P16 claims enter mdb as sealed supplied forecasts of each patch effect, judged on mdb's floor
     run = dbg.run(item["ids"], name="seal")
     run.until(f"t{len(item['ids']) - 1}.L0.h")
@@ -244,6 +256,7 @@ for item in base:
                           address_map={"A": HZ[LC], "v": HV, "processing": json.dumps(PROC["P16"])},
                           method="processed bridge (enable_compatibility_mode) patch effect, batched")
         j = supplied.judge(r, rec["mdb"][k] - base_m, magnitude=rec["max_abs_logit"], dtype=torch.bfloat16)
+        # TODO(mdb-feature P8): keep the full judged record via record sink — only record id is kept (exp6:249).
         judged.append({"record": r["id"], "native": j["native"]["value"], "claim": claim,
                        "floor": j["floor"]["value"], "native_effect": j["native_effect"]})
     rec["judged"] = judged

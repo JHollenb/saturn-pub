@@ -44,6 +44,7 @@ ad = dbg.adapter
 model = ad.model
 dev = model.lm_head.weight.device
 NL = ad.layers
+# TODO(mdb-feature P3): transcoder FeatureBasis loaded via sae.open_set — same hand-written loader as exp3.
 TC = {}
 for x in LAYERS:
     st = load_file(f"{TC_DIR}/layer_{x}.safetensors")
@@ -60,6 +61,7 @@ panel = [i for f in sorted(fams) for i in fams[f][:8]]
 if PICK:
     panel = [panel[int(k)] for k in PICK.split(",")]
 VER = nn.version()
+# TODO(mdb): use interop.names.to_nnsight / core.foreign_names.ct_node (SC8 circuit-tracer adapter) instead of a hand-typed address map (gap audit §1 library address maps row).
 AMAP = {"t<last>.L<l>.m": "model.model.layers[l].mlp.output",
         "freeze q/k": "model.model.layers[l'].self_attn.{q,k}_proj.output (detached)",
         "freeze norms": "model.model.layers[l'].{input,post_attention}_layernorm.output, model.model.norm.output"}
@@ -69,6 +71,7 @@ def rho(x, eps):
     return (x.float().pow(2).mean(-1, keepdim=True) + eps).rsqrt()
 
 
+# TODO(mdb-feature P4): run.hold('t@last.L>l.p', source=base_run) and run.hold('t@last.L>l.norm_scale', source=base_run) — frozen-pattern / frozen-norm gradient is a detached-q/k nnsight trace plus check_frozen_grad.py instead of a debugger switch.
 def frozen_grad(ids, layer, a, b, scales):
     """dM/dm_l at the last row with p and all norm scales frozen (nnsight trace)."""
     import nnsight
@@ -102,6 +105,7 @@ for item in panel:
     nat.until(f"t{last}.logits")
     lg = nat.read(f"t{last}.logits").reshape(-1).float()
     M0 = float(lg[a] - lg[b])
+    # TODO(mdb): use reads.readout(nat, Margin).vector/.rho instead of manual rF and c = gamma*(W_U[a]-W_U[b]) (gap audit §1 final-norm readout row).
     hF = f64(nat.read(f"t{last}.L{NL - 1}.h_out")).reshape(-1).cpu()
     rF = float((hF.pow(2).mean() + float(final.variance_epsilon)) ** -0.5)
     c = (f64(GF) * (f64(model.lm_head.weight[a]) - f64(model.lm_head.weight[b]))).cpu()
@@ -112,6 +116,8 @@ for item in panel:
         r = nat.read(f"t{last}.L{x}.r").reshape(-1)
         base[x] = {"p": nat.read(f"t{last}.L{x}.p").clone(),
                    "ra": rho(h, L_.input_layernorm.variance_epsilon), "rn": rho(r, L_.post_attention_layernorm.variance_epsilon)}
+    # TODO(mdb-feature P3): transcoder binding on t<last>.L<l>.m giving feature writes and direct effects — encode/direct effect/decode redone by hand (exp3:43-85 again).
+    # TODO(mdb-feature P10): nominate(...) -> sealed SuspectList of top-5 by direct effect — nomination rule coded by hand.
     # nodes
     nodes = []
     for x in LAYERS:
@@ -127,6 +133,7 @@ for item in panel:
                 nodes.append((float(de[k]), x, int(fid[k]), float(acts[k]), D[k] * acts[k]))
     nodes.sort(key=lambda z: -z[0])
     top = nodes[:5]
+    # TODO(mdb-feature P1): br.add_null('random', like=node1, norm='matched', pool=same_layer_active) — matched-norm null drawn by hand.
     same = [z for z in nodes[5:] if z[1] == top[0][1]]
     if same:
         de_r, x_r, f_r, a_r, w_r = rng.choice(same)
@@ -140,6 +147,7 @@ for item in panel:
     for node in top:
         de, x, f, act, w = node[:5]
         kind = node[5] if len(node) > 5 else "node"
+        # TODO(mdb-feature P4): hold('t@last.L>l.norm_scale', source=base_run) — per-layer base rho and scale dicts are rebuilt from an nnsight clean pass.
         if x not in grads:
             # base rho at every row for the frozen-scale trace (read from an nnsight clean pass)
             nm = nn.wrap(model)
@@ -158,12 +166,16 @@ for item in panel:
             sc["F"] = (rho(saved[("F", 0)], final.variance_epsilon) * GF.float()).detach()
             grads[x] = frozen_grad(ids, x, a, b, sc)
         A = float(grads[x] @ w)
+        # TODO(mdb): use symbols.hop_edge per node as the exact split beside the held arms instead of only the three held arms (bf16-resolution brackets) (gap audit §4 exp4).
+        # TODO(mdb-feature P8): full seal_record kept via record sink — only sealed['id'] is stored (line below).
         sealed = supplied.seal(nat, target={"kind": "margin", "row": last, "indices": [a, b]},
                                edit={"address": f"t{last}.L{x}.m", "row": last, "layer": x,
                                      "op": f"add -a d of transcoder L{x}.f{f}"},
                                value=-A, library="nnsight", version=VER, address_map=AMAP,
                                method="frozen-pattern, frozen-norm-scale gradient . write (attribution-graph edge)")
         arms = {}
+        # TODO(mdb-feature P4): arm1 = run.hold(p), arm2 = run.hold(p).hold(norm_scale) on a P1 branch — frozen-p and frozen-norm arms are re-set at every later layer by hand (exp4:172-182).
+        # TODO(mdb-feature P1): br.add('arm0'|'arm1'|'arm2'|'null', edits=[...], holds=[...]) — branch loop by hand.
         for arm in ("arm0", "arm1", "arm2", "null"):
             run.until(f"t{last}.L{x}.h")
             if arm != "null":
@@ -188,6 +200,7 @@ for item in panel:
             else:
                 arms[arm] = float(lgx[a] - lgx[b]) - M0
             run.restore(ck)
+        # TODO(mdb-feature P8): store the full bounded seal record, not just sealed['id'] — procedure, sealed_at and address map are not persisted.
         rec["nodes"].append({"kind": kind, "layer": x, "feature": f, "act": act, "direct": de,
                              "edge": -A, "record": sealed["id"], **arms,
                              "rerouting": arms["arm0"] - arms["arm1"], "norm": arms["arm1"] - arms["arm2"],

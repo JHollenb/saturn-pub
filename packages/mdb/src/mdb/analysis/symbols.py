@@ -758,7 +758,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
                     and c.info.multi_piece(view["token"]))
     if sets:
         basis = readout_basis(run, here_key[0])
-        subspaces = _subspaces(run, sets, co or (), basis)
+        co_spaces = _subspaces(run, sets, co or (), basis)
         for b in range(offset, min(offset + limit, n)):
             per_layer: dict[int, Any] = {}
             for (j, layer), w in grid.write.items():
@@ -774,7 +774,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
             view["content"]["meaning"] = ("readout of the binding's write into the reader "
                                           "row(s), summed over its reads, through rho * gamma * "
                                           "W_U (P19)")
-            _content_extras(run, view["content"], total, sets, basis, co or (), subspaces,
+            _content_extras(run, view["content"], total, sets, basis, co or (), co_spaces,
                             lexical_null, switch or {})
             if content_layers:
                 view["content_lifetime"] = {
