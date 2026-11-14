@@ -73,7 +73,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from mdb.core.kinds import WHATIF
+from mdb.core.kinds import WHATIF, procedure
 from mdb.core.pointers import seal_digest
 from mdb.core.bounded import MAX_ITEMS, bound_list, load_json
 from mdb.core.records import num, seal_record
@@ -1114,6 +1114,26 @@ def _within_view(found: dict[str, Any]) -> dict[str, Any]:
                                                     "op; mix: float64, rounded once"})}
 
 
+def _bound_scope(view: dict[str, Any], ahead: int) -> dict[str, Any]:
+    """What the sealed worst-case bound covers, said plainly (M54): it is interval arithmetic
+    on the dtype's rounding, compounded through every stop of the chain, and through each
+    forecast stop (one past the cursor, computed by the chain, not captured) on top of the
+    rounding of the operands. Each RMSNorm scales an input interval by about ``1/rms`` of its
+    input, so on a model with a small residual (the random tiny models: rms near 0.016) a
+    bound through a few forecast layers reaches 1e4..1e5 while the realised gap stays within
+    a spacing. ``wider_than_value``: the bound is at least ``|exact|``, so it does not fix the
+    change's sign; it never decides a verdict either way."""
+    bound, value = view.get("bound"), view.get("value")
+    if not isinstance(bound, dict) or not isinstance(value, dict) \
+            or not isinstance(value.get("value"), float):
+        return {}
+    wider = bound["value"] >= abs(value["value"])
+    scope = ("worst-case interval of the dtype's rounding through the chain"
+             + (f", {ahead} of its stops forecast from the cursor" if ahead else "")
+             + ("; at least |exact|: it does not fix the sign" if wider else ""))
+    return {"bound_scope": scope, "wider_than_value": wider}
+
+
 @dataclass
 class _Prepared:
     """A what-if up to its sealed prediction: everything that needs the cursor's values."""
@@ -1208,15 +1228,20 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
         prediction = {"state": "refused", "reason": reason}
     else:
         exact_view = {"value": _claim(found["exact"], EXACT), **_within_view(found)}
+        stops = len(run.stops())
+        ahead = sum(1 for j in range(p.row, p.consumer_row + 1) for i in range(stops)
+                    if p.here < (j, i) <= p.consumer_key)
         if p.consumer_key > p.here:
             exact_view["operands"] = {
                 "source": "forecast", "at": run.where,
+                "stops": num(ahead, EXACT),
                 "premise": f"the stops after {run.where} are this chain's own float64 values "
                            "from the operands captured there (a forecast), not native ones; "
                            "the exact change on measured operands is computed after the "
                            "native run (split term operands)"}
         else:
             exact_view["operands"] = {"source": "measured", "at": run.where}
+        exact_view.update(_bound_scope(exact_view, ahead))
         if "linear" in found:
             linear_view: dict[str, Any] = {"value": _claim(found["linear"], LOCAL, "P14"),
                                            "meaning": "gradient of the consumer times the edit "
@@ -1256,6 +1281,7 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
                                "rounding point (EmulatedRowModel); the base takes the stops at "
                                "or before the cursor as captured"},
     }
+    body["procedure"] = procedure(run)    # the prefill split the edit and consumer rows run under
     pointers: list[dict[str, Any]] = []
     if reason:
         body["operands"] = []

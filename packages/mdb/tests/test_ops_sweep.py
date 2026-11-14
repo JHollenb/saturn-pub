@@ -90,17 +90,17 @@ def test_the_whatif_native_delta_is_the_sweep_cell(tiny):
 
 
 def test_layer_calls_follow_the_cost_model(tiny):
-    """Cell (r, l), consumer row c, L layers: (L - l) + L(c - r) layer calls; the final restore
-    replays (L - l0) + L(c - r0) from the earliest entry. No cell replays from row 0."""
+    """Cell (r, l), consumer row c, L layers: (L - l) + L(c - r) layer calls; the return to the
+    held trail costs none (M54; it replayed (L - l0) + L(c - r0) before). No cell replays from
+    row 0."""
     ctx = _ctx(tiny)
     layers, c = tiny.adapter.layers, 5
     for rows, span in (("0:6", range(0, 6)), ("2:5", range(2, 5))):
         result = dispatch(ctx, "sweep", {"port": "h", "origin": "clean", "consumer": CONSUMER,
                                          "rows": rows})
         cells = sum((layers - l) + layers * (c - r) for r in span for l in range(layers))
-        restore = layers + layers * (c - span[0])
         layer = result["cost"]["native"]["layer"]
-        assert layer == {"value": cells + restore, "authority": "measured"}, rows
+        assert layer == {"value": cells, "authority": "measured"}, rows
 
 
 def test_a_head_selector_and_a_table_too_large_for_the_record(tiny, monkeypatch):

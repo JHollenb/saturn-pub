@@ -76,8 +76,8 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   +39 more in the record (promptset result each4 [ITEM])
 (mdb) promptset result each2 a
 each2 item a:
-whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record aec1d89c07597a81)
-  sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound]   emulated ΔM = -0.0083008 [derived-exact]
+whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record 4936eae489eeb814)
+  sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.0083008 [derived-exact]
   native  ΔM = -0.0083008 [measured]   (base -0.11401 [measured] -> edited -0.12231 [measured])
   error split (P20): linear -0.0079277 [derived-local P14] + nonlinear 0.00049298 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00086605 [derived-exact P20] (within bound 0.045715 [bound]) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM -0.0083008 [measured P20], emulated ΔM -0.0083008 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)

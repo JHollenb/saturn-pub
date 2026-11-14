@@ -46,7 +46,7 @@ import weakref
 from dataclasses import dataclass, field
 from typing import Any
 
-from mdb.core.kinds import SYMBOL_TABLE
+from mdb.core.kinds import SYMBOL_TABLE, procedure
 from mdb.core.records import seal_record
 
 from .finite import BOUND, EXACT, MEASURED, SUPPLIED, f64, num
@@ -544,6 +544,7 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                                                          "accounting")}}
     if "consumer_total" in report:
         body["consumer_total"] = report["consumer_total"]
+    body["procedure"] = procedure(run)
     return [seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
                         model_identity=run.adapter.model_identity,
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]

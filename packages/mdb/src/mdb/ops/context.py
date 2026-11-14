@@ -23,6 +23,9 @@ class Context:
         self._display_id = 1
         self._checkpoint_id = 1
         self._table: Any = None
+        # a line an op shows before it finishes (``sweep`` prints its plan); the REPL sets it,
+        # None elsewhere (the op's result carries the same information)
+        self.notice: Any = None
 
     @property
     def tokenizer(self) -> Any:

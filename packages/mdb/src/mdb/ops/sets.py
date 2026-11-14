@@ -27,8 +27,14 @@ every per-item result holds ordinary canonical addresses:
   ``pair-SET-PAIR:t<its last>.L20.A[h5]``, whatever length the two prompts are; the item row's
   ``donor`` lists the donor addresses used.
 
+``prefill=K`` or ``prefill=@ROLE`` (M54) starts each item's run, and its pair's clean run,
+under that split, bound per item (``@ROLE``: that item's own role row), so the rows from it on
+are stepped with ports (``sweep``, cross-row ``set``/``whatif`` at earlier rows); the item's row
+in the summary holds the bound value (``prefill``).
+
 An item whose template does not bind (an undefined role or variable, a role past its prompt,
-no pair) or whose op is refused is a per-item refusal with its reason; the other items run.
+no pair, a split past its prompt) or whose op is refused is a per-item refusal with its
+reason; the other items run.
 
 Output: the ``each`` op returns ONE summary record (bounded: per-item rows hold key numbers, the
 item result's digest and a pointer to it, never the result itself); the per-item results are the
@@ -302,6 +308,25 @@ def bind_text(text: str, item: Bound, pair: Bound | None = None,
     return "".join(out)
 
 
+def bind_prefill(text: str | None, item: Bound) -> int | None:
+    """``each ... prefill=K|@ROLE`` for one item: ``K``, or the row of the item's role ``ROLE``
+    (``@last`` steps only the last row, as the default does); ``Unbound`` when the role is
+    missing or the split is past the item's prompt. None: the default split."""
+    if text is None:
+        return None
+    text = str(text).strip()
+    if re.fullmatch(r"\d+", text):
+        prefill = int(text)
+    elif _BARE_ROLE.fullmatch(text):
+        prefill = item.row(text[1:])
+    else:
+        raise BadArgs(f"prefill is a row count K or @ROLE (a role of each item), not {text!r}")
+    if prefill > len(item.tokens) - 1:
+        raise Unbound(f"prefill={prefill} is past the prompt ({len(item.tokens)} tokens: "
+                      f"prefill is 0..{len(item.tokens) - 1})")
+    return prefill
+
+
 def _bind_args(name: str, args: dict[str, Any], item: Bound, pair: Bound | None,
                pair_run: str | None) -> dict[str, Any]:
     kinds = {arg.name: arg.type for arg in registry()[name].args}
@@ -430,8 +455,10 @@ def _check_names(debugger: Any, ctx: Any, names: list[str]) -> None:
 
 
 def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
-             keep: bool = False) -> EachResult:
-    """Run ``line`` on every item of the set ``set_name`` (see the module docstring)."""
+             keep: bool = False, prefill: str | None = None) -> EachResult:
+    """Run ``line`` on every item of the set ``set_name`` (see the module docstring).
+    ``prefill`` (``K`` or ``@ROLE``): each item's run, and its pair's clean run, is started
+    with that split, bound per item (``bind_prefill``); None is the default split."""
     from mdb.analysis import summary as stats
 
     debugger = getattr(ctx, "debugger", None)
@@ -441,6 +468,11 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     if found is None:
         known = ", ".join(sorted(sets_of(debugger))) or "none; set load NAME FILE"
         raise Refused(f"no prompt set {set_name!r} (sets: {known})")
+    if prefill is not None:
+        prefill = str(prefill).strip()
+        if not (re.fullmatch(r"\d+", prefill) or _BARE_ROLE.fullmatch(prefill)):
+            raise BadArgs(f"prefill is a row count K or @ROLE (a role of each item), not "
+                          f"{prefill!r}")
     at = (at or DEFAULT_AT).strip()
     steps = template(line)
     uses_pair = "@pair:" in line
@@ -455,7 +487,7 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     try:
         for item in found.items:
             row, result = _one(debugger, saved, found, item, steps, at, uses_pair, made,
-                               donors)
+                               donors, prefill)
             if keep and _run_name(found.name, item.name) in made:
                 row["run"] = _run_name(found.name, item.name)
             rows.append(row)
@@ -478,6 +510,8 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     _put_blobs(debugger, rows, results)
     full = stats.summarize([results[name] for name in results])
     summary = _summary(found, line, steps, at, keep, rows, full, saved["digest"])
+    if prefill is not None:
+        summary["prefill"] = prefill    # the template; each item's row holds its bound split
     entry_id = _remember(debugger, summary, results)
     summary["id"] = entry_id
     _store(debugger, summary)
@@ -486,13 +520,15 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
 
 def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
          steps: list[Step], at: str, uses_pair: bool, made: dict[str, Any],
-         donors: dict[str, tuple[Any, str | None]]) -> tuple[dict[str, Any], Any]:
+         donors: dict[str, tuple[Any, str | None]],
+         prefill: str | None = None) -> tuple[dict[str, Any], Any]:
     """One item: bind, make its run, run the steps. Returns its summary row and its result."""
     from mdb.analysis import summary as stats
 
     row: dict[str, Any] = {"name": item.name}
     try:
         bound = Bound(debugger, item)
+        split = bind_prefill(prefill, bound)
         pair = pair_run = None
         if uses_pair and item.pair is not None:
             pair = Bound(debugger, found.item(item.pair))
@@ -502,15 +538,18 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
         target = bind_text(at, bound)
     except Unbound as error:
         return {**row, "state": "refused", "reason": str(error)}, None
+    if split is not None:
+        row["prefill"] = split
     if pair is not None:
-        reason = _donor(debugger, saved, found, pair, pair_run, at, made, donors)
+        reason = _donor(debugger, saved, found, pair, pair_run, at, made, donors, prefill)
         if reason is not None:
             return {**row, "state": "refused", "reason": f"pair {item.pair}: {reason}"}, None
     name = _run_name(found.name, item.name)
     debugger.live = saved["live"]          # each item run carries what a fresh start would
     local = Context(debugger)
     try:
-        dispatch(local, "start", {"prompt": bound.tokens, "name": name})
+        dispatch(local, "start", {"prompt": bound.tokens, "name": name,
+                                  **({} if split is None else {"prefill": split})})
         made[name] = local.run
         _goto(local, target)
         result = None
@@ -543,8 +582,9 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
 
 def _donor(debugger: Any, saved: dict[str, Any], found: PromptSet, pair: Bound,
            run_name: str, at: str, made: dict[str, Any],
-           donors: dict[str, tuple[Any, str | None]]) -> str | None:
-    """Make (once) the clean run of the paired item at its ``at`` stop; the refusal reason."""
+           donors: dict[str, tuple[Any, str | None]], prefill: str | None = None) -> str | None:
+    """Make (once) the clean run of the paired item at its ``at`` stop, under ``prefill``
+    bound for the paired item (its own role row); the refusal reason."""
     if pair.item.name in donors:
         return donors[pair.item.name][1]
     reason = None
@@ -552,7 +592,9 @@ def _donor(debugger: Any, saved: dict[str, Any], found: PromptSet, pair: Bound,
     local = Context(debugger)
     try:
         target = bind_text(at, pair)
-        dispatch(local, "start", {"prompt": pair.tokens, "name": run_name})
+        split = bind_prefill(prefill, pair)
+        dispatch(local, "start", {"prompt": pair.tokens, "name": run_name,
+                                  **({} if split is None else {"prefill": split})})
         made[run_name] = local.run
         _goto(local, target)
     except Unbound as error:
@@ -685,7 +727,7 @@ def _store(debugger: Any, summary: dict[str, Any]) -> None:
     from mdb.core.records import declare_kind, seal_record
 
     declare_kind("prompt-set", required=("set", "line", "items", "statistics"),
-                 plain_numeric=("items.*.bytes", "items.*.blob.bytes", "items.*.blob.tensor.shape.*", "total", "statistics.n",
+                 plain_numeric=("items.*.bytes", "items.*.prefill", "items.*.blob.bytes", "items.*.blob.tensor.shape.*", "total", "statistics.n",
                                 "statistics.numeric.*.n", "statistics.numeric.*.agree.count",
                                 "statistics.numeric.*.by_authority.*.n",
                                 "statistics.numeric.*.by_authority.*.agree.count",
@@ -705,8 +747,8 @@ def _store(debugger: Any, summary: dict[str, Any]) -> None:
 # --------------------------------------------------------------------------- ops
 
 
-def _op_each(ctx, set, line, at, keep):  # noqa: A002 - the wire name
-    return run_each(ctx, set, line, at=at, keep=keep).summary
+def _op_each(ctx, set, line, at, keep, prefill=None):  # noqa: A002 - the wire name
+    return run_each(ctx, set, line, at=at, keep=keep, prefill=prefill).summary
 
 
 def _item_view(item: Item) -> dict[str, Any]:
@@ -777,9 +819,12 @@ register(Op("each", "Run one op line on every prompt of a set (one run per promp
              Arg("at", "str", default=DEFAULT_AT, positional=False,
                  help="where each item's run stops before the line runs"),
              Arg("keep", "bool", default=False, positional=False,
-                 help="keep the item runs as named runs SET-ITEM")),
+                 help="keep the item runs as named runs SET-ITEM"),
+             Arg("prefill", "str", positional=False,
+                 help="each item's prefill split: K, or @ROLE (that role's row of each item; "
+                      "the pair's clean run takes its own role row); default all but the last")),
             "native", False, _op_each,
-            usage="each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]"))
+            usage="each SET [at=ADDR] [prefill=K|@ROLE] [keep]: OP LINE [; OP LINE ...]"))
 register(Op("promptset", "Prompt sets: load a JSONL file, show or list sets, read a stored each "
             "result (the REPL's set load / set show)",
             (Arg("action", "choice", required=True, choices=("load", "define", "show", "list", "result")),

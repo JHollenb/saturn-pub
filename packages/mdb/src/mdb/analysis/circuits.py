@@ -43,7 +43,7 @@ from typing import Any, NamedTuple
 from mdb.core import circuit_pages as pages_mod
 from mdb.core.bounded import json_bytes, load_json, put_json
 from mdb.core.circuit_pages import PAGE_BYTES, PAGE_SCHEMA, PAGE_VALUES  # noqa: F401
-from mdb.core.kinds import CIRCUIT
+from mdb.core.kinds import CIRCUIT, procedure
 from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
 
@@ -598,6 +598,7 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
             "edits": {"count": sum(1 for n in _walk(root) if n.kind == "edit"),
                       "meaning": "edit nodes: displacements edits wrote, never in a remainder"},
             "premises": reader.premises}
+    body["procedure"] = procedure(run)
     try:
         check_bounded(body, "circuit record")
         record = seal_record(session_id=session_id or run_session_id(run), kind="circuit",

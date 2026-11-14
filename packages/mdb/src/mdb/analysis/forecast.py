@@ -37,7 +37,8 @@ from typing import Any
 
 from mdb.core.bounded import MAX_ITEMS, bound_list, load_json, put_json
 from mdb.core.pointers import occurrence_pointer, seal_digest
-from mdb.core.records import declare_kind, num, seal_record
+from mdb.core.kinds import FORECAST, procedure
+from mdb.core.records import num, seal_record
 
 from .accumulation import accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
@@ -49,21 +50,6 @@ U32 = 2.0 ** -24          # unit roundoff of float32, the accumulation precision
 LIBRARY_ULPS = 4          # premise: float32 exp, rsqrt, sin, cos within 4 ulp
 SILU_LIPSCHITZ = 1.1      # sup |silu'(g)| = 1.0998 (attained near g = 2.4)
 NO_IDENTITY = {"start": "the token list is an input of the row, not a computed value"}
-
-FORECAST = declare_kind(
-    "forecast",
-    required=("schema", "target", "sealed_at", "method", "operands", "predicted", "bound"),
-    plain_numeric=("sealed_at.row", "sealed_at.index", "sealed_at.transition",
-                   "sealed_at.receipts.count", "target.row", "target.index", "target.indices",
-                   "operands.*.shape", "predicted.shape", "predicted.token",
-                   "edits_at_seal.*.row", "edits_at_seal.*.layer",
-                   "method.summary.count", "method.summary.global_steps.count",
-                   "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
-                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes",
-                   "operands_summary.count", "operands_summary.listed",
-                   "operands_summary.rest.count", "operands_summary.pointer.bytes",
-                   "emulated.shape", "emulated.token", "emulated.rounding_origin.head"),
-)
 
 # (function, proof) of the identity that computes each port from its producers
 IDENTITY = {
@@ -898,6 +884,7 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     body["emulated"] = _emulated_view(emulated, label, margin, emulator,
                                       _rounding_origin(model, emulator, row, run.adapter.dtype))
     body["digests"] = {"exact": _digest(value), "emulated": _digest(emulated)}
+    body["procedure"] = procedure(run)        # the prefill split the operands come from
     pointers = [] if chain_pointer is None else [chain_pointer]
     body["operands"], operands_summary = bound_list(
         body["operands"], MAX_ITEMS, store=store, run=run,

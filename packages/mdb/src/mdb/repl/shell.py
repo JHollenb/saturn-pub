@@ -77,6 +77,14 @@ class Shell:
         self.depth = 0  # nesting of `source`
         self._interrupted = False  # Ctrl-C seen: a running script stops
         self._failed = False       # the last command (or a nested non -k source) failed
+        if not json_mode and hasattr(ctx, "notice"):
+            ctx.notice = self._notice   # an op's line before its result (sweep's plan)
+
+    def _notice(self, text: str) -> None:
+        self.write(text)
+        flush = getattr(self.out, "flush", None)
+        if flush is not None:
+            flush()
 
     def write(self, text: str) -> None:
         self.out.write(text + "\n")

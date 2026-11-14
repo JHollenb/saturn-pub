@@ -433,8 +433,8 @@ def test_train_mode_refused_at_probe(mode):
     if mode == "none":  # lookahead="layer" serves the next port from its cache: no probe runs
         with pytest.raises(ValueError, match="eval-mode"):
             run.step()
-    with pytest.raises(ValueError, match="eval-mode"):
-        run.set("L0.g", 1.0, "scale")
+    with pytest.raises(ValueError, match="eval-mode"):   # check=True probes an edit the
+        run.set("L0.h", 1.0, "scale", check=True)        # cursor's captures see (M54)
     assert run.edits == [] and len(run.session.receipts) == 1
     model.eval()
     run.until("L0.q")
@@ -824,8 +824,9 @@ def test_set_is_atomic_when_the_probe_fails(adapter, mode, failure, monkeypatch)
         raise failure
 
     monkeypatch.setattr(Run, "_ensure_cache", failing)
-    with pytest.raises(type(failure)):
-        run.set("L1.q", 0.5, "scale", mask=torch.ones(run.port_shape("q"), dtype=torch.bool))
+    with pytest.raises(type(failure)):     # check=True: probed now, so a failure un-stages
+        run.set("L1.q", 0.5, "scale", mask=torch.ones(run.port_shape("q"), dtype=torch.bool),
+                check=True)
     monkeypatch.setattr(Run, "_ensure_cache", original)
     assert run.edits == edits and run._cache is cache
     assert run.edit_mask("L1.q") is None and len(run.staged_info()) == 1
@@ -985,7 +986,7 @@ def test_plain_forward_with_staged_edits_is_unhooked(adapter, mode):
     run = Run_(adapter, mode)
     run.until("L1.a")
     run.set("L1.m", 0.0, "scale")
-    run.set("L1.p", torch.full(run.port_shape("p"), 0.125).to(adapter.dtype))
+    run.set("L1.p", torch.full(run.port_shape("p"), 0.125).to(adapter.dtype), check=True)
     cache, order = run._cache, list(run._cache.order)
     with torch.inference_mode():
         again = adapter.model(ids).logits

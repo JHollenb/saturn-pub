@@ -379,9 +379,11 @@ def _seek_within(run, address: str) -> list[str]:
     failure part way restores the starting cursor."""
     moves = []
     key = run.parse(address)
-    first = len(run.tokens) - 1
-    if key[0] < first:
-        raise ValueError(f"t{key[0]} was prefilled before this run's first stepped row t{first}")
+    root = run.parse(run.root)
+    if key < root:
+        if key[0] < run.prefill:
+            raise ValueError(run.prefilled_reason(key[0]))
+        raise ValueError(f"{address} is before this run's root {run.root}")
     start = run.checkpoint()
     try:
         if key < run.parse(run.where):

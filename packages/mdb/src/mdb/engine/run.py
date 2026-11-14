@@ -289,9 +289,10 @@ class Run:
 
     @property
     def first_row(self) -> int:
-        """The first prompt row this run steps: rows before it were prefilled in one batched
-        call and have no ports (``prefill``)."""
-        return self.prefill
+        """The first row this run steps, the row of its root (``root``): rows before it were
+        prefilled in one batched call (``prefill``) and have no ports. A run started at a
+        stored cut (``root=``) starts at that cut's row, which can be later than ``prefill``."""
+        return self._trail[0].row
 
     @property
     def procedure(self) -> dict[str, Any]:
@@ -972,6 +973,7 @@ class Run:
         mask: torch.Tensor | None = None,
         selection: str | None = None,
         origin: dict[str, Any] | None = None,
+        check: bool = False,
     ) -> dict[str, Any]:
         """Stage one edit at a port of the pending layer; returns the edit's request manifest.
 
@@ -981,6 +983,12 @@ class Run:
         Validation is by shape only (the port's shape is derived, nothing past the cursor runs);
         whether the edit fires is checked when the layer commits. Atomic: on any failure,
         ``KeyboardInterrupt`` included, nothing stays staged.
+
+        Staging runs nothing native (M54): an edit realised after the cursor's port leaves the
+        held captures as they are (they stop before it); an edit at or before it drops them,
+        and the next read (or ``staged_info``) probes the layer once with every staged edit.
+        ``check=True`` probes such an edit now instead, so a realisation failure un-stages it
+        here rather than at the next read (the ``set`` op, which prints the realised edit).
         """
         key = self.parse(target)
         mark = self._trail[-1]
@@ -1009,21 +1017,46 @@ class Run:
                 selection=selection,
                 origin=origin,
             )
-        saved_edits, saved_cache = list(self._edits), self._cache
-        try:
-            self._edits.append(edit)
-            self._cache = None
-            if self.lookahead == "layer" or self._port is not None:
-                self._ensure_cache(self._port)
-        except BaseException:
-            self._edits[:] = saved_edits
-            self._cache = saved_cache
-            raise
+        self._stage(self._edits, edit, port, check)
         if isinstance(edit.value, torch.Tensor):
             self._values[edit.key] = edit.value
         if edit.mask is not None:
             self._masks[tensor_digest(edit.mask)] = edit.mask
         return edit.manifest()
+
+    def _captures_before(self, port: str | None) -> bool:
+        """Whether the held captures stop before an edit at ``port`` is realised (an ``r`` edit
+        is realised in ``o``; a cell edit, ``port`` None, at the layer's entry), so staging it
+        leaves them valid. Never for a full-layer (``lookahead="layer"``) capture."""
+        cache = self._cache
+        if cache is None or self.lookahead == "layer" or cache.stop is None or port is None:
+            return False
+        names = self.program.names
+        name = self.program.spec(port).name
+        return names.index("o" if name == "r" else name) > names.index(cache.stop)
+
+    def _stage(self, staged: list[Any], edit: Any, port: str | None, check: bool) -> None:
+        """Append ``edit`` to ``staged`` (``_edits`` or ``_cells``) without a native call: the
+        held captures stay when they stop before it, else they are dropped and the next read
+        probes once. ``check``: probe now (when a cursor port is held); a failure un-stages."""
+        saved = (list(staged), self._cache)
+        try:
+            staged.append(edit)
+            if self._captures_before(port):
+                return
+            self._cache = None
+            if check and (self.lookahead == "layer" or self._port is not None):
+                self._ensure_cache(self._port)
+        except BaseException:
+            staged[:], self._cache = saved
+            raise
+
+    def _held_captures(self) -> None:
+        """Probe the pending layer if a staged edit dropped the captures (``set``) and a cursor
+        port (or ``lookahead="layer"``) holds them: what ``staged_info`` reports fired."""
+        if self._cache is None and self.pending_layer is not None and (
+                self.lookahead == "layer" or self._port is not None):
+            self._ensure_cache(self._port)
 
     def _written_by(self, target: str) -> tuple[str, list[PortEdit], int] | None:
         """``(port, edits that wrote it, row)`` for a computed address whose value an edit can
@@ -1096,6 +1129,7 @@ class Run:
         ``selection``, mask fields), ``layer``, ``fired`` and, once the current probe fired it,
         the realised fields (``realised_*``, ``cast_*``, ``changed_fraction``, ``mix``,
         ``replica_verified``, ``realised_at`` ...)."""
+        self._held_captures()
         cache = self._cache
         records = []
         for edit in self._edits:
@@ -1136,6 +1170,7 @@ class Run:
         dose: float | None = None,
         selection: str | None = None,
         origin: dict[str, Any] | None = None,
+        check: bool = True,
     ) -> dict[str, Any]:
         """Stage one state-cell edit of ``cache.L<layer>.<tensor>`` (``engine.edits.CellEdit``);
         returns its request manifest.
@@ -1170,16 +1205,9 @@ class Run:
             raise ValueError(f"row {mark.row} of {edit.port} is written by the pending layer "
                              "transition; it becomes a cell when the layer commits")
         edit.check(current.shape)
-        saved_cells, saved_cache = list(self._cells), self._cache
-        try:
-            self._cells.append(edit)
-            self._cache = None
-            if self.lookahead == "layer" or self._port is not None:
-                self._ensure_cache(self._port)
-        except BaseException:
-            self._cells[:] = saved_cells
-            self._cache = saved_cache
-            raise
+        # drops the held captures (their probe records the cell's realisation); ``check``
+        # (default) probes again now, as before M54, else the next read or staged_cells does
+        self._stage(self._cells, edit, None, check)
         if isinstance(edit.value, torch.Tensor):
             self._values[tensor_digest(edit.value)] = edit.value
         return edit.manifest()
@@ -1189,6 +1217,7 @@ class Run:
         it: a ``before`` edit once a port of the pending layer is held) and, then, the
         realisation record (``realised_sha256``, ``cast_*``, ``realised_*``,
         ``changed_fraction``, ``count``, ``realised_timing``, ``realised_in_layer``)."""
+        self._held_captures()
         records = []
         cache = self._cache
         for index, cell in enumerate(self._cells):
@@ -1530,6 +1559,22 @@ class Run:
             port = self.program.spec(checkpoint["port"]).name
             self._ensure_cache(port)
             self._port = port
+        return self.where
+
+    def excursion(self) -> _Snapshot:
+        """Hold the run as it is (trail, its marks' cuts and edits, staged edits, cursor) for
+        ``come_back``: an excursion that rewinds and commits edits (``sweep``) then returns
+        without replaying, at the cost of keeping the held marks' cuts alive meanwhile."""
+        return _Snapshot(self)
+
+    def come_back(self, held: _Snapshot) -> str:
+        """Return to what ``excursion`` held: the trail and cursor put back and the session
+        restored to the held last cut (no native call). Edit tensors of the excursion that
+        nothing names any more are dropped."""
+        if held.run is not self:
+            raise ValueError("that excursion belongs to another run")
+        held.rollback()
+        self._sweep_tensors()
         return self.where
 
     def _replay_base(self, checkpoint: dict[str, Any]) -> int:

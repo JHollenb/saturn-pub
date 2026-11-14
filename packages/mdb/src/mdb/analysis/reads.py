@@ -96,8 +96,9 @@ def computed(run: Any, address: str) -> bool:
 
 
 def first_row(run: Any) -> int:
-    """The first token row this run stepped (earlier rows were prefilled into the cache)."""
-    return len(run.tokens) - 1
+    """The first token row this run stepped (earlier rows were prefilled into the cache):
+    ``Run.first_row``, the row of its root (``prefill=K`` steps rows from ``K``)."""
+    return int(run.first_row)
 
 
 # --------------------------------------------------------------------------- consumers

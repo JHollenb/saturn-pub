@@ -405,12 +405,13 @@ def route(name: str, rest: str) -> tuple[str, str]:
     return name, rest
 
 
-_EACH_USAGE = "write each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]"
+_EACH_USAGE = "write each SET [at=ADDR] [prefill=K|@ROLE] [keep]: OP LINE [; OP LINE ...]"
 
 
 def _each_args(text: str) -> dict[str, Any]:
-    """``each SET [at=ADDR] [keep]: LINE``: the set and options before the first ``:``, the op
-    line(s) after it, kept as text (the op parses them once, as a template)."""
+    """``each SET [at=ADDR] [prefill=K|@ROLE] [keep]: LINE``: the set and options before the
+    first ``:``, the op line(s) after it, kept as text (the op parses them once, as a
+    template)."""
     head, colon, line = text.partition(":")
     words = head.split()
     if not colon or not words or not line.strip():
@@ -421,6 +422,8 @@ def _each_args(text: str) -> dict[str, Any]:
             args["keep"] = True
         elif word.startswith("at="):
             args["at"] = word[3:]
+        elif word.startswith("prefill=") and len(word) > 8:
+            args["prefill"] = word[8:]
         else:
             raise BadArgs(_EACH_USAGE)
     return args

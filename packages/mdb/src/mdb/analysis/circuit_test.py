@@ -56,7 +56,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mdb.core.bounded import put_json
-from mdb.core.kinds import CIRCUIT_TEST
+from mdb.core.kinds import CIRCUIT_TEST, procedure
 from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
 
@@ -577,6 +577,7 @@ def test(run: Any, circuit: Any, reference: Any, *, session_id: str | None = Non
         out["cost"]["peak_vram_bytes"] = num(int(torch.cuda.max_memory_allocated()), MEASURED)
         out["cost"]["peak_vram_meaning"] = "torch.cuda.max_memory_allocated since process start"
     out["session"] = {"before": before, "after": state_digest(run), "unchanged": True}
+    out["procedure"] = procedure(run)
     del ref
     try:
         body = check_bounded(out, "circuit test record")

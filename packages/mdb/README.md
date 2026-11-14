@@ -179,10 +179,18 @@ result is one record: the layers x rows table of deltas (`measured`), the top ce
 and the native call counts. A table too large for the record is stored as a sha256-checked
 blob with the top cells kept inline. Cells are visited from the latest layer entry back, each
 from a trail mark below it, so no cell replays from row 0: a cell `(r, l)` with the consumer
-in row `c` of an `L`-layer model costs `(L - l) + L(c - r)` layer calls, and the final restore
-`(L - l0) + L(c - r0)`. In a prompt set, `each SET: sweep h rows=@last = @pair:h --consumer
-M[$answer,$foil]` takes the origin from each item's pair; a pair of another length is a
-per-item refusal.
+in row `c` of an `L`-layer model costs `(L - l) + L(c - r)` layer calls; the edit is staged
+without a probe and the return to the held trail is a snapshot rollback, which costs none.
+Before running, `sweep` prints its plan (`sweep plan: N cells ..., P layer calls planned`) and
+refuses a plan above 50000 layer calls (about 5 minutes on Qwen2.5-1.5B at 5.2 ms per layer)
+unless `max_calls=N` raises the cap. With a project open the result is also stored as a
+`sweep` record (the table as a checked blob pointer when it is large) and its id is printed.
+In a prompt set, `each SET: sweep h rows=@last = @pair:h --consumer M[$answer,$foil]` takes the
+origin from each item's pair; a pair of another length is a per-item refusal. `each SET
+prefill=@ROLE: ...` (or `prefill=K`) starts every item, and its pair, with that split; `@ROLE`
+binds to the item's own role row, and an item whose prompt is shorter than the split is
+refused. Analysis records (`forecast`, `whatif`, `circuit`, `circuit test`, symbol tables,
+`sweep`) carry the split as `procedure: {prefill, first_row, prompt_rows}`.
 
 Tiny Qwen2 (bf16), clean `1 7 9 3 6 2`, corrupted `1 5 9 3 6 2` (row 1 differs), both stepped
 from row 0, real output (`tests/repl_golden/prompt_rows.mdb`):
@@ -199,6 +207,7 @@ t1.L0.m  bfloat16 [1, 1, 16]  (batch, row, d_model)
   norm 0.0017112 min -0.0005455 max 0.0007515 mean 0.00010715 abs_max 0.0007515 [measured]
 (mdb) until t5.logits
 (mdb) sweep h = clean --consumer t5.M[4,9]
+sweep plan: 12 cells (6 rows x 2 layers), 78 layer calls planned (base 0, cells 78; cap 50000)
 sweep h = clean:h -> t5.M[4,9]  (12 cells; base -0.038208 [measured])
   prefill=0: no row batched, rows 0..5 stepped (tokens forced)
      t0 t1 t2 t3 t4 t5
@@ -206,7 +215,7 @@ L0    0 -8  0  0  0  0
 L1    0 -9 -2 -1 -1 +5
 cell: tenths of max |Δ| 0.014893 [measured] (9 caps); '.' < 1/20, '0' exact
   top |Δ|: t1.L1 -0.014893 [measured], t1.L0 -0.011353 [measured], t5.L1 0.0081177 [measured], ...
-  cost: 90 layer calls, 35 probes, 201 other transitions [measured] (wall time in the record)
+  cost: 78 layer calls (planned 78), 11 probes, 174 other transitions [measured] (wall time in the record)
   session unchanged at t5.logits
 ```
 
@@ -220,7 +229,17 @@ of one layer gives the clean logits bit for bit when both runs use the same spli
 against 19136 bytes in 16 marks with the default split; a sweep leaves it unchanged. Time
 (measured, same model, laptop CPU): a sweep of 4 rows x 12 layers made 1224 layer calls in
 8.0 s; one row x 12 layers 20 rows before the consumer made 3210 in 18.8 s, so the cost is the
-rows between the cell and the consumer.
+rows between the cell and the consumer. After M54 (measured, 12-layer tiny Qwen2, 8-token
+prompts): rows 4:8 x 12 layers 1176 layer calls and 0 run probes (1224 and 96 before), rows
+1:8 3570 and 0 (3654 and 168); the planned count equals the measured one.
+
+A sealed `bound` is the worst-case interval of the dtype's rounding through the chain. Each
+forecast stop between the cursor and the consumer widens it, and each RMSNorm scales an
+interval by about `1/rms` of its input, so on the random tiny models (residual rms near
+0.016) a bound sealed a few layers before a cross-row consumer reaches 1e4 to 1e5 while the
+native and emulated deltas agree bit for bit. When the bound is at least `|exact|` the line
+says `(worst case, >= |exact|: no sign)`; the record keeps `bound_scope` and
+`wider_than_value`.
 
 mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
 split by cause (`forecast`, `verify`), an authority label and state on every number, and

@@ -118,16 +118,19 @@ class Debugger:
         retain_rows: int | None = None,
         lookahead: str | None = None,
         name: str | None = None,
+        prefill: int | None = None,
     ) -> Run:
-        """Prefill all but the last token; the cursor starts where the ``start`` op leaves it,
-        at ``t<last>.L0.<first port>`` (this is the one implementation of ``start``).
+        """Prefill all but the last token (``prefill=K``: the first ``K``; the later prompt
+        rows are stepped with their tokens forced); the cursor starts where the ``start`` op
+        leaves it, at ``t<first stepped row>.L0.<first port>`` (this is the one implementation
+        of ``start``). The session is built once, under that split.
 
         ``lookahead`` (``"none"``, the engine default, or ``"layer"``) is passed to ``Run``.
         ``name`` (a branch name, default ``main``) keeps the run in ``runs`` under that name,
         replacing an earlier run of the same name; other values can then name it as an origin.
         """
         name = run_name(name)
-        options: dict[str, Any] = {"retain_rows": retain_rows}
+        options: dict[str, Any] = {"retain_rows": retain_rows, "prefill": prefill}
         if lookahead is not None:
             options["lookahead"] = lookahead
         run = Run(self.adapter, self.tokens(prompt), **options)
@@ -394,11 +397,12 @@ class Debugger:
         return Context(self, run)
 
     def each(self, prompts: Any, line: str, *, at: str | None = None, keep: bool = False,
-             ctx: Context | None = None) -> Any:
+             ctx: Context | None = None, prefill: int | str | None = None) -> Any:
         """Run one op line on every prompt of a set (``mdb.ops.sets``): ``prompts`` is the name
         of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
-        (kept as the set ``inline``). Returns ``EachResult(summary, results, statistics)``; the
-        live run and its cursor are left as they were."""
+        (kept as the set ``inline``). ``prefill``: each item's split (``K`` or ``"@ROLE"``,
+        bound per item). Returns ``EachResult(summary, results, statistics)``; the live run
+        and its cursor are left as they were."""
         from .sets import define, load, run_each
 
         if isinstance(prompts, str) and prompts.endswith(".jsonl"):
@@ -406,7 +410,7 @@ class Debugger:
         elif not isinstance(prompts, str):
             prompts = define(self, "inline", list(prompts)).name
         return run_each(ctx if ctx is not None else self.ops(self.live), prompts, line, at=at,
-                        keep=keep)
+                        keep=keep, prefill=None if prefill is None else str(prefill))
 
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""

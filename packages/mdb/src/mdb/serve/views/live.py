@@ -375,7 +375,8 @@ def timeline(session) -> tuple[LiveTimeline, int]:
                             rows=[], limits=_limits(debugger)), 0
     stops = list(run.stops())
     here_row, here_index = run.parse(run.where)
-    root_row = len(run.tokens) - 1  # the run's root: its first stepped row starts at stop 0
+    # the run's root: the first stepped row's start (prefill=K), or a stored cut's stop
+    root_row, root_index = run.parse(run.root)
     context = [int(t) for t in run.session.read("tokens")[0].tolist()]
     marks: dict[int, list[str]] = {}
     for record in run.committed_edits():
@@ -385,12 +386,15 @@ def timeline(session) -> tuple[LiveTimeline, int]:
         marks.setdefault(here_row, []).append(f"{_mark(pending, record)} (staged)")
     rows = []
     for row in range(here_row + 1):
-        count = None if row < root_row else len(stops) if row < here_row else here_index + 1
+        first = root_index if row == root_row else 0    # stops of this row the run has
+        count = (None if row < root_row else len(stops) - first if row < here_row
+                 else here_index + 1 - first)
         rows.append(LiveRow(row=row, token=context[row] if row < len(context) else None,
                             count=count, edits=marks.get(row, [])))
     left_out = max(0, len(rows) - MAX_ROWS)
     return LiveTimeline(
         session=session.sid, where=run.where, stops=stops,
         cursor=LiveStop(row=here_row, index=here_index, label=stops[here_index]),
-        root=LiveStop(row=root_row, index=0, label=stops[0]), rows=rows[left_out:],
+        root=LiveStop(row=root_row, index=root_index, label=stops[root_index]),
+        rows=rows[left_out:],
         limits=_limits(debugger)), left_out

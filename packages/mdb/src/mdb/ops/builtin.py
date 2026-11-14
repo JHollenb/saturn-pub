@@ -654,11 +654,9 @@ def _start(ctx, prompt, name: str | None = None, prefill: int | None = None) -> 
             raise Refused(f"prefill={prefill} is past the prompt: it has {count} tokens, so "
                           f"prefill is 0..{count - 1} (the row after the prefilled ones is the "
                           "first stepped row)")
-    run = ctx.debugger.run(prompt, name=name)  # the one start: cursor at t<last>.L0.h
-    if prefill is not None and prefill != run.prefill:
-        # the prompt rows from `prefill` on are stepped one row at a time, tokens forced
-        run.reroot(prefill)
-        run.until(f"L0.{run.program.names[0]}")
+    # the one start: cursor at t<first stepped row>.L0.h; the prompt rows from `prefill` on are
+    # stepped one row at a time, tokens forced (one session, built under that split)
+    run = ctx.debugger.run(prompt, name=name, **({} if prefill is None else {"prefill": prefill}))
     getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)  # a new run of that name
     _switch(ctx, run)
 
@@ -1436,9 +1434,9 @@ def _op_set(ctx, target, value, op, dose=None):
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v); a port takes "
                       "replace, add or scale")
     request = port_request(ctx, found, value)
-    # atomic: failure stages nothing
+    # atomic: failure stages nothing (check: an edit the cursor's values see is realised now)
     manifest = run.set(found.run_target, request["value"], op, mask=request["mask"],
-                       selection=request["selection"], origin=request["origin"])
+                       selection=request["selection"], origin=request["origin"], check=True)
     staged = run.staged_info()
     out = {"target": found.text, "edits": [_edit_json(staged[-1] if staged else manifest)],
            "staged": len(run.edits), "where": run.where}

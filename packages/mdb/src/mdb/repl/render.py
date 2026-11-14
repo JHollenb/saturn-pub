@@ -694,6 +694,8 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         linear = prediction["linear"]
         exact = prediction["exact"]
         bound = f"  bound {_claimed(exact['bound'])}" if "bound" in exact else ""
+        if exact.get("wider_than_value"):
+            bound += " (worst case, >= |exact|: no sign)"
         operands = exact.get("operands", {})
         if operands.get("source") == "forecast":
             bound += f"  (operands forecast from {operands['at']})"
@@ -1133,9 +1135,10 @@ def _stat_lines(stat: dict[str, Any]) -> list[str]:
 def _each_lines(result: dict[str, Any]) -> list[str]:
     """``each``: one row per item (name, key numbers, verdict), then the summary lines."""
     rows = result["items"]
+    split = f" prefill={result['prefill']}" if "prefill" in result else ""
     lines = [f"each {result['set']}: {result['line']}",
-             f"  {result['total']} items at {result['at']}; runs {result['runs'].split(' ')[0]}; "
-             f"result {result['id']}"]
+             f"  {result['total']} items at {result['at']}{split}; runs "
+             f"{result['runs'].split(' ')[0]}; result {result['id']}"]
     columns: list[str] = []
     for row in rows:
         for name in row.get("key", {}).get("columns", {}):
@@ -1253,22 +1256,37 @@ def heat_table(result: dict[str, Any], width: int = _HEAT_WIDTH) -> list[str]:
     """The rows x layers table of a ``sweep`` as text of at most ``width`` columns: one line per
     layer, one column per position (row index, and the token text when a tokenizer exists), a
     cell the signed tenths of the largest |delta|. Positions that do not fit are cut from the
-    left and said so (the record holds them all)."""
-    table = result["table"]
-    rows, layers, grid = table["rows"], table["layers"], table["delta"]["value"]
-    scale = max((abs(v) for line in grid for v in line), default=0.0)
+    left and said so (the record holds them all). A sweep whose table is a blob is drawn from
+    its ``heat`` text (the same codes, computed by the op)."""
+    if "table" in result:
+        table = result["table"]
+        rows, layers, grid = table["rows"], table["layers"], table["delta"]["value"]
+        scale = max((abs(v) for line in grid for v in line), default=0.0)
+        tokens = {item["row"]: item for item in table.get("tokens", ())}
+
+        def code(i: int, j: int, cell: int) -> str:
+            return _heat_cell(grid[i][j], scale, cell)
+    else:
+        heat = result["heat"]
+        low, high = (int(x) for x in heat["rows"].split(":"))
+        first, last = (int(x) for x in heat["layers"].split(":"))
+        rows, layers = list(range(low, high)), list(range(first, last))
+        codes = [line.split(" ") for line in heat["cells"].split("\n")]
+        scale = heat["scale"]["value"]
+        tokens = {r: {"row": r, "text": t} for r, t in zip(rows, heat.get("tokens", ()))}
+
+        def code(i: int, j: int, cell: int) -> str:
+            return codes[i][j].rjust(cell)
     label = max(len(f"L{layers[-1]}"), 3) + 1
     cell = 3 if label + 3 * len(rows) <= width else 2
     fit = max(1, (width - label) // cell)
     start = max(0, len(rows) - fit)
     shown = list(range(start, len(rows)))
-    tokens = {item["row"]: item for item in table.get("tokens", ())}
     lines = [" " * label + "".join(f"t{rows[j]}"[-cell:].rjust(cell) for j in shown)]
     if any("text" in tokens.get(rows[j], {}) for j in shown):
         lines.append(" " * label + "".join(_token_label(tokens[rows[j]], cell) for j in shown))
     for i, layer in enumerate(layers):
-        lines.append(f"L{layer}".ljust(label)
-                     + "".join(_heat_cell(grid[i][j], scale, cell) for j in shown))
+        lines.append(f"L{layer}".ljust(label) + "".join(code(i, j, cell) for j in shown))
     if start:
         lines.append(f"(t{rows[0]}..t{rows[start - 1]} cut to fit; the table holds them)")
     lines.append(f"cell: tenths of max |Δ| {fmt(scale)} [measured] (9 caps); '.' < 1/20, "
@@ -1288,12 +1306,17 @@ def _sweep_lines(result: dict[str, Any]) -> list[str]:
         pointer = result["table_pointer"]
         lines.append(f"  table: {pointer['state']} blob sha256 {pointer['sha256'][:12]} "
                      f"({pointer.get('reason') or str(pointer.get('bytes', '')) + ' bytes'})")
+        if "cells" in result.get("heat", {}):
+            lines.extend(heat_table(result))
     top = ", ".join(f"t{item['row']}.L{item['layer']} {num(item['delta'])}"
                     for item in result["top"])
     lines.append(f"  top |Δ|: {top}")
-    native = result["cost"]["native"]
-    lines.append(f"  cost: {native['layer']['value']} layer calls, "
-                 f"{native['probe']['value']} probes, "
+    cost = result["cost"]
+    native = cost["native"]
+    planned = cost.get("planned", {}).get("layer")
+    lines.append(f"  cost: {native['layer']['value']} layer calls"
+                 + (f" (planned {planned['value']})" if planned else "")
+                 + f", {native['probe']['value']} probes, "
                  f"{native['transition']['value']} other transitions [measured] "
                  "(wall time in the record)")
     lines.append(f"  session unchanged at {result['where']}")
