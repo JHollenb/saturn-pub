@@ -3,7 +3,8 @@
 // magnitude): `confirmed` (residual <= floor), `not confirmed` (residual > floor) or
 // `unresolved` (no label for the native value; the reason says why). `edited` and `open` are
 // the ledger's other states. The worst-case propagated bound is shown only when the op gives
-// one (finite) and is information, never the verdict.
+// one (finite) and is information, never the verdict; when the op gives none it gives
+// `bound_note` (where the interval stopped being informative and why, M56/M57), shown instead.
 import { OpValue } from '../../chrome/OpValue';
 import { str } from '../../chrome/labelled';
 
@@ -52,6 +53,12 @@ export function ResidualVsFloor({ v }: { v: Record<string, unknown> }) {
           {' '}
           · bound <OpValue value={v.bound_max} what="bound" compact />
           {within ? ` ${within}` : ''}
+        </span>
+      )}
+      {v.bound_max === undefined && str(v.bound_note) && (
+        <span className="faint" data-testid="verify-bound-note">
+          {' '}
+          · {str(v.bound_note)}
         </span>
       )}
     </span>

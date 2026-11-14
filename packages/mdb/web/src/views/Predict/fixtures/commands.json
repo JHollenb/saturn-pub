@@ -1236,7 +1236,7 @@
         "op": "whatif",
         "route": "POST op"
       },
-      "server": "python -m mdb serve --project <tmp> --tiny qwen2 (separate process; round 6, M19)"
+      "server": "mdb.serve.app.create_app over LiveSession(open_debugger(<tmp>, tiny='qwen2')), FastAPI TestClient, same ops_before (in-process; round 7, M55/M56: emulated prediction, effect against it, per-stage containment)"
     },
     "whatif_interrupted": {
       "ops_before": [

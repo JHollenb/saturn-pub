@@ -1,5 +1,7 @@
-// Predictions in flight: a what-if panel (the `whatif` op: sealed linear and exact predictions,
-// the bound, the native measurement and the error split; the session is restored), a compare
+// Predictions in flight: a what-if panel (the `whatif` op: sealed linear, exact and emulated
+// predictions, the exact chain's worst-case interval or the note saying where it stopped being
+// informative, the native measurement, the verdict against the emulated prediction, the error
+// split and each run's per-stage containment; the session is restored), a compare
 // panel (the `compare` op: base, A, B, A+B, effects, interaction) and the run's forecasts (the
 // `forecast` / `verify` ops). Nothing here changes the session's edits: "stage this edit" is a
 // separate, explicit `set`. Pure: actions go through `act`.
@@ -154,6 +156,9 @@ export function WhatIfResult({
   const opName = str(edit.op);
   const staged = stageOf(result);
   const exact = prediction.exact;
+  const emulated = prediction.emulated;
+  const effect = isRec(result.effect) ? result.effect : {};
+  const otherEdits = strs(at(prediction, 'other_edits', 'applied'));
   return (
     <div className="whatif-result" data-testid="whatif-result">
       <div>
@@ -183,8 +188,16 @@ export function WhatIfResult({
             <th>sealed exact Δ</th>
             <td>
               <OpValue value={at(exact, 'value') ?? exact} what="exact" />{' '}
-              <span className="faint">bound</span>{' '}
-              <OpValue value={at(exact, 'bound')} what="bound" />
+              <BoundOrNote holder={exact} />
+            </td>
+          </tr>
+          <tr>
+            <th>sealed emulated Δ</th>
+            <td>
+              <OpValue value={at(emulated, 'value') ?? emulated} what="emulated" />
+              {str(at(emulated, 'meaning')) && (
+                <div className="faint">{str(at(emulated, 'meaning'))}</div>
+              )}
             </td>
           </tr>
           <tr>
@@ -204,21 +217,42 @@ export function WhatIfResult({
                 value={at(result, 'difference', 'native_minus_exact')}
                 what="native minus exact"
               />{' '}
-              <span className="faint">bound</span>{' '}
-              <OpValue
-                value={at(result, 'difference', 'native_minus_exact', 'bound')}
-                what="bound"
-              />
-              {at(result, 'difference', 'native_minus_exact', 'within_bound') === true
-                ? ' within'
-                : at(result, 'difference', 'native_minus_exact', 'within_bound') === false
-                  ? ' OUTSIDE'
-                  : ''}
+              <BoundOrNote holder={at(result, 'difference', 'native_minus_exact')} />
+            </td>
+          </tr>
+          <tr>
+            <th>verdict</th>
+            <td data-testid="whatif-verdict">
+              <VerdictChip v={effect} status="?" />{' '}
+              {effect.residual !== undefined && (
+                <span className="faint">
+                  residual <OpValue value={effect.residual} what="residual" compact />
+                  {effect.floor !== undefined && (
+                    <>
+                      {' '}
+                      vs floor <OpValue value={effect.floor} what="floor" compact />
+                    </>
+                  )}
+                </span>
+              )}
+              {[str(effect.rests_on), str(effect.note)].filter(Boolean).map((line) => (
+                <div key={line} className="faint">
+                  {line}
+                </div>
+              ))}
             </td>
           </tr>
         </tbody>
       </table>
       <SplitBar split={result.split} />
+      <StageLines stages={result.stages} />
+      {otherEdits.length > 0 && (
+        <div className="faint" data-testid="whatif-other-edits">
+          other edits in the chains: {otherEdits.join(', ')}
+          {str(at(prediction, 'other_edits', 'rule')) &&
+            ` (${str(at(prediction, 'other_edits', 'rule'))})`}
+        </div>
+      )}
       <div className="whatif-session" data-testid="whatif-session">
         {session.unchanged === true ? (
           <>
@@ -245,6 +279,57 @@ export function WhatIfResult({
           (<code>set</code>; the only button here that changes the session)
         </span>
       </div>
+    </div>
+  );
+}
+
+/** A chain's worst-case rounding interval, as information (never the verdict): the finite
+ *  interval with whether the measured value lies within it, or the op's note saying where the
+ *  interval stopped being informative and why (M56/M57: `bound_note`), or nothing. */
+export function BoundOrNote({ holder }: { holder: unknown }) {
+  if (!isRec(holder)) return null;
+  if (holder.bound !== undefined) {
+    return (
+      <span title="worst-case rounding interval through the chain: information, not the verdict">
+        <span className="faint">worst-case interval</span>{' '}
+        <OpValue value={holder.bound} what="bound" />
+        {holder.within_bound === true ? ' within' : holder.within_bound === false ? ' OUTSIDE' : ''}
+      </span>
+    );
+  }
+  const note = str(holder.bound_note);
+  return note ? (
+    <span className="faint" data-testid="bound-note">
+      ({note})
+    </span>
+  ) : null;
+}
+
+/** Each run's per-stage containment on native operands (M56c): a per-stage bound, not a chain
+ *  bound. `stages` is `{edited?, base?}` (a what-if) or one containment record (verify). */
+export function StageLines({ stages }: { stages: unknown }) {
+  if (!isRec(stages)) return null;
+  const sides: [string, unknown][] =
+    'text' in stages || 'state' in stages ? [['', stages]] : Object.entries(stages);
+  return (
+    <div className="stage-lines" data-testid="stage-lines">
+      {sides.map(([side, s]) =>
+        isRec(s) ? (
+          <div key={side} className="faint" data-stages={side || 'one'}>
+            {side ? `${side} run ` : ''}stages{' '}
+            {s.state === 'refused' || s.state === 'unresolved' ? (
+              <>
+                {str(s.state)} ({str(s.reason) ?? '?'})
+              </>
+            ) : (
+              <>
+                [per-stage bound, not a chain bound]: {str(s.text) ?? '?'}
+                {str(s.cost) && <span title="cost"> · {str(s.cost)}</span>}
+              </>
+            )}
+          </div>
+        ) : null,
+      )}
     </div>
   );
 }
@@ -474,11 +559,18 @@ function ForecastRow({ f, busy, act }: { f: LiveForecast; busy: boolean; act: Pr
       <td className="n">
         {v && v.residual_max_abs !== undefined ? (
           <ResidualVsFloor v={v} />
-        ) : (
+        ) : f.bound.max !== undefined ? (
           <>
             <span className="faint">bound</span>{' '}
             <OpValue value={at(f.bound, 'max')} what="bound" compact />
           </>
+        ) : (
+          <span className="faint" data-testid="forecast-bound-note">
+            {str(f.bound.note) ??
+              (str(f.bound.state)
+                ? `worst-case interval ${str(f.bound.state)} (${str(f.bound.reason) ?? '?'})`
+                : 'no worst-case interval')}
+          </span>
         )}
       </td>
       <td>

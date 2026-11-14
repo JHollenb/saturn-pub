@@ -108,6 +108,60 @@ describe('what-if', () => {
     expect(editAddressOf(resultOf(whatifPort))).toBe('t3.L1.o');
   });
 
+  it("shows the emulated prediction, the verdict against it and each run's stages (M55/M56)", () => {
+    const result = resultOf<Rec>(whatifHead);
+    const html = whatif(whatifHead);
+    expect(html).toContain('sealed emulated Δ');
+    expect(html).toContain('the native change predicted bit for bit');
+    expect(html).toContain('data-testid="whatif-verdict"');
+    expect(html).toContain('data-verdict="effect"');
+    expect(html).toContain('rests on native = emulated within 0 spacings');
+    // the exact chain's finite interval is information, labelled as such
+    expect(html).toContain('worst-case interval');
+    expect(html).not.toContain('data-testid="bound-note"');
+    const stages = (result.stages as Rec).edited as Rec;
+    expect(html).toContain('data-stages="edited"');
+    expect(html).toContain('data-stages="base"');
+    expect(html).toContain(
+      `edited run stages [per-stage bound, not a chain bound]: ${String(stages.text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')}`,
+    );
+    expect(String(stages.text)).toMatch(
+      /^each stage within its own rounding bound on native operands: \d+\/\d+/,
+    );
+  });
+
+  it('an uninformative interval is shown as its note, never as a huge bound (M56/M57)', () => {
+    const result = resultOf<Rec>(whatifHead);
+    const prediction = result.prediction as Rec;
+    const exact = { ...(prediction.exact as Rec) };
+    delete exact.bound;
+    const note =
+      'worst-case rounding interval not informative from t3.L0.p (score interval 12.9 at |s| 16.8)';
+    exact.bound_note = note;
+    const terms = ((result.split as Rec).terms as Rec[]).map((t) => {
+      if (t.name !== 'rounding effect') return t;
+      const rest: Rec = { ...t, bound_note: note };
+      delete rest.bound;
+      delete rest.within_bound;
+      return rest;
+    });
+    const changed = {
+      ...result,
+      prediction: { ...prediction, exact },
+      split: { ...(result.split as Rec), terms },
+    };
+    const html = renderToStaticMarkup(<WhatIfResult result={changed} busy={false} act={act} />);
+    expect(html).toContain('data-testid="bound-note"');
+    expect(html).toContain(`(${note.replace(/>/g, '&gt;')})`);
+    const from = html.indexOf('<li data-term="rounding effect"');
+    const term = html.slice(from, html.indexOf('</li>', from));
+    expect(term).toContain(note.replace(/>/g, '&gt;'));
+    expect(term).not.toContain('>bound</span>');
+  });
+
   it('a port consumer gives summaries (max_abs, norm), never one number', () => {
     const html = whatif(whatifPort);
     expect(html).toContain('max_abs');

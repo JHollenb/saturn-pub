@@ -36,16 +36,16 @@ summary: none refused; statistics over all 4 items
   prediction.exact.value  [derived-exact]
     n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
   effect.verdict: effect 4
-  +41 more in the record (promptset result each2 [ITEM])
+  +51 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 each recall: reads t@subject --consumer M[$answer,$foil] top=2
   4 items at t@last.logits; runs released; result each3
-  item  read      mass     effect      causal     verdict
-  a     t3.L1.h0  0.24902  0.011455    -0.015137  causal
-  b     t3.L1.h1  0.25195  -0.0082406  0.012207   causal
-  c     t4.L1.h1  0.19922  -0.0073077  0.0064697  causal
+  item  read      mass     effect      causal     resid sp  verdict
+  a     t3.L1.h0  0.24902  0.011455    -0.015137  0         causal
+  b     t3.L1.h1  0.25195  -0.0082406  0.012207   0         causal
+  c     t4.L1.h1  0.19922  -0.0073077  0.0064697  0         causal
   d     refused: no role 'subject' (roles: last)
-  labels: mass measured, effect derived-exact, causal measured
+  labels: mass measured, effect derived-exact, causal measured, resid sp measured
 summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   reads.0.mass  [measured]
     n 3  mean 0.2334  min 0.19922  max 0.25195  sign + 3/3
@@ -53,11 +53,13 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
     n 3  mean -0.0013643  min -0.0082406  max 0.011455  sign - 2/3
   reads.0.causal.delta  [measured]
     n 3  mean 0.00118  min -0.015137  max 0.012207  sign + 2/3
+  reads.0.causal.effect.residual_spacings  [measured]
+    n 3  mean 0  min 0  max 0  sign 0 3/3
   reads.0.causal.effect.verdict: effect 3
   reads.0.causal.verdict: causal 3
   reads.1.causal.effect.verdict: effect 3
   reads.1.causal.verdict: causal 3
-  +42 more in the record (promptset result each3 [ITEM])
+  +42 more in the record; 1 paths in some items only (promptset result each3 [ITEM])
 (mdb) each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
 each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
   4 items at t@last.logits; runs released; result each4
@@ -73,14 +75,16 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   prediction.exact.value  [derived-exact]
     n 3  mean 0.0067405  min -0.0039496  max 0.019549  sign + 2/3
   effect.verdict: effect 3
-  +39 more in the record (promptset result each4 [ITEM])
+  +45 more in the record (promptset result each4 [ITEM])
 (mdb) promptset result each2 a
 each2 item a:
 whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record 4936eae489eeb814)
   sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.0083008 [derived-exact]
   native  ΔM = -0.0083008 [measured]   (base -0.11401 [measured] -> edited -0.12231 [measured])
   error split (P20): linear -0.0079277 [derived-local P14] + nonlinear 0.00049298 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00086605 [derived-exact P20] (within bound 0.045715 [bound]) + residual 0 [measured P20]
-  verdict (P20): effect  native ΔM -0.0083008 [measured P20], emulated ΔM -0.0083008 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
+  verdict (P20): effect  native ΔM -0.0083008 [measured P20] = 17 spacings, emulated ΔM -0.0083008 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
+  edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 11/11 (worst |native - identity|/bound 0.777 at t3.L1.f); 1 not checked
+  base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.885 at t3.L1.sg)
   session unchanged at t3.logits  (5 moves, restored)
 (mdb) where
 t3.L0.h  h = layer input (residual stream)  {P01}

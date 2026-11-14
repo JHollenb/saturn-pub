@@ -19,6 +19,7 @@ export function SplitBar({ split }: { split: unknown }) {
     meaning: str(t.meaning),
     bound: t.bound,
     within: t.within_bound,
+    note: str(t.bound_note), // no informative interval: where it stopped and why (M56/M57)
     m: magnitude(valOf(t.value)),
   }));
   const scalar = parts.every((p) => p.m === null || p.m.signed);
@@ -35,7 +36,12 @@ export function SplitBar({ split }: { split: unknown }) {
         {str(at(split, 'rule')) ?? ''}
         {!scalar && ' · a vector consumer: each term is a summary (norm drawn); they do not add'}
       </div>
-      <svg width={W + 2} height={scalar ? H + 14 : parts.length * (H + 4)} role="img" aria-label="error split bar">
+      <svg
+        width={W + 2}
+        height={scalar ? H + 14 : parts.length * (H + 4)}
+        role="img"
+        aria-label="error split bar"
+      >
         {parts.map((p, i) => {
           if (!p.m || span === 0) return null;
           const w = (Math.abs(p.m.v) / span) * W;
@@ -89,6 +95,7 @@ export function SplitBar({ split }: { split: unknown }) {
                 {p.within === true ? ' within' : p.within === false ? ' OUTSIDE' : ''}
               </Fragment>
             )}
+            {p.bound === undefined && p.note && <span className="faint"> ({p.note})</span>}
             {p.meaning && <span className="faint"> — {p.meaning}</span>}
           </li>
         ))}
