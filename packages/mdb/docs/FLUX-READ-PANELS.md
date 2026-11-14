@@ -1,12 +1,12 @@
 # FLUX read panels: sealed attention panels on the FLUX.2 Klein lane
 
-This lane runs an `mdb.attention_panels` plan on FLUX.2 Klein 4B through `mdb.attention_port`. It replaces the one-off worker `saturn/experiments/2026-11-11-flux-read-graph/read_graph_worker.py` for read-cut experiments. It has three parts:
+This lane runs an `mdb_lanes.attention_panels` plan on FLUX.2 Klein 4B through `mdb_lanes.attention_port`. It replaces the one-off worker `saturn/experiments/2026-11-11-flux-read-graph/read_graph_worker.py` for read-cut experiments. It has three parts:
 
-- `src/mdb/flux_read_panels.py`: framework-free logic. It checks plans and leases, builds and verifies regeneration recipes, maps worker rows to panel results, and computes the headfree "gone" score.
-- `qualification/flux_read_panel_worker.py`: the mrun worker. It has two modes, panel and `--regenerate`.
-- `qualification/flux_read_panel_stage.py`: offline commands to build plans, stage, submit and report.
+- `packages/mdb-lanes/src/mdb_lanes/flux_read_panels.py`: framework-free logic. It checks plans and leases, builds and verifies regeneration recipes, maps worker rows to panel results, and computes the headfree "gone" score.
+- `packages/mdb-lanes/qualification/flux_read_panel_worker.py`: the mrun worker. It has two modes, panel and `--regenerate`.
+- `packages/mdb-lanes/qualification/flux_read_panel_stage.py`: offline commands to build plans, stage, submit and report.
 
-Unit tests are in `tests/test_flux_read_panel.py`. Sealed plans, tables and verdicts are in `qualification/flux_read_panels_20261112/`.
+Unit tests are in `packages/mdb-lanes/tests/test_flux_read_panel.py`. Sealed plans, tables and verdicts are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/`.
 
 ## End to end
 
@@ -14,8 +14,8 @@ Use the mdb interpreter, with `PYTHONPATH` pointing at the checkout under test. 
 
 ```bash
 PY=/Users/jakeholl/domains/saturn-pub/packages/mdb/.venv/bin/python
-export PYTHONPATH=<worktree>/packages/mdb/src
-cd packages/mdb/qualification
+export PYTHONPATH=<worktree>/packages/mdb-lanes/src:<worktree>/packages/mdb/src:<worktree>/src
+cd packages/mdb-lanes/qualification
 $PY flux_read_panel_stage.py plans flux_read_panels_20261112/plans          # 1 build + 2 seal + leases
 $PY flux_read_panel_stage.py stage RUN --plans .../plans --job smoke         # 3 stage (also: legacy, full:N)
 $PY flux_read_panel_stage.py submit RUN [--attempt N]                        # 4 submit (mrun, priority 70)
@@ -112,9 +112,9 @@ This is the FLUX counterpart of the Qwen hydration path in `native_replay_recipe
 
 Klein 4B, 256 px, 4 steps, BF16, TF32 off, prompts `cat` and `car`, seeds 4242 and 9001.
 
-Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. The primary verdict report is `report/e-report-20261113.txt` with `report/e-summary-20261113.json` and `report/e-verdicts-fixed-20261113.json`: all 78 records recomputed from the saved results with the verdict logic of 2026-11-13 by `qualification/panel_verdicts_recompute_20261113.py` (no new runs). `report/d-verdicts-*.json` hold the sealed-logic verdicts and are kept as history. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
+Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. The primary verdict report is `report/e-report-20261113.txt` with `report/e-summary-20261113.json` and `report/e-verdicts-fixed-20261113.json`: all 78 records recomputed from the saved results with the verdict logic of 2026-11-13 by `packages/mdb-lanes/qualification/panel_verdicts_recompute_20261113.py` (no new runs). `report/d-verdicts-*.json` hold the sealed-logic verdicts and are kept as history. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
 
-The sealed plans are in `qualification/flux_read_panels_20261112/plans/`:
+The sealed plans are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/plans/`:
 
 | plan | sha256 | arms | branches | contents |
 |---|---|---|---|---|
@@ -249,12 +249,12 @@ The job confirmed the staged shared-module bytes (`attention_port` e315da2a, `at
 
 The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. The picture-judgement slot is empty (`picture=None`): no picture judgement was made. Every count in this section is MEASURED by running the named version of `verdicts()` on the same saved results (`report/d-results-px.json`, plan `94ef887e...`); no new job ran.
 
-**Primary: all 78 records under the verdict logic of 2026-11-13** (`report/e-report-20261113.txt`, `report/e-summary-20261113.json`, records in `report/e-verdicts-fixed-20261113.json`; written by `qualification/panel_verdicts_recompute_20261113.py`).
+**Primary: all 78 records under the verdict logic of 2026-11-13** (`report/e-report-20261113.txt`, `report/e-summary-20261113.json`, records in `report/e-verdicts-fixed-20261113.json`; written by `packages/mdb-lanes/qualification/panel_verdicts_recompute_20261113.py`).
 
 | verdict logic | supported | set_only | not_supported | control_missing |
 |---|---|---|---|---|
 | sealed: `attention_panels` 5e09d95 (sha 31a8595b), the module the plan was sealed with | 27 | 0 | 51 | 0 |
-| pre-fix: 166b334 (sha 4a39dbaa; the same file at the audited tip 420b38e), the branch's logic before this fix pass | 2 | 13 | 63 | 0 |
+| pre-fix: 166b334 (sha 4a39dbaa; the same file at the audited tip 420b38e; after the move to mdb-lanes the same bytes are at 4bbe3e7 `packages/mdb-lanes/src/mdb_lanes/attention_panels.py`), the branch's logic before this fix pass | 2 | 13 | 63 | 0 |
 | **fixed: this fix pass (primary)** | **0** | **15** | **46** | **17** |
 | fixed, with the named-unit check reported as a flag only | 2 | 14 | 61 | 1 |
 

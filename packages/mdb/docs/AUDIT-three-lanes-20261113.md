@@ -2,6 +2,8 @@
 
 Independent audit of branch `claude/mdb-consolidation-20261112` at 420b38e, package `packages/mdb`. I read the code and the saved raw outputs. I did not rely on the write-ups. Every number marked MEASURED below was recomputed by me from raw files (PNG, rows.jsonl, npz, sealed plans) with numpy/PIL/json on the laptop, or by re-running the shared verdict code on the saved results. I loaded no models and submitted no jobs. Scratch scripts are in the session scratchpad (`flux_*.py`, `qwen_*.py`, `nd_q5.py`).
 
+Layout note (added when this branch was ported onto the mdb-lanes split, 9ec645b): the audit was written against the pre-split layout. Paths below such as `src/mdb/attention_panels.py`, `qualification/...` and `tests/...` now live under `packages/mdb-lanes/` (`src/mdb_lanes/`, `qualification/`, `tests/`); commits 420b38e and 166b334 are on the unpushed source branch only. The audit text is otherwise unchanged.
+
 Verdict vocabulary used to judge question 1 (from the brief): `supported` = no alternative explanation left; `set_only` = the set is needed (or sufficient), but mass, set size or generic damage is not ruled out.
 
 ## Findings, worst first

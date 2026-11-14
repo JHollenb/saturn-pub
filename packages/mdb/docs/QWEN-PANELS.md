@@ -1,6 +1,6 @@
 # Qwen value and read-cut panels
 
-Status: November 13, 2026, 22:06 PST (verdicts recomputed after the audit `docs/AUDIT-three-lanes-20261113.md`; first written 21:26 PST). **Smoke and all three full jobs finished and were pulled and analysed.** Smoke `job-9020b3bfd5e7`; full jobs `job-b33e6b98c328` (FP32 value + read lease 0), `job-4a433df3f30b` (read lease 1), `job-7c3232ad65bb` (read lease 2 + BF16 value + BF16 smoke read). Results tables (a) to (e) are below, MEASURED. No new job ran for the recomputation: the read verdicts and the BF16 table were recomputed from the saved rows with the fixed verdict code (`qualification/panel_verdicts_recompute_20261113.py` → `qualification/qwen_panels_20261112/full-verdicts-20261113.json`; `full-tables.json` is unchanged and holds the earlier verdicts).
+Status: November 13, 2026, 22:06 PST (verdicts recomputed after the audit `docs/AUDIT-three-lanes-20261113.md`; first written 21:26 PST). **Smoke and all three full jobs finished and were pulled and analysed.** Smoke `job-9020b3bfd5e7`; full jobs `job-b33e6b98c328` (FP32 value + read lease 0), `job-4a433df3f30b` (read lease 1), `job-7c3232ad65bb` (read lease 2 + BF16 value + BF16 smoke read). Results tables (a) to (e) are below, MEASURED. No new job ran for the recomputation: the read verdicts and the BF16 table were recomputed from the saved rows with the fixed verdict code (`packages/mdb-lanes/qualification/panel_verdicts_recompute_20261113.py` → `packages/mdb-lanes/qualification/qwen_panels_20261112/full-verdicts-20261113.json`; `full-tables.json` is unchanged and holds the earlier verdicts).
 
 Worst caveats, in order:
 1. **Read verdicts (d) changed after the fix.** The `freezing` random controls did not control what they claimed. For every `freezing` set the two random draws are the same set (`rand0` = `rand1`). For L20H5 the "random" head is L20H11, for L20H11 it is L20H5, and rank3's draw contains L20H11, so three of the six cut controls were other named test heads. The other-item control cuts the same heads' reads of `icy`, which carry 0.05% to 2.7% of the target's attention mass, so it is close to an empty cut. With those controls excluded or ruling nothing out, L20H5, L20H11 and rank3 are `control_missing`; L21H0 is `unresolved` (effect 4.4% to 8.4% of the all-cut, below the 5% minimum-fraction choice); named3 and rank12 stay `set_only` with only set size ruled out.
@@ -9,7 +9,7 @@ Worst caveats, in order:
 
 Numbers in the design sections marked DRY RUN or ASSERTED are unchanged.
 
-Modules: [`mdb.qwen_panels`](../src/mdb/qwen_panels.py) (pure Python: case, plans, recipes, analysis), [`qualification/qwen_panel_worker.py`](../qualification/qwen_panel_worker.py) (torch worker), [`qualification/qwen_panel_stage.py`](../qualification/qwen_panel_stage.py) (plans, job layout, stage, submit), [`qualification/qwen_panel_analyze.py`](../qualification/qwen_panel_analyze.py) (tables (a) to (e)). Tests: [`tests/test_qwen_panel.py`](../tests/test_qwen_panel.py).
+Modules: [`mdb_lanes.qwen_panels`](../../mdb-lanes/src/mdb_lanes/qwen_panels.py) (pure Python: case, plans, recipes, analysis), [`packages/mdb-lanes/qualification/qwen_panel_worker.py`](../../mdb-lanes/qualification/qwen_panel_worker.py) (torch worker), [`packages/mdb-lanes/qualification/qwen_panel_stage.py`](../../mdb-lanes/qualification/qwen_panel_stage.py) (plans, job layout, stage, submit), [`packages/mdb-lanes/qualification/qwen_panel_analyze.py`](../../mdb-lanes/qualification/qwen_panel_analyze.py) (tables (a) to (e)). Tests: [`packages/mdb-lanes/tests/test_qwen_panel.py`](../../mdb-lanes/tests/test_qwen_panel.py).
 
 ## The case
 
@@ -38,7 +38,7 @@ This is the value-coalition case of 2026-11-12 (job main-02), reproduced exactly
 - **Label-free sets:** `contrast_ranking` of the receiver's attention to row 18 against its attention to the other word rows (0, 2, 4, …, 20), using the smoke's FP32 attention. The plan records the rank of each named head, a raw-mass ranking (the trivial head nominator) and the `attention_ranking` top-source baselines (position 0, previous token, offsets from the end, uniform) for all heads, `named3` and each top-n set.
 - `read-smoke-<lane>`: L20H5 only, with floors, the other item and the all-cut. It is the BF16 backend-floor measurement in the full layout.
 
-**Branch budget.** `mdb.scheduling_contract` allows at most 256 logical branches per job. The full layout is therefore three jobs (`qwen_panel_stage.job_layout`; read-plan leases are capped at 199):
+**Branch budget.** `mdb_lanes.scheduling_contract` allows at most 256 logical branches per job. The full layout is therefore three jobs (`qwen_panel_stage.job_layout`; read-plan leases are capped at 199):
 
 1. FP32 value plan plus read lease 0.
 2. Read lease 1.
@@ -50,8 +50,8 @@ Each lease also runs its own `native` copy. Keep arms carry their all-cut throug
 
 ```sh
 PY=/Users/jakeholl/domains/saturn-pub/packages/mdb/.venv/bin/python
-export PYTHONPATH=<worktree>/packages/mdb/src PATH=/Users/jakeholl/domains/common/bin:$PATH MRUN_URL=http://127.0.0.1:19025
-cd packages/mdb/qualification
+export PYTHONPATH=<worktree>/packages/mdb-lanes/src:<worktree>/packages/mdb/src:<worktree>/src PATH=/Users/jakeholl/domains/common/bin:$PATH MRUN_URL=http://127.0.0.1:19025
+cd packages/mdb-lanes/qualification
 $PY qwen_panel_stage.py plans --profile smoke --out qwen_panels_20261112/smoke          # done, committed
 $PY qwen_panel_stage.py stage  RUN_SMOKE --plans qwen_panels_20261112/smoke --vram-mb 10000 --ram-mb 14000
 $PY qwen_panel_stage.py submit RUN_SMOKE                                                  # job-9020b3bfd5e7 (succeeded)
@@ -74,7 +74,7 @@ The worker prints `QWENPANEL {"kind": "modules", ...}` with the file and sha256 
   - the distance to the reference arm (max |Δlogit| and KL);
   - for read arms: the port metadata (cuts, removed reads, emptied cells) and the lease.
 - `logits.npy` (value plans only): full first-position logits as FP32, [arms, 151936]. Read plans keep the top-20 plus the tracked tokens only.
-- `recipes.jsonl`: a plain JSON recipe (`mdb-qwen-panel-recipe-v1`) for every arm. Where the arm kind is expressible, there is also a sealed `mdb.native_replay_recipe` recipe (`copy-values` on the native session, in the main-02 token order).
+- `recipes.jsonl`: a plain JSON recipe (`mdb-qwen-panel-recipe-v1`) for every arm. Where the arm kind is expressible, there is also a sealed `mdb_lanes.native_replay_recipe` recipe (`copy-values` on the native session, in the main-02 token order).
 - `results.json` (read plans): the `attention_panels` results record within the lease. The outcome is |margin shift from `native`|, and twin pairs are |margin(delta cut) − margin(recompute cut)|.
 - `receiver-attention.json`: row 21's FP32-recomputed attention (`attention_port.Read.probs`), every layer, head and source.
 - `summary.json`: the timeline, peak VRAM and RSS, versions, and the module sha256s.
@@ -94,7 +94,7 @@ MEASURED on the real model (smoke `job-9020b3bfd5e7`, CUDA): FP32, max |Δlogit|
 
 ## Results
 
-Scope: one prompt pair and one model; the 18 cells share one context and are not independent replications. Every number in this section is MEASURED unless marked otherwise. Full tables: [`qualification/qwen_panels_20261112/full-tables.json`](../qualification/qwen_panels_20261112/full-tables.json) (written by `qwen_panel_analyze.py --plans qwen_panels_20261112/full`); full plans and label-free ranking: [`qualification/qwen_panels_20261112/full/`](../qualification/qwen_panels_20261112/full/). Pulled job directories: `/Users/jakeholl/domains/artifacts/mdb-qwen-panels-20261112/<job>/`; staged payloads: `.../runs/full-0{0,1,2}`.
+Scope: one prompt pair and one model; the 18 cells share one context and are not independent replications. Every number in this section is MEASURED unless marked otherwise. Full tables: [`packages/mdb-lanes/qualification/qwen_panels_20261112/full-tables.json`](../../mdb-lanes/qualification/qwen_panels_20261112/full-tables.json) (written by `qwen_panel_analyze.py --plans qwen_panels_20261112/full`); full plans and label-free ranking: [`packages/mdb-lanes/qualification/qwen_panels_20261112/full/`](../../mdb-lanes/qualification/qwen_panels_20261112/full/). Pulled job directories: `/Users/jakeholl/domains/artifacts/mdb-qwen-panels-20261112/<job>/`; staged payloads: `.../runs/full-0{0,1,2}`.
 
 ### Runs
 

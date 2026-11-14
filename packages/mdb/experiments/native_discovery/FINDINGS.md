@@ -60,7 +60,7 @@ The next useful comparison is a matched discovery/development study of formation
 
 ## Addendum, 2026-11-12 14:42 PST: re-analysis with position-robust metrics and trivial baselines
 
-An independent review flagged that the early-boundary result might be a first-token effect. This addendum re-scores the two saved panels from their artifacts only (no model load, no forward) with the shared `mdb.analysis_metrics` and `mdb.attention_ranking` modules, using `reanalyze_sink.py` in this directory. The original numbers above are unchanged and still verify; what changes is how they should be read. All values below are measured on the saved artifacts.
+An independent review flagged that the early-boundary result might be a first-token effect. This addendum re-scores the two saved panels from their artifacts only (no model load, no forward) with the shared `mdb_lanes.analysis_metrics` and `mdb_lanes.attention_ranking` modules, using `reanalyze_sink.py` in this directory. The original numbers above are unchanged and still verify; what changes is how they should be read. All values below are measured on the saved artifacts.
 
 **Position 0 holds almost all of the residual energy at the early boundaries.** At layers 9 and 19, the first token carries 99.73–99.90% of the target's squared size in three of four held-out documents of the initial panel and in all four of the second panel. The fourth initial-panel document (it starts with the digit `2`) has no such activation (0.01%). The uncentred relative MSE used above is therefore mostly a score for predicting that one large vector.
 

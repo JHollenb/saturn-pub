@@ -1,6 +1,6 @@
 # Attention panels: one generator for read-cut and value-replacement experiments
 
-`mdb.attention_panels` builds the arm list of an attention experiment from a named unit set, a universe of units and a few options. It adds every mandatory control, counts the branches, splits the panel into leases, seals the plan by hash, and turns per-arm scalar outcomes into a verdict for each unit set. It replaces the hand-written arm lists in the FLUX read-graph worker (`headcut` block) and the `{arm, kind, cells, dose}` schemas in `value_coalition.plan`, `frozen_value_pair.arms` and `attention_source_resolver.arms`, together with the kind → (side, payload side, target row, payload row) mapping that three qualification workers each copied.
+`mdb_lanes.attention_panels` builds the arm list of an attention experiment from a named unit set, a universe of units and a few options. It adds every mandatory control, counts the branches, splits the panel into leases, seals the plan by hash, and turns per-arm scalar outcomes into a verdict for each unit set. It replaces the hand-written arm lists in the FLUX read-graph worker (`headcut` block) and the `{arm, kind, cells, dose}` schemas in `value_coalition.plan`, `frozen_value_pair.arms` and `attention_source_resolver.arms`, together with the kind → (side, payload side, target row, payload row) mapping that three qualification workers each copied.
 
 The module is framework-free. Importing it loads neither torch nor numpy (a test checks this). numpy is imported only to draw random controls, and `attention_port` only when an arm is mapped to port cuts.
 
@@ -39,7 +39,7 @@ Kinds:
 ## The generators
 
 ```python
-from mdb.attention_panels import ReadPanelSpec, RandomControls, read_panel, value_panel, sets_from_ranking
+from mdb_lanes.attention_panels import ReadPanelSpec, RandomControls, read_panel, value_panel, sets_from_ranking
 
 panel = read_panel(ReadPanelSpec(
     items=("red", "black", "ball", "snow"),             # one prompt's test words
@@ -130,7 +130,7 @@ A read plan carries an `execution` block that is part of its sha256:
 
 | key | meaning |
 |---|---|
-| `status` | `supported`, `set_only`, `not_supported`, `unresolved` or `control_missing` (after any picture judgement). The same five words are the `mdb.symbol_reads` verdicts; `symbol_reads.set_results_from_panel_verdict(panel, record, run_id=..., contrast_id=...)` turns this record into set-scope `CausalResult`s (one per cut type) without re-deriving anything |
+| `status` | `supported`, `set_only`, `not_supported`, `unresolved` or `control_missing` (after any picture judgement). The same five words are the `mdb_lanes.symbol_reads` verdicts; `symbol_reads.set_results_from_panel_verdict(panel, record, run_id=..., contrast_id=...)` turns this record into set-scope `CausalResult`s (one per cut type) without re-deriving anything |
 | `scalar_status`, `why` | the status from the numbers alone, and why |
 | `claim_scope`, `claim_statement` | for `supported`: `identity`; for `set_only`: `needed_set` (cut) or `sufficient_set` (keep), with a statement that begins `WEAKER CLAIM` and names what is not shown; `None` otherwise |
 | `ruled_out`, `remaining_alternatives` | alternatives ruled out in every context of both cut types, and those still open |
@@ -263,4 +263,4 @@ pairs = {c: {k: px_mad(images[c, k.split("|")[0]], images[c, k.split("|")[1]]) f
 records = verdicts(panel, results_record(panel, outcomes, pair_distances=pairs, seal=seal))
 ```
 
-Read `docs/ATTENTION-PORT.md` for the port, and `mdb.attention_ranking` for rankings and matched sets.
+Read `docs/ATTENTION-PORT.md` for the port, and `mdb_lanes.attention_ranking` for rankings and matched sets.
