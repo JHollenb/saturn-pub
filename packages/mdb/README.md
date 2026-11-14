@@ -215,7 +215,7 @@ L0    0 -8  0  0  0  0
 L1    0 -9 -2 -1 -1 +5
 cell: tenths of max |Δ| 0.014893 [measured] (9 caps); '.' < 1/20, '0' exact
   top |Δ|: t1.L1 -0.014893 [measured], t1.L0 -0.011353 [measured], t5.L1 0.0081177 [measured], ...
-  cost: 78 layer calls (planned 78), 11 probes, 174 other transitions [measured] (wall time in the record)
+  cost: 78 layer calls (planned 78), 11 probes, 174 other transitions [measured] (wall time in the result: cost.seconds)
   session unchanged at t5.logits
 ```
 

@@ -24,7 +24,7 @@ from mdb.engine.models import tiny_model  # noqa: E402
 from mdb.ops import Refused, dispatch  # noqa: E402
 from mdb.ops.lines import parse  # noqa: E402
 from mdb.ops.predict import session_digest  # noqa: E402
-from mdb.repl.render import render  # noqa: E402
+from mdb.repl.render import heat_table, render  # noqa: E402
 from mdb.repl.shell import Shell  # noqa: E402
 
 FIXTURE = Path(__file__).parent / "fixtures" / "prompt_set_tiny.jsonl"
@@ -226,6 +226,16 @@ def test_a_blob_table_still_draws_its_heat_table():
     assert "table" not in out and out["heat"]["rows"] == "1:6"
     text = render(out)
     assert "L11" in text and "cell: tenths of max" in text
+
+
+def test_two_digit_row_labels_are_not_jammed():
+    """Seen on Qwen2.5-1.5B rows 18:21: the header printed ``t18t19t20`` (3-column cells)."""
+    result = {"table": {"rows": [18, 19, 20], "layers": [0, 1],
+                        "delta": {"value": [[8.5, 0.0, 0.0], [0.1, 0.0, 0.0]],
+                                  "authority": "measured"}}}
+    lines = heat_table(result, 80)
+    assert lines[0].split() == ["t18", "t19", "t20"]
+    assert lines[1].split() == ["L0", "+9", "0", "0"]
 
 
 # --------------------------------------------------------------------------- (9) staging

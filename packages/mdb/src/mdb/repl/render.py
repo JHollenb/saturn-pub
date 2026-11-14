@@ -1278,7 +1278,8 @@ def heat_table(result: dict[str, Any], width: int = _HEAT_WIDTH) -> list[str]:
         def code(i: int, j: int, cell: int) -> str:
             return codes[i][j].rjust(cell)
     label = max(len(f"L{layers[-1]}"), 3) + 1
-    cell = 3 if label + 3 * len(rows) <= width else 2
+    need = max(3, len(f"t{rows[-1]}") + 1)          # t18 needs 4 columns, not a jammed 3
+    cell = next((c for c in (need, 3) if label + c * len(rows) <= width), 2)
     fit = max(1, (width - label) // cell)
     start = max(0, len(rows) - fit)
     shown = list(range(start, len(rows)))
@@ -1318,7 +1319,7 @@ def _sweep_lines(result: dict[str, Any]) -> list[str]:
                  + (f" (planned {planned['value']})" if planned else "")
                  + f", {native['probe']['value']} probes, "
                  f"{native['transition']['value']} other transitions [measured] "
-                 "(wall time in the record)")
+                 "(wall time in the result: cost.seconds)")
     lines.append(f"  session unchanged at {result['where']}")
     return lines
 
