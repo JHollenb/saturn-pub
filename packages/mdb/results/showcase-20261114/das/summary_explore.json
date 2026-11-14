@@ -10,6 +10,30 @@
      "flips": 44,
      "frac_of_whole": 1.0
     },
+    "symtr1": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr2": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr4": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr8": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr16": {
+     "flips": 6,
+     "frac_of_whole": 0.13636363636363635
+    },
+    "symtr32": {
+     "flips": 16,
+     "frac_of_whole": 0.36363636363636365
+    },
     "dasin4": {
      "flips": 2,
      "frac_of_whole": 0.045454545454545456
@@ -72,6 +96,30 @@
      "flips": 38,
      "frac_of_whole": 1.0
     },
+    "symtr1": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr2": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr4": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr8": {
+     "flips": 0,
+     "frac_of_whole": 0.0
+    },
+    "symtr16": {
+     "flips": 4,
+     "frac_of_whole": 0.10526315789473684
+    },
+    "symtr32": {
+     "flips": 12,
+     "frac_of_whole": 0.3157894736842105
+    },
     "dasin4": {
      "flips": 0,
      "frac_of_whole": 0.0
@@ -129,6 +177,12 @@
  },
  "median_frac_moved": {
   "whole": 1.0,
+  "symtr1": 0.014185814185814187,
+  "symtr2": 0.05242673992673992,
+  "symtr4": 0.11342195540308747,
+  "symtr8": 0.2665642076502732,
+  "symtr16": 0.43212530712530717,
+  "symtr32": 0.6425806451612903,
   "dasin4": 0.2838827838827839,
   "dasin8": 0.5941722972972974,
   "dasin16": 0.9431524547803618,

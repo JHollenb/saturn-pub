@@ -12,7 +12,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
 from mdb.analysis.subspace import principal_angles  # noqa: E402
 
 OUT = Path(sys.argv[1])
-R = sorted((json.loads(l) for f in glob.glob(str(OUT / "score-explore*.jsonl")) for l in open(f)), key=lambda r: r["id"])
+M = {}
+for f in sorted(glob.glob(str(OUT / "score-explore*.jsonl"))):      # several jobs: merge arms per pair
+    for line in open(f):
+        r = json.loads(line)
+        if r["id"] in M:
+            assert M[r["id"]]["M0"] == r["M0"] and M[r["id"]]["arms"]["whole"]["M"] == r["arms"]["whole"]["M"]
+            M[r["id"]]["arms"].update(r["arms"])
+        else:
+            M[r["id"]] = r
+R = [M[k] for k in sorted(M)]
 B = torch.load(OUT / "bases.pt", weights_only=False)
 X = torch.load(OUT / "bases-indist.pt", weights_only=False)
 B.update({k: v for k, v in X.items() if k != "meta"})
