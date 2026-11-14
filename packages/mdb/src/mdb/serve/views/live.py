@@ -315,7 +315,7 @@ def _forecast_row(entry) -> LiveForecast:
     bound = {k: v for k, v in view["bound"].items() if k != "premises"}
     return LiveForecast(id=int(view["id"]), target=str(view["target"]),
                         status=str(view["status"]), sealed_at=str(view["sealed_at"]),
-                        record=str(view["record"]), steps=len(view["method"]),
+                        record=str(view["record"]), steps=int(view["method_summary"]["count"]),
                         predicted=view["predicted"], bound=bound,
                         verdict=view.get("verdict"))
 

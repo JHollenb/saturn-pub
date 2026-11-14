@@ -53,9 +53,7 @@ def test_every_analysis_op_fits_the_record_bound_at_depth(layers, tmp_path):
     dispatch(ctx, "until", {"target": "t3.logits"})
     verified = _ok(dispatch(ctx, "verify", {}))
     verdict = verified["forecasts"][0]["verdict"]
-    # Past 64 layers the session's receipt window (engine.run._RECEIPTS) no longer holds the
-    # whole path from the sealed cut, so the lineage test answers "open" (new issue M42).
-    assert verdict in ("confirmed", "edited", "not confirmed") + (("open",) if layers > 64 else ())
+    assert verdict in ("confirmed", "edited", "not confirmed")   # never "open": lineage is the trail's
 
     # what-if at depth: a port edit, a cell edit, a value of another run
     before = propagate.state_digest(ctx.run)

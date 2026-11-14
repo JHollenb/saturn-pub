@@ -303,8 +303,10 @@ def _whatif(ctx, target, value, op, consumer, dose=None):
     edit = build_edit(ctx, address, value, op, dose)
     chosen = parse_consumer(ctx, consumer)
     before = session_digest(ctx)
+    project = getattr(ctx.debugger, "project", None)
+    store = project.store if project is not None and not project.read_only else None
     try:
-        result = propagate.whatif(ctx.run, edit, chosen)
+        result = propagate.whatif(ctx.run, edit, chosen, store=store)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
     after = session_digest(ctx)

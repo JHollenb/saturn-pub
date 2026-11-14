@@ -946,25 +946,19 @@ def view(entry: Forecast) -> dict[str, Any]:
 
 
 def _lineage(run: Any, sealed: dict[str, Any]) -> dict[str, Any]:
-    """Whether the current cut descends from the sealed cut through native transitions recorded
-    after sealing (``Session.receipts``): ``continue`` receipts whose parent is the sealed cut or
-    a descendant of it."""
-    current = run.checkpoint()["cut"]
-    reached = {sealed["cut"]}
-    held = run.session.receipts
-    # The session keeps only its last receipts (``engine.run._RECEIPTS``), so a count taken at
-    # seal time points past them on a deep model (M40): find the receipt the seal saw, and read
-    # every retained receipt when it has been pruned away.
-    last = sealed["receipts"].get("last")
-    seen = next((i + 1 for i in range(len(held) - 1, -1, -1) if held[i].fingerprint == last),
-                0) if last is not None else 0
-    receipts = held[seen:]
-    for receipt in receipts:
-        data = receipt.to_dict()
-        if data.get("operation") == "continue" and data.get("parent") in reached:
-            reached.add(data["result"])
+    """Whether the sealed cut is an ancestor of the current cut: the sealed cut (its fingerprint
+    at its transition count) is a mark of the run's trail, which holds the whole path of the
+    current cut however deep the model is and is rebuilt identically by a restore (``whatif``).
+    A cut on another path (an edit or a rewind before the seal) is not on the trail."""
+    trail = run.cut_trail()
+    current = trail[-1][0]
+    wanted = (sealed["cut"], sealed.get("transition"))
+    at = next((i for i in range(len(trail) - 1, -1, -1)
+               if trail[i][0] == wanted[0] and (wanted[1] is None or trail[i][1] == wanted[1])),
+              None)
+    after = 0 if at is None else trail[-1][1] - trail[at][1]
     return {"sealed_cut": sealed["cut"], "current_cut": current,
-            "receipts_after_seal": {"count": len(receipts)}, "descends": current in reached,
+            "receipts_after_seal": {"count": after}, "descends": at is not None,
             "same_cut": current == sealed["cut"]}
 
 

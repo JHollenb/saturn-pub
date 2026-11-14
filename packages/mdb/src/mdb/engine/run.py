@@ -746,6 +746,13 @@ class Run:
         """Release the read cache and the hydrated Session; the run stays usable."""
         self._drop_reads()
 
+    def cut_trail(self) -> list[tuple[str, int]]:
+        """``(cut fingerprint, transitions)`` of every trail mark, root first (plain data, no
+        tensors). The trail always holds the whole path of the current cut, however many
+        receipts the session keeps, and a restore (a ``whatif``'s return) rebuilds the same
+        fingerprints, so ``cut A is an ancestor of the current cut`` is ``A`` appearing here."""
+        return [(mark.fingerprint, mark.transitions) for mark in self._trail]
+
     def held_bytes(self) -> dict[str, int]:
         """Bytes of tensor storage this run holds, each storage counted once (measured):
         ``trail`` (the marks' cuts: consecutive cuts share what a transition did not replace,
