@@ -1,0 +1,11 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision fe7a5d62cde38c9bb46f2dcb3e581dce71d9439b pick 0,16,50
+load 6.7s; cells 2.5s; 3 items; correct candidates 108
+J1 {"id": "currency:yen", "M0": 6.375, "panel_mean": [-2.88, " Tokyo", " Hungary", " Rotterdam"], "donor0": [-10.75, " Seoul", " Korea", " Osaka"], "other_country_mean": [-4.38, " Bangkok", " Thailand", " Kh"], "country_mean": [-0.12, " Tokyo", " Japan", " Osaka"], "s": 8.5}
+J1 {"id": "person:Hokusai", "M0": 8.5, "panel_mean": [-3.12, " Tokyo", " Hungary", " Rotterdam"], "donor0": [-7.12, " Tokyo", " Denmark", " Krak"], "other_country_mean": [-3.5, " Tokyo", " Chile", " Pablo"], "country_mean": [0.12, " Tokyo", " Japan", " Osaka"], "s": 8.62}
+J1 {"id": "city:Shanghai", "M0": 4.75, "panel_mean": [-2.75, " Beijing", " Hungary", " Rotterdam"], "donor0": [-8.0, " Berlin", " Germany", " Munich"], "other_country_mean": [-2.12, " Bangkok", " Thailand", " Kh"], "country_mean": [0.25, " Beijing", " China", " Shanghai"], "city_family_mean": [-3.62, " Beijing", " Hungary", " Istanbul"], "s": 10.81}
+TOTAL 34.6s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:36.29
+	Maximum resident set size (kbytes): 5584016
+-rw-rw-r-- 1 beast beast 6386 Nov 13 23:27 j1-smoke.jsonl
