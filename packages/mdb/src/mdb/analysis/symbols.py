@@ -974,6 +974,9 @@ def _component_row(run: Any, cb: Any, consumer: Any, sets: Any, tokenizer: Any,
     if consumer is None:
         consumer = _default_consumer(run)
     row = component_table(run, cb, consumer, sets=sets, tokenizer=tokenizer)
+    mass = row.get("mass")
+    if isinstance(mass, dict) and "inherited" in mass:      # record-safe: a claim holds NUM_KEYS
+        row["mass_meaning"] = mass.pop("inherited")
     ref = (cb.basis or {}).get("saelens") or {}
     for entry in row["components"]:
         if entry.get("feature") is None:
