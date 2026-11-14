@@ -129,7 +129,10 @@ class Pool:
     @property
     def kernel_path(self) -> str:
         """``mdb-prefill-batched`` for cache-cell pools (read from the batched prefill; the
-        per-item ``origin.prefill`` is recorded), else ``mdb-stepped``."""
+        per-item ``origin.prefill`` is recorded), else ``mdb-stepped``; ``mdb-stepped`` too for a
+        cache-cell pool collected with ``prefill=`` splits before every item's cell row."""
+        if getattr(self, "_kernel_path", None):
+            return self._kernel_path
         return "mdb-prefill-batched" if self.address.startswith("cache.") else "mdb-stepped"
 
     def duplicates(self) -> int:
@@ -330,20 +333,28 @@ class Pool:
 
 def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
             name: str = "pool", labels: Sequence[str] = (),
-            where: Callable[[dict[str, Any], Any], bool] | None = None) -> Pool:
+            where: Callable[[dict[str, Any], Any], bool] | None = None,
+            prefill: Callable[[dict[str, Any]], int] | None = None) -> Pool:
     """Collect one value per item at ``address`` (module docstring). ``items``: dicts with
-    ``id``, ``ids`` (token ids), optional ``roles`` and the ``labels`` keys."""
+    ``id``, ``ids`` (token ids), optional ``roles`` and the ``labels`` keys. ``prefill`` (cache
+    cells only): ``prefill(item)`` is the item's prefill split, so the rows from it on are
+    stepped (the kernel path of a driver that ran ``dbg.run(ids, prefill=K)``); the pool's
+    kernel path is ``mdb-stepped`` when every item's cell row is at or after its split."""
     from mdb.engine.run import Run
 
     torch = _torch()
     adapter = debugger.adapter if hasattr(debugger, "adapter") else debugger
     kept, values, skipped = [], [], []
+    stepped = prefill is not None
     for item in items:
         bound = bind(address, item)
         ids = [int(t) for t in item["ids"]]
         last = len(ids) - 1
         if bound.startswith("cache."):
-            run = Run(adapter, ids)
+            split = None if prefill is None else int(prefill(item))
+            run = Run(adapter, ids, prefill=split)
+            cell_row = re.search(r"row=(\d+)", bound)
+            stepped = stepped and cell_row is not None and int(cell_row[1]) >= int(run.prefill)
             run.until(f"t{last}.L0.{run.program.names[0]}")
         else:
             row = int(bound.split(".", 1)[0][1:]) if bound.startswith("t") else last
@@ -362,9 +373,12 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
     if not kept:
         raise Refusal(f"pool {name}: no item kept (skipped {len(skipped)})")
     stacked = torch.stack(values)
-    return Pool(name, address, kept, stacked, skipped=skipped,
+    pool = Pool(name, address, kept, stacked, skipped=skipped,
                 model_identity=adapter.model_identity, execution=dict(adapter.execution),
                 labels=labels)
+    if stepped and address.startswith("cache."):
+        pool._kernel_path = "mdb-stepped"
+    return pool
 
 
 __all__ = ["Pool", "SCHEMA", "bind", "collect"]
