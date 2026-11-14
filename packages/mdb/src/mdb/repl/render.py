@@ -572,11 +572,14 @@ def _predicted(body: dict[str, Any]) -> str:
 
 def _forecast_lines(result: dict[str, Any]) -> list[str]:
     view = result["forecast"]
-    chain = view["method"]
-    last = chain[-1]
-    method = (f"{last['identity']} {last['proof'] or ''}: {last['operator']}" if len(chain) == 1
-              else f"{len(chain)} identities {chain[0]['stop']} .. {last['stop']} (last "
+    summary = view["method_summary"]
+    count, first, last = summary["count"], summary["first"][0], summary["last"][-1]
+    method = (f"{last['identity']} {last['proof'] or ''}: {last['operator']}" if count == 1
+              else f"{count} identities {first['stop']} .. {last['stop']} (last "
                    f"{last['identity']} {last['proof'] or ''})")
+    pointer = summary["chain_pointer"]
+    method += (f"; chain blob {pointer['ref'][:16]}" if pointer["state"] == "stored"
+               else "; chain not stored (no project)")
     bound = view["bound"]
     vector = "sha256" in view["predicted"]
     spread = (f"bound {_claimed(bound['max'])}{' per element' if vector else ''}"

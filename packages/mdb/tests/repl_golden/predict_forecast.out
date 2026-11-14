@@ -1,20 +1,20 @@
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) forecast
-forecast 1  t3.L0.a  sealed at t3.L0.h  record 518ae7a3fdc0815f
-  method rms_norm P02: a = RMSNorm(h) * w_in
+forecast 1  t3.L0.a  sealed at t3.L0.h  record 5e7d0474948e3600
+  method rms_norm P02: a = RMSNorm(h) * w_in; chain not stored (no project)
   predicted max_abs 2.0572 [derived-exact] norm 3.9958 [derived-exact]  sha256 96ed261df6498277  bound 0.016106 [bound] per element
 (mdb) forecast L0.p
-forecast 2  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
-  method 7 identities t3.L0.a .. t3.L0.p (last softmax P05)
+forecast 2  t3.L0.p  sealed at t3.L0.h  record 12a86c94ea74e244
+  method 7 identities t3.L0.a .. t3.L0.p (last softmax P05); chain not stored (no project)
   predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 cb1cc1226f21049d  bound 0.0026798 [bound] per element
 (mdb) forecast M[4,9]
-forecast 3  t3.M[4,9]  sealed at t3.L0.h  record fdf63e31c6a16d1c
-  method 39 identities t3.L0.a .. t3.logits (last readout_logits P19)
+forecast 3  t3.M[4,9]  sealed at t3.L0.h  record 0909eab057c31264
+  method 39 identities t3.L0.a .. t3.logits (last readout_logits P19); chain not stored (no project)
   predicted -0.11452 [derived-exact P19]  bound 16.825 [bound]
 (mdb) forecast L1.m
-forecast 4  t3.L1.m  sealed at t3.L0.h  record 0c51908fc4011542
-  method 36 identities t3.L0.a .. t3.L1.m (last affine P10)
+forecast 4  t3.L1.m  sealed at t3.L0.h  record 0e18d44ff8b37b15
+  method 36 identities t3.L0.a .. t3.L1.m (last affine P10); chain not stored (no project)
   predicted max_abs 0.00051965 [derived-exact] norm 0.00078825 [derived-exact]  sha256 4e96ef75ffb0c469  bound 0.021312 [bound] per element
 (mdb) step
 t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}

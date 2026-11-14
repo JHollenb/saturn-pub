@@ -83,8 +83,10 @@ def test_forecast_record_binds_cut_cursor_method_operands_and_is_sealed(debugger
     body = record["body"]
     assert body["sealed_at"]["where"] == "t3.L0.k"
     assert body["sealed_at"]["cut"] == run.checkpoint()["cut"]
-    assert [step["stop"] for step in body["method"]["chain"]][-1] == "t3.L0.p"
-    assert all(step["proof"] for step in body["method"]["chain"])
+    chain = forecast.ledger(run)[view["id"]].chain
+    assert [step["stop"] for step in chain][-1] == "t3.L0.p"
+    assert all(step["proof"] for step in chain)
+    assert body["method"]["summary"]["count"] == len(chain)
     addresses = {item["address"] for item in body["operands"]}
     assert {"t3.L0.k", "cache.L0.k[row=0:3]"} <= addresses
     assert all(len(item["sha256"]) == 64 for item in body["operands"])
@@ -158,7 +160,10 @@ def test_rewind_and_replay_to_the_target_still_verifies_with_its_order(debugger)
     run.reverse_step("layer")      # back to the boundary the sealing stop belongs to
     run.until("t3.L1.h")
     [result] = forecast.verify(run, [view["id"]])
-    assert result["verdict"] == "within-bound"
+    # 28 random layers: the propagated bound is not finite, which is stated (no-bound), never a
+    # false within-bound; the record still verifies against the native value
+    assert result["verdict"] in ("within-bound", "no-bound")
+    assert result["residual_max_abs"]["value"] < 0.05
     assert result["order"]["descends"] and result["order"]["sealed_before_target"]
 
 
@@ -189,3 +194,68 @@ def test_a_large_weight_is_multiplied_block_by_block_and_no_float64_weight_is_ke
                  default=0)
     assert widest <= int(value.numel())
     assert not hasattr(blocks, "_weights")
+
+
+def _deep_margin(run_debugger, store):
+    """Seal ``M[3,7]`` of the last row's logits from ``L0.h`` on a 28-layer tiny model."""
+    run = run_debugger.run(PROMPT)
+    run.until("L0.h")
+    view = forecast.seal(run, forecast.Margin(3, 3, 7), store=store)
+    return run, view
+
+
+def _deep_debugger():
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    return attach(tiny_model("qwen2", "bf16", layers=28), None)
+
+
+def _check_deep(run, view, store):
+    entry = forecast.ledger(run)[view["id"]]
+    record = entry.record
+    assert len(entry.chain) > 64                      # the old record refused this chain
+    assert verify_record(record) == record
+    assert len(json.dumps(record, sort_keys=True, separators=(",", ":"))) < 64 * 1024
+    summary = record["body"]["method"]["summary"]
+    assert summary["count"] == len(entry.chain)
+    assert sum(item["count"] for item in summary["proof_counts"]) >= len(entry.chain)
+    assert summary["first"] == entry.chain[:3] and summary["last"] == entry.chain[-3:]
+    assert sum(item["count"] for item in summary["layer_counts"]) + summary["global_steps"]["count"] == len(entry.chain)
+    run.until("logits")
+    before = (entry.predicted.clone(), None if entry.bound is None else entry.bound.clone())
+    (result,) = forecast.verify(run, [view["id"]])
+    # 28 random layers: the propagated bound is not finite, which is stated (no-bound), never a
+    # false within-bound; the record still verifies against the native value
+    assert result["verdict"] in ("within-bound", "no-bound")
+    assert result["residual_max_abs"]["value"] < 0.05
+    assert float(entry.predicted) == float(before[0])
+    return entry, summary, result
+
+
+def test_a_chain_longer_than_the_record_cap_is_summarised_without_a_project():
+    debugger = _deep_debugger()
+    run, view = _deep_margin(debugger, None)
+    entry, summary, result = _check_deep(run, view, None)
+    assert summary["chain_pointer"]["state"] == "absent" and "no project" in summary["chain_pointer"]["reason"]
+    assert entry.record["pointers"] == []
+    assert view["method"] == entry.chain and view["method_summary"] == summary
+    with pytest.raises(forecast.Refusal, match="no chain pointer"):
+        forecast.load_chain(entry.record, None)
+
+
+def test_a_chain_longer_than_the_record_cap_is_stored_by_pointer_with_a_project(tmp_path):
+    from mdb.core.project import Project
+
+    project = Project(tmp_path / "p")
+    debugger = _deep_debugger()
+    run, view = _deep_margin(debugger, project.store)
+    entry, summary, result = _check_deep(run, view, project.store)
+    assert summary["chain_pointer"]["state"] == "stored"
+    assert forecast.load_chain(entry.record, project.store) == entry.chain
+    # the same forecast without a store verifies to the same numbers
+    other, other_view = _deep_margin(debugger, None)
+    other_entry, _, other_result = _check_deep(other, other_view, None)
+    assert float(other_entry.predicted) == float(entry.predicted)
+    assert other_result["residual_max_abs"] == result["residual_max_abs"]
+    assert other_result["native"] == result["native"]

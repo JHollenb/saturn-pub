@@ -149,7 +149,9 @@ def _forecast(ctx, target):
     else:
         chosen = _margin(ctx, target) or _whole_stop(ctx, target, "forecast")
     try:
-        view = forecast.seal(ctx.run, chosen)
+        project = getattr(ctx.debugger, "project", None)
+        store = project.store if project is not None and not project.read_only else None
+        view = forecast.seal(ctx.run, chosen, store=store)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
     entry = forecast.ledger(ctx.run)[view["id"]]

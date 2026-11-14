@@ -24,6 +24,8 @@ of counting it as a failure. A forecast whose target was never reached stays ope
 
 from __future__ import annotations
 
+import hashlib
+import json
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -48,7 +50,10 @@ FORECAST = declare_kind(
     plain_numeric=("sealed_at.row", "sealed_at.index", "sealed_at.transition",
                    "sealed_at.receipts.count", "target.row", "target.index", "target.indices",
                    "operands.*.shape", "predicted.shape", "predicted.token",
-                   "edits_at_seal.*.row", "edits_at_seal.*.layer"),
+                   "edits_at_seal.*.row", "edits_at_seal.*.layer",
+                   "method.summary.count", "method.summary.global_steps.count",
+                   "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
+                   "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes"),
 )
 
 # (function, proof) of the identity that computes each port from its producers
@@ -633,6 +638,7 @@ class Forecast:
     edits: frozenset
     status: str = "open"
     verdict: dict[str, Any] | None = field(default=None)
+    chain: list = field(default_factory=list)   # the full identity chain (the record keeps a summary)
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -697,8 +703,13 @@ def _resolve_target(run: Any, target: str | Margin | None) -> tuple[str, Margin 
     return run.stops()[key[1]], None, key
 
 
-def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
+def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> dict[str, Any]:
     """Predict ``target`` (default: the next stop) from values at the cursor and seal it.
+
+    The record keeps a bounded summary of the identity chain (``method.summary``); the full
+    chain is stored as a JSON blob in ``store`` (a project ``LocalStore``) and the record points
+    at it (``method.chain_pointer``, a tensor pointer to the uint8 bytes). Without a store the
+    pointer is absent with its reason and the full chain stays on the ledger entry.
 
     Returns the forecast view (``id``, ``target``, ``method``, ``predicted``, ``bound``,
     ``record``); raises ``Refusal`` when the target is already computed (at or before the cursor,
@@ -739,9 +750,11 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
     checkpoint = run.checkpoint()
     entries = ledger(run)
     number = max(entries, default=0) + 1
+    chain = _chain(run, model, row)
+    summary, chain_pointer = _store_chain(chain, store)
     body = _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
-                 status)
-    pointers = []
+                 status, summary)
+    pointers = [] if chain_pointer is None else [chain_pointer]
     if margin is None and label != "sample":
         from mdb.engine.ports import tensor_digest
 
@@ -756,7 +769,7 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
     # the row model is dropped on return: the entry owns these tensors, no copy needed
     entry = Forecast(number, record, label, margin, key, value.detach(),
                      None if bound is None else bound.detach(),
-                     frozenset(_edit_key(e) for e in body["edits_at_seal"]))
+                     frozenset(_edit_key(e) for e in body["edits_at_seal"]), chain=chain)
     entries[number] = entry
     return view(entry)
 
@@ -785,17 +798,89 @@ def _summary(value: Any, authority: str) -> dict[str, Any]:
             "norm": num(float(flat.norm()), authority)}
 
 
-def _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
-          status) -> dict[str, Any]:
-    from mdb.engine.ports import tensor_digest
-
-    row = here[0]
+def _chain(run: Any, model: RowModel, row: int) -> list[dict[str, Any]]:
+    """The identities the row model evaluated, in order (can be hundreds on a real model)."""
     chain = []
     for name in model.computed:
         operator, proofs = _operator(run.program, name)
         function, proof = IDENTITY[name.split(".", 1)[-1]]
         chain.append({"stop": f"t{row}.{name}", "operator": operator, "proofs": proofs,
                       "identity": function, "proof": proof})
+    return chain
+
+
+EDGE_STEPS = 3          # identities kept at each end of the chain in the record summary
+MAX_LAYER_COUNTS = 64   # per-layer totals are listed only up to the record's sequence bound
+
+
+def _chain_bytes(chain: list[dict[str, Any]]) -> bytes:
+    return json.dumps(chain, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _store_chain(chain: list[dict[str, Any]], store: Any) -> tuple[dict[str, Any], Any]:
+    """``(summary, tensor pointer or None)``: the bounded summary the record holds (count, proof
+    use, first and last identities, per-layer totals) and, with a store, the pointer to the full
+    chain blob (JSON bytes as a uint8 tensor)."""
+    import numpy as np
+
+    from mdb.core.pointers import tensor_pointer
+
+    proofs: dict[str, int] = {}
+    for step in chain:
+        for proof in {step["proof"], *step["proofs"]} - {None}:
+            proofs[proof] = proofs.get(proof, 0) + 1
+    layers: dict[int, int] = {}
+    for step in chain:
+        port = step["stop"].split(".", 1)[1]
+        if port in GLOBAL_OPERATORS:
+            continue
+        layer = _split(port)[0]
+        layers[layer] = layers.get(layer, 0) + 1
+    summary: dict[str, Any] = {
+        "count": len(chain),
+        "proof_counts": [{"proof": k, "count": v} for k, v in sorted(proofs.items())],
+        "first": chain[:EDGE_STEPS], "last": chain[-EDGE_STEPS:],
+        "global_steps": {"count": sum(1 for s in chain
+                                      if s["stop"].split(".", 1)[1] in GLOBAL_OPERATORS)}}
+    if layers and len(layers) <= MAX_LAYER_COUNTS:
+        summary["layer_counts"] = [{"layer": i, "count": layers.get(i, 0)}
+                                   for i in range(max(layers) + 1)]
+    raw = _chain_bytes(chain)
+    summary["chain_sha256"] = hashlib.sha256(raw).hexdigest()
+    if store is None:
+        summary["chain_pointer"] = {
+            "state": "absent",
+            "reason": "no project store: the full chain is held in memory on the forecast "
+                      "entry (Forecast.chain), not stored"}
+        return summary, None
+    stored = store.put_tensor(np.frombuffer(raw, dtype=np.uint8).copy())
+    pointer = tensor_pointer(stored["ref"], sha256=stored["sha256"], shape=stored["shape"],
+                             dtype=stored["dtype"])
+    summary["chain_pointer"] = {"state": "stored", "ref": stored["ref"], "bytes": len(raw)}
+    return summary, pointer
+
+
+def load_chain(record: dict[str, Any], store: Any) -> list[dict[str, Any]]:
+    """The full identity chain a forecast record points at, from ``store``; checked against the
+    record's ``chain_sha256`` (``Unresolved`` or a refusal when absent or changed)."""
+    from mdb.core.pointers import resolve_tensor
+
+    summary = record["body"]["method"]["summary"]
+    if summary["chain_pointer"]["state"] != "stored":
+        raise Refusal("the record holds no chain pointer: " + summary["chain_pointer"]["reason"])
+    pointer = next(p for p in record["pointers"] if p.get("kind") == "tensor"
+                   and p["ref"] == summary["chain_pointer"]["ref"])
+    raw = resolve_tensor(pointer, store=store, framework="numpy").tobytes()
+    if hashlib.sha256(raw).hexdigest() != summary["chain_sha256"]:
+        raise Refusal("the stored chain differs from the record's chain_sha256")
+    return json.loads(raw)
+
+
+def _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
+          status, summary) -> dict[str, Any]:
+    from mdb.engine.ports import tensor_digest
+
+    row = here[0]
     operands = [{"address": f"t{row}.{name}", "sha256": tensor_digest(tensor.contiguous()),
                  "shape": list(tensor.shape), "dtype": str(tensor.dtype).removeprefix("torch.")}
                 for name, tensor in model.captured.items()]
@@ -831,7 +916,7 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
                       "receipts": {"count": len(run.session.receipts)},
                       "lookahead": status["lookahead"],
                       "computed_past_cursor": list(status["computed_past_cursor"])},
-        "method": {"authority": EXACT, "chain": chain,
+        "method": {"authority": EXACT, "summary": summary,
                    "rule": "identities of the port program on values that exist at the cursor; "
                            "no native call for the target"},
         "operands": operands,
@@ -846,7 +931,8 @@ def view(entry: Forecast) -> dict[str, Any]:
     body = entry.record["body"]
     out = {"id": entry.id, "record": entry.record["id"], "target": body["target"]["address"],
            "status": entry.status, "sealed_at": body["sealed_at"]["where"],
-           "method": body["method"]["chain"], "predicted": body["predicted"],
+           "method": entry.chain, "method_summary": body["method"]["summary"],
+           "predicted": body["predicted"],
            "bound": body["bound"]}
     if entry.verdict is not None:
         out["verdict"] = entry.verdict
