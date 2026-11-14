@@ -824,7 +824,9 @@ class LiveTimeline(Model):
 class LiveCircuit(Model):
     """One circuit of the run's ledger (the ``circuit`` op): its id, consumer, ``k`` (top) and
     ``depth``, node ``count``, the cursor it was built at, its sealed record id, how many times
-    it was tested and the verdict text of the last test (None: never tested)."""
+    it was tested and the verdict text of the last test (None: never tested).
+    ``from_previous_run``: built by an earlier run that ``start``/``restart`` replaced (the ledger
+    is kept across runs; its ``where`` and source rows are that run's, not this one's)."""
     id: int
     consumer: str
     k: int
@@ -834,6 +836,7 @@ class LiveCircuit(Model):
     record: str
     tests: int
     verdict: str | None
+    from_previous_run: bool = False
 
 
 class LiveForecast(Model):

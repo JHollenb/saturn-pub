@@ -173,7 +173,21 @@ function Ledger({ ledger, circuits, selected, busy, overlay, act }: CircuitViewP
                   <td>
                     <Count n={c.id} />
                   </td>
-                  <td className="mono">{c.consumer}</td>
+                  <td className="mono">
+                    {c.consumer}
+                    {c.from_previous_run && (
+                      <>
+                        {' '}
+                        <span
+                          className="chip faint"
+                          data-testid="previous-run"
+                          title="built by an earlier run (before start/restart): its cursor and source rows are that run's prompt, not this one's"
+                        >
+                          previous run
+                        </span>
+                      </>
+                    )}
+                  </td>
                   <td>
                     <Count n={c.k} />
                   </td>

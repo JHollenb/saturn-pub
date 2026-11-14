@@ -294,14 +294,18 @@ def frame(session) -> tuple[LiveFrame, list[Omitted]]:
         scale /= 2
 
 
-def _circuit_row(circuit) -> LiveCircuit:
+def _circuit_row(circuit, carried=None) -> LiveCircuit:
+    """A ledger row; ``carried`` is the debugger's ``carried_circuits`` (id -> circuit built by
+    an earlier run), the test ``circuit show`` uses for ``from_previous_run``."""
     body = circuit.record["body"]
     last = circuit.tests[-1] if circuit.tests else None
+    previous = (carried or {}).get(circuit.id) is circuit
     return LiveCircuit(id=int(circuit.id), consumer=str(body["consumer"]), k=int(body["k"]),
                        depth=int(body["depth"]), count=int(body["count"]),
                        where=str(body["where"]), record=str(circuit.record["id"]),
                        tests=len(circuit.tests),
-                       verdict=None if last is None else str(last.get("verdict")))
+                       verdict=None if last is None else str(last.get("verdict")),
+                       from_previous_run=previous)
 
 
 def _forecast_row(entry) -> LiveForecast:
@@ -326,7 +330,9 @@ def ledger(session, limit: int = LEDGER_LIMIT) -> tuple[LiveLedger, list[Omitted
     run = session.ctx.run
     rows: dict[str, list] = {"circuits": [], "forecasts": [], "symbols": []}
     if run is not None:
-        rows["circuits"] = [_circuit_row(c) for _, c in sorted(circuits.ledger(run).items())]
+        carried = getattr(session.debugger, "carried_circuits", None)
+        rows["circuits"] = [_circuit_row(c, carried)
+                            for _, c in sorted(circuits.ledger(run).items())]
         rows["forecasts"] = [_forecast_row(e) for _, e in sorted(forecast.ledger(run).items())]
         rows["symbols"] = [LiveSymbol(name=name, definitions=list(b.addresses),
                                       rows=sorted({int(c.row) for c in b.cells}))

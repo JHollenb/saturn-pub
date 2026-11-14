@@ -222,6 +222,26 @@ describe('circuit layout', () => {
 });
 
 describe('CircuitView', () => {
+  it('marks a circuit carried from a previous run in the list (M12)', () => {
+    const [first, ...rest] = ledger.circuits;
+    const html = renderToStaticMarkup(
+      <CircuitView
+        ledger={[{ ...first!, from_previous_run: true }, ...rest]}
+        circuits={new Map()}
+        selected={null}
+        node={null}
+        focus={null}
+        slot={{ state: 'idle' }}
+        testSlot={{ state: 'idle' }}
+        busy={false}
+        overlay={false}
+        act={act}
+      />,
+    );
+    expect(html.match(/data-testid="previous-run"/g)).toHaveLength(1);
+    const row = html.slice(html.indexOf(`data-circuit="${first!.id}"`));
+    expect(row.slice(0, row.indexOf('</tr>'))).toContain('previous run');
+  });
   it('lists the circuits of the run from the ledger', () => {
     const html = render({});
     for (const c of ledger.circuits) expect(html).toContain(`data-circuit="${c.id}"`);
@@ -280,7 +300,9 @@ describe('CircuitView', () => {
     const html = render({ circuits: new Map([[e.id, e]]), selected: e.id, busy: false });
     const button = html.match(/<button[^>]*>circuit test \d+<\/button>/)?.[0] ?? '';
     expect(button).toContain('disabled');
-    expect(button).toContain('title="circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)"');
+    expect(button).toContain(
+      'title="circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)"',
+    );
     expect(html).toContain('data-testid="test-disabled"');
   });
 
@@ -300,7 +322,11 @@ describe('CircuitView', () => {
     expect(busy).toMatch(/<button[^>]*>interrupt<\/button>/);
     const interrupted = slotFrom(testInterrupted, 'circuit test 1');
     expect(interrupted.state).toBe('interrupted');
-    const stopped = render({ circuits: new Map([[e.id, e]]), selected: e.id, testSlot: interrupted });
+    const stopped = render({
+      circuits: new Map([[e.id, e]]),
+      selected: e.id,
+      testSlot: interrupted,
+    });
     expect(stopped).toContain('data-testid="test-interrupted"');
     const missing = slotFrom(testRefused, 'circuit test 9');
     expect(missing.state).toBe('refused');

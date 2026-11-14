@@ -241,6 +241,7 @@ export interface LiveCircuit {
   record: string;
   tests: number;
   verdict: string | null;
+  from_previous_run: boolean;
 }
 
 export interface LiveEdit {

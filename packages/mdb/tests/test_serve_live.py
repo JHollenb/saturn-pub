@@ -911,7 +911,7 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     assert circuit == {"id": entry.id, "consumer": body["consumer"], "k": 1, "depth": 2,
                        "count": body["count"], "where": body["where"],
                        "record": entry.record["id"], "tests": 0,
-                       "verdict": None}
+                       "verdict": None, "from_previous_run": False}
     (sealed,) = data["forecasts"]
     view = forecast.view(forecast.ledger(run)[sealed["id"]])
     assert sealed["target"] == view["target"] == "t3.L0.p"
@@ -920,6 +920,25 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     assert "premises" not in sealed["bound"] and sealed["bound"]["max"] == view["bound"]["max"]
     assert data["symbols"] == [{"name": "ctx", "definitions": ["t1"], "rows": [1]}]
     assert set(symbols.declared(run)) == {"ctx"}
+
+
+def test_the_ledger_marks_circuits_carried_from_a_previous_run(live):
+    """M12 keeps the circuit ledger across ``start``: a circuit built by the replaced run is
+    listed with ``from_previous_run`` (as ``circuit show`` marks it); a new one is not."""
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    _op(c, sid, "until", {"target": "t3.logits"})
+    first = _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 1}).json()
+    assert [r["from_previous_run"] for r in _ledger(c, sid)["data"]["circuits"]] == [False]
+    _op(c, sid, "start", {"prompt": [1, 7, 9, 3]})
+    _op(c, sid, "until", {"target": "t3.logits"})
+    _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 1})
+    rows = _ledger(c, sid)["data"]["circuits"]
+    assert [(r["id"], r["from_previous_run"]) for r in rows] == [
+        (first["data"]["result"]["id"], True), (first["data"]["result"]["id"] + 1, False)]
+    shown = _op(c, sid, "circuit", {"target": "show", "id": rows[0]["id"]}).json()
+    assert shown["data"]["result"]["from_previous_run"] is True
 
 
 def test_the_ledger_fits_the_cap_and_names_what_it_left_out(live):
