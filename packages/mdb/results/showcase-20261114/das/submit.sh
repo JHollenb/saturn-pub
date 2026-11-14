@@ -10,10 +10,11 @@ P=/private/tmp/claude-501/-Users-jakeholl-domains/f9daae27-47d0-4118-8855-2c7a6f
 mkdir -p $P
 if [ -n "$(git -C $W status --porcelain -- $SC/das/*.py $SC/common.py)" ]; then echo "uncommitted das driver; commit first"; exit 3; fi
 git -C $W archive HEAD src packages/mdb/src $SC/common.py $SC/run.sh $SC/das $SC/exp1/census.json \
-  packages/mdb/results/twohop-20261113/next/r1_items.json | tar -x -C $P
+  packages/mdb/results/twohop-20261113/next/r1_items.json \
+  packages/mdb/results/twohop-20261113/next/b1_sets.json packages/mdb/results/twohop-20261113/next/b1-score.json | tar -x -C $P
 git -C $W rev-parse --short HEAD > $P/REVISION
 cp $P/$SC/common.py $P/$SC/run.sh $P/$SC/das/*.py $P/$SC/das/*.sh $P/$SC/das/train_candidates.json $P/$SC/exp1/census.json \
-   $P/packages/mdb/results/twohop-20261113/next/r1_items.json $P/
+   $P/packages/mdb/results/twohop-20261113/next/{r1_items.json,b1_sets.json,b1-score.json} $P/
 SHA=$(shasum -a 256 $P/das.py | cut -c1-16)
 echo "payload $P rev $(cat $P/REVISION) das.py sha256:$SHA"
 cd $P
