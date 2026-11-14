@@ -26,12 +26,16 @@ W_U = ad.model.lm_head.weight.detach()
 gamma = final.weight.detach()
 tok = dbg.tokenizer
 items = {i["id"]: i for i in json.load(open("r1_items.json"))["items"]}
+for _i in items.values():  # hard items carry capital_token None; their answer is the capital token
+    if _i.get("capital_token") is None and _i.get("group") == "hard":
+        _i["capital_token"] = _i["answer"]
 base_c = json.load(open("candidates.json"))
 ext_c = json.load(open("candidates_ext.json"))
 allc = base_c["items"] + ext_c["items"]
 COUNTRIES = sorted({i["country_token"] for i in allc if i.get("country_token")})
 CAPITALS = sorted(set(base_c["capital_tokens"].values()) | {i["capital_token"] for i in ext_c["items"]
-                                                           if i.get("capital_token")})
+                                                           if i.get("capital_token")}
+                  | {i["capital_token"] for i in items.values() if i.get("capital_token")})
 ENT = sorted({tok(" " + i["descriptor"], add_special_tokens=False)["input_ids"][0] for i in allc})
 ALL = sorted(set(COUNTRIES) | set(CAPITALS) | set(ENT))
 g_of = torch.arange(H) // (H // KV)
@@ -139,7 +143,15 @@ for iid, a in arms.items():
         if key[0] == "cell":
             xs.append(f[f"cell|{key[1]}|{key[2]}|{key[3]}"])
             ys.append(dm)
-    per_item_sp.append({"id": iid, "group": a["group"], "sp": spearman(xs, ys)})
+    big = [i for i, y in enumerate(ys) if abs(y) > 0.5]
+    ib = max(range(len(ys)), key=lambda i: abs(ys[i]))
+    ifc = max(range(len(xs)), key=lambda i: abs(xs[i]))
+    top5 = set(sorted(range(len(ys)), key=lambda i: -abs(ys[i]))[:5])
+    per_item_sp.append({"id": iid, "group": a["group"], "sp": spearman(xs, ys),
+                        "near_zero_frac": sum(abs(y) < 0.07 for y in ys) / len(ys), "n_big": len(big),
+                        "sp_big": spearman([xs[i] for i in big], [ys[i] for i in big]) if len(big) >= 3 else None,
+                        "top_cell_same": ib == ifc, "fc_top_in_native_top5": ifc in top5,
+                        "ratio_big": st.median(xs[i] / ys[i] for i in big) if big else None})
     for kind in ("t0_zero", "t0_mask", "relay_zero", "relay_mask"):
         dm = a["cuts"][kind]["logits"][0] - a["cuts"][kind]["logits"][1] - M0
         fc_err.setdefault(f"cut {kind}", []).append((f[f"cut|{kind}"], dm, f[f"cut32|{kind}"]))
@@ -158,6 +170,13 @@ for iid, a in arms.items():
 for g in ("base", "hard"):
     sp = [x["sp"] for x in per_item_sp if x["group"] == g and not math.isnan(x["sp"])]
     F[f"liveness_spearman_{g}"] = q(sp)
+    rows_ = [x for x in per_item_sp if x["group"] == g]
+    F[f"liveness_diag_{g}"] = {"near_zero_frac": q([x["near_zero_frac"] for x in rows_]),
+                               "n_big": q([x["n_big"] for x in rows_]),
+                               "sp_big_items_ge3": q([x["sp_big"] for x in rows_ if x["sp_big"] is not None]),
+                               "top_cell_same": rate(x["top_cell_same"] for x in rows_),
+                               "fc_top_in_native_top5": rate(x["fc_top_in_native_top5"] for x in rows_),
+                               "fc_over_native_big": q([x["ratio_big"] for x in rows_ if x["ratio_big"] is not None])}
 F["donor_swap_flip_mismatch"] = rate(p != o for p, o in zip(swap_flip["pred"], swap_flip["obs"]))
 F["donor_swap_observed_flips"] = sum(swap_flip["obs"])
 for k, v in fc_err.items():
@@ -191,7 +210,7 @@ res["lifetime"] = {
     "single_cell_strip_empty_outside_L20": [empty_outside, len(first_causal)]}
 
 # contrast vs share ranking against the liveness sweep (base + hard)
-sp_share, sp_contrast = [], []
+sp_share, sp_contrast, top_sh, top_co, spb_sh, spb_co = [], [], [], [], [], []
 for iid, a in arms.items():
     if iid not in fc:
         continue
@@ -215,6 +234,14 @@ for iid, a in arms.items():
         sh.append(abs(s_))
         co.append(abs(c_))
         ef.append(abs(dm))
+    if ef:
+        itop = max(range(len(ef)), key=lambda i: ef[i])
+        top_sh.append(max(range(len(sh)), key=lambda i: sh[i]) == itop)
+        top_co.append(max(range(len(co)), key=lambda i: co[i]) == itop)
+        bg = [i for i, e_ in enumerate(ef) if e_ > 0.5]
+        if len(bg) >= 3:
+            spb_sh.append(spearman([sh[i] for i in bg], [ef[i] for i in bg]))
+            spb_co.append(spearman([co[i] for i in bg], [ef[i] for i in bg]))
     sp_share.append(spearman(sh, ef))
     sp_contrast.append(spearman(co, ef))
     # address rule and readouts
@@ -264,7 +291,9 @@ for iid, a in arms.items():
         res["hop_ladders"][iid] = lad
 res["contrast"] = {"share_spearman": q(sp_share), "contrast_spearman": q(sp_contrast),
                    "contrast_beats_share": rate(c_ > s_ for c_, s_ in zip(sp_contrast, sp_share)
-                                                if not (math.isnan(c_) or math.isnan(s_)))}
+                                                if not (math.isnan(c_) or math.isnan(s_))),
+                   "share_top_cell_is_native_top": rate(top_sh), "contrast_top_cell_is_native_top": rate(top_co),
+                   "share_spearman_big": q(spb_sh), "contrast_spearman_big": q(spb_co)}
 for g, rows in res["address"].items():
     res["address"][g] = {k: rate(r[k] == r["gt"] for r in rows) for k in ("argmax", "last", "first", "random")}
 for g, rd in res["readouts"].items():
