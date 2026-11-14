@@ -215,29 +215,13 @@ def item_report(m: Map, run: Any, item: dict[str, Any], *, consumer: Any = None,
             declared(run).pop(name, None)
 
 
-def _bindings_by_name(report: dict[str, Any]) -> dict[str, Any]:
-    """``report`` with ``table.bindings`` re-keyed by symbol name (``table.bindings.<slot>``),
-    so cross-item statistics line up by slot even when an item's slot bound no row (``bind``
-    skips it, which would shift every later position)."""
-    table = report.get("table")
-    if not isinstance(table, dict) or not isinstance(table.get("bindings"), list):
-        return report
-    keyed = {}
-    for i, entry in enumerate(table["bindings"]):
-        name = (entry.get("symbol") or entry.get("name")) if isinstance(entry, dict) else None
-        keyed[str(name) if name is not None else f"#{i}"] = entry
-    return {**report, "table": {**table, "bindings": keyed}}
-
-
 def freeze(m: Map, reports: list[dict[str, Any]], categorical: list[str]) -> Map:
     """``m`` with ``constants`` filled from per-item ``reports``: ``summary`` (numeric claims and
     verdict counts over the paths every report has) and ``modes`` (the most common value of
-    each categorical dotted path, with counts). Table bindings are keyed by symbol name
-    (``table.bindings.<slot>.*``), never by page position."""
+    each categorical dotted path, with counts)."""
     constants = dict(m.constants)
-    keyed = [_bindings_by_name(r) for r in reports]
-    constants["summary"] = summ.summarize(keyed)
-    constants["modes"] = summ.modes(keyed, categorical)
+    constants["summary"] = summ.summarize(reports)
+    constants["modes"] = summ.modes(reports, categorical)
     constants["n_items"] = len(reports)
     return Map(m.slots, m.edges, m.consumer_rule, m.candidate_sets, constants)
 
