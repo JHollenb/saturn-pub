@@ -68,25 +68,29 @@ for k, pr in enumerate(prompts):
     ids = tok(pr["text"], add_special_tokens=False)["input_ids"]
     n = len(ids)
     x = torch.tensor([ids], device="cuda")
-    grads = []  # filled inside the backward block (its locals do not reach this frame; job-9044d2a117a4)
+    # trace-body locals do not reach this frame (job-9044d2a117a4, job-ba98642a9496): every value
+    # that leaves the trace goes into a container created out here
+    grads, hs_s, vs, ps, tt = [], [], [], [], {}
     with nm.trace(x):
         emb = nm.model.embed_tokens.output
         emb.requires_grad_(True)
-        hs, vs, ps = [], [], []
+        hs = []
         for i in range(L):
             hs.append(nm.model.layers[i].input)
             vs.append(nm.model.layers[i].self_attn.v_proj.output.save())
             ps.append(nm.model.layers[i].self_attn.output[1].save())
         hs.append(nm.model.norm.input)
-        hs_s = [h.save() for h in hs]
+        for h in hs:
+            hs_s.append(h.save())
         lg = nm.lm_head.output[0, -1].float()
         top = lg.topk(2)
-        tv, ti = top.values.save(), top.indices.save()
+        tt["v"], tt["i"] = top.values.save(), top.indices.save()
         M = top.values[0] - top.values[1]
         with M.backward():
             for h in reversed(hs):
                 grads.append(h.grad.save())
     grads = list(reversed(grads))
+    tv, ti = tt["v"], tt["i"]
     hstack = torch.stack([h[0].detach().float() for h in hs_s])            # (L+1, n, d)
     gstack = torch.stack([g[0].detach().float() for g in grads])
     att = torch.stack([p[0].detach().float() for p in ps])                 # (L, H, n, n)
