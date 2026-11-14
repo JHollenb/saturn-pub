@@ -9,7 +9,7 @@ P=/private/tmp/claude-501/-Users-jakeholl-domains/f9daae27-47d0-4118-8855-2c7a6f
 mkdir -p $P
 git -C $W archive HEAD src packages/mdb/src | tar -x -C $P
 git -C $W rev-parse --short HEAD > $P/REVISION
-cp $SC/common.py $SC/run.sh $SC/smokes.sh $TW/r1_items.json $TW/b1_sets.json $TW/b1-score.json $P/
+cp $SC/common.py $SC/run.sh $SC/smokes.sh $SC/full45.sh $SC/full6.sh $TW/r1_items.json $TW/b1_sets.json $TW/b1-score.json $P/
 for d in exp1 exp2 exp3 exp4 exp5 exp6 exp7; do cp $SC/$d/*.py $SC/$d/*.json $P/ 2>/dev/null || true; done
 cp $SC/data/* $P/ 2>/dev/null || true
 cd $P

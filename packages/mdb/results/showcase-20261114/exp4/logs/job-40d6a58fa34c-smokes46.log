@@ -1,0 +1,20 @@
+mrun: job-40d6a58fa34c -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 6659478 script exp4_brackets.py
+[    4.0s] load
+[    8.1s] D city:Barcelona 4.11s
+[   11.9s] D currency:forint 3.77s
+[   11.9s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:13.87
+	Maximum resident set size (kbytes): 5406684
+== revision 6659478 script exp6_tlnull.py
+[   10.2s] load
+[   16.3s] F city:Aarhus 6.15s
+[   22.2s] F city:Alexandria 5.84s
+[   22.2s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.96
+	Maximum resident set size (kbytes): 14232704
+mrun: job-40d6a58fa34c -> succeeded
+mrun: job-40d6a58fa34c finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 38.44, 'peak_rss_mb': 13229.1, 'peak_vram_mb': 11968.0}
