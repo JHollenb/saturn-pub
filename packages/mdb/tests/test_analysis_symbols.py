@@ -229,8 +229,12 @@ def test_hop_edge_ladder_closes_and_its_parts_match_hand_computations(debugger):
     edited = debugger.run(PROMPT)
     edited.set_cell(0, "v", value, rows=[1], kv=[0])
     edited.until("t3.logits")
+    cache = {}
     edge = symbols.hop_edge(run, edited, reader, cell_layer=0, top_neurons=3, spectral=True,
-                            top_bins=2)
+                            top_bins=2, cache=cache)
+    again = symbols.hop_edge(run, edited, reader, cell_layer=0, top_neurons=3, spectral=True,
+                             top_bins=2, cache=cache)
+    assert again == edge                                   # the weight cache changes no number
     fp32 = run.adapter.model.lm_head.weight.dtype == torch.float32
     tol = 1e-4 if fp32 else 5e-2
     assert edge["upstream"]["value"] == 0.0               # the cell layer's input row is untouched

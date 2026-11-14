@@ -233,13 +233,14 @@ def _silu_prime(x: Any) -> Any:
     return sig * (1 + x * (1 - sig))
 
 
-def _rfft_parts(weight_rows: Any, delta: Any) -> Any:
+def _rfft_parts(weight_rows: Any, delta: Any, gw: Any = None) -> Any:
     """Parseval split of ``weight_rows @ delta`` over channel-DFT bins: (rows, bins) float64 whose
     row sums equal ``weight_rows @ delta`` (real rfft, x.y = (1/d) sum_k s_k Re(conj(X_k) Y_k),
-    s_k = 1 at DC and Nyquist, else 2)."""
+    s_k = 1 at DC and Nyquist, else 2). ``gw``: the rows' rfft when already taken."""
     torch = _torch()
     d = int(delta.numel())
-    gw = torch.fft.rfft(weight_rows, dim=1)
+    if gw is None:
+        gw = torch.fft.rfft(weight_rows, dim=1)
     dn = torch.fft.rfft(delta.reshape(-1))
     scale = torch.full((gw.shape[1],), 2.0, dtype=torch.float64)
     scale[0] = 1.0
@@ -249,7 +250,8 @@ def _rfft_parts(weight_rows: Any, delta: Any) -> Any:
 
 
 def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons: int = 8,
-             spectral: bool = False, top_bins: int = 32, seed: int = 0) -> dict[str, Any]:
+             spectral: bool = False, top_bins: int = 32, seed: int = 0,
+             cache: dict | None = None) -> dict[str, Any]:
     """The exact hop ladder of a finite cell edit at the consumer's row (advisor memo 4.2).
 
     ``run`` is the native run and ``edited`` the same prompt with the cell edit staged and run
@@ -266,6 +268,8 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     ``Delta a`` of every neuron is split over channel-DFT bins by Parseval and the top
     ``top_bins`` bins' share of the |effect|-weighted credit is reported against the same share
     under a random channel permutation and against the neuron basis at the same unit fraction.
+    ``cache``: a dict the caller keeps across calls on the same model; it holds the float64
+    gate/up/down weights, their channel rfft and the permutation per layer (values unchanged).
     """
     torch = _torch()
     from .reads import layer_module
@@ -288,6 +292,21 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     direct = float(c @ (port(edited, cell_layer, "o") - port(run, cell_layer, "o")))
     upstream = float(c @ (port(edited, cell_layer, "h") - port(run, cell_layer, "h")))
     gen = torch.Generator().manual_seed(seed)
+    cache = {} if cache is None else cache
+
+    def weights(layer, module):
+        key = ("w", layer)
+        if key not in cache:
+            cache[key] = (f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight),
+                          f64(module.mlp.down_proj.weight))
+        return cache[key]
+
+    def spectra(layer, gate):
+        key = ("rfft", layer, seed)
+        if key not in cache:
+            perm = torch.randperm(gate.shape[1], generator=gen)
+            cache[key] = (torch.fft.rfft(gate, dim=1), perm, torch.fft.rfft(gate[:, perm], dim=1))
+        return cache[key]
     mlp, reread, closure_sum = [], [], direct + upstream
     for layer in range(cell_layer, layers):
         module = layer_module(run.adapter, layer)
@@ -303,9 +322,8 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
         ds, db = s1 - s0, b1 - b0
         terms = torch.stack([b0 * ds, s0 * db, ds * db])           # (3, d_ff)
         df = terms.sum(0)
-        down = f64(module.mlp.down_proj.weight)                      # (d, d_ff)
-        cd = c @ down
-        del down
+        gate, up, down = weights(layer, module)
+        cd = c @ down                                               # (d_ff,)
         effect = cd * df
         exact = float(effect.sum())
         captured = float(c @ (port(edited, layer, "m") - port(run, layer, "m")))
@@ -317,8 +335,6 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
         rho0 = float((r0.pow(2).mean() + eps) ** -0.5)
         dr = r1 - r0
         dn_lin = gamma_l * (rho0 * dr - (rho0 ** 3 / dr.numel()) * float(r0 @ dr) * r0)
-        gate = f64(module.mlp.gate_proj.weight)
-        up = f64(module.mlp.up_proj.weight)
         da_lin, db_lin = gate @ dn_lin, up @ dn_lin
         linear = float((cd * (b0 * _silu_prime(g0) * da_lin + s0 * db_lin)).sum())
         order = effect.abs().argsort(descending=True)
@@ -344,12 +360,12 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                                   if float(effect.abs().sum()) else 0.0, EXACT)}
         if spectral:
             dn = port(edited, layer, "n") - port(run, layer, "n")
-            weights = effect.abs()
-            parts = _rfft_parts(gate, dn)                            # (d_ff, bins)
-            credit = (weights[:, None] * parts.abs()).sum(0)
-            perm = torch.randperm(dn.numel(), generator=gen)
-            pparts = _rfft_parts(gate[:, perm], dn[perm])
-            pcredit = (weights[:, None] * pparts.abs()).sum(0)
+            wabs = effect.abs()
+            gw, perm, pgw = spectra(layer, gate)
+            parts = _rfft_parts(gate, dn, gw)                        # (d_ff, bins)
+            credit = (wabs[:, None] * parts.abs()).sum(0)
+            pparts = _rfft_parts(None, dn[perm], pgw)
+            pcredit = (wabs[:, None] * pparts.abs()).sum(0)
             bins = credit.numel()
             k_neurons = max(1, round(top_bins / bins * effect.numel()))
             spec = torch.fft.rfft(dn).abs().pow(2)
@@ -364,13 +380,12 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                                           MEASURED),
                 "credit_top_bins_share": num(share(credit, top_bins), EXACT),
                 "credit_top_bins_share_permuted": num(share(pcredit, top_bins), EXACT),
-                "neuron_top_share_same_fraction": num(share(weights, k_neurons), EXACT),
+                "neuron_top_share_same_fraction": num(share(wabs, k_neurons), EXACT),
                 "energy_top_bins_share": num(share(spec, top_bins), EXACT),
                 "energy_top_bins_share_permuted": num(share(pspec, top_bins), EXACT),
                 "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of "
                            "Delta n, weighted by |effect|; permuted = same with a random channel "
                            "order; neuron share = top neurons at the same unit fraction"}
-        del gate, up
         mlp.append(entry)
     last = layers - 1
     h1, h0 = port(edited, last, "h_out"), port(run, last, "h_out")
