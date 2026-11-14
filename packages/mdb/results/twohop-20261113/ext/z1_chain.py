@@ -68,8 +68,8 @@ def sets_for(item):
 
 def declare(run, item, r0):
     symbols.declare(run, "bridge", [f"cache.L{LAYER}.v[kv{GROUP},row={r0}]"])
-    rest = [f"cache.L{x}.v[kv{g},row={r0}]" for x in range(L) for g in range(KV)
-            if (x, g) != (LAYER, GROUP)]
+    rest = ([f"t{r0}.L{x}.v" for x in range(L) if x != LAYER]
+            + [f"cache.L{LAYER}.v[kv{g},row={r0}]" for g in range(KV) if g != GROUP])
     symbols.declare(run, "r0rest", rest)
     others = [f"t{r}" for r in item["span"] if r != r0]
     if others:
