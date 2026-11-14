@@ -1,5 +1,12 @@
 # mdb examples
 
+**Only experiments approved by the owner are added here.**
+
+Numbered directories (`01-...`, `02-...`) are experiment examples: one measured experiment, a
+notebook that walks a newcomer through it, an equivalent script for mrun, a launcher, and the
+numbers the original run measured (`expected_outputs.md`, with job ids). The loose scripts below
+are older primitive demos.
+
 Runnable examples over caller-owned `BenchSession` state and saved scalar programs.
 Examples load no model on import; real-model examples run inside an admitted mrun worker.
 
@@ -8,6 +15,7 @@ Examples load no model on import; real-model examples run inside an admitted mru
 | `resident_lab.py` | Rewind/replay, residual preview/commit/abort, sibling memory, circuit panel (tiny random CPU model). |
 | `pass_indexed_baseline.py` | The pass-indexed-baseline R0 drift recipe as BenchSession primitives. |
 | `collect_session.py` | Collecting an exported session. |
+| [`01-sae-census-qwen3-1.7b/`](01-sae-census-qwen3-1.7b/) | First SAELens x mdb experiment: SAE variable census on Qwen3-1.7B-Base with Qwen-Scope SAEs (features vs error term, error splice, steering). Notebook, script, Beast launcher. |
 | [`read_weight_transport_demo.py`](read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../docs/READ-WEIGHT-TRANSPORT.md). |
 | [`read_weight_taylor_demo.py`](read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../docs/READ-WEIGHT-TAYLOR.md). |
 | [`read_weight_centered_demo.py`](read_weight_centered_demo.py) | Replay measured midpoint coefficients and their zero residual without a framework; [native-profile state/KV closure and measured costs](../docs/READ-WEIGHT-CLOSURE.md). |
@@ -68,3 +76,27 @@ job report's `scenes` array (measured peak VRAM 3582 MB; wall ~520 s for four
 scenes). These are BF16 numbers, a different numeric regime than the paper's FP32
 primary and the same regime as the paper's 7B replication and BF16 VM
 cross-check.
+
+## Experiment examples
+
+### How to run
+
+Each experiment directory holds `<name>.ipynb` (the walkthrough), `<name>.py` (the same cells as a
+plain script; the notebook is generated from it, cell for cell), `run.sh` (the payload entry point),
+`run_on_beast.sh` (submit through mrun) and `expected_outputs.md`.
+
+- Beast through mrun (the way the numbers were measured): open the tunnel
+  (`ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast`, `MRUN_URL=http://127.0.0.1:19025`), check
+  the GPU is free (`~/domains/common/bin/common mrun jobs --state running`), then
+  `bash run_on_beast.sh`. It stages the payload (the example, `packages/mdb/src`, `src`) and
+  submits one job at priority 70. Results land in the job log (`RESULT_JSON ...`) and
+  `$MRUN_ARTIFACTS_DIR`.
+- Local GPU: install `mdb-runtime[autoregressive]` (torch, transformers 5.x), `sae-lens` and
+  `matplotlib`, set `MDB_MODEL` and `MDB_SAE` to local checkpoints, and either open the notebook or
+  run `python <name>.py`.
+
+### Hardware
+
+One CUDA GPU with about 8 GB free and about 12 GB of host RAM. The first example measured a 3.7 GB
+VRAM peak (bf16 1.7B model, eager attention) and runs in under 10 minutes. The models are read
+from local disk only (`local_files_only`); nothing is downloaded.
