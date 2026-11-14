@@ -14,7 +14,7 @@ from pathlib import Path
 
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
 from mdb.analysis.subspace import principal_angles  # noqa: E402
 
 OUT = Path(sys.argv[1])
