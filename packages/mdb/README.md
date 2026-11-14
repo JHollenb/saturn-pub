@@ -225,7 +225,7 @@ rows between the cell and the consumer.
 mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
 split by cause (`forecast`, `verify`), an authority label and state on every number, and
 reversible stepping inside a layer (`reverse-step`, `restart`). It lacks a batched forward
-(prompt sets run one prompt at a time), model families beyond Qwen2 and Qwen3, and dictionary
+(prompt sets run one prompt at a time), model families beyond Qwen2, Qwen3, Llama and Mistral (gemma: M32), and dictionary
 features (M23).
 
 ## Embedding
