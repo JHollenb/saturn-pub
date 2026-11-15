@@ -86,3 +86,71 @@ def test_environment_declares(tmp_path, monkeypatch):
     record = _seal()
     assert record["body"]["custody"]["script_sha256"] == custody.file_sha256(script)
     assert len(sink_path.read_text().splitlines()) == 1
+
+
+def test_sink_names_are_unique_per_run(tmp_path, monkeypatch):
+    """Pre-release custody fix: shard jobs that opened one file name lost all but the last
+    shard's records at collection. No path, a directory or ``{run}`` names the file per run."""
+    monkeypatch.setattr(custody, "_RUN_TAG", [])
+    monkeypatch.setenv("MRUN_JOB_ID", "job-abc123")
+    tag = custody.run_tag()
+    assert tag.startswith("job-abc123-") and tag.endswith(f"pid{__import__('os').getpid()}")
+    assert custody.sink_path(tmp_path) == tmp_path / f"records-{tag}.jsonl"
+    assert custody.sink_path(str(tmp_path / "shard-{run}.jsonl")) == tmp_path / f"shard-{tag}.jsonl"
+    monkeypatch.chdir(tmp_path)
+    with custody.records_to() as sink:
+        a = _seal()
+    assert sink.path == (tmp_path / f"records-{tag}.jsonl").absolute()
+    assert [r["id"] for r in sink.records()] == [a["id"]]
+    monkeypatch.setattr(custody, "_RUN_TAG", [])                 # another job: another file
+    monkeypatch.setenv("MRUN_JOB_ID", "job-def456")
+    with custody.records_to(tmp_path) as other:
+        _seal()
+    assert other.path != sink.path and len(sink.records()) == 1
+
+
+def test_sink_refuses_a_file_another_run_wrote(tmp_path, monkeypatch):
+    path = tmp_path / "records.jsonl"
+    with custody.records_to(path):
+        first = _seal()
+    with custody.records_to(path):                               # this process's own file: ok
+        second = _seal()
+    foreign = tmp_path / "foreign.jsonl"
+    foreign.write_text(path.read_text())                         # written by "another run"
+    with pytest.raises(FileExistsError):
+        custody.records_to(foreign)
+    with custody.records_to(foreign, append=True) as sink:
+        third = _seal()
+    assert [r["id"] for r in sink.records()] == [first["id"], second["id"], third["id"]]
+    monkeypatch.setenv("MDB_RECORDS", str(tmp_path / "env-foreign.jsonl"))
+    (tmp_path / "env-foreign.jsonl").write_text(path.read_text())
+    custody._STATE["env_read"] = False
+    with pytest.raises(FileExistsError):
+        _seal()
+    custody._STATE["env_read"] = False
+    monkeypatch.setenv("MDB_RECORDS_APPEND", "1")
+    _seal()
+    assert len((tmp_path / "env-foreign.jsonl").read_text().splitlines()) == 3
+
+
+def test_absent_payload_is_sealed_in_the_sink(tmp_path):
+    """A pointer with no store (``state: absent``) still has its bytes in the sink file."""
+    from mdb.core.bounded import put_json
+
+    obj = [{"arm": "H", "probes": {"v": [0.5, 0.25]}}]
+    bare = put_json(obj)
+    with custody.records_to(tmp_path / "r.jsonl") as sink:
+        pointer = put_json(obj)
+        record = _seal()
+    assert pointer == bare                                       # a sink never changes a pointer
+    assert sink.load_json(pointer) == obj and sink.payload_count == 1
+    assert [r["id"] for r in sink.records()] == [record["id"]]   # payload lines are not records
+    with custody.records_to(tmp_path / "plain.jsonl", payloads=False) as plain:
+        put_json(obj)
+    assert plain.payloads() == {} and not plain.path.exists()
+    lines = (tmp_path / "r.jsonl").read_text().splitlines()
+    bad = json.loads(lines[0])
+    bad["raw"] = bad["raw"].replace("0.5", "0.6")
+    (tmp_path / "r.jsonl").write_text(json.dumps(bad) + "\n" + lines[1] + "\n")
+    with pytest.raises(ValueError):
+        sink.load_json(pointer)

@@ -326,3 +326,29 @@ def test_seal_large_branches_by_pointer(dbg, donor):
     assert rec["body"].get("arms_compact") is True
     full = load_json(rec["body"]["arms_payload"], run=run)
     assert len(full) == len(rec["body"]["arms"]) == 25 and "probes" in full[0]
+
+
+def test_compact_branches_payload_sealed_in_sink(dbg, donor, tmp_path):
+    """Amplitude audit 6a: a compact branches record's ``arms_payload`` is ``state: absent`` (no
+    store), so per-arm probe values were in no sealed file. With a sink open the payload bytes
+    are written next to the record and read back sha256-checked."""
+    from mdb.core import custody
+
+    run = dbg.run(P, name="big-sink", prefill=2)
+    br = Branches(run, Margin(LAST, 3, 7), at="t2.L0.h",
+                  probes={f"p{i}": (lambda r: [0.125] * 40) for i in range(6)})
+    br.add("H", [])
+    for i in range(24):
+        br.add_null(f"n{i}", "random", like="H", seed=i)
+    br.run()
+    with custody.records_to(tmp_path / "records-{run}.jsonl") as sink:
+        rec = br.seal()
+    assert rec["body"]["arms_compact"] is True
+    assert rec["body"]["arms_payload"]["state"] == "absent"
+    assert [r["id"] for r in sink.records()] == [rec["id"]]
+    full = sink.load_json(rec["body"]["arms_payload"])
+    import json
+
+    measured = [a.result for a in br.arms.values() if a.result is not None]
+    assert len(full) == 25 and sorted(full[0]["probes"]) == [f"p{i}" for i in range(6)]
+    assert full == json.loads(json.dumps(measured))              # every arm's probe values

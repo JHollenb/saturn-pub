@@ -43,6 +43,9 @@ def put_json(obj: Any, *, store: Any = None, run: Any = None,
                                          shape=stored["shape"], dtype=stored["dtype"])}
     if run is not None:
         _HELD.setdefault(run, {})[digest] = raw     # the bytes, so a held copy cannot change
+    from mdb.core import custody                    # an open record sink seals the bytes too
+
+    custody.emit_payload(digest, raw)
     return {"state": "absent", "sha256": digest,
             "reason": absent_reason or "no project store: the full list is held in memory on "
                                        "the run (bounded.load_json), not stored"}

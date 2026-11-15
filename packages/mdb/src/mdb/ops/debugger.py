@@ -511,12 +511,15 @@ class Debugger:
         return custody.declare(script=script, prereg=prereg, kernel_path=kernel_path, note=note)
 
     @staticmethod
-    def records_to(path: Any) -> Any:
+    def records_to(path: Any = None, *, append: bool = False, payloads: bool = True) -> Any:
         """Append every record sealed from now on to ``path`` (JSONL; ``core.custody.Sink``):
-        records persist with no project attached."""
+        records persist with no project attached. No path, a directory or ``{run}`` in the name
+        gives a unique per-process/job file; an existing file another run wrote needs
+        ``append=True``. Pointer payloads with no store (compact ``Branches`` arms) are written
+        to the sink too (``Sink.load_json``)."""
         from mdb.core import custody
 
-        return custody.records_to(path)
+        return custody.records_to(path, append=append, payloads=payloads)
 
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""

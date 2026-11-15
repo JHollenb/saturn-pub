@@ -18,10 +18,25 @@ branch, pool, ...), because they act inside ``records.seal_record``:
   persists with no project attached; ``Sink.records()`` reads them back verified. Several sinks
   may be open; ``Sink.close()`` stops one.
 
+  Sink names (pre-release custody fix, 2026-11-14): shard jobs that all opened
+  ``records-<tag>.jsonl`` were collected into one directory and only the last shard's records
+  survived. So ``path`` may be omitted (``records-<run>.jsonl`` in the working directory), a
+  directory (``<dir>/records-<run>.jsonl``) or contain ``{run}``; ``<run>`` is ``run_tag()``
+  (``MRUN_JOB_ID`` when set, a timestamp and the pid: unique per process and job). An explicit
+  file that already holds data and was not opened by this process is refused
+  (``FileExistsError``) unless ``append=True``.
+
+  Payloads: a record too large for one line keeps a sha256 pointer to the full payload
+  (``bounded.put_json``; ``state: "absent"`` with no project store, e.g. a compact
+  ``Branches.seal``'s ``arms_payload``). While a sink is open the payload bytes are also written
+  to it as one ``{"mdb_payload": ...}`` line, so the full payload (per-arm probe values) is sealed
+  in the file; ``Sink.load_json(pointer)`` reads it back sha256-checked. Records are unchanged:
+  a sink never alters a record's id.
+
 The environment can declare custody for a job payload with no code change: ``MDB_SCRIPT`` and
 ``MDB_PREREG`` (paths) and ``MDB_KERNEL_PATH`` (any one of them declares) are read on first use
 (an unreadable file raises on every seal, never once);  ``MDB_RECORDS`` opens a
-sink.
+sink (same naming rules; ``MDB_RECORDS_APPEND=1`` is the ``append`` flag).
 """
 
 from __future__ import annotations
@@ -42,6 +57,9 @@ INTEROP_LIBRARIES = ("nnsight", "sae_lens", "transformer_lens", "pyvene", "circu
 _LOCK = threading.Lock()
 _STATE: dict[str, Any] = {"declared": None, "env_read": False, "env_error": None}
 _SINKS: list[Sink] = []
+_OWNED: set[str] = set()          # sink files this process opened (it may reopen and append)
+PAYLOAD_SCHEMA = "mdb-payload-v1"
+_RUN_TAG: list[str] = []
 
 
 def file_sha256(path: str | Path) -> str:
@@ -123,12 +141,15 @@ def _from_env() -> None:
         if script or prereg or kernel:
             declare(script=script, prereg=prereg, kernel_path=kernel)
         sink = os.environ.get("MDB_RECORDS")
-        if sink and not any(str(s.path) == sink for s in _SINKS):
-            records_to(sink)
+        if sink:
+            resolved = sink_path(sink)
+            if not any(s.path == resolved for s in _SINKS):
+                records_to(resolved, append=os.environ.get("MDB_RECORDS_APPEND", "").lower()
+                           in ("1", "true", "yes"))
     except BaseException as error:
         _STATE["env_read"], _STATE["env_error"] = True, error
         raise
-    _STATE["env_read"] = True
+    _STATE["env_read"], _STATE["env_error"] = True, None
 
 
 def block_with_libraries(block: dict[str, Any]) -> dict[str, Any]:
@@ -162,31 +183,64 @@ def custody(kernel_path: str | None = None) -> dict[str, Any]:
 class Sink:
     """An append-only JSONL file of sealed records (one canonical record per line)."""
 
-    def __init__(self, path: str | Path):
+    def __init__(self, path: str | Path, *, payloads: bool = True):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.count = 0
+        self.payload_count = 0
+        self.payloads_on = bool(payloads)
+
+    def _append(self, line: str) -> None:
+        with _LOCK, self.path.open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
 
     def write(self, record: dict[str, Any]) -> None:
         from .records import stored_form
 
-        line = stored_form(record)
-        with _LOCK, self.path.open("a", encoding="utf-8") as handle:
-            handle.write(line + "\n")
+        self._append(stored_form(record))
         self.count += 1
 
+    def write_payload(self, digest: str, raw: bytes) -> None:
+        """One payload line: the exact JSON bytes a record's pointer names by ``sha256``."""
+        if not self.payloads_on:
+            return
+        line = json.dumps({"mdb_payload": PAYLOAD_SCHEMA, "sha256": digest, "bytes": len(raw),
+                           "raw": raw.decode("utf-8")}, sort_keys=True, separators=(",", ":"))
+        self._append(line)
+        self.payload_count += 1
+
+    def _lines(self) -> list[dict[str, Any]]:
+        if not self.path.exists():
+            return []
+        return [json.loads(line) for line in self.path.read_text(encoding="utf-8").splitlines()
+                if line.strip()]
+
     def records(self, *, verify: bool = True) -> list[dict[str, Any]]:
-        """The records written to this file (by any process), verified unless ``verify=False``."""
+        """The records written to this file (by any process), verified unless ``verify=False``.
+        Payload lines are not records and are skipped (``payloads()``)."""
         from .records import verify_record
 
-        out = []
-        if not self.path.exists():
-            return out
-        for line in self.path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                record = json.loads(line)
-                out.append(verify_record(record) if verify else record)
+        return [verify_record(r) if verify else r for r in self._lines()
+                if "mdb_payload" not in r]
+
+    def payloads(self) -> dict[str, bytes]:
+        """sha256 -> payload bytes for every payload line, each checked against its sha256."""
+        out = {}
+        for line in self._lines():
+            if "mdb_payload" not in line:
+                continue
+            raw = line["raw"].encode("utf-8")
+            if hashlib.sha256(raw).hexdigest() != line["sha256"]:
+                raise ValueError(f"payload {line['sha256'][:12]} differs from its sha256")
+            out[line["sha256"]] = raw
         return out
+
+    def load_json(self, pointer: dict[str, Any]) -> Any:
+        """The full object a ``bounded.put_json`` pointer names, from this file's payloads."""
+        raw = self.payloads().get(pointer["sha256"])
+        if raw is None:
+            raise ValueError(f"no payload {pointer['sha256'][:12]} in {self.path}")
+        return json.loads(raw)
 
     def close(self) -> None:
         with _LOCK:
@@ -200,12 +254,61 @@ class Sink:
         self.close()
 
 
-def records_to(path: str | Path) -> Sink:
-    """Open a sink: every record sealed from now on is appended to ``path``."""
-    sink = Sink(path)
+def run_tag() -> str:
+    """This process's sink tag: ``<MRUN_JOB_ID>-`` (when set) + start time + ``pid<pid>``."""
+    if not _RUN_TAG:
+        job = os.environ.get("MRUN_JOB_ID", "").strip()
+        parts = [job] if job else []
+        parts += [time.strftime("%Y%m%dT%H%M%S"), f"pid{os.getpid()}"]
+        _RUN_TAG.append("".join(c if c.isalnum() or c in "-_." else "_"
+                                for c in "-".join(parts)))
+    return _RUN_TAG[0]
+
+
+def sink_path(path: str | Path | None = None) -> Path:
+    """Where a sink named ``path`` writes: ``None`` -> ``./records-<run>.jsonl``; a directory
+    (existing, or ending in a separator) -> ``<dir>/records-<run>.jsonl``; ``{run}`` in the name
+    -> replaced by ``run_tag()``; any other path as given."""
+    name = f"records-{run_tag()}.jsonl"
+    if path is None:
+        return Path.cwd() / name
+    text = str(path)
+    if "{run}" in text:
+        return Path(text.replace("{run}", run_tag()))
+    if text.endswith(("/", os.sep)) or Path(text).is_dir():
+        return Path(text) / name
+    return Path(text)
+
+
+def records_to(path: str | Path | None = None, *, append: bool = False,
+               payloads: bool = True) -> Sink:
+    """Open a sink: every record sealed from now on is appended to ``sink_path(path)``.
+
+    A file that already holds data and that this process did not open is refused unless
+    ``append=True`` (two shards writing one name lose records when collected); use a directory,
+    ``{run}`` or no path for a unique per-process name. ``payloads=False`` keeps the file to
+    records only (no ``mdb_payload`` lines)."""
+    target = sink_path(path).absolute()
+    key = str(target)
+    if (not append and key not in _OWNED and target.is_file()
+            and target.stat().st_size > 0):
+        raise FileExistsError(
+            f"record sink {target} already holds records this process did not write; pass "
+            "append=True to add to it, or give a directory / a name with {run} / no path for a "
+            f"unique per-run file (records-{run_tag()}.jsonl)")
+    sink = Sink(target, payloads=payloads)
     with _LOCK:
+        _OWNED.add(key)
         _SINKS.append(sink)
     return sink
+
+
+def emit_payload(digest: str, raw: bytes) -> None:
+    """Hand a payload's bytes to every open sink (``bounded.put_json`` calls this when it has no
+    store, so a pointer with ``state: "absent"`` is still sealed in the sink file)."""
+    _from_env()
+    for sink in list(_SINKS):
+        sink.write_payload(digest, raw)
 
 
 def sinks() -> list[Sink]:
@@ -227,6 +330,6 @@ def emit(record: dict[str, Any]) -> None:
         sink.write(record)
 
 
-__all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "SCHEMA", "Sink", "attach_custody", "clear",
-           "current", "custody", "declare", "emit", "file_sha256", "libraries", "records_to",
-           "sinks"]
+__all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "PAYLOAD_SCHEMA", "SCHEMA", "Sink",
+           "attach_custody", "clear", "current", "custody", "declare", "emit", "emit_payload",
+           "file_sha256", "libraries", "records_to", "run_tag", "sink_path", "sinks"]
