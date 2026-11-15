@@ -1,10 +1,10 @@
 # Changelog
 
-All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner; the section below is a draft.
+All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
-## [Unreleased] — DRAFT, proposed 0.2.0 (not bumped, not tagged)
+## [0.2.0] — 2026-11-14 (owner-approved version; on mdb-pre-release, not yet tagged or merged to main)
 
-Covers `main` (8c019ee, 2026-11-13) to `mdb-pre-release` (2026-11-14): the `mdb-engine-refactor` work of 2026-11-14 plus `claude/mdb-lanes-integration-20261114`. `pyproject.toml` and `mdb.__version__` still say 0.1.0.
+Covers `main` (8c019ee, 2026-11-13) to `mdb-pre-release` (2026-11-14): the `mdb-engine-refactor` work of 2026-11-14 plus `claude/mdb-lanes-integration-20261114`. `pyproject.toml` and `mdb.__version__` are 0.2.0.
 
 Why a minor bump. The package is pre-1.0, so a breaking change moves the minor version. This release adds many public objects and changes three defaults or behaviours that existing scripts can hit (see Changed). A patch bump would understate both.
 
