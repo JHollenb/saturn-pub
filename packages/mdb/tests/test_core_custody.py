@@ -154,3 +154,22 @@ def test_absent_payload_is_sealed_in_the_sink(tmp_path):
     (tmp_path / "r.jsonl").write_text(json.dumps(bad) + "\n" + lines[1] + "\n")
     with pytest.raises(ValueError):
         sink.load_json(pointer)
+
+
+def test_records_to_same_path_twice_is_one_sink(tmp_path):
+    path = tmp_path / "again.jsonl"
+    with custody.records_to(path) as first:
+        second = custody.records_to(path)
+        assert second is first
+        _seal()
+    assert len(path.read_text().splitlines()) == 1 and len(first.records()) == 1
+
+
+def test_suffixless_missing_path_is_a_directory(tmp_path):
+    new_dir = tmp_path / "new-dir"
+    got = custody.sink_path(new_dir)
+    assert got.parent == new_dir and got.name.startswith("records-")
+    assert custody.sink_path(tmp_path / "plain.jsonl") == tmp_path / "plain.jsonl"
+    with custody.records_to(new_dir) as sink:
+        _seal()
+    assert sink.path.parent == new_dir.absolute() and new_dir.is_dir()

@@ -3,11 +3,13 @@
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
+# MDB_NPAIRS=1 bash run_on_beast.sh   runs a 1-pair smoke (default 6).
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MDB="$(cd "$HERE/../.." && pwd)"            # packages/mdb
 ROOT="$(cd "$MDB/../.." && pwd)"            # repo root (holds src/ = saturn_pub)
 export MRUN_URL="${MRUN_URL:-http://127.0.0.1:19025}"
+NPAIRS="${MDB_NPAIRS:-6}"
 
 # Stage a payload: this example + the mdb source + saturn_pub, no web build or tests.
 STAGE="$(mktemp -d "${TMPDIR:-/tmp}/mdb-example-sae.XXXXXX")"
@@ -22,4 +24,4 @@ cd "$STAGE"
 # --vram and --ram are in MB. Measured peak was 3.7 GB VRAM (bf16 1.7B model) and about 8 GB host
 # RAM with the SAE cache at 6 layers; the asks leave headroom.
 ~/domains/common/bin/mrun submit -e mdb-example-sae --payload . --pin beast --gpu \
-  --vram 6000 --ram 12000 --priority 70 --env-alias mrun --detach -- bash run.sh
+  --vram 6000 --ram 12000 --priority 70 --env-alias mrun --detach -- env MDB_NPAIRS="$NPAIRS" bash run.sh

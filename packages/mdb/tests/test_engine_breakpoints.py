@@ -645,3 +645,13 @@ def test_watch_and_break_at_the_same_stop_report_both(debugger):
     assert bp.stop_reason({"watch", "tbreak"}) == "watch+breakpoint"
     assert bp.stop_reason({"watch"}) == "watch" and bp.stop_reason({"break"}) == "breakpoint"
     assert bp.stop_reason({"advance"}) == "advance"
+
+
+def test_watch_set_after_the_address_is_computed_takes_that_value_as_baseline(debugger):
+    ctx = _ctx(debugger)
+    dispatch(ctx, "until", {"target": "L1.h_out"})
+    assert ctx.run.where == f"t{ROW}.L1.h_out"
+    watch = dispatch(ctx, "watch", {"address": "L1.o"})
+    assert watch["baseline"] == f"t{ROW}.L1.o"          # the value at set time, not the next row's
+    result = dispatch(ctx, "continue", {"budget": 2})
+    assert (result["reason"], result["where"]) == ("watch", f"t{ROW + 1}.L1.o")

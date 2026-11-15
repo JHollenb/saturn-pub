@@ -1089,7 +1089,7 @@ def _op_watch(ctx, address, mode, predicate):
             if isinstance(error, ValueError):
                 raise _table_error(error) from None
             raise
-        out["baseline"] = ctx.run.where if primed else None
+        out["baseline"] = primed
     return out
 
 

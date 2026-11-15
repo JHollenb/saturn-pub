@@ -221,6 +221,24 @@ class LiveSession:
             return {"interrupted": True, "running": self.running, "cancelled": cancelled,
                     "reason": None}
 
+    def cancel(self, future: Future) -> bool:
+        """Cancel the one job behind ``future`` (its client went away): queued -> it never runs;
+        running and interruptible (an op or console line) -> Ctrl-C is delivered to it, as
+        ``interrupt()`` does, so the state rolls back and the worker is free; a running view or
+        reduction is left to finish. Other jobs are untouched. True when something was done."""
+        with self._lock:
+            for job in self._waiting:
+                if job.future is future and not job.cancelled:
+                    job.cancelled = True
+                    return True
+            job = self._current
+            if job is None or job.future is not future or not job.interruptible or self._sent:
+                return False
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(
+                ctypes.c_ulong(self._thread.ident), ctypes.py_object(KeyboardInterrupt))
+            self._sent = True
+            return True
+
     def close(self) -> None:
         """Stop the worker after the jobs already queued."""
         self._jobs.put(None)

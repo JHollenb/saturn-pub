@@ -29,7 +29,7 @@ original run's answer-token neuron null (median 0.06) argues against simple unem
 ## Validation run of this example (measured)
 
 The job ran on one CUDA GPU (RTX 4080) through our job scheduler, with script sha256 8673d59ec0c8
-(`composer_neurons.py` as validated; its comments were edited afterwards, the code is unchanged) and prereg sha256 8ef92b2d26d3 (the original preregistration,
+(`composer_neurons.py` as validated; its comments were edited afterwards, the code is unchanged; the comment on batched `Branches` arms was corrected after validation to say 0.2.0 batches port arms too) and prereg sha256 8ef92b2d26d3 (the original preregistration,
 unchanged). It succeeded in 197 s wall (script 196 s). Peak VRAM was 6890 MB and peak RSS 2386 MB.
 Validation log: `validation-job-a6c4f49f1615.log` in this directory.
 

@@ -1043,3 +1043,60 @@ def test_malformed_ledger_queries_never_5xx(live, query):
     response = c.get(f"/api/v1/s/{live.sid}/live/ledger?{query}")
     assert response.status_code in (400, 422), (query, response.status_code)
     assert response.json()["state"] == "refused"
+
+
+def test_client_disconnect_cancels_its_running_op(live):
+    app = create_app(live.debugger.project.root, port=PORT, live=live)
+    c = _client(app)
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    _op(c, live.sid, "break", {"pattern": "L*.p", "condition": "norm > 1e30"})  # never hits
+    body = json.dumps({"op": "continue", "args": {"budget": 4096}, "request_id": "gone"}).encode()
+    scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1", "method": "POST",
+             "scheme": "http", "path": f"/api/v1/s/{live.sid}/op", "raw_path": b"", "query_string": b"",
+             "root_path": "", "client": ("127.0.0.1", 1), "server": ("127.0.0.1", PORT),
+             "headers": [(b"host", f"127.0.0.1:{PORT}".encode()), (b"content-type", b"application/json"),
+                         (b"content-length", str(len(body)).encode())]}
+
+    async def go():
+        gone, sent, delivered = asyncio.Event(), [], []
+
+        async def receive():
+            if not delivered:
+                delivered.append(1)
+                return {"type": "http.request", "body": body, "more_body": False}
+            await gone.wait()
+            return {"type": "http.disconnect"}
+
+        async def send(message):
+            sent.append(message)
+
+        task = asyncio.create_task(app(scope, receive, send))
+        for _ in range(200):
+            await asyncio.sleep(0.02)
+            if live.running == "continue":
+                break
+        await asyncio.sleep(0.3)
+        gone.set()
+        started = time.monotonic()
+        await asyncio.wait_for(task, 5)
+        return time.monotonic() - started
+
+    elapsed = asyncio.run(go())
+    assert elapsed < 3.0, elapsed                     # the full continue takes ~6 s
+    now = _op(c, live.sid, "where").json()["data"]["result"]
+    assert now["where"] == live.ctx.run.where         # the worker is free and the cursor consistent
+    assert _op(c, live.sid, "step").json()["state"] == "resolved"
+
+
+def test_reduce_accepts_the_pointer_an_op_returns(live):
+    app = create_app(live.debugger.project.root, port=PORT, live=live)
+    c = _client(app)
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    _op(c, live.sid, "until", {"target": "L1.h"})
+    pointer = _op(c, live.sid, "print", {"address": "L1.h"}).json()["data"]["result"]["pointer"]
+    assert isinstance(pointer["address"], dict)
+    got = c.post(f"/api/v1/s/{live.sid}/reduce", json={"pointer": pointer, "op": "stats"})
+    assert got.status_code == 200, got.text
+    hand = c.post(f"/api/v1/s/{live.sid}/reduce", json={
+        "pointer": {"kind": "occurrence", "address": f"t{len(PROMPT) - 1}.L1.h"}, "op": "stats"})
+    assert got.json()["data"]["l2"] == hand.json()["data"]["l2"]

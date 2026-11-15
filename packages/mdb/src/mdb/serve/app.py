@@ -163,13 +163,29 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         return ViewError("not_live", f"{what}: session {sid!r} is recorded; the live session "
                          f"is {live.sid!r}", 403)
 
-    async def on_worker(future):
-        """Await a live job; a full queue is 409 ``busy``, an interrupted read 409."""
+    async def on_worker(future, http=None):
+        """Await a live job; a full queue is 409 ``busy``, an interrupted read 409. With ``http``
+        (the request), a client that disconnects before the job ends cancels that job
+        (``LiveSession.cancel``: a running op or console line is interrupted, a queued job never
+        runs), so an abandoned request does not hold the single worker."""
+        watcher = None
+        if http is not None:
+            async def watch_client():
+                while not future.done():
+                    if await http.is_disconnected():
+                        live.cancel(future)
+                        return
+                    await asyncio.sleep(0.05)
+
+            watcher = asyncio.ensure_future(watch_client())
         try:
             return await asyncio.wrap_future(future)
         except Interrupted as error:
             raise ViewError("interrupted", "the request was interrupted before it finished",
                             409) from error
+        finally:
+            if watcher is not None:
+                watcher.cancel()
 
     def submit(make, *args):
         try:
@@ -335,14 +351,14 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         return respond(envelope("op", data, omitted))
 
     @app.post("/api/v1/s/{sid}/op")
-    async def op(sid: str, request: OpRequest):
+    async def op(sid: str, request: OpRequest, http: Request):
         if not is_live(sid):
             return await run_in_threadpool(recorded_op, sid, request)
         from .. import ops
 
         if request.op not in ops.registry():
             return respond(refused("unknown-op", f"no operation {request.op!r}"), 404)
-        body = await on_worker(submit(live.op, request.op, request.args))
+        body = await on_worker(submit(live.op, request.op, request.args), http)
         result = scrub(body["result"])
         state = result.get("state", "resolved")
         state = state if state in ("resolved", "unresolved", "refused") else "refused"
@@ -354,10 +370,10 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                        409 if state == "refused" else 200)
 
     @app.post("/api/v1/s/{sid}/console")
-    async def console(sid: str, request: ConsoleRequest):
+    async def console(sid: str, request: ConsoleRequest, http: Request):
         if not is_live(sid):
             raise not_live(sid, "the console")
-        body = await on_worker(submit(live.console, request.line))
+        body = await on_worker(submit(live.console, request.line), http)
         return respond(envelope("console", ConsoleResult(line=request.line, seq=body["seq"],
                                                          where=body["where"],
                                                          text=scrub(body["text"]))))

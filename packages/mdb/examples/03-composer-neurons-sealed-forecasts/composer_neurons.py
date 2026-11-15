@@ -317,10 +317,11 @@ for c in MEASURED_C:
 #   effect of a write of the same size aimed at the answer, a *ceiling* for direct unembedding
 #   alignment rather than a matched alternative.
 #
-# `Branches.run(mode="batched", recheck=k)` measures *state-cell* arms (`cache.L<l>.k|v`) in a
-# batched forward; it refuses port edits such as these `f` knock-outs, so the batched numbers come
-# from nnsight (step 6) and `Branches` is the stepped authority for the arms below. (Since
-# 2026-11-14 `Branches` batches port arms too, f included; this validated run predates it.)
+# `Branches.run(mode="batched", recheck=k)` batches *state-cell* arms (`cache.L<l>.k|v`) and, since
+# mdb 0.2.0, port edits such as these `f` knock-outs too (release-gate probe job-36ee29ad9cb2: 24
+# `f` arms batched, max |batched - stepped| 0.375 at about 49 floors). This validated run predates
+# that and took its batched numbers from nnsight (step 6), with `Branches` stepped as the authority
+# for the arms below.
 
 # %%
 W_DOWN = {x: model.model.layers[x].mlp.down_proj.weight for x in LAYERS}

@@ -183,8 +183,24 @@ class BlobPointer(Model):
 
 
 class OccurrencePointer(Model):
+    """An occurrence by address text (``t10.L12.h``). The pointer an op result carries (``print``:
+    ``address`` a clock dict, plus authority/cut/event/program/recipe/value) is accepted too and
+    reduced to its address text; the extra fields are not part of the reduction's identity."""
     kind: Literal["occurrence"] = "occurrence"
     address: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def _from_op_pointer(cls, value: Any) -> Any:
+        if not isinstance(value, dict) or not isinstance(value.get("address"), dict):
+            return value
+        from ..core import address as addresses
+
+        try:
+            text = addresses.format_address(addresses.from_json(value["address"]))
+        except (ValueError, KeyError, TypeError) as error:
+            raise ValueError(f"not an occurrence address: {error}") from error
+        return {"kind": value.get("kind", "occurrence"), "address": text}
 
 
 PointerSpec = Annotated[Union[SlotPointer, BlobPointer, OccurrencePointer],

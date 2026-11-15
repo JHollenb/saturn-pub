@@ -513,8 +513,8 @@ class Debugger:
     @staticmethod
     def records_to(path: Any = None, *, append: bool = False, payloads: bool = True) -> Any:
         """Append every record sealed from now on to ``path`` (JSONL; ``core.custody.Sink``):
-        records persist with no project attached. No path, a directory or ``{run}`` in the name
-        gives a unique per-process/job file; an existing file another run wrote needs
+        records persist with no project attached. No path, a directory (existing, a trailing
+        ``/``, or a suffix-less name) or ``{run}`` in the name gives a unique per-process/job file; an existing file another run wrote needs
         ``append=True``. Pointer payloads with no store (compact ``Branches`` arms) are written
         to the sink too (``Sink.load_json``)."""
         from mdb.core import custody

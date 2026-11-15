@@ -4,8 +4,9 @@ A breakpoint is an address pattern (``L*.p``, ``t5.L1.o``, ``t*.logits``) plus a
 condition; a watch is an address pattern plus an optional predicate and a mode:
 
 * ``change``: fires when the selected value differs (bitwise) from the value seen at the
-  previous matching stop (and the predicate, if any, holds). The first evaluation only
-  records a baseline.
+  previous matching stop (and the predicate, if any, holds). The baseline is the value at the
+  time the watch is set (the cursor's stop, or the nearest earlier matching stop of the cursor's
+  row); with none, the first evaluation only records it.
 * ``level``: fires at every matching stop where the predicate holds.
 * ``edge``: fires where the predicate holds and did not hold at the previous matching stop
   (the state before the first evaluation counts as not holding).
@@ -1050,14 +1051,27 @@ def _evaluate(item: Breakpoint | Watch, probe: _Probe, state: dict[str, Any]) ->
     return hit
 
 
-def prime(run: Any, item: Watch, *, tokenizer: Any = None) -> bool:
-    """Record a new watch's baseline at the cursor when the cursor matches it (as gdb does)."""
+def prime(run: Any, item: Watch, *, tokenizer: Any = None) -> str | None:
+    """Record a new watch's baseline as gdb does: the value at the time the watch is set.
+
+    That is the cursor's own stop when it matches the watch, else the latest stop of the cursor's
+    row at or before the cursor that does (an address already computed on this row), so the
+    first change after the cursor is not lost to a baseline taken from a later row. Returns
+    the address the baseline was taken at (None when none was)."""
     row, index = run.parse(run.where)
-    label = run.stops()[index]
-    if not _stops(item, stop_occurrence(row, label)):
-        return False
-    _evaluate(item, _Probe(run, row, label, tokenizer), item.state)
-    return True
+    stops = run.stops()
+    for earlier in range(index, -1, -1):
+        label = stops[earlier]
+        if not _stops(item, stop_occurrence(row, label)):
+            continue
+        if earlier != index:
+            try:
+                run.read(f"t{row}.{label}")      # still held? (not for a stored cut's earlier stops)
+            except Exception:  # noqa: BLE001 - not readable: no baseline, as before
+                return None
+        _evaluate(item, _Probe(run, row, label, tokenizer), item.state)
+        return f"t{row}.{label}"
+    return None
 
 
 def _stops(item: Any, occurrence: addresses.Occurrence) -> bool:

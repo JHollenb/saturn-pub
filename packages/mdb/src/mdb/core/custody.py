@@ -267,7 +267,9 @@ def run_tag() -> str:
 
 def sink_path(path: str | Path | None = None) -> Path:
     """Where a sink named ``path`` writes: ``None`` -> ``./records-<run>.jsonl``; a directory
-    (existing, or ending in a separator) -> ``<dir>/records-<run>.jsonl``; ``{run}`` in the name
+    (existing, ending in a separator, or a name with no suffix that does not exist yet, so
+    ``Path("out/sinks")`` is a directory and ``Path("out/records.jsonl")`` a file) ->
+    ``<dir>/records-<run>.jsonl``; ``{run}`` in the name
     -> replaced by ``run_tag()``; any other path as given."""
     name = f"records-{run_tag()}.jsonl"
     if path is None:
@@ -275,9 +277,11 @@ def sink_path(path: str | Path | None = None) -> Path:
     text = str(path)
     if "{run}" in text:
         return Path(text.replace("{run}", run_tag()))
-    if text.endswith(("/", os.sep)) or Path(text).is_dir():
-        return Path(text) / name
-    return Path(text)
+    as_path = Path(text)
+    if (text.endswith(("/", os.sep)) or as_path.is_dir()
+            or (not as_path.suffix and not as_path.exists())):
+        return as_path / name
+    return as_path
 
 
 def records_to(path: str | Path | None = None, *, append: bool = False,
@@ -287,7 +291,8 @@ def records_to(path: str | Path | None = None, *, append: bool = False,
     A file that already holds data and that this process did not open is refused unless
     ``append=True`` (two shards writing one name lose records when collected); use a directory,
     ``{run}`` or no path for a unique per-process name. ``payloads=False`` keeps the file to
-    records only (no ``mdb_payload`` lines)."""
+    records only (no ``mdb_payload`` lines). Calling it again for a path that already has an open
+    sink returns that sink (so re-running a notebook cell does not write every record twice)."""
     target = sink_path(path).absolute()
     key = str(target)
     if (not append and key not in _OWNED and target.is_file()
@@ -296,6 +301,11 @@ def records_to(path: str | Path | None = None, *, append: bool = False,
             f"record sink {target} already holds records this process did not write; pass "
             "append=True to add to it, or give a directory / a name with {run} / no path for a "
             f"unique per-run file (records-{run_tag()}.jsonl)")
+    with _LOCK:
+        for open_sink in _SINKS:
+            if str(open_sink.path.absolute()) == key:
+                open_sink.payloads_on = bool(payloads)
+                return open_sink
     sink = Sink(target, payloads=payloads)
     with _LOCK:
         _OWNED.add(key)
