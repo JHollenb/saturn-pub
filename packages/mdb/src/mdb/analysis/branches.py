@@ -256,7 +256,7 @@ class Branches:
             ref.restore(self.checkpoint)
             # the debuggee's active holds are part of its base: the reference runs under them
             # too, so ``reference == M0`` and the self-patch null reads 0 on a held run
-            for held in run._holds:
+            for held in run.hold_objects():
                 if not held.cells:
                     ref.hold(held.text, source=held.source, name=held.name)
             ref.until(f"t{self.row}.logits")

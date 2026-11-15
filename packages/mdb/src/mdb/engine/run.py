@@ -1515,6 +1515,11 @@ class Run:
         """The active holds (``hold``), oldest first."""
         return [hold.describe() for hold in self._holds]
 
+    def hold_objects(self) -> tuple[Any, ...]:
+        """The active ``engine.holds.Hold`` objects, oldest first (read-only view, for analysis
+        code that re-creates them on another run, e.g. ``Branches``' reference)."""
+        return tuple(self._holds)
+
     def release(self, name: str | None = None) -> list[str]:
         """Drop the hold ``name`` (every hold when None); returns the names dropped. Hold edits
         already committed stay on the trail (they are the path); the pending layer's are
