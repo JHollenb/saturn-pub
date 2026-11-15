@@ -398,7 +398,14 @@ def parse_selector(text: str) -> addresses.Selector:
 
 
 class Condition:
-    """A parsed, whitelisted condition over reductions of one port value."""
+    """A parsed, whitelisted condition over reductions of one port value.
+
+    ``sites`` (None for an ordinary condition) is the set of layers a MULTI-SITE condition
+    (``analysis.features.FeatureCondition`` over several contexts) reads: the item only stops at
+    those layers, keeps one watch memory per layer (so an edge or change watch over L0..Ln is
+    the same as one watch per layer) and reports the stop it fired at (``site``, ``layer``)."""
+
+    sites: frozenset[int] | None = None
 
     def __init__(self, text: str):
         if not isinstance(text, str) or not text.strip():
@@ -551,6 +558,7 @@ class ConditionEnv:
     row: int | None = None
     tokenizer: Any = None
     run: Any = None     # the run at the stop: predicates that read more than the port value
+    site: str | None = None   # the stop's address (``t4.L1.h``): multi-site predicates pick by layer
 
     def reduction(self, name: str, value: Any) -> Any:
         if not isinstance(value, Selection):
@@ -990,7 +998,7 @@ class _Probe:
                                head_dim=self.run.adapter.head_dim, row=None,
                                tokenizer=self.tokenizer)
             return ConditionEnv(full, selection, CELL_AXES, self.run.adapter.head_dim, None,
-                                self.tokenizer, self.run)
+                                self.tokenizer, self.run, self.address)
         axes = stop_axes(self.run.program, self.label)
         full = self.value()
         row = None if self.label in ("start",) else self.row
@@ -999,12 +1007,16 @@ class _Probe:
         selection = select(full, axes, pattern.selector, head_dim=self.run.adapter.head_dim,
                            row=row, tokenizer=self.tokenizer)
         return ConditionEnv(full, selection, axes, self.run.adapter.head_dim, row, self.tokenizer,
-                            self.run)
+                            self.run, self.address)
 
 
 def _evaluate(item: Breakpoint | Watch, probe: _Probe, state: dict[str, Any]) -> dict | None:
     """Whether ``item`` fires at this stop; watches update ``state`` (their memory)."""
     env = probe.env(item.parsed)
+    sites = None if isinstance(item, Breakpoint) else getattr(item.predicate, "sites", None)
+    if sites is not None:
+        # a multi-site watch keeps one memory per layer (= one single-site watch per layer)
+        state = state.setdefault("sites", {}).setdefault(int(probe.label[1:].split(".")[0]), {})
     if isinstance(item, Breakpoint):
         if item.condition is not None and not item.condition.evaluate(env):
             return None
@@ -1029,6 +1041,9 @@ def _evaluate(item: Breakpoint | Watch, probe: _Probe, state: dict[str, Any]) ->
         return None
     hit = {"id": item.id, "kind": "watch", "pattern": item.pattern, "mode": item.mode,
            "new": stats, "new_provenance": prov}
+    if sites is not None:
+        hit["site"] = probe.address
+        hit["layer"] = int(probe.label[1:].split(".")[0])
     if old is not None:
         hit["old"] = old
         hit["old_provenance"] = old_prov
@@ -1039,14 +1054,25 @@ def prime(run: Any, item: Watch, *, tokenizer: Any = None) -> bool:
     """Record a new watch's baseline at the cursor when the cursor matches it (as gdb does)."""
     row, index = run.parse(run.where)
     label = run.stops()[index]
-    if not stops_at(item.parsed, stop_occurrence(row, label)):
+    if not _stops(item, stop_occurrence(row, label)):
         return False
     _evaluate(item, _Probe(run, row, label, tokenizer), item.state)
     return True
 
 
+def _stops(item: Any, occurrence: addresses.Occurrence) -> bool:
+    """Whether ``item`` stops at ``occurrence``: its pattern matches and, for a multi-site
+    condition, the occurrence is one of its sites' layers."""
+    if not stops_at(item.parsed, occurrence):
+        return False
+    condition = getattr(item, "predicate", None) if isinstance(item, Watch) else \
+        getattr(item, "condition", None)
+    sites = getattr(condition, "sites", None)
+    return sites is None or occurrence.layer in sites
+
+
 def _matching(items: list, occurrence: addresses.Occurrence) -> list:
-    return [item for item in items if stops_at(item.parsed, occurrence)]
+    return [item for item in items if _stops(item, occurrence)]
 
 
 def _at_stop(items: list, matched: list, probe: _Probe, states: dict | None,

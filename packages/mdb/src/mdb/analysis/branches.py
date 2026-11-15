@@ -40,9 +40,17 @@ Built-in nulls (each derived from an arm ``like`` and recorded with its rule):
   answer-minus-foil unembedding through the final norm), signed like the change's own projection:
   the direct-effect ceiling of a write of that size (the answer-token null).
 
-``batched(recheck=k)`` measures state-cell arms in one batched forward per chunk
-(``sweep.cell_sweep``; kernel path ``batched``, with its measured null-vs-stepped delta added to
-the floor of those arms; twice the delta: a margin is a difference of two logits) and re-measures the ``k`` largest on the stepped path (the exp5 pattern).
+``batched`` measures arms in one batched forward per chunk (``sweep.cell_sweep``; kernel path
+``batched``, with its measured null-vs-stepped delta added to the floor of those arms; twice the
+delta: a margin is a difference of two logits): state-cell arms (``replace`` of whole cells) and
+port arms at the pending row's native-module ports (``a q k v n g sg u f A o m``; any op, selector
+or mask, applied per arm by a forward hook with the stepped run's own arithmetic). A batched
+forward is a different kernel path from the stepped one, and the audited showcase found that
+this only changes verdicts for effects within about 4 floors (0/214 above), so the default
+``recheck="band"`` re-measures stepped only the arms that could flip: ``1/k <= |dM| / floor <= k``
+(``k`` = the stability margin, 4 unless calibrated); arms above ``k`` floors (stable) or below
+``1/k`` (clearly null) keep their batched row, which says why (``recheck.why``). ``recheck=0``
+none, ``"all"`` every arm, an ``int`` the ``k`` arms of largest ``|dM|`` (the exp5 pattern).
 
 ``interchange`` (subspace.py) builds on this object.
 """
@@ -237,6 +245,33 @@ class Branches:
 
     # --- arms -----------------------------------------------------------------------------
 
+    def _shaped(self, e: Edit) -> Edit:
+        """The edit with a cache-cell value in the block shape ``(1, kv, rows, d)`` the stepped
+        ``Run.set`` wants, when it holds exactly that many numbers in another shape (a flat
+        ``(d,)`` for one kv head and one row): normalised once here so the batched path and the
+        stepped recheck accept the same arms (EX1)."""
+        if not e.cell:
+            return e
+        from dataclasses import replace
+
+        from mdb.engine import refs
+
+        torch = _torch()
+        found = refs.resolve(self.debuggee, e.target)
+        kwargs = refs.cell_edit(self.debuggee, found, 0.0, None)
+        adapter = self.debuggee.adapter
+        block = (1, adapter.num_kv_heads if kwargs["kv"] is None else len(kwargs["kv"]),
+                 len(kwargs["rows"]), adapter.head_dim if kwargs["d"] is None else len(kwargs["d"]))
+        ref = e.value if isinstance(e.value, refs.ValueRef) else None
+        value = ref.value if ref is not None else e.value
+        if (not isinstance(value, torch.Tensor) or tuple(value.shape) == block
+                or value.numel() != block[0] * block[1] * block[2] * block[3]):
+            return e
+        value = value.reshape(block)
+        if ref is not None:
+            value = refs.ValueRef(value, {**ref.pointer, "shape": list(block)})
+        return replace(e, value=value)
+
     def add(self, name: str, edits: Sequence[Edit] = (), *, holds: Sequence[Any] = (),
             final_scale: str = "native") -> Arm:
         """A named arm: ``edits`` staged from the branch point, ``holds`` (addresses held at the
@@ -246,7 +281,8 @@ class Branches:
             raise Refusal(f"an arm named {name!r} exists")
         if final_scale not in ("native", "held"):
             raise Refusal("final_scale is native or held")
-        arm = Arm(name, "edit", [e if isinstance(e, Edit) else Edit(*e) for e in edits],
+        arm = Arm(name, "edit",
+                  [self._shaped(e if isinstance(e, Edit) else Edit(*e)) for e in edits],
                   list(holds), final_scale)
         self.arms[name] = arm
         return arm
@@ -460,27 +496,107 @@ class Branches:
         return rows
 
     def run(self, names: Sequence[str] | None = None, *, mode: str = "stepped",
-            recheck: int = 0, again: bool = False, batch: int = 64) -> list[dict[str, Any]]:
-        """Measure arms: ``mode="stepped"`` (``run_arms``, the authority) or ``"batched"``
-        (``batched``, state-cell arms, with ``recheck`` stepped re-measurements)."""
+            recheck: int | str | None = "band", again: bool = False, batch: int = 64
+            ) -> list[dict[str, Any]]:
+        """Measure arms: ``mode="stepped"`` (``run_arms``, the authority; ``recheck`` unused) or
+        ``"batched"`` (``batched``, with ``recheck`` stepped re-measurements)."""
         if mode == "stepped":
             return self.run_arms(names, again=again)
         if mode == "batched":
             return self.batched(names, recheck=recheck, batch=batch)
         raise Refusal("mode is stepped or batched")
 
-    def batched(self, names: Sequence[str] | None = None, *, recheck: int = 0,
-                batch: int = 64) -> list[dict[str, Any]]:
-        """State-cell arms measured in batched native forwards (``sweep.cell_sweep``): every edit
-        a ``replace`` of whole cells ``cache.L<l>.k|v[kv<g>,row=<r>]`` (one kv, one row, all of
-        head_dim), the branch point the pending row's first port with no edits on the path.
-        Kernel path ``batched``; the measured null-vs-stepped delta is added to those arms'
-        floor. ``recheck``: the ``k`` arms of largest ``|dM|`` are re-measured stepped and keep
-        both (``stepped`` on the row, ``kernel_delta`` = batched - stepped)."""
+    def _batched_edit(self, arm: Arm, e: Edit) -> Any:
+        """The ``Cell`` or ``PortPatch`` of one batched arm edit (refusing what cannot batch)."""
         from mdb.engine import refs
+        from mdb.engine.ports import PortEdit
 
+        from .sweep import Cell, PortPatch
+
+        torch = _torch()
+        found = refs.resolve(self.debuggee, e.target)
+        if e.cell:
+            if e.op != "replace" or e.dose is not None:
+                raise Refusal(f"arm {arm.name}: a batched cell arm replaces whole cells, not "
+                              f"{e.target} ({e.dose is not None and 'mix' or e.op})")
+            keys = dict(found["selector"].keys)
+            kv, row = keys.get("kv"), keys.get("row")
+            if not isinstance(kv, int) or not isinstance(row, int) or "d" in keys:
+                raise Refusal(f"{e.target}: one kv head and one row, all of head_dim")
+            value = e.value.value if isinstance(e.value, refs.ValueRef) else e.value
+            if not isinstance(value, torch.Tensor):
+                raise Refusal(f"arm {arm.name}: batched cell {e.target} needs a tensor "
+                              "value, not a number")
+            return Cell(found["layer"], found["tensor"], row, kv, value)
+        if e.dose is not None:
+            raise Refusal(f"arm {arm.name}: a dose applies to cell edits only")
+        if found["row"] != self.row:
+            raise Refusal(f"arm {arm.name}: batched port edits are at the pending row "
+                          f"t{self.row}, not {e.target}")
+        layer_text, _, port = found["label"].partition(".")
+        base = found["address"].partition("[")[0]
+        if self.debuggee.parse(base) < self.debuggee.parse(self.at):
+            raise Refusal(f"{e.target} is before the branch point {self.at}")
+        request = refs.port_edit(self.debuggee, found, e.value, None, e.mask,
+                                 shape=self.reference.address_shape(base))
+        mask = request["mask"]
+        shape = tuple(self.reference.address_shape(base))
+        edit = PortEdit(port, request["value"], e.op,
+                        mask=None if mask is None else mask.broadcast_to(shape).contiguous(),
+                        selection=request["selection"])
+        return PortPatch(int(layer_text[1:]), port, edit)
+
+    def _recheck_plan(self, rows: list[dict[str, Any]], recheck: Any) -> dict[int, str]:
+        """``{arm index: why}`` of the arms to re-measure stepped, and (in place) the
+        ``recheck`` record of every row (``done``, ``why``)."""
+        if recheck in (None, False, 0):
+            plan: dict[int, str] = {}
+            why = {i: "recheck off" for i in range(len(rows))}
+        elif recheck == "all" or recheck is True:
+            plan = {i: "recheck='all'" for i in range(len(rows))}
+            why = {}
+        elif recheck == "band":
+            plan, why = {}, {}
+            for i, row in enumerate(rows):
+                f = (row.get("effect_floors") or {}).get("value")
+                k = float(row["k"]["value"]) if "k" in row else None
+                if f is None or k is None:
+                    plan[i] = "no floor: the band cannot be judged, rechecked"
+                elif f > k:
+                    why[i] = (f"above the band: {f:.3g} floors > k={k:g} (stable; no kernel-path "
+                              "difference measured above k floors)")
+                elif f < 1.0 / k:
+                    why[i] = f"clearly null: {f:.3g} floors < 1/k={1.0 / k:.3g}; verdict cannot flip"
+                else:
+                    plan[i] = f"in the kernel-sensitive band: 1/k <= {f:.3g} floors <= k={k:g}"
+        elif isinstance(recheck, int) and not isinstance(recheck, bool) and recheck > 0:
+            order = sorted(range(len(rows)), key=lambda i: -abs(rows[i]["dM"]["value"]))
+            plan = {i: f"recheck={recheck}: among the {recheck} largest |dM|"
+                    for i in order[:recheck]}
+            why = {i: f"recheck={recheck}: not among the {recheck} largest |dM|"
+                   for i in range(len(rows)) if i not in plan}
+        else:
+            raise Refusal("recheck is 0 (none), 'band', 'all' or an int k (the k largest)")
+        for i, row in enumerate(rows):
+            row["recheck"] = {"done": i in plan, "why": plan.get(i) or why.get(i, "")}
+        return plan
+
+    def batched(self, names: Sequence[str] | None = None, *, recheck: int | str | None = "band",
+                batch: int = 64) -> list[dict[str, Any]]:
+        """Arms measured in batched native forwards (``sweep.cell_sweep``): state-cell arms
+        (every edit a ``replace`` of whole cells ``cache.L<l>.k|v[kv<g>,row=<r>]``: one kv head,
+        one row, all of head_dim) and port arms at the pending row's native-module ports
+        (``a q k v n g sg u f A o m``; any op/selector/mask; holds refused), the branch point the
+        pending row's first port with no edits on the path. Kernel path ``batched``; the measured
+        null-vs-stepped delta is added to those arms' floor.
+
+        ``recheck`` (module docstring): ``"band"`` (default) re-measures stepped only the arms
+        whose effect is within the kernel-sensitive band and could flip, ``"all"`` every arm,
+        an int ``k`` the ``k`` of largest ``|dM|``, ``0`` none. A rechecked row keeps both
+        (``stepped`` on the row, ``kernel_delta`` = batched - stepped); every row carries
+        ``recheck = {done, why}``."""
         from .stability import BATCHED
-        from .sweep import Cell, cell_sweep
+        from .sweep import cell_sweep
 
         torch = _torch()
         chosen = [self.arm(n) for n in (list(self.arms) if names is None else names)]
@@ -488,24 +604,20 @@ class Branches:
         for arm in chosen:
             if arm.holds or arm.final_scale != "native":
                 raise Refusal(f"arm {arm.name}: holds run on the stepped path only")
-            cells = []
-            for e in arm.edits:
-                if not e.cell or e.op != "replace" or e.dose is not None:
-                    raise Refusal(f"arm {arm.name}: a batched arm replaces whole cells, not "
-                                  f"{e.target} ({e.op})")
-                found = refs.resolve(self.debuggee, e.target)
-                keys = dict(found["selector"].keys)
-                kv, row = keys.get("kv"), keys.get("row")
-                if not isinstance(kv, int) or not isinstance(row, int) or "d" in keys:
-                    raise Refusal(f"{e.target}: one kv head and one row, all of head_dim")
-                value = e.value.value if isinstance(e.value, refs.ValueRef) else e.value
-                if not isinstance(value, torch.Tensor):
-                    raise Refusal(f"arm {arm.name}: batched cell {e.target} needs a tensor "
-                                  "value, not a number")
-                cells.append(Cell(found["layer"], found["tensor"], row, kv, value))
-            cells_of.append(cells)
+            cells_of.append([self._batched_edit(arm, e) for e in arm.edits])
         logits_all = self.base_logits
-        swept = cell_sweep(self.debuggee, cells_of, batch=batch, stepped_logits=logits_all)
+        run = self.debuggee
+        first = f"t{self.row}.L0.{run.program.names[0]}"
+        moved = run.parse(run.where) != run.parse(first)
+        if moved:
+            # the sweep runs the pending row whole from its first port: with nothing edited on
+            # the path (cell_sweep refuses otherwise) the branch point's state is the same
+            run.rewind(first)
+        try:
+            swept = cell_sweep(run, cells_of, batch=batch, stepped_logits=logits_all)
+        finally:
+            if moved:
+                run.restore(self.checkpoint)
         extra = float(swept["null_vs_stepped"] or 0.0)
         # the same delta over the consumer's own tokens only (the showcase floors measured it
         # there; ``null_vs_stepped`` is the max over the whole vocabulary)
@@ -527,14 +639,12 @@ class Branches:
             if own is not None:
                 arm.result["kernel_delta_null_consumer_tokens"] = num(own, MEASURED)
             rows.append(arm.result)
-        if recheck:
-            order = sorted(range(len(chosen)), key=lambda i: -abs(rows[i]["dM"]["value"]))
-            for i in order[:recheck]:
-                stepped = self._measure(chosen[i])
-                rows[i]["stepped"] = {"dM": stepped["dM"], "argmax": stepped["argmax"],
-                                      "kernel_path": stepped["kernel_path"]}
-                rows[i]["kernel_delta"] = num(rows[i]["dM"]["value"] - stepped["dM"]["value"],
-                                              MEASURED)
+        for i, why in self._recheck_plan(rows, recheck).items():
+            stepped = self._measure(chosen[i])
+            rows[i]["stepped"] = {"dM": stepped["dM"], "argmax": stepped["argmax"],
+                                  "kernel_path": stepped["kernel_path"]}
+            rows[i]["kernel_delta"] = num(rows[i]["dM"]["value"] - stepped["dM"]["value"],
+                                          MEASURED)
         _ = torch
         return rows
 

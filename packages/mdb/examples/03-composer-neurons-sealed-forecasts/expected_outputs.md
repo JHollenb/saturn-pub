@@ -110,6 +110,8 @@ showcase's answer-token neuron set did. That neuron null was not rerun (see belo
    `Branches.run()` (stepped) is the authority for the set, the top neuron, the random set and the
    three mdb nulls on every item, not a recheck of 2 arms. N4 compares the nnsight batched set and
    top arms with the `Branches` stepped ones.
+   (Since 2026-11-14 `Branches` batches `f`-port arms too, with the band recheck by default; this
+   validated run predates that and its numbers are unchanged.)
 
 ## mdb objects used (and the showcase TODOs they replace)
 

@@ -319,7 +319,8 @@ for c in MEASURED_C:
 #
 # `Branches.run(mode="batched", recheck=k)` measures *state-cell* arms (`cache.L<l>.k|v`) in a
 # batched forward; it refuses port edits such as these `f` knock-outs, so the batched numbers come
-# from nnsight (step 6) and `Branches` is the stepped authority for the arms below.
+# from nnsight (step 6) and `Branches` is the stepped authority for the arms below. (Since
+# 2026-11-14 `Branches` batches port arms too, f included; this validated run predates it.)
 
 # %%
 W_DOWN = {x: model.model.layers[x].mlp.down_proj.weight for x in LAYERS}

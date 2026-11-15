@@ -15,6 +15,14 @@ shape). Each chunk therefore carries a null arm (no edit) at batch index 0, and 
 reports ``null_vs_stepped``: the largest ``|logit|`` difference between that null arm and the
 run's stepped native logits, measured, so a caller can put it into its noise floor.
 
+Port patches (``PortPatch(layer, port, edit)``, gap fix 2026-11-14): an arm may also carry edits
+of the native-module ports of the pending row (``a q k v n g sg u f A o m ...``: every port whose
+program entry is a ``pre`` or ``out`` hook on a layer submodule, so not ``h``, ``r``, ``h_out``
+or the eager-attention ports). ``edit`` is the engine's own ``PortEdit`` (value, op, mask); a
+forward hook on that submodule applies it to batch element ``i`` only, as ``edit.apply`` on the
+``(1, 1, ...)`` slice, i.e. the same cast-once, one-rounded-op arithmetic the stepped run
+realises, with that arm's own mask. Edits of one arm at one port apply in the order given.
+
 Labels: every returned logit is ``measured`` (native forward), under the edits of its arm.
 Memory: one chunk's cache (``B`` copies of the prefill cache) and logits of the requested token
 ids only; nothing else is kept.
@@ -41,6 +49,51 @@ class Cell:
     row: int
     kv: int
     value: Any
+
+
+@dataclass(frozen=True)
+class PortPatch:
+    """One port edit of the pending row at ``layer``: ``edit`` is an ``engine.ports.PortEdit``
+    whose value/mask have the port's ``(1, 1, ...)`` shape (the stepped run's)."""
+
+    layer: int
+    port: str
+    edit: Any
+
+
+def _port_ok(program: Any, port: str) -> Any:
+    """The program entry of ``port`` when a batched hook can realise an edit there."""
+    spec = program.spec(port)
+    if not spec.editable or spec.hook not in ("pre", "out") or not spec.site or port == "r":
+        ok = [p.name for p in program.ports
+              if p.editable and p.hook in ("pre", "out") and p.site and p.name != "r"]
+        raise Refusal(f"a batched port edit needs a native-module port ({', '.join(ok)}), "
+                      f"not {port}")
+    return spec
+
+
+def _hooks(adapter: Any, items: dict[tuple[int, str], list[tuple[int, Any]]], program: Any):
+    """Forward hooks that apply each (layer, port)'s edits to their batch elements."""
+    from mdb.engine.ports import _module
+
+    handles = []
+    for (layer, port), todo in items.items():
+        spec = program.spec(port)
+        module = _module(adapter._layer_modules[layer], spec.site)
+
+        def apply(x, todo=todo):
+            out = x.clone()
+            for index, edit in todo:
+                out[index:index + 1] = edit.apply(out[index:index + 1])
+            return out
+
+        if spec.hook == "pre":
+            handles.append(module.register_forward_pre_hook(
+                lambda m, args, apply=apply: (apply(args[0]), *args[1:])))
+        else:
+            handles.append(module.register_forward_hook(
+                lambda m, args, output, apply=apply: apply(output)))
+    return handles
 
 
 def _check(run: Any) -> int:
@@ -85,8 +138,17 @@ def cell_sweep(run: Any, arms: Sequence[Sequence[Cell]], *, tokens: Sequence[int
     length = int(keys[0].shape[2])
     if length != row:
         raise Refusal(f"the cache holds {length} rows, the pending row is t{row}")
+    from mdb.engine.ports import program_for
+
+    program = program_for(adapter)
     for arm in arms:
         for cell in arm:
+            if isinstance(cell, PortPatch):
+                if not 0 <= cell.layer < layers:
+                    raise Refusal(f"no layer {cell.layer} for port {cell.port}")
+                _port_ok(program, cell.port)
+                cell.edit.validate(program.shape(cell.port, adapter.model.config, src=row + 1))
+                continue
             if cell.tensor not in ("k", "v"):
                 raise Refusal("a cell is k or v")
             if not (0 <= cell.layer < layers and 0 <= cell.row < row
@@ -105,19 +167,29 @@ def cell_sweep(run: Any, arms: Sequence[Sequence[Cell]], *, tokens: Sequence[int
             chunk = [[]] + [list(arm) for arm in arms[start:start + batch]]
             size = len(chunk)
             cache = DynamicCache(config=model.config)
+            items: dict[tuple[int, str], list[tuple[int, Any]]] = {}
+            for index, arm in enumerate(chunk):
+                for cell in arm:
+                    if isinstance(cell, PortPatch):
+                        items.setdefault((cell.layer, cell.port), []).append((index, cell.edit))
             for layer in range(layers):
                 k = keys[layer].expand(size, -1, -1, -1).clone()
                 v = values[layer].expand(size, -1, -1, -1).clone()
                 for index, arm in enumerate(chunk):
                     for cell in arm:
-                        if cell.layer != layer:
+                        if isinstance(cell, PortPatch) or cell.layer != layer:
                             continue
                         target = k if cell.tensor == "k" else v
                         target[index, cell.kv, cell.row] = cell.value.reshape(-1).to(
                             device=device, dtype=target.dtype)
                 cache.update(k, v, layer)
             ids = torch.full((size, 1), token, dtype=torch.long, device=device)
-            logits = model(ids, past_key_values=cache, use_cache=True).logits[:, -1]
+            handles = _hooks(adapter, items, program)
+            try:
+                logits = model(ids, past_key_values=cache, use_cache=True).logits[:, -1]
+            finally:
+                for handle in handles:
+                    handle.remove()
             del cache
             chosen = logits if pick is None else logits.index_select(1, pick)
             argmax.append(logits.argmax(dim=-1)[1:].cpu())
@@ -140,4 +212,4 @@ def cell_sweep(run: Any, arms: Sequence[Sequence[Cell]], *, tokens: Sequence[int
     return result
 
 
-__all__ = ["Cell", "cell_sweep"]
+__all__ = ["Cell", "PortPatch", "cell_sweep"]

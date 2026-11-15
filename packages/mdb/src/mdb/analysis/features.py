@@ -17,6 +17,16 @@ feature's declared name token, else its id), ``content(SET)`` (the best token of
 candidate set read from the context cell's current value through ``gamma_F * W_U`` and the
 KV group's ``W_O``; rho-free, a ranking) and declared numeric constants (``truth``). It reads
 the run it is evaluated on (``ConditionEnv.run``), so it fires on edited values as well.
+
+Multi-site watches (gap fix 2026-11-14): a ``FeatureContext`` is tied to one site (one basis,
+one layer). ``FeatureCondition(text, contexts)`` also takes several contexts (a sequence, or
+``{layer: context}``; ``feature_sites`` builds one per layer from a ``{layer: basis}``): the
+condition then reads, at each stop, the context of that stop's layer (``ConditionEnv.site``),
+the item stops only at those layers, keeps one watch memory per layer and reports the stop
+(``hit["site"]``, ``hit["layer"]``). A watch ``t4.L*.h`` over contexts for L0..Ln equals n
+single-site watches ``t4.L<l>.h`` run one by one, in edge, level and change modes alike. Named
+sets, labels, candidates and constants are per context, so every context must declare the
+names the text uses.
 """
 
 from __future__ import annotations
@@ -154,16 +164,60 @@ class FeatureContext:
         return int(toks[int(scores.argmax())])
 
 
-class FeatureCondition(Condition):
-    """A ``Condition`` that also reads features (module docstring)."""
+def feature_sites(bases: Any, row: int, layers: Any = None, **shared: Any) -> dict[int, FeatureContext]:
+    """``{layer: FeatureContext}`` for a multi-site ``FeatureCondition``: one context per layer of
+    ``bases`` (``{layer: basis}``, or a callable ``layer -> basis``; ``layers`` then names them),
+    all at ``row``, sharing ``kv``, ``sets``, ``labels``, ``candidates`` and ``constants``."""
+    if callable(bases):
+        if layers is None:
+            raise Refusal("feature_sites(callable) needs layers=")
+        found = {int(layer): bases(int(layer)) for layer in layers}
+    else:
+        found = {int(layer): basis for layer, basis in dict(bases).items()
+                 if layers is None or layer in set(layers)}
+    return {layer: FeatureContext(basis, row, layer, **shared) for layer, basis in
+            sorted(found.items())}
 
-    def __init__(self, text: str, context: FeatureContext):
-        self.context = context
+
+class FeatureCondition(Condition):
+    """A ``Condition`` that also reads features (module docstring). ``context``: one
+    ``FeatureContext`` (a single-site condition), or several (a sequence, or ``{layer:
+    context}``; one per distinct layer): a multi-site condition (``sites`` = their layers)."""
+
+    def __init__(self, text: str, context: Any):
+        if isinstance(context, FeatureContext):
+            self.contexts = {context.layer: context}
+            self.sites = None
+        else:
+            items = list(context.values()) if isinstance(context, dict) else list(context)
+            if not items or not all(isinstance(c, FeatureContext) for c in items):
+                raise ConditionError("a feature condition takes a FeatureContext or several")
+            layers = [c.layer for c in items]
+            if len(set(layers)) != len(layers):
+                raise ConditionError("one context per layer in a multi-site feature condition")
+            if isinstance(context, dict) and any(int(k) != c.layer for k, c in context.items()):
+                raise ConditionError("a context dict is keyed by its context's layer")
+            self.contexts = {c.layer: c for c in items}
+            self.sites = frozenset(layers)
+        self.context = next(iter(self.contexts.values()))
         super().__init__(text)
 
+    def _context(self, env: Any = None) -> FeatureContext:
+        """The context of the stop ``env`` is at (a single-site condition: its only one)."""
+        if self.sites is None:
+            return self.context
+        match = re.search(r"\.L(\d+)\.", getattr(env, "site", None) or "")
+        if match is None or int(match[1]) not in self.contexts:
+            raise ConditionError(f"no feature context for the stop "
+                                 f"{getattr(env, 'site', None)!r} (sites: L"
+                                 f"{', L'.join(map(str, sorted(self.sites)))})")
+        return self.contexts[int(match[1])]
+
     def _check(self, node: ast.AST, *, value_ok: bool = False) -> None:
-        ctx = self.context
-        if isinstance(node, ast.Name) and node.id in ctx.constants:
+        contexts = list(self.contexts.values())
+        if isinstance(node, ast.Name) and any(node.id in c.constants for c in contexts):
+            if not all(node.id in c.constants for c in contexts):
+                raise ConditionError(f"constant {node.id!r} is not declared at every site")
             return
         if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and \
                 node.value.id == "feature":
@@ -176,14 +230,16 @@ class FeatureCondition(Condition):
             if node.keywords or len(node.args) != 1 or not isinstance(node.args[0], ast.Name):
                 raise ConditionError(f"{node.func.id}(SET) takes one declared set name")
             name = node.args[0].id
-            pool = ctx.sets if node.func.id == "best_feature" else ctx.candidates
-            if name not in pool:
-                raise ConditionError(f"{node.func.id}: no declared set {name!r}")
+            for ctx in contexts:
+                pool = ctx.sets if node.func.id == "best_feature" else ctx.candidates
+                if name not in pool:
+                    raise ConditionError(f"{node.func.id}: no declared set {name!r}"
+                                         + ("" if self.sites is None else f" at L{ctx.layer}"))
             return
         super()._check(node, value_ok=value_ok)
 
     def _eval(self, node: ast.AST, env: Any) -> Any:
-        ctx = self.context
+        ctx = self._context(env)
         run = getattr(env, "run", None)
         if isinstance(node, ast.Name) and node.id in ctx.constants:
             return ctx.constants[node.id]
@@ -206,4 +262,4 @@ class FeatureCondition(Condition):
 
 
 __all__ = ["FeatureAddress", "FeatureCondition", "FeatureContext", "activations",
-           "feature_value", "parse_feature_address"]
+           "feature_sites", "feature_value", "parse_feature_address"]

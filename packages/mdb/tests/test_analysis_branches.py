@@ -115,9 +115,12 @@ def test_batched_cell_arms_with_stepped_recheck(dbg, donor):
     for r in rows:
         own = r["kernel_delta_null_consumer_tokens"]["value"]
         assert 0.0 <= own <= r["kernel_delta_null"]["value"]
-    with pytest.raises(Refusal):
-        br.add("p", [edit(f"t{LAST}.L0.m", 0.0, "scale")])
+    with pytest.raises(Refusal):                               # a cell arm replaces whole cells
+        br.add("p", [edit("cache.L1.v[kv0,row=1]", 0.0, "scale")])
         br.run(["p"], mode="batched")
+    with pytest.raises(Refusal):                               # h is not a native-module port
+        br.add("h", [edit(f"t{LAST}.L1.h", 0.0, "scale")])
+        br.run(["h"], mode="batched")
 
 
 def test_interchange_rides_on_branches(dbg):
@@ -153,3 +156,127 @@ def test_arm_magnitude_and_head_selector(dbg):
     assert row["M"]["value"] == _margin(lg)
     assert row["magnitude"]["value"] == max(abs(float(lg[3].float())), abs(float(lg[7].float())))
     assert row["edits"][0]["selection"] == "h1"
+
+
+# --- gap fixes 2026-11-14: batched port arms, flat cell value (EX1), the recheck band ----------
+
+def _port_arms(dbg, donor, br, at_layer):
+    """f-port arms of every edit kind: a donor block ref, a selector scale, a masked add, two
+    layers in one arm, and an m-port write."""
+    dm, ff = dbg.adapter.model.config.hidden_size, dbg.adapter.model.config.intermediate_size
+    g = torch.Generator().manual_seed(3)
+    L = at_layer
+    mask = torch.zeros(1, 1, ff, dtype=torch.bool)
+    mask[..., ::3] = True
+    br.add("ref", [edit(f"t{LAST}.L{L}.f[i=2:9]", donor.ref(f"t{LAST}.L{L}.f[i=2:9]"))])
+    br.add("scale", [edit(f"t{LAST}.L{L}.f[i=3|5]", 0.0, "scale")])
+    br.add("mask", [edit(f"t{LAST}.L{L}.f", torch.randn(1, 1, ff, generator=g) * 0.4, "add",
+                         mask=mask)])
+    br.add("two", [edit(f"t{LAST}.L{L}.f[i=1|4]", 0.5, "add"),
+                   edit(f"t{LAST}.L1.f[i=7]", 0.0, "replace")])
+    br.add("m", [edit(f"t{LAST}.L{L}.m", torch.randn(1, 1, dm, generator=g) * 0.5, "add")])
+
+
+@pytest.mark.parametrize("at", [None, f"t{LAST}.L1.h"], ids=["at-L0", "at-L1"])
+def test_batched_port_arms_equal_stepped(dbg, donor, at):
+    """f (and m) port arms run batched equal the same arms stepped within the arm's floor, with
+    each arm's own mask, at the first port and from a later branch point."""
+    run = dbg.run(P, name="bp")
+    br = Branches(run, Margin(LAST, 3, 7), at=at)
+    _port_arms(dbg, donor, br, 1)
+    rows = br.run(mode="batched", recheck=0)
+    assert all(r["kernel_path"] == "batched" and not r["recheck"]["done"] for r in rows)
+    batched = {r["name"]: r["dM"]["value"] for r in rows}
+    assert run.where == br.at                                   # back at the branch point
+    stepped = {r["name"]: r["dM"]["value"] for r in br.run_arms(again=True)}
+    for r in rows:
+        assert abs(batched[r["name"]] - stepped[r["name"]]) <= r["floor"]["value"], r["name"]
+    assert any(abs(v) > 0 for v in stepped.values())
+    # a masked arm touches only its mask: the batched arm differs from the unmasked add
+    assert batched["mask"] != batched["m"]
+
+
+def test_batched_port_arms_equal_nnsight_batch(dbg, donor):
+    """The same f/m arms through nnsight's batched patch (interop.nn.batch_whatif) agree with
+    the Branches batched path within the arm's floor."""
+    pytest.importorskip("nnsight")
+    import warnings
+
+    from mdb.interop import nn
+
+    warnings.filterwarnings("ignore")
+    run = dbg.run(P, name="nnb")
+    br = Branches(run, Margin(LAST, 3, 7))
+    dm = dbg.adapter.model.config.hidden_size
+    vec = torch.randn(dm, generator=torch.Generator().manual_seed(4)) * 0.5
+    br.add("scale", [edit(f"t{LAST}.L1.f[i=3|5]", 0.0, "scale")])
+    br.add("two", [edit(f"t{LAST}.L0.f[i=1|4]", 0.5, "add"),
+                   edit(f"t{LAST}.L1.f[i=7]", 0.0, "replace")])
+    br.add("m", [edit(f"t{LAST}.L1.m", vec.reshape(1, 1, dm).to(dbg.adapter.dtype), "add")])
+    rows = {r["name"]: r for r in br.run(mode="batched", recheck=0)}
+    arms = {"scale": [nn.Edit("L1.f[i=3|5]", 0.0, "scale")],
+            "two": [nn.Edit("L0.f[i=1|4]", 0.5, "add"), nn.Edit("L1.f[i=7]", 0.0, "replace")],
+            "m": [nn.Edit("L1.m", vec.reshape(1, dm).to(dbg.adapter.dtype), "add")]}
+    res = nn.batch_whatif(dbg.adapter.model, [P], [(3, 7)], arms)
+    for name, row in rows.items():
+        assert abs(res["arms"][name]["delta"][0] - row["dM"]["value"]) <= row["floor"]["value"], name
+
+
+def test_flat_cell_value_accepted_by_both_paths(dbg, donor):
+    """EX1: a flat (d,) value for one cell is normalised to the block shape when the arm is
+    created, so the batched path and the stepped recheck accept the same arm."""
+    run = dbg.run(P, name="flat")
+    br = Branches(run, Margin(LAST, 3, 7))
+    d = dbg.adapter.head_dim
+    cell = "cache.L1.v[kv0,row=1]"
+    flat = donor.ref(cell).value.reshape(-1)
+    assert flat.shape == (d,)
+    br.add("flat", [edit(cell, flat)])
+    br.add("ref", [edit(cell, donor.ref(cell))])
+    br.add("flatref", [edit(cell, type(donor.ref(cell))(flat, donor.ref(cell).pointer))])
+    assert tuple(br.arm("flat").edits[0].value.shape) == (1, 1, 1, d)
+    assert br.arm("flatref").edits[0].value.pointer["shape"] == [1, 1, 1, d]
+    rows = {r["name"]: r for r in br.run(mode="batched", recheck="all")}
+    assert all(r["recheck"]["done"] and "stepped" in r for r in rows.values())
+    assert rows["flat"]["stepped"]["dM"] == rows["ref"]["stepped"]["dM"]
+    assert rows["flat"]["dM"] == rows["ref"]["dM"] == rows["flatref"]["dM"]
+    stepped = br.run_arms(["flat"], again=True)[0]                # the stepped path alone
+    assert stepped["dM"] == rows["flat"]["stepped"]["dM"]
+
+
+def test_recheck_band_default_skips_stable_and_null(dbg, donor):
+    """90 m-port writes of geometrically growing size (null, in-band and stable arms alike): by
+    default exactly the arms with 1/k <= |dM|/floor <= k are re-measured stepped, each row says
+    why, and the other options (0, 'all', int k) behave as documented."""
+    run = dbg.run(P, name="band")
+    br = Branches(run, Margin(LAST, 3, 7))
+    dm = dbg.adapter.model.config.hidden_size
+    v = torch.randn(dm, generator=torch.Generator().manual_seed(11), dtype=torch.float64)
+    for i in range(90):
+        value = (v * 1e-10 * 1.4 ** i).to(dbg.adapter.dtype).reshape(1, 1, dm)
+        br.add(f"g{i}", [edit(f"t{LAST}.L1.m", value, "add")])
+    rows = br.run(mode="batched")                                 # the default is "band"
+    k = rows[0]["k"]["value"]
+    inband = [1 / k <= r["effect_floors"]["value"] <= k for r in rows]
+    assert [r["recheck"]["done"] for r in rows] == inband
+    assert [("stepped" in r) for r in rows] == inband
+    nulls = [r for r in rows if r["effect_floors"]["value"] < 1 / k]
+    stable = [r for r in rows if r["effect_floors"]["value"] > k]
+    assert nulls and stable and any(inband)
+    assert all("clearly null" in r["recheck"]["why"] for r in nulls)
+    assert all("above the band" in r["recheck"]["why"] for r in stable)
+    assert all("kernel-sensitive band" in r["recheck"]["why"] for r in rows if r["recheck"]["done"])
+    for r in rows:
+        if "stepped" in r:                                       # the recheck is still within floor
+            assert abs(r["kernel_delta"]["value"]) <= r["floor"]["value"]
+    names = [r["name"] for r in rows]
+    for option, count in ((0, 0), (None, 0), ("all", len(rows)), (3, 3)):
+        got = br.run(mode="batched", recheck=option)
+        assert [r["name"] for r in got] == names
+        assert sum(r["recheck"]["done"] for r in got) == count, option
+        assert all(r["recheck"]["why"] for r in got)
+    top = br.run(mode="batched", recheck=3)
+    largest = sorted(top, key=lambda r: -abs(r["dM"]["value"]))[:3]
+    assert all(r["recheck"]["done"] for r in largest)             # int k: the k largest |dM|
+    with pytest.raises(Refusal):
+        br.run(mode="batched", recheck="sometimes")

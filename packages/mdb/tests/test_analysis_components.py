@@ -242,3 +242,108 @@ def test_symbol_table_record_holds_a_wide_feature_binding_by_pointer(tmp_path):
     assert len(full) == len(rows)
     assert json.dumps(full, sort_keys=True) == json.dumps(json.loads(json.dumps(rows)),
                                                           sort_keys=True)
+
+
+# --- gap fix 2026-11-14: multi-site feature watch (one context per layer) ---------------------
+
+def _site_bases(debugger):
+    """A random FeatureBasis at every layer's residual input (``L<l>.h``)."""
+    width, g = int(debugger.model.config.hidden_size), torch.Generator().manual_seed(21)
+    return {layer: sae.FeatureBasis(
+        f"r{layer}", layer, "h", F // 2, torch.randn(F, width, generator=g),
+        torch.randn(F, generator=g) * 0.1, torch.randn(width, F, generator=g) / 8,
+        torch.randn(width, generator=g) * 0.1) for layer in range(debugger.adapter.layers)}
+
+
+def _collect(run, table, budget=8, cap=64):
+    """Every hit of ``run_forward`` to the end of the row budget: ``[(where, hit ids/kinds...)]``."""
+    out = []
+    for _ in range(cap):
+        res = bp.run_forward(run, table, budget=budget)
+        if res["reason"] not in ("watch", "watch+breakpoint", "breakpoint"):
+            return out, res
+        out.append(res)
+    raise AssertionError("did not terminate")
+
+
+@pytest.mark.parametrize("mode", ["edge", "level"])
+def test_multi_site_feature_watch_equals_single_site_watches(debugger, mode):
+    bases = _site_bases(debugger)
+    run = _run(debugger, "t4.L0.h")
+    layers = sorted(bases)
+    live = {layer: set(features.activations(_run(debugger, f"t4.L{layer}.h"), bases[layer], 4,
+                                             layer)) for layer in layers}
+    both = [f for f in range(F) if sum(f in live[layer] for layer in layers) >= 2]
+    some = [f for f in both if not all(f in live[layer] for layer in layers)]
+    feature = (some or both)[0]
+    text = f"feature[{feature}] > 0"
+    ctxs = features.feature_sites(bases, row=4)
+    cond = features.FeatureCondition(text, ctxs)
+    assert cond.sites == frozenset(layers) and cond.selector_texts() == []
+    fresh = debugger.run(PROMPT, prefill=1)
+    table = bp.Table()
+    watch = table.add_watch("t4.L*.h", fresh.program, mode=mode, compiled=cond)
+    hits, end = _collect(fresh, table)
+    multi = [(r["where"], h["site"], h["layer"]) for r in hits for h in r["hits"]]
+    assert all(r["reason"] == "watch" for r in hits)
+    assert multi and all(w == s for w, s, _ in multi)          # the hit names the stop it fired at
+    assert all(s == f"t4.L{layer}.h" for _, s, layer in multi)
+    assert table.items[watch.id].hits == len(multi)
+    # one watch per layer, run one by one: the same hits
+    singles = []
+    for layer in layers:
+        one = debugger.run(PROMPT, prefill=1)
+        t = bp.Table()
+        t.add_watch(f"t4.L{layer}.h", one.program, mode=mode, compiled=features.FeatureCondition(
+            text, features.FeatureContext(bases[layer], row=4, layer=layer)))
+        got, _ = _collect(one, t)
+        singles += [(r["where"], h["pattern"]) for r in got for h in r["hits"]]
+    assert sorted(w for w, _, _ in multi) == sorted(w for w, _ in singles)
+    assert len(multi) >= 2 or mode == "level"
+    # a stop without a context (a layer outside the sites) is never visited
+    partial = features.FeatureCondition(text, {0: ctxs[0]})
+    p = debugger.run(PROMPT, prefill=1)
+    t = bp.Table()
+    t.add_watch("t4.L*.h", p.program, mode=mode, compiled=partial)
+    got, _ = _collect(p, t)
+    assert {h["layer"] for r in got for h in r["hits"]} <= {0}
+
+
+def test_multi_site_watch_with_breakpoint_and_reverse(debugger):
+    bases = _site_bases(debugger)
+    layers = sorted(bases)
+    run = _run(debugger, "t4.L0.h")
+    live = [features.activations(_run(debugger, f"t4.L{l}.h"), bases[l], 4, l) for l in layers]
+    feature = next(f for f in range(F) if f in live[0])
+    ctxs = features.feature_sites(bases, row=4)
+    cond = features.FeatureCondition(f"feature[{feature}] > 0", ctxs)
+    fresh = debugger.run(PROMPT, prefill=1)
+    table = bp.Table()
+    table.add_watch("t4.L*.h", fresh.program, mode="level", compiled=cond)
+    table.add_break("t4.L0.h", fresh.program)
+    first = bp.run_forward(fresh, table, budget=8)
+    assert first["reason"] == "watch+breakpoint" and first["where"] == "t4.L0.h"
+    assert {h["kind"] for h in first["hits"]} == {"watch", "break"}
+    assert [h["site"] for h in first["hits"] if h["kind"] == "watch"] == ["t4.L0.h"]
+    # back from the end: the reverse walk finds the same stops as the forward one
+    fwd = [first["where"]]
+    while True:
+        res = bp.run_forward(fresh, table, budget=8)
+        if res["reason"] not in ("watch", "watch+breakpoint", "breakpoint"):
+            break
+        fwd.append(res["where"])
+    back = []
+    while True:
+        res = bp.run_reverse(fresh, table)
+        if res["reason"] not in ("watch", "watch+breakpoint", "breakpoint"):
+            break
+        back.append(res["where"])
+    assert back == list(reversed(fwd))      # the cursor is past the last hit
+    # a context set must name its constants at every site
+    with pytest.raises(bp.ConditionError):
+        features.FeatureCondition("feature[1] > truth", [
+            features.FeatureContext(bases[0], 4, 0, constants={"truth": 1}),
+            features.FeatureContext(bases[1], 4, 1)])
+    with pytest.raises(bp.ConditionError):
+        features.FeatureCondition("feature[1] > 0", [features.FeatureContext(bases[0], 4, 0),
+                                                      features.FeatureContext(bases[0], 4, 0)])
