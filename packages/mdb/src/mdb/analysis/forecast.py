@@ -984,6 +984,22 @@ def _resolve_target(run: Any, target: str | Margin | None) -> tuple[str, Margin 
     return run.stops()[key[1]], None, key
 
 
+def refuse_held(run: Any) -> None:
+    """Issue DC5 (measured 2026-11-14, tiny qwen2 fp32): the forecast chains reason from the
+    committed edits, not from the edits active holds will stage ahead of the cursor, so a
+    whatif under ``t@last.L>0.p`` held predicted the free continuation bit for bit (-8.6021e-05)
+    while the held native change was -8.4773e-05. Until holds are part of the edit plan, a
+    forecast on a run with active holds is refused (``run.release()`` first, or measure the
+    held arm with ``Branches``)."""
+    holds = getattr(run, "holds", None)
+    if holds:
+        names = ", ".join(h["name"] for h in holds)
+        raise Refusal(f"the run has active holds ({names}); forecasts do not model the edits "
+                      "a hold stages ahead of the cursor, so the prediction would be the free "
+                      "continuation's. Release them (run.release()) or measure the held arm "
+                      "with Branches")
+
+
 def seal(run: Any, target: str | Margin | None = None, *, store: Any = None,
          staged: str = "refuse") -> dict[str, Any]:
     """Predict ``target`` (default: the next stop) from values at the cursor and seal it.
@@ -1008,6 +1024,7 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None,
     or past it by the native call: ``Run.status()["computed_past_cursor"]``), lies in another
     row, has no identity, or a staged edit sits between the cursor and the target.
     """
+    refuse_held(run)
     here = run.parse(run.where)
     row = here[0]
     label, margin, key = _resolve_target(run, target)

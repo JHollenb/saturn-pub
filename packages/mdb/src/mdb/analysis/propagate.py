@@ -1365,6 +1365,9 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
     for the full operand list when it is over the record bound (see ``bound_operands``).
     ``shared``: the emulated base chains of one call (``_emulated_base``). ``stages``: report
     the per-stage containment (``_checker``)."""
+    from mdb.analysis.forecast import refuse_held
+
+    refuse_held(run)
     p = plan(run, edit, consumer)
     if before is None:
         before = state_digest(run)

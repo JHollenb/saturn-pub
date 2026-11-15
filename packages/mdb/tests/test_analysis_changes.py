@@ -108,3 +108,23 @@ def test_forecast_writer_runs_before_native_and_failure_prevents_release(monkeyp
         propagate.whatif(run, edit, Margin(3, 4, 9), before_native=broken_writer)
     assert events == []
     assert state_digest(run) == before
+
+
+def test_forecasts_refuse_a_run_with_active_holds():
+    """Issue DC5 (measured): under a hold the whatif prediction was the free continuation's
+    bit for bit while the native change differed; forecasts on a held run are refused."""
+    from mdb.analysis import forecast, propagate
+
+    dbg = open_tiny("qwen2", "fp32")
+    base = dbg.run([1, 5, 9, 3], name="base")
+    base.until("logits")
+    run = dbg.run([1, 5, 9, 3], name="held")
+    run.hold("t@last.L>0.p", source=base)
+    run.until("t3.L0.f")
+    with pytest.raises(Refusal, match="active holds"):
+        propagate.whatif(run, propagate.Edit("t3.L0.f", 3.0, "scale"), Margin(3, 4, 9))
+    with pytest.raises(Refusal, match="active holds"):
+        forecast.seal(run, Margin(3, 4, 9))
+    run.release()
+    assert propagate.whatif(run, propagate.Edit("t3.L0.f", 3.0, "scale"),
+                            Margin(3, 4, 9)).report["measured"]["delta"]["value"] != 0
