@@ -22,9 +22,9 @@ Examples load no model on import; real-model examples run inside an admitted mru
 | [`05-sae-component-binding-carrier/`](05-sae-component-binding-carrier/) | 2026-11-14, owner-approved (showcase exp2). SAE features as component bindings of the carrier value cell: the named country component moves 0.59 of the cell, a random one 0.0. `Binding.component`, symbol table, Branches over layers. |
 | [`06-interchange-subspace-pyvene/`](06-interchange-subspace-pyvene/) | 2026-11-14, owner-approved (showcase exp7). Interchange at the carrier cell: pyvene and mdb agree on flip verdicts; `SubspaceBinding` for the training-free SAE subspace (an honest negative) and readout spans, with the audited DAS comparison. |
 | [`07-frozen-gradient-brackets-transcoders/`](07-frozen-gradient-brackets-transcoders/) | 2026-11-14, owner-approved (showcase exp4; presented on above-floor nodes). Transcoder nodes, nnsight frozen-gradient edge, mdb holds (pattern, norm scales) as Branches arms; the edge explains 0.92-0.97 of native, direct-edge overstatement ~1.6x. |
-| [`read_weight_transport_demo.py`](read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../docs/READ-WEIGHT-TRANSPORT.md). |
-| [`read_weight_taylor_demo.py`](read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../docs/READ-WEIGHT-TAYLOR.md). |
-| [`read_weight_centered_demo.py`](read_weight_centered_demo.py) | Replay measured midpoint coefficients and their zero residual without a framework; [native-profile state/KV closure and measured costs](../docs/READ-WEIGHT-CLOSURE.md). |
+| [`read_weight_transport_demo.py`](../../mdb-experiments/examples/read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../../mdb-experiments/docs/READ-WEIGHT-TRANSPORT.md). |
+| [`read_weight_taylor_demo.py`](../../mdb-experiments/examples/read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../../mdb-experiments/docs/READ-WEIGHT-TAYLOR.md). |
+| [`read_weight_centered_demo.py`](../../mdb-experiments/examples/read_weight_centered_demo.py) | Replay measured midpoint coefficients and their zero residual without a framework; [native-profile state/KV closure and measured costs](../../mdb-experiments/docs/READ-WEIGHT-CLOSURE.md). |
 
 ## `pass_indexed_baseline.py`
 

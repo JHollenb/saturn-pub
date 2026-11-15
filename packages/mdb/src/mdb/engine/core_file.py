@@ -2,7 +2,7 @@
 (gap audit 2026-11-14, P2; the owner's "capture once, replay" rule as gdb's core file).
 
 The scale study wrote its own capture format and three fp32 CPU replicas that rebuilt a
-``DynamicCache`` and re-hooked HF modules by hand (``results/scale-20261114/capture.py``,
+``DynamicCache`` and re-hooked HF modules by hand (``mdb-experiments/results/scale-20261114/capture.py`` in the repository,
 ``hopmath.py:61-100``, ``forecast.py``, ``audit/a3_beast_cpu.py``); the hop-math audit had to find
 a replica-null mismatch that produced a free "repair" by hand. Here:
 

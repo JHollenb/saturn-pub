@@ -31,6 +31,21 @@ packages = ["src/mdb"]
 # `/` with Refused web_build_absent).
 artifacts = ["src/mdb/serve/static/**"]
 
+[tool.hatch.build.targets.sdist]
+# Only what a user needs to build, test and learn the package. Internal experiments, results,
+# trackers and lane-era docs live in ../mdb-experiments and are never packed.
+include = [
+  "src/mdb/**",
+  "tests/**",
+  "docs/**",
+  "examples/**",
+  "web/**",
+  "README.md",
+  "CHANGELOG.md",
+  "pyproject.toml",
+]
+exclude = ["web/node_modules/**", "web/dist/**", "**/__pycache__/**"]
+
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -41,7 +56,6 @@ pythonpath = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-extend-exclude = ["experiments/time_circuits/vendor"] # Frozen paper source bytes.
 
 [tool.ruff.lint]
 select = ["F", "I"]

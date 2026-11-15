@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-TOOL = Path(__file__).resolve().parents[1].parent / "mdb" / "tools" / "split_lanes.py"
+TOOL = Path(__file__).resolve().parents[1].parent / "mdb-experiments" / "tools" / "split_lanes.py"
 # A plain constant, not a path expression: split_lanes classifies tests that build
 # "<package>/qualification" paths as lane tests, and this synthetic path is not one.
 QDIR = "qualification"

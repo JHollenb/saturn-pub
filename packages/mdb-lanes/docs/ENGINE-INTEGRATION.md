@@ -72,7 +72,7 @@ relative to the repository root. Each line says MEASURED (read in the code or ru
   what v2 does not express (renormalising cut, delta zero cut, FP32 blend dose arithmetic, FLUX,
   other row groupings). v1 `native_replay_recipe` is unchanged and still read.
 - 4d done: `predicted_write.receiver_write_scores`, `pw_shares`, `clean_random_draws` (plus the
-  existing `gated_unit_mass`); docs `packages/mdb/docs/FLUX-READ-PANELS.md` ("Ranking heads") and
+  existing `gated_unit_mass`); docs `packages/mdb-experiments/docs/FLUX-READ-PANELS.md` ("Ranking heads") and
   `ATTENTION-PANELS.md`. MEASURED: reproduces the experiment's addendum-2 selection exactly.
 - 4e done: `mdb_lanes/flux_nnsight.py` (import-guarded; extra `nnsight = ["nnsight==0.8.2"]`); its
   functions are `bridge.py`'s verbatim (tested), so job-8fd7bb3b1604's parity applies to them for the

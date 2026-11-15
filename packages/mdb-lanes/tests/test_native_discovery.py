@@ -317,7 +317,7 @@ def test_run_refuses_shared_visible_prefix_before_capture(tmp_path):
 def test_corpus_extractor_groups_byte_identical_files_into_one_split(tmp_path):
     import importlib.util
     spec = importlib.util.spec_from_file_location(
-        "native_corpus", Path(__file__).parents[1].parent / "mdb" / "experiments/native_discovery/corpus.py")
+        "native_corpus", Path(__file__).parents[1].parent / "mdb-experiments" / "experiments/native_discovery/corpus.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     rng = np.random.default_rng(0)
@@ -533,7 +533,7 @@ def test_position_robust_pipeline_seals_split_baseline_and_nominator(tmp_path):
     assert nominator["learning"] == "none" and set(nominator["documents"]) == set(metadata["fitted_document_ids"])
     # The artifact-only audit re-scores every sealed arm, including the new ones.
     spec = importlib.util.spec_from_file_location(
-        "native_audit", Path(__file__).parents[1].parent / "mdb" / "experiments/native_discovery/audit.py")
+        "native_audit", Path(__file__).parents[1].parent / "mdb-experiments" / "experiments/native_discovery/audit.py")
     audit = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(audit)
     stage = tmp_path / "stage"
@@ -545,7 +545,7 @@ def test_position_robust_pipeline_seals_split_baseline_and_nominator(tmp_path):
     save_json(stage / "result.json", {"artifact": {"sha256": __import__("mdb_lanes.native_discovery", fromlist=["x"]).file_hash(stage / "evidence.tar.gz")}})
     assert audit.audit(stage)["metric_checks"] > 0
     spec = importlib.util.spec_from_file_location(
-        "native_rerun_report", Path(__file__).parents[1].parent / "mdb" / "experiments/native_discovery/rerun_report.py")
+        "native_rerun_report", Path(__file__).parents[1].parent / "mdb-experiments" / "experiments/native_discovery/rerun_report.py")
     tables_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(tables_module)
     tables = tables_module.tables(stage)

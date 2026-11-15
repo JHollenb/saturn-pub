@@ -14,7 +14,7 @@ from mdb_lanes.bench_verify import verify
 
 
 def test_fitted_worker_native_panel_and_memory_probe(tmp_path):
-    path = Path(__file__).parents[1].parent / "mdb" / "experiments/jacobian-reader-writer/real_bf16_worker.py"
+    path = Path(__file__).parents[1].parent / "mdb-experiments" / "experiments/jacobian-reader-writer/real_bf16_worker.py"
     spec = importlib.util.spec_from_file_location("real_bf16_worker", path)
     worker = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(worker)

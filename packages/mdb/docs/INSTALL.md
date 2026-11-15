@@ -28,7 +28,7 @@ distribution installed here. `mdb debug`, `mdb doctor`, `mdb help`, `mdb capabil
 The base package has no model-library dependencies. For a caller-owned language
 model or the tiny CPU Qwen console, install `.[autoregressive]` and run
 `mdb debug --tiny qwen2`. The default `mdb debug` is a pure-Python Counter demo.
-See the [local debugger guide](LOCAL-DEBUGGER.md) for opening local checkpoints;
+See the [local debugger guide](../../mdb-experiments/docs/LOCAL-DEBUGGER.md) for opening local checkpoints;
 these language-model entry points need no mrun installation or scheduler.
 Qwen stateful execution requires BF16 and checks it before creating the session.
 The model-library extra retains the qualified dependency pins below.
@@ -43,7 +43,7 @@ common workspace, MLflow or MinIO installation is required. The import namespace
 remains mrun.
 
 For caller-owned Transformers or custom framework runners, use
-`BenchSession.from_backend` from the [backend guide](BACKENDS.md).
+`BenchSession.from_backend` from the [backend guide](../../mdb-experiments/docs/BACKENDS.md).
 `.[transformerlens]` supplies the independent TransformerLens 4.2.0 integration
 environment. A custom dependency-free runner needs only the base MDB package.
 

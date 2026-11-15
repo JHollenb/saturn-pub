@@ -262,7 +262,7 @@ assert not any(name == 'saturn' or name.startswith('saturn.') for name in sys.mo
 def test_sample_export_is_directly_consumable_by_temporal_viewer() -> None:
     from mdb_lanes.temporal_causal_viewer import normalize_evidence
 
-    path = Path(__file__).parents[1].parent / "mdb" / "examples" / "pass-causal-state-diff.sample.json"
+    path = Path(__file__).parents[1].parent / "mdb-experiments" / "examples" / "pass-causal-state-diff.sample.json"
     payload = json.loads(path.read_text())
     assert payload["schema"] == PASS_CAUSAL_STATE_DIFF_SCHEMA
     assert payload["status"]["causal_verdict"] == "not-inferred-from-diffs-alone"

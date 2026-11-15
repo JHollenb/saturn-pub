@@ -5,15 +5,15 @@ decoder (Qwen2, Qwen3, Llama or Mistral; gemma is not supported, M32) and stops 
 you can read them, edit them, checkpoint and rewind. Every number it shows carries a label that
 says how the number was obtained.
 
-The experimental [branch-change analysis](docs/BRANCH-CHANGES-TRIAL.md) explains finite
+The experimental [branch-change analysis](../mdb-experiments/docs/BRANCH-CHANGES-TRIAL.md) explains finite
 attention routing/payload and MLP gate/up differences between aligned native runs. Its
 first real-model trial connects a nominated neuron restoration to a persisted conditional
-forecast. The [proposal](docs/COMPUTATION-EXPLANATIONS-PROPOSAL.md) describes the remaining
+forecast. The [proposal](../mdb-experiments/docs/COMPUTATION-EXPLANATIONS-PROPOSAL.md) describes the remaining
 producer, consumer and circuit-discovery work.
 
 This directory is the `mdb-runtime` distribution (import name `mdb`). It depends on `saturn-pub`,
 whose `Session` runs the model. The older experiment code lives in `../mdb-lanes` and plugs in
-through entry points (see [Lanes](#lanes)). Open issues are in [`issues.jsonl`](issues.jsonl)
+through entry points (see [Lanes](#lanes)). Open issues are in [`issues.jsonl`](../mdb-experiments/issues.jsonl)
 (ids M1 onward); [Known limits](#known-limits) cites them.
 
 Except for the section on a real model, every command and code block below was run on a random
@@ -1102,7 +1102,7 @@ token). Against one full forward over the whole prompt the largest logit differe
 
 ## Known limits
 
-Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below are its `issue`.
+Open issues and their evidence are in [`issues.jsonl`](../mdb-experiments/issues.jsonl); ids below are its `issue`.
 
 - `attach` needs eager attention, one sequence (batch 1) and frozen weights in eval mode;
   `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2,

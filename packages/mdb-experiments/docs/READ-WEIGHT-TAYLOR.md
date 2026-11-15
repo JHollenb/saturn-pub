@@ -63,7 +63,7 @@ Compilation requires Torch and a qualified Qwen2-style smooth transport. Run it 
 Run the measured demo from the repository root, with MDB installed:
 
 ```sh
-python packages/mdb/examples/read_weight_taylor_demo.py \
+python packages/mdb-experiments/examples/read_weight_taylor_demo.py \
   --program packages/mdb/qualification/read_weight_second_order_20261107/DEMO-PROGRAM.json \
   --dose 0.6
 ```

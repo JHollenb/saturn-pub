@@ -32,8 +32,8 @@ LANES = {
         "worker": "qwen_panel_worker.py",
         "scripts": {"plans": "qwen_panel_stage.py", "stage": "qwen_panel_stage.py",
                     "submit": "qwen_panel_stage.py", "analyze": "qwen_panel_analyze.py"},
-        "docs": ["packages/mdb/docs/QWEN-PANELS.md", "packages/mdb/docs/ATTENTION-PANELS.md",
-                 "packages/mdb/docs/ATTENTION-PORT.md"],
+        "docs": ["packages/mdb-experiments/docs/QWEN-PANELS.md", "packages/mdb-experiments/docs/ATTENTION-PANELS.md",
+                 "packages/mdb-experiments/docs/ATTENTION-PORT.md"],
         "results": "packages/mdb-lanes/qualification/qwen_panels_20261112",
     },
     "flux-read-panels": {
@@ -42,8 +42,8 @@ LANES = {
         "worker": "flux_read_panel_worker.py",
         "scripts": {"plans": "flux_read_panel_stage.py", "stage": "flux_read_panel_stage.py",
                     "submit": "flux_read_panel_stage.py", "report": "flux_read_panel_stage.py"},
-        "docs": ["packages/mdb/docs/FLUX-READ-PANELS.md", "packages/mdb/docs/ATTENTION-PANELS.md",
-                 "packages/mdb/docs/ATTENTION-PORT.md"],
+        "docs": ["packages/mdb-experiments/docs/FLUX-READ-PANELS.md", "packages/mdb-experiments/docs/ATTENTION-PANELS.md",
+                 "packages/mdb-experiments/docs/ATTENTION-PORT.md"],
         "results": "packages/mdb-lanes/qualification/flux_read_panels_20261112",
     },
 }

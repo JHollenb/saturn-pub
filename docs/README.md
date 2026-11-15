@@ -15,18 +15,18 @@ test suites and migration details. Installing one package does not install the o
 ## MDB
 
 - [Overview, use cases and quickstart](mdb.md)
-- [Native circuit inspection and comparison](../packages/mdb/docs/NATIVE-CIRCUIT-INSPECTION.md), [capability roadmap](../packages/mdb/docs/NATIVE-CIRCUIT-CAPABILITIES.md), [workflow design](../packages/mdb/docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical basis](../packages/mdb/docs/NATIVE-CIRCUIT-MATH.md)
+- [Native circuit inspection and comparison](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-INSPECTION.md), [capability roadmap](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-CAPABILITIES.md), [workflow design](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical basis](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-MATH.md)
 - [Installation and optional dependencies](../packages/mdb/docs/INSTALL.md)
-- [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb/docs/LOCAL-DEBUGGER.md)
-- [Custom backends: forward, capture, intervention and local debugger](../packages/mdb/docs/BACKENDS.md)
-- [Stateful TransformerLens layer debugger](../packages/mdb/docs/TRANSFORMERLENS-DEBUGGER.md)
-- [Usage: execution, history, memory, debugger and offline tools](../packages/mdb/docs/USAGE.md)
-- [Symbol table capabilities, computation forecasts and measured results](../packages/mdb/docs/SYMBOL-TABLE-CAPABILITIES.md)
-- [Experiment walkthroughs: rewind, residual edits, sibling memory and diffusion replay](../packages/mdb/docs/EXPERIMENTS.md)
-- [J-space reader/writer API](../packages/mdb/docs/JACOBIAN-WORKSPACE.md) and [reproducible proof](../packages/mdb/experiments/jacobian-reader-writer/README.md)
-- [Qualification records and model/backend boundaries](../packages/mdb/docs/QUALIFICATION.md)
-- [E6/E20 paper experiments and research-session boundaries](../packages/mdb/experiments/time_circuits/README.md)
-- [Package README: the port-level engine (`mdb engine`, `mdb serve`, web viewer)](../packages/mdb/README.md) and [extraction provenance](../packages/mdb/PROVENANCE.json)
+- [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb-experiments/docs/LOCAL-DEBUGGER.md)
+- [Custom backends: forward, capture, intervention and local debugger](../packages/mdb-experiments/docs/BACKENDS.md)
+- [Stateful TransformerLens layer debugger](../packages/mdb-experiments/docs/TRANSFORMERLENS-DEBUGGER.md)
+- [Usage: execution, history, memory, debugger and offline tools](../packages/mdb-experiments/docs/USAGE.md)
+- [Symbol table capabilities, computation forecasts and measured results](../packages/mdb-experiments/docs/SYMBOL-TABLE-CAPABILITIES.md)
+- [Experiment walkthroughs: rewind, residual edits, sibling memory and diffusion replay](../packages/mdb-experiments/docs/EXPERIMENTS.md)
+- [J-space reader/writer API](../packages/mdb-experiments/docs/JACOBIAN-WORKSPACE.md) and [reproducible proof](../packages/mdb-experiments/experiments/jacobian-reader-writer/README.md)
+- [Qualification records and model/backend boundaries](../packages/mdb-experiments/docs/QUALIFICATION.md)
+- [E6/E20 paper experiments and research-session boundaries](../packages/mdb-experiments/experiments/time_circuits/README.md)
+- [Package README: the port-level engine (`mdb engine`, `mdb serve`, web viewer)](../packages/mdb/README.md) and [extraction provenance](../packages/mdb-experiments/PROVENANCE.json)
 
 The detailed MDB guides live with its package so its source distribution retains
 its documentation. The links above are the repository-wide entry points.

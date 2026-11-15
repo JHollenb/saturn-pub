@@ -12,27 +12,27 @@ branches, permitted edits and durable backing. Its model adapters expose typed
 layer/token or block/denoising boundaries.
 
 Start with [installation](../packages/mdb/docs/INSTALL.md), then the
-[usage guide](../packages/mdb/docs/USAGE.md) or
-[experiment walkthroughs](../packages/mdb/docs/EXPERIMENTS.md).
+[usage guide](../packages/mdb-experiments/docs/USAGE.md) or
+[experiment walkthroughs](../packages/mdb-experiments/docs/EXPERIMENTS.md).
 The [documentation index](README.md) covers both packages.
 
 For the GDB-style first experience, install the base package and run `mdb debug`.
 It opens a pure-Python Counter with step, break, watch, checkpoint, fork and
 preview/commit/abort. With the autoregressive extra, `mdb debug --tiny qwen2`
 uses random CPU BF16 weights and `mdb open --local CHECKPOINT_DIR` opens a
-supported local model. See the [local console guide](../packages/mdb/docs/LOCAL-DEBUGGER.md).
+supported local model. See the [local console guide](../packages/mdb-experiments/docs/LOCAL-DEBUGGER.md).
 
 ## When to choose MDB
 
 | Job | Why MDB fits | Walkthrough |
 | --- | --- | --- |
-| Save an in-flight model session and continue in another process | Durable checkpoints and portable exports bind state, model identity, history and execution contract | [Execution and history](../packages/mdb/docs/USAGE.md#execution-and-history) |
-| Compare several futures while inspecting their storage | Copy-on-write branches, immutable ancestor sharing, local backing, residency accounting, eviction and hydration | [Memory and addresses](../packages/mdb/docs/USAGE.md#memory-and-addresses) |
-| Debug a token or denoiser failure at a native boundary | Breakpoints, scoped source frames, inspection and preview/abort/commit of supported writes | [Debugger, symbols and circuits](../packages/mdb/docs/USAGE.md#debugger-symbols-and-circuits) |
-| Rewind a layer, perturb a residual and retain the comparison | Same-parent native continuations, circuit measurements, receipts and independently verifiable exports | [Experiment walkthroughs](../packages/mdb/docs/EXPERIMENTS.md) |
-| Read a frozen J-space lens and test an explicit residual write | Source-bound lens observations and candidates lower through native preview, commit and abort; later memory and output are measured separately | [Jacobian workspace](../packages/mdb/docs/JACOBIAN-WORKSPACE.md) |
+| Save an in-flight model session and continue in another process | Durable checkpoints and portable exports bind state, model identity, history and execution contract | [Execution and history](../packages/mdb-experiments/docs/USAGE.md#execution-and-history) |
+| Compare several futures while inspecting their storage | Copy-on-write branches, immutable ancestor sharing, local backing, residency accounting, eviction and hydration | [Memory and addresses](../packages/mdb-experiments/docs/USAGE.md#memory-and-addresses) |
+| Debug a token or denoiser failure at a native boundary | Breakpoints, scoped source frames, inspection and preview/abort/commit of supported writes | [Debugger, symbols and circuits](../packages/mdb-experiments/docs/USAGE.md#debugger-symbols-and-circuits) |
+| Rewind a layer, perturb a residual and retain the comparison | Same-parent native continuations, circuit measurements, receipts and independently verifiable exports | [Experiment walkthroughs](../packages/mdb-experiments/docs/EXPERIMENTS.md) |
+| Read a frozen J-space lens and test an explicit residual write | Source-bound lens observations and candidates lower through native preview, commit and abort; later memory and output are measured separately | [Jacobian workspace](../packages/mdb-experiments/docs/JACOBIAN-WORKSPACE.md) |
 | Stage a finite model job with reproducible runtime custody | Optional mrun integration seals installed wheels, declared files and configuration into an admitted worker | [Installation and worker environment](../packages/mdb/docs/INSTALL.md) |
-| Audit an exported run without loading the model | Dependency-free byte verification and evidence/index tools | [Offline tools](../packages/mdb/docs/USAGE.md#offline-tools) |
+| Audit an exported run without loading the model | Dependency-free byte verification and evidence/index tools | [Offline tools](../packages/mdb-experiments/docs/USAGE.md#offline-tools) |
 
 Choose [`saturn_pub`](usage.md) for its broader decoder-family adapters,
 SAELens/TransformerLens and circuit-tracer integrations, causal panels, measured
@@ -70,7 +70,7 @@ With the autoregressive extra installed, run this from the repository root:
 ```sh
 mdb version
 mdb capabilities
-python -I "$PWD/packages/mdb/examples/resident_lab.py" --tiny qwen2 --out ./results/mdb-first-lab
+python -I "$PWD/packages/mdb-experiments/examples/resident_lab.py" --tiny qwen2 --out ./results/mdb-first-lab
 mdb verify --root ./results/mdb-first-lab/export
 ```
 
@@ -101,15 +101,15 @@ session.close()
 
 This wraps the resident model without creating another lease. For real-model
 experiments in the domains workspace, load and run it inside an admitted mrun
-worker. The [usage guide](../packages/mdb/docs/USAGE.md) covers finite CLI scripts,
+worker. The [usage guide](../packages/mdb-experiments/docs/USAGE.md) covers finite CLI scripts,
 image preparation, resume, address capabilities and explicit legacy conversion.
 
 ## Qualification and boundaries
 
 MDB has bounded model-backed records for Qwen2/Qwen2.5, Mamba v1, FLUX and SDXL.
-Read the [qualification record](../packages/mdb/docs/QUALIFICATION.md) for the
+Read the [qualification record](../packages/mdb-experiments/docs/QUALIFICATION.md) for the
 exact checkpoints, numerical lanes, native comparisons and remaining work.
-The [E6/E20 paper adapters](../packages/mdb/experiments/time_circuits/README.md)
+The [E6/E20 paper adapters](../packages/mdb-experiments/experiments/time_circuits/README.md)
 have separate research-input closures; they do not expand the interactive
 BenchSession family catalog.
 

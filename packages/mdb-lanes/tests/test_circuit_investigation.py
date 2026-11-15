@@ -336,7 +336,7 @@ def test_tiny_walkthrough_report_matches_declared_live_checks(tmp_path, monkeypa
 
     torch = pytest.importorskip("torch")
     threads = torch.get_num_threads()
-    path = Path(__file__).parents[1].parent / "mdb" / "examples/project-navigation/circuit_understanding.py"
+    path = Path(__file__).parents[1].parent / "mdb-experiments" / "examples/project-navigation/circuit_understanding.py"
     output = tmp_path / "walkthrough"
     monkeypatch.setattr(sys, "argv", [str(path), "--out", str(output)])
     try:

@@ -8,7 +8,7 @@ Install the public packages with their model support, then run the example with 
 
 ```sh
 python -m pip install '.[ar]' './packages/mdb[autoregressive]'
-python -I packages/mdb/examples/project-navigation/circuit_understanding.py \
+python -I packages/mdb-experiments/examples/project-navigation/circuit_understanding.py \
   --out /absolute/new/tiny-circuit-investigation
 ```
 

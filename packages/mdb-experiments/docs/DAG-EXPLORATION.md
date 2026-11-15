@@ -134,7 +134,7 @@ would erase distinctions needed by the debugger.
 ## Reproduce and inspect
 
 ```sh
-python packages/mdb/examples/project-navigation/explore_dags.py PROJECT \
+python packages/mdb-experiments/examples/project-navigation/explore_dags.py PROJECT \
   --session-id demo --out ./dag-output
 ```
 

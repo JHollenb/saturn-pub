@@ -123,7 +123,7 @@ def fit_and_score(tmp_path, steps, *, position=True):
 @pytest.mark.xfail(strict=True, reason=(
     "MEASURED 2026-11-13: at the default budget (60 steps, 60 accepted updates) no arm recovers the planted "
     "previous-token route (best 0.56, linear_features); see the module docstring and "
-    "packages/mdb/experiments/native_discovery/FINDINGS.md. Strict: if a later learner recovers it at this budget, update this."))
+    "packages/mdb-experiments/experiments/native_discovery/FINDINGS.md. Strict: if a later learner recovers it at this budget, update this."))
 def test_learner_recovers_planted_route_at_the_default_budget(tmp_path):
     scores = fit_and_score(tmp_path, steps=60)
     assert max(v for v, _ in scores.values()) >= RECOVERED, scores
