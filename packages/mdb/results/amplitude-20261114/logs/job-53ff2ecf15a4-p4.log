@@ -1,0 +1,17 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-4B-Base steps: native pools
+== step [native pools] budget 570s
+[    8.5s] load Qwen3-4B-Base L_c=24 kv=6 phase=pools
+[   13.5s] pool correct L21 n=113 5.0s
+[   18.2s] pool correct L22 n=113 4.7s
+[   22.9s] pool correct L23 n=113 4.7s
+[   27.6s] pool correct L24 n=113 4.7s
+[   32.3s] pool correct L25 n=113 4.7s
+[   33.3s] pool wrong L24 n=24
+[   33.4s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:34.90
+	Maximum resident set size (kbytes): 4891740
+1 MiB
+pools-Qwen3-4B-Base.json
+records-native-pools-Qwen3-4B-Base.jsonl

@@ -1,0 +1,72 @@
+{
+ "name": "Amplitude law of latent hops (advisor memo 2026-11-14 open-problems \u00a72.1 arms A/B/C, with \u00a72.3 gate switching as the companion)",
+ "memo": "obsidian/model-math/ADVISOR-2026-11-14-open-problems-we-could-solve.md \u00a72.1, \u00a72.3",
+ "sealed": "2026-11-14T15:19:56-0800 (from `date`), before any smoke or scored job of this programme; committed before the first mrun submission",
+ "status": "owner-approved programme; single seed (20261114); predictions re-sealed from the memo with the changes and reasons listed under 'changes_from_memo'",
+ "models": [
+  "Qwen3-0.6B-Base (L_c 20, kv 6, 28 layers)",
+  "Qwen3-1.7B-Base (L_c 20, kv 6, 28 layers)",
+  "Qwen3-4B-Base (L_c 24, kv 6, 36 layers)"
+ ],
+ "inputs": "scale study (results/scale-20261114): panel.json, panel_supp.json, score-*.json / supscore-*.json (correctness, carrier row row_at_item, country rank), copied into data/; exp5 named composer neurons (results/showcase-20261114/exp5/out/exp5-panels.json, Qwen3-1.7B only)",
+ "context_measured": {
+  "hopmath_operand_repair": "same-true-country mean cell repairs right-operand wrong items 5/9 (0.6B), 5/9 (1.7B; AUDIT-HOPMATH correction: d5-081 was already correct in the unedited replica, so 5/9 not 6/10), 3/8 (4B); readable 5/23, 12/17, 2/11",
+  "das_11b": "the country code at the 1.7B carrier cell (L20 KV6) is high-rank and mostly per-country: generic subspaces from other countries (DAS, class means, readout spans) flip 14-22/64 at k=32 and mean-difference k<=8 flips 0/64 (das/report.md, AUDIT-DAS.md, followup/AUDIT-FOLLOWUP.md). Memo \u00a72.2's low-rank predictions are therefore already falsified and \u00a72.2 is not rerun.",
+  "self_backpatch": "the row's own h at L_c+4 written into L_c-4 repaired 1/64 (AUDIT-SCALE)"
+ },
+ "items": {
+  "wrong": "wrong items of d3-lm, d3-per, d4-work (main panel) and d5 (supplement), as hopmath \u00a73: 0.6B 38 (readable 27, right-operand 11), 1.7B 32 (19 / 13), 4B 24 (15 / 9); stratum readable = carrier country rank > 3 or unranked (score files), right_operand = rank <= 3",
+  "excluded_from_P_arms": "items whose true country has no correct main-panel item (the Pool refuses the class mean): 0.6B 6, 1.7B 5, 4B 5; scored n (readable / right-operand): 0.6B 23/9, 1.7B 17/10, 4B 11/8 (= hopmath). Arm B runs on every wrong item; its amplitude probes exist only for non-excluded items",
+  "correct": "correct main-panel items (any block): 0.6B 84, 1.7B 100, 4B 113; correct base items with a donor for \u00a72.3: 30 / 41 / 42 (minus donors whose country has no correct item)"
+ },
+ "objects": {
+  "pools": "mdb Pools at cache.L<x>.v[kv<kv_c>,row=@carrier] over correct main-panel items, x in the band [L_c-3, L_c+1], label country (= country_token); and over the wrong items at L_c. Collected natively (bf16, mdb prefill path), sealed, saved, reloaded in every phase.",
+  "code": "per item and layer: m_all = pool.mean_for(item) (leave-one-out over correct items), m_c = pool.class_mean_for(item, by=country) (leave-one-out, same true country); d = (m_c - m_all)/|m_c - m_all|; amplitude a(v) = (v - m_all).d / |m_c - m_all| in class-code units (1.0 = the mean code of the correct same-country items). The wrong item is never in any mean (it is not in the correct pool).",
+  "P_true": "rank-1 projector onto d (SubspaceBinding, authority fitted, PER-ITEM TEST-INFORMED: it uses the item's true country)",
+  "P_span_k": "SubspaceBinding class_mean_subspace: top-k PCA of the centred class means of all countries in the correct pool, k in {1, 4, 16} (fitted; test-informed at the CLASS level: the wrong item's own country is one of the classes, the item itself is not)",
+  "dose": "v(alpha) = v + (alpha - 1) P (v - m_all), i.e. the component of (v - m_all) in P scaled by alpha, everything else unchanged; alpha in {0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4, 6, 8}",
+  "consumer": "Margin(last row, truth, b) with b = the top non-truth token of the native run (the model's wrong answer on wrong items); flip/repair = full-vocabulary argmax == truth",
+  "floor": "Branches' shared floor: 2 bf16 spacings at the larger |logit| of the base margin (+ 2x the measured batched-vs-stepped null delta on batched arms); stability band: |dM| >= 4 floors stable, else kernel-sensitive (treated as unresolved, not as an effect)"
+ },
+ "arms": {
+  "A": "native bf16 (Beast GPU), answer-row footing: run with prefill = last row, the carrier cell cache.L_c.v[kv_c,row=carrier] replaced by v(alpha). All P_true and P_span arms batched (sweep.cell_sweep), P_true arms re-measured on the mdb stepped path (the authority for P1). Nulls (stepped): matched-norm random like T3 and T8, self-patch like T2. alpha* = smallest alpha whose stepped argmax is the truth.",
+  "E1": "exploratory, sealed: correct items, P_true dose-down alpha in {0, 0.25, 0.5, 0.75} (batched)",
+  "B": "native bf16, true back-patch at the carrier row: run with prefill = carrier row (rows before it are unaffected by an edit at the carrier row, so this equals a rerun from the span's first row by causality), Branches at t<row>.L<L_c-8>.h; arm B<s>_<t> writes the base run's own h at t<row>.L<s>.h into t<row>.L<t>.h, s in {L_c+2, L_c+4, L_c+6, L-1}, t in {L_c-8, L_c-6, L_c-4, L_c-2} (16 pairs), continued to the answer row's logits. Nulls: a matched-norm random add like every pair (16), self-patch like B<L_c+4>_<L_c-4>. Probes (Branches.probes, read before restore): the carrier amplitude a_x at cache.L<x>.v[kv_c,row=carrier] for x in the band [L_c-3, L_c+1] (each with its own layer's Pool directions) and |v| at L_c.",
+  "C": "fp32 replica from mdb core files (bf16 prefix cache dumped by the native run at row=last, answer row recomputed in fp32; Run.core_check null check recorded): the P_true dose ladder again (alpha*_fp32), then at alpha*_fp32 symbols.hop_edge (cell_layer L_c, top 256 neurons per layer by |effect|) on the base and edited replica runs. Switch set: neurons in L_c+1..L_c+4 (L21-L24 on 1.7B) whose gate pre-activation g changes sign between the base and edited runs, among the listed top-256, ranked by |effect|; S_N = the top N with N = the item's country's exp5 composer count in the same layers (1.7B only; 32 per country). Jaccard(S_N, composers) against 200 random same-size sets from the same layers.",
+  "F_2.3": "fp32 replica, correct base items: donor swap v -> v + alpha (m_donor_country - v) with m_donor_country = the pool's class mean of the donor's country (all its correct items), consumer M = logit(answer) - logit(donor answer), alpha in {0.25, 0.5, 1, 2}; hop_edge per dose (per-layer exact MLP and re-read terms); symbols.gate_switch_forecast at alpha=1: F1 = direct + linear MLP (one-layer Jacobian on the actual input change, the hop-math first-order total), F2[k] = F1 with the k largest-|Jacobian Delta g| gates per layer replaced by the exact finite SwiGLU of their Jacobian-predicted (Delta g, Delta u), k in {8, 32, 128}, F3[k] = the chained passive version (residual change starts as the cell layer's direct write, each layer's F2-style MLP change fed forward, later re-reads not forecast). Flip: M0 + delta < 0. Log-slope per layer = log2(term(2 alpha)/term(alpha)) for the exact MLP term, median over items and over the two steps 0.5->1, 1->2 (items with |term| > 0.05 at both doses)."
+ },
+ "changes_from_memo": [
+  "P for arm A: the memo's rank-k class-mean projector (k in {1,4}) is replaced by the item's own TRUE-country direction (rank 1, per-item test-informed) as the primary arm, with the class-mean span k in {1,4,16} as a second, labelled arm. Reason: das 11b measured the country code as high-rank and per-country; a shared rank-1/4 span is known to move little (0/64 at k<=8 in interchange).",
+  "dose grid extended from {0.5..3} to {0.5..8}: a rank-1 handle on a high-rank code may need more gain than the memo assumed; without the extension a 'no flip by 3' would be ambiguous between 'no threshold' and 'threshold above 3'.",
+  "P1 alpha* band widened from [1.2, 2.0] to [1.25, 4.0] for the same reason; the memo's band is reported beside it.",
+  "P3 'every repairing pair raises |Pv| by >= 1.3x' becomes >= 0.8 of repairing arms (bf16 kernel noise on a rank-1 projection; 'every' would be decided by one arm); a raise is defined in class-code units (a_after - a_native >= 0.3, or a_after/a_native >= 1.3 when a_native > 0.1), because readable items can have a_native <= 0 where a ratio is meaningless.",
+  "P4 Jaccard bar lowered from 0.3 to 0.15: the exp5 composer sets were nominated for CAPITAL answers on Run 1 prompts, while every wrong item here has a LANGUAGE answer (d3/d4/d5); hop-math measured that language rides the same L21-L24 band at about 0.7x the capital's MLP share, so partial overlap is the expectation. The memo's 0.3 is reported beside it.",
+  "P4 is tested on Qwen3-1.7B only (the only model with an exp5 composer set); 0.6B and 4B report switch counts only.",
+  "1.7B right-operand repair context corrected to 5/9 (AUDIT-HOPMATH)."
+ ],
+ "predictions": {
+  "P1": "On right-operand wrong items (P_true, stepped): (a) M(alpha) is non-decreasing over the dose grid on >= 0.8 of items, a step counting as a violation only when M drops by more than 1 floor; (b) the argmax flips to the truth at some alpha <= 8 on >= 0.5 of items and the median alpha* over flipped items lies in [1.25, 4.0] (memo band [1.2, 2.0] reported); (c) threshold: the critical amplitude a_native * alpha* over flipped items has q75/q25 <= 2.5 and median in [0.5, 2.0] class-code units. On readable wrong items P_true flips <= 0.3 of items by alpha = 8.",
+  "P2": "The native amplitude a (P_true, L_c) of correct items exceeds that of right-operand wrong items with AUC >= 0.75 (pooled Mann-Whitney per model; correct items restricted to the countries of the right-operand items); readable wrong items have median a <= 0.3 and below the right-operand median.",
+  "P3": "Arm B (stepped): (a) the exists-any repair rate (any of the 16 pairs, argmax == truth) in the right-operand stratum is >= 2x that of the readable stratum, judged per model when the model has >= 4 repairing items, else pooled over models; (b) >= 0.8 of repairing (item, pair) arms raise the carrier amplitude at L_c (raise defined above); (c) arms that do not raise it repair on <= 0.1 of (item, pair) arms and at <= 1/3 the rate of raising arms; (d) matched-norm random arms repair at <= 1/3 the rate of true back-patch arms.",
+  "P4": "Qwen3-1.7B, fp32 replica at alpha*_fp32: median Jaccard(S_N, exp5 composers of the true country, L21-L24) >= 0.15 against a random same-size median <= 0.01 (memo bar 0.3 reported).",
+  "S_span": "Exploratory, sealed: P_span16 flips at least as many right-operand items as P_true by alpha = 8; P_span1 and P_span4 flip fewer than P_true.",
+  "E1": "Exploratory, sealed: on correct items, removing the true-country component (alpha = 0) loses the argmax on <= 0.2 of items (a rank-1 removal of a high-rank code), with median M(0)/M(1) in [0.4, 0.9].",
+  "F_2.3": "(memo \u00a72.3, kept) F2[32] median ratio to native >= 0.85 and flip-set mismatch <= 0.125 of items; F3[32] mismatch <= 0.0625 of items; on 1.7B the median MLP log-slope is 1.3-1.6 at L21-L24 and 0.9-1.1 at L25-L27; on 4B the re-read term's log-slope exceeds 1.5. Replication check: F1 median ratio in [0.45, 0.75] (memo measured 0.59)."
+ },
+ "falsifiers": {
+  "amplitude": "P2 AUC < 0.6: the code's strength along the true direction is not what fails.",
+  "threshold": "P1: alpha* scattered over the whole grid with non-monotone M(alpha) on > 0.3 of right-operand items: no threshold.",
+  "timing_vs_amplification": "P3: arm-B repairs equal across strata (ratio < 1.25), or >= 0.5 of repairing arms with no amplitude rise (a_after - a_native < 0.1): back-patching is not amplification and the timing account stands.",
+  "gate_switch": "\u00a72.3: F2[128] median ratio < 0.75 (the gap is dense, not a few switched gates), or the MLP log-slope is flat across layers (|L21-24 slope - L25-27 slope| < 0.1)."
+ },
+ "custody": "every sealed record (pools, branches, core files) carries custody: amp.py and prereg.json sha256 via dbg.custody(script=, prereg=), library versions, kernel path; records stream to records-*.jsonl. Payload = git archive of HEAD; REVISION and the amp.py sha256 are in the job note. One Beast job at a time, submitted only when no job is running or queued. Smoke job first (separate OUTROOT, SMOKE=2), scored jobs after its data are verified.",
+ "limits_declared": "single seed; arm A and C are on the answer-row footing (later rows' K/V fixed, as in hop-math), arm B recomputes every row from the carrier row; P_true and the span arms are test-informed (labelled); composer sets exist for 1.7B only and were nominated for capital answers.",
+ "amendments": [
+  {
+   "at": "2026-11-14T15:41:19-0800",
+   "before": "any scored job (after smoke job-129e4505bb4f, 1.7B, SMOKE=2: 2 wrong items)",
+   "text": "Kernel-path near-ties: a wrong item (score files) whose mdb native base argmax on an arm's own path is already the truth (smoke: d3-lm:Tivoli Gardens, M0 = +0.25 = 0.5 floor on the prefill=last path, 0.0 on the prefill=row path) cannot be 'repaired'. Such items are excluded from that arm's flip/repair counts and from alpha*, and reported separately with their M0 in floors (the hop-math audit's d5-081 replica-null artefact is the same case). P2 amplitudes still include them (the amplitude is defined on the pool's native value).",
+   "also": "smoke fixes, no rule change: Branches.seal() calls restored (a refactor had dropped them, so smoke branches records were not emitted); val() returns None for an unresolved share instead of raising."
+  }
+ ]
+}

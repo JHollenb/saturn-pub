@@ -1,0 +1,207 @@
+{
+"model": "Qwen3-4B-Base",
+"L_c": 24,
+"kv_c": 6,
+"band": [
+21,
+22,
+23,
+24,
+25
+],
+"n_correct": 113,
+"wrong": [
+{
+"id": "d3-lm:Tivoli Gardens",
+"family": "d3-lm",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 45
+},
+{
+"id": "d3-lm:the Colosseum",
+"family": "d3-lm",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 46
+},
+{
+"id": "d3-per:Franz Kafka",
+"family": "d3-per",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 45
+},
+{
+"id": "d3-per:Marie Curie",
+"family": "d3-per",
+"stratum": "readable",
+"rank": 4,
+"supp": false,
+"carrier": 46
+},
+{
+"id": "d4-work:the film The Great Dictator",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 37,
+"supp": false,
+"carrier": 52
+},
+{
+"id": "d4-work:The Metamorphosis",
+"family": "d4-work",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 51
+},
+{
+"id": "d4-work:the novel Palace Walk",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 15,
+"supp": false,
+"carrier": 50
+},
+{
+"id": "d4-work:The Arcades Project",
+"family": "d4-work",
+"stratum": "right_operand",
+"rank": 2,
+"supp": false,
+"carrier": 49
+},
+{
+"id": "d4-work:the Commentaries on the Gallic War",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 7,
+"supp": false,
+"carrier": 53
+},
+{
+"id": "d5:d5-081",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 1,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-102",
+"family": "d5",
+"stratum": "readable",
+"rank": 43,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-042",
+"family": "d5",
+"stratum": "readable",
+"rank": 4,
+"supp": true,
+"carrier": 53
+},
+{
+"id": "d5:d5-005",
+"family": "d5",
+"stratum": "readable",
+"rank": 41,
+"supp": true,
+"carrier": 54
+},
+{
+"id": "d5:d5-088",
+"family": "d5",
+"stratum": "readable",
+"rank": 20,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-064",
+"family": "d5",
+"stratum": "readable",
+"rank": 44,
+"supp": true,
+"carrier": 50
+},
+{
+"id": "d5:d5-104",
+"family": "d5",
+"stratum": "readable",
+"rank": 32,
+"supp": true,
+"carrier": 55
+},
+{
+"id": "d5:d5-094",
+"family": "d5",
+"stratum": "readable",
+"rank": 19,
+"supp": true,
+"carrier": 59
+},
+{
+"id": "d5:d5-086",
+"family": "d5",
+"stratum": "readable",
+"rank": 5,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-089",
+"family": "d5",
+"stratum": "readable",
+"rank": 27,
+"supp": true,
+"carrier": 58
+},
+{
+"id": "d5:d5-100",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 3,
+"supp": true,
+"carrier": 56
+},
+{
+"id": "d5:d5-012",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 2,
+"supp": true,
+"carrier": 55
+},
+{
+"id": "d5:d5-065",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 1,
+"supp": true,
+"carrier": 55
+},
+{
+"id": "d5:d5-105",
+"family": "d5",
+"stratum": "readable",
+"rank": 54,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-087",
+"family": "d5",
+"stratum": "readable",
+"rank": 4,
+"supp": true,
+"carrier": 53
+}
+]
+}

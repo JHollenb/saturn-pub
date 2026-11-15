@@ -1,0 +1,137 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-0.6B-Base steps: native pools native A
+== step [native pools] budget 570s
+[    2.8s] load Qwen3-0.6B-Base L_c=20 kv=6 phase=pools
+[    5.7s] pool correct L17 n=84 2.9s
+[    8.3s] pool correct L18 n=84 2.6s
+[   10.9s] pool correct L19 n=84 2.6s
+[   13.6s] pool correct L20 n=84 2.6s
+[   16.2s] pool correct L21 n=84 2.6s
+[   17.4s] pool wrong L20 n=38
+[   17.5s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.97
+	Maximum resident set size (kbytes): 2161848
+== step [native A] budget 551s
+[    2.7s] load Qwen3-0.6B-Base L_c=20 kv=6 phase=A
+[    7.7s] A d3-lm:the Astronomical Clock of the Old Town 5.0s
+[   12.3s] A d3-lm:Tivoli Gardens 4.5s
+[   17.0s] A d3-lm:Fisherman's Bastion 4.7s
+[   21.5s] A d3-per:Franz Kafka 4.5s
+[   26.1s] A d3-per:Erno Rubik 4.6s
+[   30.8s] A d3-per:Baruch Spinoza 4.6s
+[   31.1s] A d3-per:Marie Curie excluded 0.3s
+[   35.8s] A d4-work:the film The Great Dictator 4.7s
+[   40.6s] A d4-work:The Metamorphosis 4.8s
+[   45.4s] A d4-work:the book Either/Or 4.8s
+[   50.1s] A d4-work:the novel Palace Walk 4.7s
+[   54.8s] A d4-work:The Arcades Project 4.7s
+[   59.6s] A d4-work:The Republic 4.8s
+[   64.3s] A d4-work:the Rubik's Cube 4.7s
+[   69.1s] A d4-work:the Commentaries on the Gallic War 4.8s
+[   73.8s] A d4-work:The Book of Disquiet 4.7s
+[   78.7s] A d5:d5-055 4.9s
+[   83.5s] A d5:d5-081 4.9s
+[   88.3s] A d5:d5-093 4.8s
+[   93.2s] A d5:d5-102 4.9s
+[   98.1s] A d5:d5-022 4.9s
+[  102.9s] A d5:d5-042 4.8s
+[  107.8s] A d5:d5-005 4.9s
+[  112.7s] A d5:d5-088 4.9s
+[  117.3s] A d5:d5-064 4.7s
+[  122.2s] A d5:d5-104 4.8s
+[  127.1s] A d5:d5-094 4.9s
+[  127.4s] A d5:d5-096 excluded 0.3s
+[  127.7s] A d5:d5-086 excluded 0.3s
+[  128.0s] A d5:d5-089 excluded 0.3s
+[  128.3s] A d5:d5-100 excluded 0.3s
+[  133.1s] A d5:d5-012 4.8s
+[  138.0s] A d5:d5-082 4.8s
+[  142.9s] A d5:d5-023 4.9s
+[  147.7s] A d5:d5-045 4.9s
+[  152.5s] A d5:d5-065 4.8s
+[  157.4s] A d5:d5-105 4.9s
+[  157.8s] A d5:d5-087 excluded 0.3s
+[  158.4s] E1 currency:pound sterling 0.6s
+[  159.0s] E1 currency:renminbi 0.6s
+[  159.6s] E1 currency:rupiah 0.6s
+[  160.6s] E1 currency:yen 0.6s
+[  161.2s] E1 person:Mozart 0.6s
+[  161.8s] E1 person:Charles Dickens 0.6s
+[  162.4s] E1 person:Pablo Neruda 0.6s
+[  163.1s] E1 person:Confucius 0.6s
+[  164.0s] E1 person:Hans Christian Andersen 0.6s
+[  164.6s] E1 person:Jean Sibelius 0.6s
+[  165.2s] E1 person:Plato 0.6s
+[  166.4s] E1 landmark:Uluru 0.6s
+[  167.1s] E1 landmark:Schonbrunn Palace 0.6s
+[  167.7s] E1 landmark:the Forbidden City 0.6s
+[  168.3s] E1 landmark:the Acropolis 0.6s
+[  169.0s] E1 landmark:Borobudur 0.6s
+[  169.9s] E1 city:Salzburg 0.6s
+[  170.8s] E1 city:Plovdiv 0.6s
+[  171.7s] E1 city:Valparaiso 0.6s
+[  172.4s] E1 city:Shanghai 0.6s
+[  173.1s] E1 city:Brno 0.8s
+[  173.8s] E1 city:Aarhus 0.6s
+[  174.4s] E1 city:Alexandria 0.6s
+[  175.0s] E1 d2:Vienna 0.6s
+[  175.7s] E1 d2:London 0.6s
+[  176.3s] E1 d2:Prague 0.6s
+[  176.9s] E1 d2:Copenhagen 0.6s
+[  177.6s] E1 d2:Cairo 0.6s
+[  178.2s] E1 d2:Helsinki 0.6s
+[  178.8s] E1 d2:Paris 0.6s
+[  179.5s] E1 d2:Berlin 0.6s
+[  180.1s] E1 d2:Athens 0.6s
+[  181.0s] E1 d2:Rome 0.6s
+[  181.6s] E1 d2:Tokyo 0.6s
+[  182.3s] E1 d2:Seoul 0.6s
+[  182.9s] E1 d2:Amsterdam 0.6s
+[  183.6s] E1 d3-lm:Schonbrunn Palace 0.7s
+[  184.2s] E1 d3-lm:Big Ben 0.6s
+[  184.9s] E1 d3-lm:the Khan el-Khalili bazaar 0.7s
+[  185.5s] E1 d3-lm:Suomenlinna fortress 0.7s
+[  186.2s] E1 d3-lm:Notre-Dame Cathedral 0.6s
+[  186.8s] E1 d3-lm:the Brandenburg Gate 0.6s
+[  187.5s] E1 d3-lm:the Acropolis 0.6s
+[  188.1s] E1 d3-lm:the Colosseum 0.7s
+[  188.7s] E1 d3-lm:Shibuya Crossing 0.6s
+[  189.4s] E1 d3-lm:Gyeongbokgung Palace 0.7s
+[  190.1s] E1 d3-lm:the Anne Frank House 0.6s
+[  190.7s] E1 d3-per:Franz Schubert 0.7s
+[  191.4s] E1 d3-per:Charlie Chaplin 0.7s
+[  192.0s] E1 d3-per:Niels Bohr 0.7s
+[  192.7s] E1 d3-per:Naguib Mahfouz 0.7s
+[  193.3s] E1 d3-per:Claude Monet 0.7s
+[  194.0s] E1 d3-per:Alexander von Humboldt 0.7s
+[  194.6s] E1 d3-per:Pericles 0.6s
+[  195.3s] E1 d3-per:Ennio Morricone 0.7s
+[  196.0s] E1 d3-per:Hokusai 0.7s
+[  196.9s] E1 d4-work:The Blue Danube waltz 0.7s
+[  197.6s] E1 d4-work:Candide 0.7s
+[  198.3s] E1 d4-work:The Great Wave off Kanagawa 0.7s
+[  199.5s] E1 dist-city:Salzburg 0.7s
+[  200.2s] E1 dist-city:Brno 0.7s
+[  200.9s] E1 dist-city:Aarhus 0.7s
+[  201.5s] E1 dist-city:Alexandria 0.7s
+[  202.1s] E1 obsc-city:Perth 0.6s
+[  202.9s] E1 obsc-city:Graz 0.8s
+[  203.5s] E1 obsc-city:Leeds 0.6s
+[  204.1s] E1 obsc-city:Varna 0.6s
+[  204.8s] E1 obsc-city:Wuhan 0.6s
+[  205.4s] E1 obsc-city:Ostrava 0.6s
+[  206.0s] E1 obsc-city:Odense 0.6s
+[  206.6s] E1 obsc-city:Luxor 0.6s
+[  207.2s] E1 obsc-city:Turku 0.6s
+[  207.9s] E1 obsc-city:Dortmund 0.6s
+[  207.9s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:29.34
+	Maximum resident set size (kbytes): 2173956
+1 MiB
+armA-Qwen3-0.6B-Base-0of1.jsonl
+armE1-Qwen3-0.6B-Base-0of1.jsonl
+pools-Qwen3-0.6B-Base.json
+records-native-A-Qwen3-0.6B-Base.jsonl
+records-native-pools-Qwen3-0.6B-Base.jsonl

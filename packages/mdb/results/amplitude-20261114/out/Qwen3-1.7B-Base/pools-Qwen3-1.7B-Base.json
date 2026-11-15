@@ -1,0 +1,271 @@
+{
+"model": "Qwen3-1.7B-Base",
+"L_c": 20,
+"kv_c": 6,
+"band": [
+17,
+18,
+19,
+20,
+21
+],
+"n_correct": 100,
+"wrong": [
+{
+"id": "d3-lm:the Astronomical Clock of the Old Town",
+"family": "d3-lm",
+"stratum": "readable",
+"rank": 4,
+"supp": false,
+"carrier": 46
+},
+{
+"id": "d3-lm:Tivoli Gardens",
+"family": "d3-lm",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 44
+},
+{
+"id": "d3-lm:Fisherman's Bastion",
+"family": "d3-lm",
+"stratum": "readable",
+"rank": 48,
+"supp": false,
+"carrier": 44
+},
+{
+"id": "d3-lm:the Colosseum",
+"family": "d3-lm",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 46
+},
+{
+"id": "d3-per:Franz Kafka",
+"family": "d3-per",
+"stratum": "right_operand",
+"rank": 3,
+"supp": false,
+"carrier": 45
+},
+{
+"id": "d3-per:Baruch Spinoza",
+"family": "d3-per",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 48
+},
+{
+"id": "d3-per:Marie Curie",
+"family": "d3-per",
+"stratum": "right_operand",
+"rank": 2,
+"supp": false,
+"carrier": 46
+},
+{
+"id": "d4-work:The Blue Danube waltz",
+"family": "d4-work",
+"stratum": "right_operand",
+"rank": 1,
+"supp": false,
+"carrier": 50
+},
+{
+"id": "d4-work:the film The Great Dictator",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 33,
+"supp": false,
+"carrier": 52
+},
+{
+"id": "d4-work:The Metamorphosis",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 5,
+"supp": false,
+"carrier": 51
+},
+{
+"id": "d4-work:the book Either/Or",
+"family": "d4-work",
+"stratum": "right_operand",
+"rank": 2,
+"supp": false,
+"carrier": 51
+},
+{
+"id": "d4-work:The Arcades Project",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 5,
+"supp": false,
+"carrier": 49
+},
+{
+"id": "d4-work:The Republic",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 24,
+"supp": false,
+"carrier": 48
+},
+{
+"id": "d4-work:the Commentaries on the Gallic War",
+"family": "d4-work",
+"stratum": "right_operand",
+"rank": 2,
+"supp": false,
+"carrier": 54
+},
+{
+"id": "d4-work:The Book of Disquiet",
+"family": "d4-work",
+"stratum": "readable",
+"rank": 31,
+"supp": false,
+"carrier": 51
+},
+{
+"id": "d5:d5-055",
+"family": "d5",
+"stratum": "readable",
+"rank": 16,
+"supp": true,
+"carrier": 55
+},
+{
+"id": "d5:d5-081",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 3,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-102",
+"family": "d5",
+"stratum": "readable",
+"rank": 5,
+"supp": true,
+"carrier": 53
+},
+{
+"id": "d5:d5-022",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 2,
+"supp": true,
+"carrier": 54
+},
+{
+"id": "d5:d5-042",
+"family": "d5",
+"stratum": "readable",
+"rank": 11,
+"supp": true,
+"carrier": 53
+},
+{
+"id": "d5:d5-005",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 2,
+"supp": true,
+"carrier": 48
+},
+{
+"id": "d5:d5-088",
+"family": "d5",
+"stratum": "readable",
+"rank": 26,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-064",
+"family": "d5",
+"stratum": "readable",
+"rank": 55,
+"supp": true,
+"carrier": 50
+},
+{
+"id": "d5:d5-104",
+"family": "d5",
+"stratum": "readable",
+"rank": 46,
+"supp": true,
+"carrier": 54
+},
+{
+"id": "d5:d5-094",
+"family": "d5",
+"stratum": "readable",
+"rank": 32,
+"supp": true,
+"carrier": 58
+},
+{
+"id": "d5:d5-086",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 3,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-089",
+"family": "d5",
+"stratum": "readable",
+"rank": 4,
+"supp": true,
+"carrier": 45
+},
+{
+"id": "d5:d5-100",
+"family": "d5",
+"stratum": "readable",
+"rank": 14,
+"supp": true,
+"carrier": 56
+},
+{
+"id": "d5:d5-023",
+"family": "d5",
+"stratum": "readable",
+"rank": 6,
+"supp": true,
+"carrier": 53
+},
+{
+"id": "d5:d5-065",
+"family": "d5",
+"stratum": "readable",
+"rank": 10,
+"supp": true,
+"carrier": 55
+},
+{
+"id": "d5:d5-105",
+"family": "d5",
+"stratum": "readable",
+"rank": 42,
+"supp": true,
+"carrier": 57
+},
+{
+"id": "d5:d5-087",
+"family": "d5",
+"stratum": "right_operand",
+"rank": 3,
+"supp": true,
+"carrier": 53
+}
+]
+}
