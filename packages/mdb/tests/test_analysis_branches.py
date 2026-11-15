@@ -111,6 +111,10 @@ def test_batched_cell_arms_with_stepped_recheck(dbg, donor):
     for r in rechecked:
         # measured 2026-11-14: bf16 0 exactly; fp32 <= 5.96e-8 = the floor (2 spacings + 2 x null)
         assert abs(r["kernel_delta"]["value"]) <= r["floor"]["value"]
+    # the null delta over the margin's own tokens is part of the whole-vocabulary one
+    for r in rows:
+        own = r["kernel_delta_null_consumer_tokens"]["value"]
+        assert 0.0 <= own <= r["kernel_delta_null"]["value"]
     with pytest.raises(Refusal):
         br.add("p", [edit(f"t{LAST}.L0.m", 0.0, "scale")])
         br.run(["p"], mode="batched")
@@ -129,3 +133,23 @@ def test_interchange_rides_on_branches(dbg):
     assert out["floor"]["value"] == br.floor
     br.add_null("self", "self", like="M")
     assert br.run(["self"])[0]["dM"]["value"] == 0.0
+
+
+def test_arm_magnitude_and_head_selector(dbg):
+    """An arm row carries the consumer's |logit| size on that arm (a floor over an item's arms),
+    and a head selector edit ``A[h1] = 0`` equals the hand-built head mask."""
+    run = dbg.run(P, name="mag")
+    br = dbg.branches(run, Margin(LAST, 3, 7), at=f"t{LAST}.L0.h")
+    br.add("A1", [edit(f"t{LAST}.L0.A[h1]", 0.0)])
+    row = br.run()[0]
+    hand = dbg.run(P, name="hand-mag")
+    hand.until(f"t{LAST}.L0.h")
+    shape, dh = hand.port_shape("A"), dbg.adapter.head_dim
+    mask = torch.zeros(shape, dtype=torch.bool)
+    mask.reshape(-1)[dh:2 * dh] = True
+    hand.set(f"t{LAST}.L0.A", torch.zeros(shape, dtype=dbg.adapter.dtype), mask=mask)
+    hand.until(f"t{LAST}.logits")
+    lg = hand.read(f"t{LAST}.logits").reshape(-1)
+    assert row["M"]["value"] == _margin(lg)
+    assert row["magnitude"]["value"] == max(abs(float(lg[3].float())), abs(float(lg[7].float())))
+    assert row["edits"][0]["selection"] == "h1"

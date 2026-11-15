@@ -1,0 +1,37 @@
+{
+ "experiment": "6: TransformerLens weight processing as a reparametrisation null: how much of a patching verdict is rounding",
+ "written": "2026-11-14T12:05-08:00",
+ "status": "sealed before job F; single seed",
+ "models": {
+  "Qwen2.5-0.5B": "carrier L21 KV0",
+  "Qwen3-0.6B-Base": "carrier L20 KV6 (scale-20261114 report (a))"
+ },
+ "library": "transformer-lens 4.4.0 TransformerBridge; processed = enable_compatibility_mode() on a separate copy (fold_ln on RMS, center_unembed; residual not centred), tl.processing() recorded; hooks from mdb.interop.names.to_tl",
+ "panel": "the 48 base items of results/scale-20261114/panel.json per model, consumer M[answer, donor answer]",
+ "memo_predictions_verbatim": "memo_sections.json section 6 (c)",
+ "predictions": {
+  "R1": "fp32 leg: processed and unprocessed base margins agree within 1e-4 on 48/48 items per model; any larger gap means processing is not a pure reparametrisation on that family",
+  "R2": "bf16 leg: |processed - native| on the margin is within mdb's floor on >= 0.9 of items and on >= 0.9 of the patch effects; the 95th percentile of |processed - unprocessed| in spacings is reported against the 2-spacing rule",
+  "R3": "among patch effects mdb calls 'effect' (|native| > floor), <= 5% change sign or fall below floor on the processed bridge; among effects below floor, >= 30% change sign",
+  "R4": "attention-weight changes >= 0.1 (L_c, last row) occur on 0 items in fp32; bf16-only changes are listed by head",
+  "nulls": "unprocessed bf16 bridge vs mdb (parity, expected bitwise for the base forward of the same kernel path); unprocessed bf16 batched vs batch-1 per arm (kernel-path delta)",
+  "falsifier": "the 95th percentile of the reparametrisation difference (processed - unprocessed, bf16, same batch layout) exceeds 4 spacings on either model"
+ },
+ "operational_definitions": {
+  "patch effects": "per item 2H+1: zero each query head's A (hook_z) at L_c and at L_c+1 at the last row, and the carrier V interchange from the donor (the carrier KV group's v at the carrier row, sequence scope). H = 14 (0.5B) or 16 (0.6B), so 29 or 33 per item, not the memo's 20 (stated deviation)",
+  "carrier row": "argmax over span rows (t0 excluded, ties to the later row) of the answer row's L_c attention summed over the carrier KV group's query heads",
+  "mdb native": "stepped bf16 CUDA: head zeroing by a masked Run.set of A at the last row from a checkpoint at t<last>.L<Lc>.h; V interchange by a masked Run.set of v at t<crow>.L<Lc> with prefill = carrier row (sequence scope)",
+  "TL legs": "U16 and P16: all arms of an item in one batch (base + 2H + 1) on CUDA; U16 also batch 1 per arm; U32 and P32: fp32 on CPU, base forward only (R1 margins, R4 pattern)",
+  "floor": "2 bf16 spacings at the largest |logit| of (answer, foil) over the item's arms",
+  "claims": "each P16 patch effect (arm - base, same batch) sealed as a supplied-forecast record and judged by analysis.supplied.judge against mdb's native effect (deviation: the memo names interop.verify, whose stepped re-measure costs 5-6 s per claim, issue I4; the native arms here are mdb's own stepped arms)",
+  "R2 statistic": "|P16 effect - mdb effect| <= floor per patch; |P16 base - mdb base| <= floor per item",
+  "spacing unit": "bf16 spacing at the larger |logit| of the pair"
+ },
+ "amendments": [
+  {
+   "at": "2026-11-14T13:30-08:00",
+   "before": "any full exp6 run (after the combined smoke job-c5870c6a3277, killed_vram at 15.3 GB with all four bridges on CUDA; no prediction read)",
+   "change": "U32/P32 run on CPU as the memo specifies, base forward only (they feed R1 and R4 only); TL hook_z/hook_v are 4-D on the bridge (batch, pos, heads, d_head): the smoke's batched arms indexed them as flat and are discarded"
+  }
+ ]
+}

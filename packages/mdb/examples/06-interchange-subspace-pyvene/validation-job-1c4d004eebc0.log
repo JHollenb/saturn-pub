@@ -1,0 +1,138 @@
+mrun: job-1c4d004eebc0 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 321cb029b20965b018f8f1f4ac9537e2b48c2d05  npairs 34
+34 pairs: city:Barcelona, city:Busan, city:Gdansk, city:Gothenburg, city:Hamburg, city:Krakow, city:Kyoto, city:Milan, city:Munich, city:Naples, city:Porto, city:Rotterdam, city:Saint Petersburg, city:Seville, city:Shanghai, city:Shenzhen, currency:baht, currency:forint, currency:koruna, currency:krona, currency:pound sterling, currency:renminbi, currency:rial, currency:rouble, currency:ruble, currency:rupiah, currency:shekel, currency:sterling, currency:won, currency:yen, currency:yuan, currency:zloty, landmark:Borobudur, landmark:Masada
+model loaded in 5s; head_dim 128, 8 KV groups; script sha256 bcd8e5207ce6, prereg be363361ba04
+SAE L19.h_out k 50 | census country features 58 | pyvene registered ['Qwen3Model', 'Qwen3ForCausalLM', 'Qwen3ForSequenceClassification'] | config model.layers[20].self_attn.v_proj.output
+31 donors; example pointer: {'origin': 'donor', 'via': 'live', 'address': 't36.L20.v[kv6]', 'sha256': 'b90cf93c5e9bf56f853a15d427b1df1c1bfa990d8754eb1be477559ffd441f40', 'shape': [1, 1, 128], 'dtype': 'bfloat16', 'where': 't37.logits'}
+pool donor-carrier-v: n=31, kernel path mdb-stepped, record d2b8949de3bd3501; bitwise equal to Run.ref on every donor: True
+readout span full69: k=32, authority derived-exact, explained 0.950, digest 281bd2261a81
+readout span a69: k=32, authority derived-exact, explained 0.942, digest bea1ba0bece3
+city:Barcelona               crow 36 rank 5  M0   5.250 (showcase   5.250)  whole   0.625 (  0.625)  pyvene   0.625 (  0.625)  sae   5.000 (  5.000)  random  5.250  full69  1.125  a69  2.125  self dM 0.0  [4.83s]
+city:Busan                   crow 37 rank 3  M0   4.125 (showcase   4.125)  whole  -3.625 ( -3.625)  pyvene  -3.500 ( -3.500)  sae   0.750 (  0.750)  random  3.875  full69 -3.000  a69  0.375  self dM 0.0  [5.15s]
+city:Gdansk                  crow 38 rank 4  M0   4.750 (showcase   4.750)  whole  -2.000 ( -2.000)  pyvene  -2.125 ( -2.125)  sae  -0.875 ( -0.875)  random  4.750  full69  0.250  a69  1.625  self dM 0.0  [5.63s]
+city:Gothenburg              crow 37 rank 6  M0   8.000 (showcase   8.000)  whole   1.625 (  1.625)  pyvene   1.750 (  1.750)  sae   5.625 (  5.625)  random  8.000  full69  2.625  a69  4.125  self dM 0.0  [8.32s]
+city:Hamburg                 crow 36 rank 5  M0   4.750 (showcase   4.750)  whole  -0.625 ( -0.625)  pyvene  -0.750 ( -0.750)  sae   0.750 (  0.750)  random  4.250  full69 -0.250  a69  1.250  self dM 0.0  [5.03s]
+city:Krakow                  crow 37 rank 5  M0   2.000 (showcase   2.000)  whole  -3.375 ( -3.375)  pyvene  -3.125 ( -3.125)  sae   0.875 (  0.750)  random  1.875  full69 -2.375  a69 -1.125  self dM 0.0  [5.15s]
+city:Kyoto                   crow 36 rank 3  M0   3.625 (showcase   3.625)  whole  -1.125 ( -1.125)  pyvene  -1.125 ( -1.125)  sae   4.125 (  4.125)  random  3.625  full69 -0.250  a69  2.625  self dM 0.0  [4.85s]
+city:Milan                   crow 36 rank 3  M0   4.250 (showcase   4.250)  whole  -2.375 ( -2.375)  pyvene  -2.500 ( -2.500)  sae   2.250 (  2.250)  random  4.125  full69 -1.875  a69 -0.625  self dM 0.0  [5.03s]
+city:Munich                  crow 36 rank 2  M0   5.625 (showcase   5.625)  whole  -2.125 ( -2.125)  pyvene  -2.000 ( -2.000)  sae   1.250 (  1.250)  random  5.750  full69 -1.250  a69  0.500  self dM 0.0  [4.89s]
+city:Naples                  crow 36 rank 3  M0   5.375 (showcase   5.375)  whole  -2.125 ( -2.125)  pyvene  -2.250 ( -2.250)  sae   1.375 (  1.375)  random  4.875  full69 -1.500  a69  0.125  self dM 0.0  [4.88s]
+city:Porto                   crow 36 rank 4  M0   4.500 (showcase   4.500)  whole  -3.125 ( -3.125)  pyvene  -3.000 ( -3.000)  sae  -0.250 ( -0.250)  random  4.625  full69 -2.125  a69 -0.875  self dM 0.0  [5.07s]
+city:Rotterdam               crow 36 rank 3  M0   5.375 (showcase   5.375)  whole  -5.000 ( -5.000)  pyvene  -5.000 ( -5.000)  sae   1.625 (  1.625)  random  5.250  full69 -3.875  a69 -2.750  self dM 0.0  [4.85s]
+city:Saint Petersburg        crow 37 rank 3  M0   6.500 (showcase   6.500)  whole  -5.375 ( -5.375)  pyvene  -5.500 ( -5.500)  sae   5.000 (  4.875)  random  6.250  full69 -4.875  a69 -3.500  self dM 0.0  [5.17s]
+city:Seville                 crow 37 rank 4  M0   9.000 (showcase   9.000)  whole  -2.500 ( -2.500)  pyvene  -2.625 ( -2.625)  sae   7.500 (  7.500)  random  8.375  full69 -1.375  a69  0.375  self dM 0.0  [5.37s]
+city:Shanghai                crow 36 rank 2  M0   4.750 (showcase   4.750)  whole  -3.375 ( -3.375)  pyvene  -3.375 ( -3.375)  sae   4.875 (  4.875)  random  4.750  full69 -3.375  a69  0.125  self dM 0.0  [4.88s]
+city:Shenzhen                crow 37 rank 3  M0   4.625 (showcase   4.625)  whole  -1.875 ( -1.875)  pyvene  -2.000 ( -2.000)  sae   4.125 (  4.125)  random  4.250  full69 -1.875  a69 -0.625  self dM 0.0  [5.19s]
+currency:baht                crow 37 rank 6  M0  11.500 (showcase  11.500)  whole  -5.125 ( -5.125)  pyvene  -5.125 ( -5.125)  sae   4.625 (  4.750)  random 11.000  full69 -3.125  a69 -2.375  self dM 0.0  [5.19s]
+currency:forint              crow 37 rank 5  M0   9.500 (showcase   9.500)  whole  -0.625 ( -0.625)  pyvene  -0.750 ( -0.750)  sae   8.125 (  8.125)  random  9.625  full69  0.000  a69  1.000  self dM 0.0  [5.37s]
+currency:koruna              crow 37 rank 8  M0   7.000 (showcase   7.000)  whole  -3.500 ( -3.500)  pyvene  -3.500 ( -3.500)  sae   0.000 (  0.000)  random  6.750  full69 -2.375  a69  0.000  self dM 0.0  [5.18s]
+currency:krona               crow 36 rank 5  M0   8.500 (showcase   8.500)  whole   1.125 (  1.125)  pyvene   1.500 (  1.500)  sae   6.000 (  6.000)  random  8.375  full69  1.875  a69  3.875  self dM 0.0  [8.23s]
+currency:pound sterling      crow 36 rank 9  M0  13.875 (showcase  13.875)  whole   5.875 (  5.875)  pyvene   5.625 (  5.625)  sae   7.750 (  7.750)  random 13.250  full69  6.875  a69  8.125  self dM 0.0  [8.02s]
+currency:renminbi            crow 38 rank 6  M0  11.125 (showcase  11.125)  whole   6.875 (  6.875)  pyvene   7.125 (  7.125)  sae  10.250 ( 10.250)  random 11.000  full69  8.125  a69  9.125  self dM 0.0  [5.68s]
+currency:rial                crow 37 rank 3  M0   5.000 (showcase   5.000)  whole  -4.875 ( -4.875)  pyvene  -4.875 ( -4.875)  sae   2.000 (  2.000)  random  4.875  full69 -4.000  a69 -3.000  self dM 0.0  [5.2s]
+currency:rouble              crow 37 rank 3  M0  11.500 (showcase  11.500)  whole  -6.000 ( -6.000)  pyvene  -6.250 ( -6.250)  sae   6.125 (  6.125)  random 11.125  full69 -5.000  a69 -3.625  self dM 0.0  [5.19s]
+currency:ruble               crow 36 rank 3  M0  10.250 (showcase  10.250)  whole   0.500 (  0.500)  pyvene  -0.250 ( -0.250)  sae   6.875 (  6.875)  random 10.125  full69  1.250  a69  2.125  self dM 0.0  [8.2s]
+currency:rupiah              crow 38 rank 3  M0  11.375 (showcase  11.375)  whole  -0.750 ( -0.750)  pyvene  -0.500 ( -0.500)  sae   8.250 (  8.125)  random 11.125  full69 -0.125  a69  0.125  self dM 0.0  [5.7s]
+currency:shekel              crow 37 rank 5  M0   7.000 (showcase   7.000)  whole  -7.000 ( -7.000)  pyvene  -7.125 ( -7.125)  sae   2.250 (  2.125)  random  6.750  full69 -6.750  a69 -4.625  self dM 0.0  [5.17s]
+currency:sterling            crow 36 rank 6  M0   8.875 (showcase   8.875)  whole   0.250 (  0.250)  pyvene   0.250 (  0.250)  sae   1.875 (  1.875)  random  8.500  full69  1.125  a69  3.625  self dM 0.0  [4.85s]
+currency:won                 crow 36 rank 4  M0   5.625 (showcase   5.625)  whole  -6.625 ( -6.625)  pyvene  -6.500 ( -6.500)  sae   3.000 (  3.000)  random  5.625  full69 -6.250  a69 -0.125  self dM 0.0  [4.87s]
+currency:yen                 crow 36 rank 4  M0   6.375 (showcase   6.375)  whole  -4.250 ( -4.250)  pyvene  -4.375 ( -4.375)  sae  -2.625 ( -2.625)  random  6.375  full69 -4.000  a69 -2.250  self dM 0.0  [5.06s]
+currency:yuan                crow 36 rank 7  M0   5.750 (showcase   5.750)  whole  -3.875 ( -3.875)  pyvene  -3.750 ( -3.750)  sae   0.625 (  0.625)  random  5.500  full69 -2.875  a69  0.375  self dM 0.0  [4.87s]
+currency:zloty               crow 37 rank 7  M0  13.938 (showcase  13.938)  whole  -4.125 ( -4.125)  pyvene  -4.125 ( -4.125)  sae   5.500 (  5.500)  random 14.125  full69 -1.125  a69  0.500  self dM 0.0  [8.56s]
+landmark:Borobudur           crow 39 rank 4  M0   7.125 (showcase   7.125)  whole  -1.875 ( -1.875)  pyvene  -2.125 ( -2.125)  sae  -0.375 ( -0.375)  random  6.875  full69 -1.375  a69 -0.375  self dM 0.0  [5.82s]
+landmark:Masada              crow 37 rank 3  M0  10.000 (showcase  10.000)  whole  -9.000 ( -9.000)  pyvene  -8.875 ( -8.875)  sae  -0.750 ( -0.750)  random  9.750  full69 -8.250  a69 -4.000  self dM 0.0  [5.37s]
+{
+ "pairs": 34,
+ "flips": {
+  "whole": "27/34",
+  "pyvene": "26/34",
+  "sae": "4/34",
+  "random": "0/34",
+  "full69_k32": "22/34",
+  "a69_k32": "13/34"
+ },
+ "flips_margin4": {
+  "whole": "24/34",
+  "pyvene": "24/34",
+  "sae": "1/34",
+  "random": "0/34",
+  "full69_k32": "22/34",
+  "a69_k32": "9/34"
+ },
+ "whole_flips_with_branches_M0": "27/34",
+ "pyvene_mdb_verdict_agree": "33/34",
+ "disagree": [
+  "currency:rupiah"
+ ],
+ "pyvene_mdb_gap": {
+  "median": 0.125,
+  "max": 0.75
+ },
+ "kernel_path_clean_gap": {
+  "median": 0.0,
+  "max": 0.25
+ },
+ "sae_rank": {
+  "median": 4.0,
+  "max": 9
+ },
+ "median_frac_moved": {
+  "sae": 0.3537998146431881,
+  "random": 0.018362533692722373,
+  "full69_k32": 0.9067831590533847,
+  "a69_k32": 0.7118340163934427
+ },
+ "self_null_max_abs_dM": 0.0,
+ "median_mass_of_delta_sae": 0.3518232514325193
+}
+symbol table for city:Gdansk at t39.logits (1.9s, records ['56f80eea8c5cc7ec48fa4470b020c087e34e6da62d58c899b5a797e6881455b9'])
+  sae-country      k=  4  derived-exact mass_native 0.236  to_consumer +0.075 of cell +0.718  share 0.105  labels ['iia_panel', 'interchange']
+  random           k=  4  supplied      mass_native 0.002  to_consumer +0.016 of cell +0.718  share 0.022  labels ['iia_panel', 'interchange']
+  readout-full69   k= 32  derived-exact mass_native 0.558  to_consumer +0.702 of cell +0.718  share 0.977  labels ['iia_panel', 'interchange']
+  readout-a69      k= 32  derived-exact mass_native 0.514  to_consumer +0.505 of cell +0.718  share 0.703  labels ['iia_panel', 'interchange']
+M0            equal on 34/34
+crow          equal on 34/34
+donor_crow    equal on 34/34
+rank          equal on 34/34
+features      equal on 34/34
+whole         equal on 34/34
+pyvene        equal on 34/34
+pyvene_clean  equal on 34/34
+branches_M0   equal on 34/34
+full69_k32    equal on 27/34  max |diff| 0.125
+a69_k32       equal on 27/34  max |diff| 0.125
+sae           equal on 29/34  max |diff| 0.125
+random        equal on 8/34  max |diff| 0.625
+sae_vnative   equal to showcase sae on 34/34
+a69_vnative   equal to showcase a69_k32 on 34/34
+recipient cell differs between the native run and the branched run on 18/34 pairs (max |dv| 0.8125)
+
+number                               showcase        now
+flips @1 floor whole                       27         27
+flips @1 floor pyvene                      26         26
+flips @1 floor sae                          4          4
+flips @1 floor random                       0          0
+flips @1 floor full69_k32                  22         22
+flips @1 floor a69_k32                     13         13
+flips @4 floors whole                      24         24
+flips @4 floors pyvene                     24         24
+flips @4 floors sae                         1          1
+flips @4 floors random                      0          0
+flips @4 floors full69_k32                 22         22
+flips @4 floors a69_k32                     8          9
+pyvene_mdb_verdict_agree                   33         33
+median_frac_moved sae                  0.3548     0.3538
+median_frac_moved random               0.0104     0.0184
+pyvene_mdb_gap median                   0.125      0.125
+pyvene_mdb_gap max                       0.75       0.75
+kernel_path_clean_gap median              0.0        0.0
+kernel_path_clean_gap max                0.25       0.25
+self-patch null: max |dM| 0.0 (must be 0)
+done in 239.7s; wrote out/interchange_subspace_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "npairs": 34, "pool": {"n": 31, "kernel_path": "mdb-stepped", "equal_to_run_ref": true, "record": "d2b8949de3bd3501876a786d48501412e8c602af7d3c489bf02c8dbe95ec2319"}, "summary": {"pairs": 34, "flips": {"whole": "27/34", "pyvene": "26/34", "sae": "4/34", "random": "0/34", "full69_k32": "22/34", "a69_k32": "13/34"}, "flips_margin4": {"whole": "24/34", "pyvene": "24/34", "sae": "1/34", "random": "0/34", "full69_k32": "22/34", "a69_k32": "9/34"}, "whole_flips_with_branches_M0": "27/34", "pyvene_mdb_verdict_agree": "33/34", "disagree": ["currency:rupiah"], "pyvene_mdb_gap": {"median": 0.125, "max": 0.75}, "kernel_path_clean_gap": {"median": 0.0, "max": 0.25}, "sae_rank": {"median": 4.0, "max": 9}, "median_frac_moved": {"sae": 0.3537998146431881, "random": 0.018362533692722373, "full69_k32": 0.9067831590533847, "a69_k32": 0.7118340163934427}, "self_null_max_abs_dM": 0.0, "median_mass_of_delta_sae": 0.3518232514325193}, "symbol_table": {"pair": "city:Gdansk", "subspaces": [{"name": "sae-country", "k": 4, "authority": "derived-exact", "mass_native": 0.23638625243547237, "subspace_to_consumer": 0.07507073105962839, "cell_to_consumer": 0.7181592220861884}, {"name": "random", "k": 4, "authority": "supplied", "mass_native": 0.0022409115892734668, "subspace_to_consumer": 0.015751340685065375, "cell_to_consumer": 0.7181592220861884}, {"name": "readout-full69", "k": 32, "authority": "derived-exact", "mass_native": 0.5584164649891957, "subspace_to_consumer": 0.7018355548834296, "cell_to_consumer": 0.7181592220861884}, {"name": "readout-a69", "k": 32, "authority": "derived-exact", "mass_native": 0.514286465022556, "subspace_to_consumer": 0.5045501920674942, "cell_to_consumer": 0.7181592220861884}]}, "equal_counts": {"M0": 34, "crow": 34, "donor_crow": 34, "rank": 34, "features": 34, "whole": 34, "pyvene": 34, "pyvene_clean": 34, "branches_M0": 34, "full69_k32": 27, "a69_k32": 27, "sae": 29, "random": 8, "sae_vnative": 34, "a69_vnative": 34}, "showcase_reference": {"flips": {"whole": 27, "pyvene": 26, "sae": 4, "random": 0, "full69_k32": 22, "a69_k32": 13}, "flips_margin4": {"whole": 24, "pyvene": 24, "sae": 1, "random": 0, "full69_k32": 22, "a69_k32": 8}}, "seconds": 239.7, "records": "out/records.jsonl"}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:00.69
+	Maximum resident set size (kbytes): 4352380
+mrun: job-1c4d004eebc0 -> succeeded
+mrun: job-1c4d004eebc0 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 241.02, 'peak_rss_mb': 3433.3, 'peak_vram_mb': 3888.0}

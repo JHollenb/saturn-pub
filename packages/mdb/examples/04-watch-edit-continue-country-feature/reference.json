@@ -1,0 +1,1959 @@
+{
+ "source": "results/showcase-20261114/exp1/out/exp1-items.jsonl (jobs job-17ce950a0f0b, job-a38bd2b83820)",
+ "per_item": {
+  "d3-lm:Anitkabir": {
+   "correct": true,
+   "carrier_row": 46,
+   "foil": 34117,
+   "native_logits": [
+    32.5,
+    29.125
+   ],
+   "native_argmax": 23734,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 27602,
+   "content_C": 17009,
+   "wrong_feature": 2502,
+   "truth_feature": [
+    26436,
+    52.328339303301334
+   ],
+   "delta_norm": 26.948354760968957,
+   "donor": "d2:Ankara",
+   "arms": {
+    "R1": {
+     "argmax": 23734,
+     "logits": [
+      32.25,
+      29.125
+     ],
+     "dM": -0.25,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 23734,
+     "logits": [
+      32.75,
+      29.0
+     ],
+     "dM": 0.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 23734,
+     "logits": [
+      32.75,
+      29.375
+     ],
+     "dM": 0.0,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Big Ben": {
+   "correct": true,
+   "carrier_row": 43,
+   "foil": 7855,
+   "native_logits": [
+    33.5,
+    30.75
+   ],
+   "native_argmax": 6364,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": 13224,
+   "content_C": 13224,
+   "wrong_feature": null,
+   "truth_feature": [
+    10710,
+    168.73399291981093
+   ],
+   "delta_norm": 65.29185030192025,
+   "donor": "d3-lm:Buckingham Palace",
+   "arms": {
+    "R1": {
+     "argmax": 6364,
+     "logits": [
+      33.25,
+      30.625
+     ],
+     "dM": -0.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 6364,
+     "logits": [
+      33.75,
+      30.25
+     ],
+     "dM": 0.75,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      33.25,
+      30.25
+     ],
+     "dM": 0.25,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Buckingham Palace": {
+   "correct": true,
+   "carrier_row": 43,
+   "foil": 7855,
+   "native_logits": [
+    33.75,
+    30.5
+   ],
+   "native_argmax": 6364,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": 13224,
+   "content_C": 13224,
+   "wrong_feature": null,
+   "truth_feature": [
+    10710,
+    168.73399291981093
+   ],
+   "delta_norm": 67.70444546778906,
+   "donor": "d3-lm:Big Ben",
+   "arms": {
+    "R1": {
+     "argmax": 6364,
+     "logits": [
+      33.5,
+      30.5
+     ],
+     "dM": -0.25,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 6364,
+     "logits": [
+      33.75,
+      30.875
+     ],
+     "dM": -0.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      33.75,
+      30.375
+     ],
+     "dM": 0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Fisherman's Bastion": {
+   "correct": false,
+   "carrier_row": 43,
+   "foil": 34117,
+   "native_logits": [
+    25.5,
+    30.25
+   ],
+   "native_argmax": 34117,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 29467,
+   "content_C": 23968,
+   "wrong_feature": 29308,
+   "truth_feature": [
+    23868,
+    89.84772023342686
+   ],
+   "delta_norm": 50.22806188800962,
+   "donor": "d3-lm:the Szechenyi thermal bath",
+   "arms": {
+    "R1": {
+     "argmax": 34117,
+     "logits": [
+      26.5,
+      30.5
+     ],
+     "dM": 0.75,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 23734,
+     "logits": [
+      28.0,
+      30.75
+     ],
+     "dM": 2.0,
+     "repaired": false
+    },
+    "RND": {
+     "argmax": 34117,
+     "logits": [
+      25.375,
+      30.25
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d3-lm:Gyeongbokgung Palace": {
+   "correct": true,
+   "carrier_row": 46,
+   "foil": 20644,
+   "native_logits": [
+    32.25,
+    27.375
+   ],
+   "native_argmax": 16134,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": 11862,
+   "content_C": 11862,
+   "wrong_feature": null,
+   "truth_feature": [
+    11471,
+    100.1242993805037
+   ],
+   "delta_norm": 59.30601719043879,
+   "donor": "d2:Seoul",
+   "arms": {
+    "R1": {
+     "argmax": 16134,
+     "logits": [
+      32.25,
+      27.375
+     ],
+     "dM": 0.0,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 16134,
+     "logits": [
+      32.25,
+      27.0
+     ],
+     "dM": 0.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 16134,
+     "logits": [
+      32.5,
+      27.625
+     ],
+     "dM": 0.0,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Notre-Dame Cathedral": {
+   "correct": true,
+   "carrier_row": 44,
+   "foil": 19458,
+   "native_logits": [
+    34.25,
+    29.875
+   ],
+   "native_argmax": 8585,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": null,
+   "truth_feature": [
+    27787,
+    118.9803222335484
+   ],
+   "delta_norm": 68.71149474237438,
+   "donor": "d3-lm:the Eiffel Tower",
+   "arms": {
+    "R1": {
+     "argmax": 8585,
+     "logits": [
+      34.25,
+      29.375
+     ],
+     "dM": 0.5,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 8585,
+     "logits": [
+      34.5,
+      29.5
+     ],
+     "dM": 0.625,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      34.25,
+      29.5
+     ],
+     "dM": 0.375,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Red Square": {
+   "correct": true,
+   "carrier_row": 43,
+   "foil": 6364,
+   "native_logits": [
+    34.25,
+    29.5
+   ],
+   "native_argmax": 8522,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 27602,
+   "content_C": 8359,
+   "wrong_feature": 2502,
+   "truth_feature": [
+    20845,
+    69.1611285519271
+   ],
+   "delta_norm": 17.651483037127857,
+   "donor": "d3-lm:Saint Basil's Cathedral",
+   "arms": {
+    "R1": {
+     "argmax": 8522,
+     "logits": [
+      34.25,
+      29.5
+     ],
+     "dM": 0.0,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 8522,
+     "logits": [
+      34.0,
+      28.75
+     ],
+     "dM": 0.5,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8522,
+     "logits": [
+      34.25,
+      29.625
+     ],
+     "dM": -0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Retiro Park": {
+   "correct": true,
+   "carrier_row": 43,
+   "foil": 42188,
+   "native_logits": [
+    33.25,
+    29.75
+   ],
+   "native_argmax": 15154,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 29467,
+   "content_C": 33000,
+   "wrong_feature": 30986,
+   "truth_feature": null,
+   "delta_norm": 13.428875606898572,
+   "donor": "d3-lm:the Prado Museum",
+   "arms": {
+    "R1": {
+     "argmax": 15154,
+     "logits": [
+      33.25,
+      30.0
+     ],
+     "dM": -0.25,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 15154,
+     "logits": [
+      33.25,
+      30.125
+     ],
+     "dM": -0.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 15154,
+     "logits": [
+      33.25,
+      29.75
+     ],
+     "dM": 0.0,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Saint Basil's Cathedral": {
+   "correct": true,
+   "carrier_row": 45,
+   "foil": 69506,
+   "native_logits": [
+    33.25,
+    28.0
+   ],
+   "native_argmax": 8522,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 8359,
+   "wrong_feature": null,
+   "truth_feature": [
+    20845,
+    69.1611285519271
+   ],
+   "delta_norm": 10.094164906736568,
+   "donor": "d3-lm:Red Square",
+   "arms": {
+    "R1": {
+     "argmax": 8522,
+     "logits": [
+      33.5,
+      28.0
+     ],
+     "dM": 0.25,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 8522,
+     "logits": [
+      34.0,
+      28.625
+     ],
+     "dM": 0.125,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8522,
+     "logits": [
+      33.25,
+      27.875
+     ],
+     "dM": 0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Schonbrunn Palace": {
+   "correct": true,
+   "carrier_row": 45,
+   "foil": 56769,
+   "native_logits": [
+    31.625,
+    29.75
+   ],
+   "native_argmax": 5938,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 34898,
+   "wrong_feature": null,
+   "truth_feature": [
+    29692,
+    72.34136497055158
+   ],
+   "delta_norm": 24.7346311448541,
+   "donor": "d3-lm:St. Stephen's Cathedral",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      31.375,
+      29.625
+     ],
+     "dM": -0.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      32.75,
+      28.125
+     ],
+     "dM": 2.75,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      31.75,
+      29.75
+     ],
+     "dM": 0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Shibuya Crossing": {
+   "correct": true,
+   "carrier_row": 43,
+   "foil": 6364,
+   "native_logits": [
+    33.5,
+    29.625
+   ],
+   "native_argmax": 10769,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 27602,
+   "content_C": 6323,
+   "wrong_feature": 2502,
+   "truth_feature": [
+    15308,
+    75.1096451147131
+   ],
+   "delta_norm": 21.094561143225615,
+   "donor": "d3-lm:the Meiji Shrine",
+   "arms": {
+    "R1": {
+     "argmax": 10769,
+     "logits": [
+      33.25,
+      29.5
+     ],
+     "dM": -0.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 10769,
+     "logits": [
+      33.25,
+      29.375
+     ],
+     "dM": 0.0,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 10769,
+     "logits": [
+      33.5,
+      29.75
+     ],
+     "dM": -0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:Tivoli Gardens": {
+   "correct": true,
+   "carrier_row": 44,
+   "foil": 23234,
+   "native_logits": [
+    32.75,
+    32.75
+   ],
+   "native_argmax": 23234,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 25662,
+   "content_C": 34340,
+   "wrong_feature": 27085,
+   "truth_feature": [
+    22369,
+    34.588928996130804
+   ],
+   "delta_norm": 31.83648833938128,
+   "donor": "d3-lm:the Little Mermaid statue",
+   "arms": {
+    "R1": {
+     "argmax": 43680,
+     "logits": [
+      33.75,
+      31.875
+     ],
+     "dM": 1.875,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 43680,
+     "logits": [
+      33.5,
+      32.5
+     ],
+     "dM": 1.0,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 43680,
+     "logits": [
+      33.0,
+      32.75
+     ],
+     "dM": 0.25,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:the Astronomical Clock of the Old Town": {
+   "correct": false,
+   "carrier_row": 46,
+   "foil": 23734,
+   "native_logits": [
+    30.0,
+    31.5
+   ],
+   "native_argmax": 23734,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 14867,
+   "content_C": 34340,
+   "wrong_feature": 2921,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 36.68575963643809,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 33150,
+     "logits": [
+      31.0,
+      30.875
+     ],
+     "dM": 1.625,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 33150,
+     "logits": [
+      33.0,
+      28.125
+     ],
+     "dM": 6.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 23734,
+     "logits": [
+      30.125,
+      31.75
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d3-lm:the Belvedere palace": {
+   "correct": true,
+   "carrier_row": 45,
+   "foil": 14811,
+   "native_logits": [
+    32.0,
+    31.875
+   ],
+   "native_argmax": 5938,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 5616,
+   "content_C": 34898,
+   "wrong_feature": 12330,
+   "truth_feature": [
+    29692,
+    72.34136497055158
+   ],
+   "delta_norm": 26.2567767133634,
+   "donor": "d3-lm:Schonbrunn Palace",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      32.0,
+      32.0
+     ],
+     "dM": -0.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      31.75,
+      31.25
+     ],
+     "dM": 0.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      32.0,
+      31.75
+     ],
+     "dM": 0.125,
+     "repaired": true
+    }
+   }
+  },
+  "d3-lm:the Colosseum": {
+   "correct": false,
+   "carrier_row": 46,
+   "foil": 19458,
+   "native_logits": [
+    31.5,
+    31.875
+   ],
+   "native_argmax": 19458,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": 15344,
+   "content_C": 15344,
+   "wrong_feature": null,
+   "truth_feature": [
+    26232,
+    72.44649844989365
+   ],
+   "delta_norm": 44.565277474129715,
+   "donor": "d3-lm:the Trevi Fountain",
+   "arms": {
+    "R1": {
+     "argmax": 14811,
+     "logits": [
+      31.625,
+      31.5
+     ],
+     "dM": 0.5,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 14811,
+     "logits": [
+      31.875,
+      31.5
+     ],
+     "dM": 0.75,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 19458,
+     "logits": [
+      31.375,
+      32.0
+     ],
+     "dM": -0.25,
+     "repaired": false
+    }
+   }
+  },
+  "d3-lm:the Pantheon": {
+   "correct": false,
+   "carrier_row": 44,
+   "foil": 8585,
+   "native_logits": [
+    30.625,
+    32.5
+   ],
+   "native_argmax": 8585,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    26232,
+    72.44649844989365
+   ],
+   "delta_norm": 54.5334317739617,
+   "donor": "d3-lm:the Trevi Fountain",
+   "arms": {
+    "R1": {
+     "argmax": 14811,
+     "logits": [
+      31.875,
+      28.125
+     ],
+     "dM": 5.625,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 14811,
+     "logits": [
+      32.5,
+      29.75
+     ],
+     "dM": 4.625,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      30.625,
+      32.25
+     ],
+     "dM": 0.25,
+     "repaired": false
+    }
+   }
+  },
+  "d3-per:Baruch Spinoza": {
+   "correct": false,
+   "carrier_row": 48,
+   "foil": 36266,
+   "native_logits": [
+    30.625,
+    31.0
+   ],
+   "native_argmax": 36266,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": 25662,
+   "content_C": 25662,
+   "wrong_feature": 21265,
+   "truth_feature": [
+    27085,
+    118.57071727385448
+   ],
+   "delta_norm": 70.19227389515483,
+   "donor": "d3-lm:the Anne Frank House",
+   "arms": {
+    "R1": {
+     "argmax": 23234,
+     "logits": [
+      30.875,
+      28.875
+     ],
+     "dM": 2.375,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 23234,
+     "logits": [
+      31.125,
+      30.25
+     ],
+     "dM": 1.25,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 23234,
+     "logits": [
+      31.25,
+      30.25
+     ],
+     "dM": 1.375,
+     "repaired": true
+    }
+   }
+  },
+  "d3-per:Franz Kafka": {
+   "correct": false,
+   "carrier_row": 45,
+   "foil": 5938,
+   "native_logits": [
+    30.625,
+    31.25
+   ],
+   "native_argmax": 5938,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 34340,
+   "content_C": 34898,
+   "wrong_feature": 22369,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 40.193358682025654,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 33150,
+     "logits": [
+      31.25,
+      30.75
+     ],
+     "dM": 1.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 33150,
+     "logits": [
+      32.75,
+      29.875
+     ],
+     "dM": 3.5,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      30.625,
+      31.375
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d3-per:Harry Houdini": {
+   "correct": false,
+   "carrier_row": 47,
+   "foil": 6364,
+   "native_logits": [
+    32.0,
+    32.5
+   ],
+   "native_argmax": 6364,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 36255,
+   "content_C": 42776,
+   "wrong_feature": 31953,
+   "truth_feature": [
+    23868,
+    89.84772023342686
+   ],
+   "delta_norm": 50.0208801258277,
+   "donor": "d3-lm:the Szechenyi thermal bath",
+   "arms": {
+    "R1": {
+     "argmax": 56769,
+     "logits": [
+      33.5,
+      32.25
+     ],
+     "dM": 1.75,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 56769,
+     "logits": [
+      34.25,
+      30.375
+     ],
+     "dM": 4.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      31.625,
+      32.5
+     ],
+     "dM": -0.375,
+     "repaired": false
+    }
+   }
+  },
+  "d3-per:Julius Caesar": {
+   "correct": false,
+   "carrier_row": 45,
+   "foil": 19458,
+   "native_logits": [
+    28.75,
+    33.0
+   ],
+   "native_argmax": 19458,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 14867,
+   "content_C": 14867,
+   "wrong_feature": 13110,
+   "truth_feature": [
+    26232,
+    72.44649844989365
+   ],
+   "delta_norm": 45.7505185412051,
+   "donor": "d3-lm:the Trevi Fountain",
+   "arms": {
+    "R1": {
+     "argmax": 19458,
+     "logits": [
+      30.125,
+      32.5
+     ],
+     "dM": 1.875,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 19458,
+     "logits": [
+      31.375,
+      32.0
+     ],
+     "dM": 3.625,
+     "repaired": false
+    },
+    "RND": {
+     "argmax": 19458,
+     "logits": [
+      28.875,
+      33.0
+     ],
+     "dM": 0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d3-per:Marie Curie": {
+   "correct": false,
+   "carrier_row": 46,
+   "foil": 8585,
+   "native_logits": [
+    32.25,
+    33.0
+   ],
+   "native_argmax": 8585,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 32961,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    2502,
+    60.012163488214526
+   ],
+   "delta_norm": 48.69356576381137,
+   "donor": "d3-lm:the Palace of Culture and Science",
+   "arms": {
+    "R1": {
+     "argmax": 31984,
+     "logits": [
+      32.75,
+      31.75
+     ],
+     "dM": 1.75,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 31984,
+     "logits": [
+      33.25,
+      29.875
+     ],
+     "dM": 4.125,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      32.25,
+      32.75
+     ],
+     "dM": 0.25,
+     "repaired": false
+    }
+   }
+  },
+  "d3-per:Rainer Maria Rilke": {
+   "correct": false,
+   "carrier_row": 49,
+   "foil": 5938,
+   "native_logits": [
+    29.375,
+    33.0
+   ],
+   "native_argmax": 5938,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 34898,
+   "wrong_feature": null,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 39.976932261397764,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      30.375,
+      32.75
+     ],
+     "dM": 1.25,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      32.0,
+      32.25
+     ],
+     "dM": 3.375,
+     "repaired": false
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      29.125,
+      33.0
+     ],
+     "dM": -0.25,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:The Arcades Project": {
+   "correct": false,
+   "carrier_row": 49,
+   "foil": 8585,
+   "native_logits": [
+    29.375,
+    32.75
+   ],
+   "native_argmax": 8585,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    27885,
+    119.3717290010647
+   ],
+   "delta_norm": 49.10076539273477,
+   "donor": "d3-lm:the Brandenburg Gate",
+   "arms": {
+    "R1": {
+     "argmax": 8585,
+     "logits": [
+      31.125,
+      32.25
+     ],
+     "dM": 2.25,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      32.0,
+      31.75
+     ],
+     "dM": 3.625,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      29.25,
+      32.75
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:The Blue Danube waltz": {
+   "correct": false,
+   "carrier_row": 50,
+   "foil": 56769,
+   "native_logits": [
+    29.5,
+    30.25
+   ],
+   "native_argmax": 56769,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": 34898,
+   "content_C": 34898,
+   "wrong_feature": null,
+   "truth_feature": [
+    29692,
+    72.34136497055158
+   ],
+   "delta_norm": 25.567979266366045,
+   "donor": "d3-lm:Schonbrunn Palace",
+   "arms": {
+    "R1": {
+     "argmax": 56769,
+     "logits": [
+      29.25,
+      30.25
+     ],
+     "dM": -0.25,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      30.5,
+      30.0
+     ],
+     "dM": 1.25,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 56769,
+     "logits": [
+      29.25,
+      30.0
+     ],
+     "dM": 0.0,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:The Book of Disquiet": {
+   "correct": false,
+   "carrier_row": 51,
+   "foil": 8585,
+   "native_logits": [
+    27.125,
+    31.625
+   ],
+   "native_argmax": 8585,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    18490,
+    101.92798309447242
+   ],
+   "delta_norm": 29.8369410810958,
+   "donor": "d3-lm:the Belem Tower",
+   "arms": {
+    "R1": {
+     "argmax": 8585,
+     "logits": [
+      27.625,
+      30.625
+     ],
+     "dM": 1.5,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 42188,
+     "logits": [
+      31.75,
+      30.25
+     ],
+     "dM": 6.0,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      27.125,
+      31.625
+     ],
+     "dM": 0.0,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:The Metamorphosis": {
+   "correct": false,
+   "carrier_row": 51,
+   "foil": 5938,
+   "native_logits": [
+    30.125,
+    32.5
+   ],
+   "native_argmax": 5938,
+   "floor": 0.5,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 34898,
+   "wrong_feature": null,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 39.613691718308914,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      31.5,
+      31.875
+     ],
+     "dM": 2.0,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 33150,
+     "logits": [
+      33.25,
+      30.5
+     ],
+     "dM": 5.125,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      30.0,
+      32.25
+     ],
+     "dM": 0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:The Republic": {
+   "correct": false,
+   "carrier_row": 48,
+   "foil": 6364,
+   "native_logits": [
+    28.875,
+    30.5
+   ],
+   "native_argmax": 6364,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 29467,
+   "content_C": 23968,
+   "wrong_feature": 29308,
+   "truth_feature": [
+    16529,
+    32.23782999468489
+   ],
+   "delta_norm": 17.029280384879318,
+   "donor": "d3-lm:the Acropolis",
+   "arms": {
+    "R1": {
+     "argmax": 6364,
+     "logits": [
+      29.25,
+      30.5
+     ],
+     "dM": 0.375,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 17860,
+     "logits": [
+      31.875,
+      30.125
+     ],
+     "dM": 3.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      28.875,
+      30.5
+     ],
+     "dM": 0.0,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the Commentaries on the Gallic War": {
+   "correct": false,
+   "carrier_row": 54,
+   "foil": 19458,
+   "native_logits": [
+    26.875,
+    32.25
+   ],
+   "native_argmax": 19458,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    26232,
+    72.44649844989365
+   ],
+   "delta_norm": 50.2195652350544,
+   "donor": "d3-lm:the Trevi Fountain",
+   "arms": {
+    "R1": {
+     "argmax": 19458,
+     "logits": [
+      28.875,
+      32.25
+     ],
+     "dM": 2.0,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 19458,
+     "logits": [
+      29.5,
+      32.5
+     ],
+     "dM": 2.375,
+     "repaired": false
+    },
+    "RND": {
+     "argmax": 19458,
+     "logits": [
+      27.0,
+      32.25
+     ],
+     "dM": 0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the Duino Elegies": {
+   "correct": false,
+   "carrier_row": 49,
+   "foil": 5938,
+   "native_logits": [
+    27.0,
+    31.625
+   ],
+   "native_argmax": 5938,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 36255,
+   "content_C": 34898,
+   "wrong_feature": 31953,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 37.71694203318421,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      28.625,
+      31.875
+     ],
+     "dM": 1.375,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 33150,
+     "logits": [
+      32.75,
+      31.25
+     ],
+     "dM": 6.125,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      26.875,
+      31.875
+     ],
+     "dM": -0.375,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the Unfinished Symphony": {
+   "correct": false,
+   "carrier_row": 50,
+   "foil": 8522,
+   "native_logits": [
+    30.375,
+    30.625
+   ],
+   "native_argmax": 8522,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": 34898,
+   "content_C": 34898,
+   "wrong_feature": null,
+   "truth_feature": [
+    29692,
+    72.34136497055158
+   ],
+   "delta_norm": 25.489947563556257,
+   "donor": "d3-lm:Schonbrunn Palace",
+   "arms": {
+    "R1": {
+     "argmax": 8522,
+     "logits": [
+      30.375,
+      30.75
+     ],
+     "dM": -0.125,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 5938,
+     "logits": [
+      30.75,
+      29.75
+     ],
+     "dM": 1.25,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8522,
+     "logits": [
+      30.375,
+      30.5
+     ],
+     "dM": 0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the book Either/Or": {
+   "correct": false,
+   "carrier_row": 51,
+   "foil": 8585,
+   "native_logits": [
+    31.0,
+    32.0
+   ],
+   "native_argmax": 5938,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 31503,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    22369,
+    34.588928996130804
+   ],
+   "delta_norm": 37.85378817628478,
+   "donor": "d3-lm:Tivoli Gardens",
+   "arms": {
+    "R1": {
+     "argmax": 5938,
+     "logits": [
+      31.625,
+      28.625
+     ],
+     "dM": 4.0,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 43680,
+     "logits": [
+      32.75,
+      29.125
+     ],
+     "dM": 4.625,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "logits": [
+      31.375,
+      31.875
+     ],
+     "dM": 0.5,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the book Fear and Trembling": {
+   "correct": false,
+   "carrier_row": 52,
+   "foil": 34117,
+   "native_logits": [
+    28.75,
+    30.125
+   ],
+   "native_argmax": 4492,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 31503,
+   "wrong_feature": null,
+   "truth_feature": [
+    22369,
+    34.588928996130804
+   ],
+   "delta_norm": 9.952991152798642,
+   "donor": "d3-lm:Tivoli Gardens",
+   "arms": {
+    "R1": {
+     "argmax": 4492,
+     "logits": [
+      28.875,
+      29.875
+     ],
+     "dM": 0.375,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 43680,
+     "logits": [
+      32.25,
+      29.625
+     ],
+     "dM": 4.0,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 4492,
+     "logits": [
+      28.75,
+      30.125
+     ],
+     "dM": 0.0,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the film The Great Dictator": {
+   "correct": false,
+   "carrier_row": 52,
+   "foil": 5938,
+   "native_logits": [
+    30.25,
+    30.375
+   ],
+   "native_argmax": 5938,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 33311,
+   "content_C": 59357,
+   "wrong_feature": 6622,
+   "truth_feature": [
+    10710,
+    168.73399291981093
+   ],
+   "delta_norm": 76.07816706638903,
+   "donor": "d3-lm:Big Ben",
+   "arms": {
+    "R1": {
+     "argmax": 6364,
+     "logits": [
+      31.375,
+      30.0
+     ],
+     "dM": 1.5,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 6364,
+     "logits": [
+      31.875,
+      29.375
+     ],
+     "dM": 2.625,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      30.5,
+      29.75
+     ],
+     "dM": 0.875,
+     "repaired": true
+    }
+   }
+  },
+  "d4-work:the novel Palace Walk": {
+   "correct": false,
+   "carrier_row": 50,
+   "foil": 93335,
+   "native_logits": [
+    31.125,
+    31.125
+   ],
+   "native_argmax": 34117,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 29467,
+   "wrong_feature": null,
+   "truth_feature": [
+    13110,
+    87.63042293816068
+   ],
+   "delta_norm": 33.133827568195315,
+   "donor": "d3-lm:the Khan el-Khalili bazaar",
+   "arms": {
+    "R1": {
+     "argmax": 34117,
+     "logits": [
+      31.25,
+      31.125
+     ],
+     "dM": 0.125,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 93335,
+     "logits": [
+      31.375,
+      31.625
+     ],
+     "dM": -0.25,
+     "repaired": false
+    },
+    "RND": {
+     "argmax": 93335,
+     "logits": [
+      31.0,
+      31.25
+     ],
+     "dM": -0.25,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the novel The Sound of Waves": {
+   "correct": false,
+   "carrier_row": 52,
+   "foil": 6364,
+   "native_logits": [
+    29.5,
+    30.75
+   ],
+   "native_argmax": 6364,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 29467,
+   "content_C": 29467,
+   "wrong_feature": 29308,
+   "truth_feature": [
+    15308,
+    75.1096451147131
+   ],
+   "delta_norm": 23.417338866446165,
+   "donor": "d3-lm:Shibuya Crossing",
+   "arms": {
+    "R1": {
+     "argmax": 6364,
+     "logits": [
+      31.125,
+      31.125
+     ],
+     "dM": 1.25,
+     "repaired": false
+    },
+    "R2": {
+     "argmax": 10769,
+     "logits": [
+      33.0,
+      31.0
+     ],
+     "dM": 3.25,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 6364,
+     "logits": [
+      29.375,
+      30.75
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the novel The Trial": {
+   "correct": false,
+   "carrier_row": 50,
+   "foil": 15154,
+   "native_logits": [
+    30.25,
+    30.875
+   ],
+   "native_argmax": 15154,
+   "floor": 0.25,
+   "watch_fired": true,
+   "best_feature_label": 10259,
+   "content_C": 42776,
+   "wrong_feature": 9390,
+   "truth_feature": [
+    26772,
+    82.89247206590377
+   ],
+   "delta_norm": 39.791668631360345,
+   "donor": "d3-lm:the Charles Bridge",
+   "arms": {
+    "R1": {
+     "argmax": 33150,
+     "logits": [
+      31.125,
+      29.125
+     ],
+     "dM": 2.625,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 33150,
+     "logits": [
+      33.0,
+      25.625
+     ],
+     "dM": 8.0,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 15154,
+     "logits": [
+      30.25,
+      31.375
+     ],
+     "dM": -0.5,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the opera Carmen": {
+   "correct": false,
+   "carrier_row": 49,
+   "foil": 15154,
+   "native_logits": [
+    31.875,
+    32.5
+   ],
+   "native_argmax": 15154,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 33150,
+   "content_C": 17689,
+   "wrong_feature": 13215,
+   "truth_feature": [
+    27787,
+    118.9803222335484
+   ],
+   "delta_norm": 75.6474847857371,
+   "donor": "d3-lm:Notre-Dame Cathedral",
+   "arms": {
+    "R1": {
+     "argmax": 8585,
+     "logits": [
+      32.75,
+      31.125
+     ],
+     "dM": 2.25,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 8585,
+     "logits": [
+      33.5,
+      28.75
+     ],
+     "dM": 5.375,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 15154,
+     "logits": [
+      31.75,
+      32.5
+     ],
+     "dM": -0.125,
+     "repaired": false
+    }
+   }
+  },
+  "d4-work:the play Life Is a Dream": {
+   "correct": false,
+   "carrier_row": 52,
+   "foil": 6364,
+   "native_logits": [
+    29.0,
+    30.625
+   ],
+   "native_argmax": 6364,
+   "floor": 0.25,
+   "watch_fired": false,
+   "best_feature_label": -1,
+   "content_C": 14867,
+   "wrong_feature": null,
+   "truth_feature": null,
+   "delta_norm": 0.0,
+   "donor": "d3-lm:Retiro Park",
+   "arms": {
+    "R2": {
+     "argmax": 15154,
+     "logits": [
+      31.375,
+      30.125
+     ],
+     "dM": 2.875,
+     "repaired": true
+    }
+   }
+  },
+  "d4-work:the play Miss Julie": {
+   "correct": false,
+   "carrier_row": 50,
+   "foil": 8585,
+   "native_logits": [
+    29.625,
+    32.25
+   ],
+   "native_argmax": 8585,
+   "floor": 0.5,
+   "watch_fired": true,
+   "best_feature_label": 9625,
+   "content_C": 9625,
+   "wrong_feature": 27787,
+   "truth_feature": [
+    25065,
+    62.49001395130165
+   ],
+   "delta_norm": 45.182969219794245,
+   "donor": "d3-lm:the Vasa Museum",
+   "arms": {
+    "R1": {
+     "argmax": 30109,
+     "logits": [
+      31.25,
+      30.25
+     ],
+     "dM": 3.625,
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 30109,
+     "logits": [
+      32.25,
+      28.0
+     ],
+     "dM": 6.875,
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 8585,
+     "logits": [
+      29.625,
+      32.25
+     ],
+     "dM": 0.0,
+     "repaired": false
+    }
+   }
+  }
+ },
+ "summary": {
+  "n": 39,
+  "wrong": 27,
+  "correct": 12,
+  "fired_wrong": "18/27",
+  "fired_correct": "6/12",
+  "content_true_wrong": "5/27",
+  "content_true_correct": "11/12",
+  "R1_repairs_wrong": "12/27",
+  "R1_repairs_where_fired": "9/18",
+  "R2_repairs_wrong": "22/27",
+  "RND_repairs_wrong": "2/26",
+  "R1_on_correct_argmax_changes": "1/12",
+  "median_R1_over_R2": 0.38742964352720455,
+  "n_ratio": 26
+ },
+ "full_panel": {
+  "n": 110,
+  "fired_wrong": "18/27",
+  "fired_correct": "30/83",
+  "content_true_correct": "78/83",
+  "content_true_wrong": "5/27",
+  "R1_repairs_wrong": "12/27",
+  "R2_repairs_wrong": "22/27",
+  "RND_repairs_wrong": "2/26",
+  "R1_repairs_where_fired": "9/18",
+  "median_R1_over_R2": 0.387
+ }
+}

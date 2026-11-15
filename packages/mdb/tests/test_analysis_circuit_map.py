@@ -251,3 +251,21 @@ def test_hop_edge_top_neurons_zero_keeps_every_layer_on_the_neuron_path(debugger
         assert a["exact"]["value"] == b["exact"]["value"]
         assert a["omitted"]["count"] == b["omitted"]["count"] + len(b["neurons"])
     assert none["totals"]["mlp_exact"]["value"] == some["totals"]["mlp_exact"]["value"]
+
+
+def test_group_heads_is_the_group_writers_grouping(debugger):
+    """``group_heads(adapter, g)`` names the query heads ``group_writers`` sums for group g."""
+    from mdb.analysis.finite import f64
+
+    ad = debugger.adapter
+    w = layer_module(ad, 0).self_attn.o_proj.weight
+    writers = cm.group_writers(w, ad.num_heads, ad.num_kv_heads)
+    per_head = f64(w).reshape(w.shape[0], ad.num_heads, -1).permute(1, 0, 2)
+    every = []
+    for g in range(ad.num_kv_heads):
+        heads = cm.group_heads(ad, g)
+        assert torch.equal(writers[g], per_head[list(heads)].sum(0))
+        every += heads
+    assert sorted(every) == list(range(ad.num_heads))
+    with pytest.raises(Refusal):
+        cm.group_heads(ad, ad.num_kv_heads)

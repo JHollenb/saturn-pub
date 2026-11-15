@@ -210,3 +210,35 @@ def test_offline_component_binding_equals_live_bitwise(debugger, basis, tmp_path
                                      adapter=debugger.adapter)
     with pytest.raises(Refusal, match="not stepped"):
         components.ResidualCapture.from_run(run, rows=[0], layers=[1])
+
+
+def test_symbol_table_record_holds_a_wide_feature_binding_by_pointer(tmp_path):
+    """A feature binding with hundreds of active features (a k=50 SAE with content is already
+    past the 64 KiB record bound) seals: the section's rows go behind a sha256 pointer, the
+    report keeps them all."""
+    from mdb.core.bounded import load_json
+
+    debugger = open_tiny("qwen3", "fp32")
+    width, wide_f, wide_k = int(debugger.model.config.hidden_size), 1024, 400
+    g = torch.Generator().manual_seed(5)
+    for layer in range(debugger.adapter.layers):
+        torch.save({"W_enc": torch.randn(wide_f, width, generator=g),
+                    "b_enc": torch.randn(wide_f, generator=g) * 0.1,
+                    "W_dec": torch.randn(width, wide_f, generator=g) / 8,
+                    "b_dec": torch.randn(width, generator=g) * 0.1},
+                   tmp_path / f"layer{layer}.sae.pt")
+    (tmp_path / "config.json").write_text(json.dumps({"k": wide_k, "hook_point": "resid_post"}))
+    wide = sae.open_set("w", str(tmp_path)).get(0)
+    run = _run(debugger)
+    cb = symbols.Binding.component(run, "carrier", "cache.L1.v[kv0,row=2]", wide)
+    tab = symbols.table(run, consumer=Margin(4, 4, 9), components=[cb])
+    record = tab.records[0]
+    verify_record(record)
+    rows = tab.report["components"][0]["components"]
+    assert len(rows) == len(cb.components) > wide_k / 2
+    section = record["body"]["components"][0]
+    assert "components" not in section and section["partition"]["holds"]
+    full = load_json(section["components_full"], run=run)
+    assert len(full) == len(rows)
+    assert json.dumps(full, sort_keys=True) == json.dumps(json.loads(json.dumps(rows)),
+                                                          sort_keys=True)

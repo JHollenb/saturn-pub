@@ -1,0 +1,27 @@
+{
+ "experiment": "5: out-of-sample composer neurons: an nnsight attribution-patching forecast sealed in mdb and verified natively",
+ "written": "2026-11-14T11:50-08:00",
+ "status": "sealed before job E; single seed",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "library": "nnsight 0.8.2 via mdb.interop.nn (grads: one forward + one backward per equal-length group, nnsight.save idiom; batch_whatif: one trace per arm over a country's items)",
+ "panel": "the 64 base items (1a), consumer M[answer, donor answer]; within each country (sorted by id) items alternate A, B, A, ...; one-item countries are A only (panel B is therefore smaller than the memo's 32; reported)",
+ "memo_predictions_verbatim": "memo_sections.json section 5 (c)",
+ "predictions": {
+  "N1": "the out-of-sample named set moves M by >= 0.5 more than the random set on >= 0.75 of panel-B items (24/32 scaled) and beats the answer-token null on >= 0.69 (22/32 scaled)",
+  "N2": "Spearman between the forecast and the native single-neuron effect over neurons with |native| > floor is >= 0.8; the size ratio forecast/native (median) is 0.4 to 0.7",
+  "N3": "the per-layer median ratio rises with depth: L20 <= 0.5 and L26-27 >= 0.8",
+  "N4": "batched - stepped is within 2 spacings on >= 0.9 of verified arms; if not, the floor absorbs it and the verdicts are re-stated",
+  "falsifier": "N1 fails: the composer neurons are item-specific and 'named neurons' was a selection artefact"
+ },
+ "operational_definitions": {
+  "edit": "knock-out of f[i] at the answer row to the 64-item panel mean at that layer (Run 1's knock-out)",
+  "forecast": "dM/df_i (nnsight grads, bf16 native backward) times (mean_i - f_i), sealed per B item and per named neuron as supplied-forecast records (library nnsight, version, address map) before any native arm; the set forecast is the sum",
+  "nomination": "per country with A items and B items: per layer L20..27 the 8 neurons with the most negative summed forecast over the country's A items, kept only if the forecast is negative on every A item of the country",
+  "N1 statistic": "|dM_named| - |dM_random| >= 0.5 (batched native) per B item; and |dM_named| > |dM_answer_null|",
+  "random set": "same count per layer, uniformly drawn (seed 20261114), named excluded",
+  "answer-token null": "same count per layer drawn uniformly from the top-5x neurons of that layer ranked by |gamma_F (W_U[a]-W_U[b]) . W_down[:, i]| summed over the country's B items, named excluded",
+  "floor": "2 bf16 spacings at the larger |logit| of the pair + |batched base - stepped base| of the item",
+  "ratio": "forecast / native single-neuron effect on neurons with |native| > floor",
+  "stepped authority": "mdb Run.set masked replace of f at each layer from a checkpoint at t<last>.L20.h, continued to the logits; 2 arms per B item (the named set and the single neuron with the largest |batched| effect)"
+ }
+}
