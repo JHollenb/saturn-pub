@@ -13,3 +13,4 @@
 07-smoke	job-6f7a1a047230	succeeded
 07-real	job-4db206d0dd7c	succeeded
 03-probe	job-0e83f1ca6240	failed:unknown
+03-probe-r2	job-36ee29ad9cb2	succeeded

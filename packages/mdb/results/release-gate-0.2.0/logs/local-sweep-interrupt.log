@@ -1,0 +1,7 @@
+'run donor2\nt2.L0.h  h = layer input (residual stream)  {P01}'
+'t10.logits  logits = lm_head(fn)'
+'run base2\nt2.L0.h  h = layer input (residual stream)  {P01}'
+'t10.logits  logits = lm_head(fn)'
+'sweep plan: 216 cells (9 rows x 24 layers), 23436 layer calls planned (base 0, cells 23436; cap 50000)\ninterrupted at t10.logits'
+
+[exited with code 0]
