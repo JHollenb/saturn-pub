@@ -24,18 +24,18 @@
 #   the same norm, remove the error component, zero the cell. A built-in matched-norm Gaussian
 #   null (`add_null("random")`) runs next to them at L20.
 #
-# **Result to look for (audited, `results/showcase-20261114/AUDIT-SHOWCASE.md`).** L2 is the
+# **Result to look for (the original 64-item run).** L2 is the
 # headline: at L20, removing the named top country component moves `M` by a median **0.59** of
 # zeroing the whole cell; a matched-norm random component **0.0**; the error component
 # **0.11** (64 items). The partition identity (components sum to the cell on 64/64, max gap
 # 1.8e-15) is a float64 check of the code, not a finding about the model. The SAELens check
 # (108/108 active sets) compares mdb's `to_saelens()` conversion with SAELens's TopK encode, not
-# SAELens's own loader (that registry load fails offline, SC1).
+# SAELens's own loader (that registry load fails offline).
 #
 # **This example** runs the first 24 of the 64 base items (16 currency and 8 person items,
-# from the showcase's shard `s0`; `items.json` holds the first 32, `MDB_NITEMS` picks how
-# many) and prints its numbers next to the showcase's numbers for the same items
-# (`reference.json`). One seed, bf16, eager attention, Beast GPU.
+# from the original run's first shard; `items.json` holds the first 32, `MDB_NITEMS` picks how
+# many) and prints its numbers next to the original run's numbers for the same items
+# (`reference.json`). One seed, bf16, eager attention, one CUDA GPU.
 
 # %%
 import json
@@ -73,7 +73,7 @@ def log(msg):
 #
 # `load_local` is mdb's loader (bf16, eager attention, no download); `mdb.attach` wraps the
 # model. `dbg.custody(script=, prereg=)` stamps every record sealed from now on with the sha256
-# of this script and of the preregistration (`prereg.json`, the showcase's exp2 prereg, copied
+# of this script and of the preregistration (`prereg.json`, the original run's preregistration, copied
 # unchanged), the library versions and the kernel path. `dbg.records_to` appends each sealed
 # record (symbol tables, branches) to `records.jsonl`.
 
@@ -106,7 +106,7 @@ log(f"model loaded; custody script {str(custody['script_sha256'])[:12]} "
 # load. Per item we check that SAELens's `encode` picks the same active set as mdb. What this
 # does and does not show: it checks mdb's conversion against SAELens's TopK encode. SAELens's own
 # loader (`SAE.from_pretrained` from the registry) is attempted too, but it needs the Hugging
-# Face hub; offline on Beast it fails (the showcase recorded `LocalEntryNotFoundError`, SC1).
+# Face hub; offline it fails (the original run recorded `LocalEntryNotFoundError`).
 
 # %%
 from mdb.analysis import sae
@@ -151,7 +151,7 @@ log("SAEs ready")
 #
 # 1. Run the prompt natively to the last row's logits (`prefill` = the first span row, so the
 #    span rows are *stepped* and their residuals can be read). The carrier row is the frozen
-#    B1 rule: the argmax over the span of the answer row's L20 heads 12+13 attention
+#    `R_argmax` rule: the argmax over the span of the answer row's L20 heads 12+13 attention
 #    (`circuit_map.slot_rows`).
 # 2. Declare the `carrier` symbol (`cache.L20.v[kv6,row=r]`) and split it with
 #    `Binding.component` over the L19 basis.
@@ -173,11 +173,11 @@ log("SAEs ready")
 #    change of the same norm at the same cell (stepped). Every arm row carries `dM`, the shared
 #    floor, `effect_floors` and `above_floor`; `br.seal()` writes a `branches` record.
 #
-# The feature lineage (step 6) is plain Python: feature lifetime strips (P9) are not an mdb
+# The feature lineage (step 6) is plain Python: feature lifetime strips are not an mdb
 # object yet. Starting from the L19 top country feature, each lower layer's feature with the
 # largest decoder cosine to the previous one is followed; the onset is the lowest layer down to
 # which every link has cosine >= 0.7 and is active at the carrier row (L9 is censored).
-# Prompt-set iteration (P7) is also not built: the loop over items is a plain `for`.
+# The loop over items is a plain `for`.
 
 # %%
 from mdb.analysis import symbols
@@ -190,7 +190,7 @@ from mdb.analysis.verdict import margin_floor
 
 CARRIER = cm.Slot("carrier", "carrier", "R_argmax", layers=(CL,), kv=(CG,), rule_layer=CL,
                   rule_heads=(12, 13))
-rng = random.Random(20261114)        # the showcase's draw order, so the random picks match it
+rng = random.Random(20261114)        # the original run's draw order, so the random picks match it
 
 
 def comp_rows(tab):
@@ -210,7 +210,7 @@ def top_country(rows):
 
 
 def lineage(f19, acts_by_layer):
-    """Backward decoder-cosine chain of f19 (plain Python, P9 not built)."""
+    """Backward decoder-cosine chain of f19 (plain Python)."""
     chain = {19: (f19, 1.0, f19 in acts_by_layer[19])}
     d = B19.direction(f19).float()
     for x in range(18, LINEAGE[0] - 1, -1):
@@ -330,7 +330,7 @@ def study(item):
 # ## 4. Run the items
 #
 # The log prints, per item, the top country feature, its share of the carrier's direct effect
-# on `M`, and the L20 arms as fractions of zeroing the cell, next to the showcase's values for
+# on `M`, and the L20 arms as fractions of zeroing the cell, next to the original run's values for
 # the same item.
 
 # %%
@@ -351,21 +351,21 @@ RESULT["items"] = RECS
 log("items done")
 
 # %% [markdown]
-# ## 5. Key numbers: now versus the showcase on the same items
+# ## 5. Key numbers: now versus the original run on the same items
 #
-# One scorer runs over this run's records and over the showcase's records for the same items
-# (`reference.json`, from `results/showcase-20261114/exp2/out/exp2-items-s0.jsonl`):
+# One scorer runs over this run's records and over the original run's records for the same items
+# (`reference.json`):
 #
 # * **L2** (headline): median over items of `dM(arm) / dM(zero cell)` at L20.
 # * **L1**: the top country component's share of the carrier's direct effect (bar: >= 0.5 on
 #   40/64), the error component's share (bar: <= 0.2 on 48/64). The preregistered bars are for
 #   64 items; here the counts are over the subset.
 # * **L4**: the layers at which removing the top country component is above the floor. The
-#   showcase floor is 2 bf16 spacings at the larger |logit| plus the batched-vs-stepped delta of
+#   original run's floor is 2 bf16 spacings at the larger |logit| plus the batched-vs-stepped delta of
 #   the null arm measured on the two margin tokens, once. The `Branches` floor of a batched arm
 #   adds the null delta over the whole vocabulary, twice (a margin is a difference of two
 #   logits), so it is larger and L4 is shown with both rules (the row field
-#   `kernel_delta_null_consumer_tokens` gives the showcase's delta).
+#   `kernel_delta_null_consumer_tokens` gives the original run's delta).
 # * **L3**: lineage onset (median; the preregistered falsifier is onset >= L15).
 # * **partition**: the largest float64 gap between the sum of the component shares and the
 #   cell image's share. This is a code check (an algebraic identity), not a model finding.
@@ -448,7 +448,7 @@ print("L4 layer histogram now (showcase rule): ", now_rule["L4"]["layer_histogra
 print("L4 layer histogram showcase:            ", then["L4"]["layer_histogram"])
 
 # %% [markdown]
-# Per-item agreement with the showcase: the same carrier row, the same top country feature at
+# Per-item agreement with the original run: the same carrier row, the same top country feature at
 # every layer, the same random picks, and the same `dM` for every batched arm (same kernel path,
 # same arm order). The two re-measured stepped arms per item give the batched-vs-stepped
 # difference; the liveness of the declared `carrier` (stepped, fresh prefix cache) must agree

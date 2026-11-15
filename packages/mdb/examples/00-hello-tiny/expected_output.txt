@@ -1,0 +1,50 @@
+
+== 1. step: walk the ports of layer 0, one native operation at a time
+t3.L0.a
+t3.L0.q
+t3.L0.k
+t3.L1.p (1, 2, 1, 4)
+
+== 2. set: stage an edit, see where it lands
+t3.logits [{'row': 3, 'layer': 1, 'port': 'm', 'op': 'scale', 'staged': False, 'selection': None}]
+
+== 3. watch: stop when a value changes
+Watch 1 (change) on L*.h_out
+Watch 1 (change) L*.h_out  old norm 0.088279 min -0.046143 max 0.040527 mean 0.00074005 abs_max 0.046143 [measured]
+  new norm 0.089818 min -0.048584 max 0.041992 mean 0.0018342 abs_max 0.048584 [measured]
+t3.L1.h_out  h_out = r + m (layer output)  {P14}
+deleted 1
+
+== 4. branch: several edits from one checkpoint, one shared floor, a built-in null
+  patch-A  dM -0.013428  floors 13.75
+  zero-m   dM -0.001221  floors 1.25
+  self     dM +0.000000  floors 0.00
+  floor 0.000977 (2 x bfloat16 spacing at the larger |logit| of the base margin + extra)
+
+== 5. symbols: who reads what, at the logits
+t3.logits  logits = lm_head(fn)
+symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [supplied]
+  mass: a sum over the heads and layers that read the binding (n reads, mean per read)
+  life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
+  t0 (id 1) read   mass 1.0039 [derived-exact] over 4 reads (mean 0.25098 [derived-exact])  to_consumer 0.0075996 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+    defined t0.L*.k, t0.L*.v
+    readers t3.L1.h0 mass 0.25 [measured] effect 0.013624 [derived-exact P19]; t3.L0.h0 mass 0.25195 [measured] effect -0.0107 [derived-exact P19]; t3.L1.h1 mass 0.25 [measured] effect 0.0091402 [derived-exact P19] (+1 more)
+  t1 (id 5) read   mass 0.99805 [derived-exact] over 4 reads (mean 0.24951 [derived-exact])  to_consumer -0.0010188 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+    defined t1.L*.k, t1.L*.v
+    readers t3.L1.h0 mass 0.24902 [measured] effect 0.011455 [derived-exact P19]; t3.L0.h1 mass 0.25 [measured] effect -0.0081352 [derived-exact P19]; t3.L0.h0 mass 0.25 [measured] effect -0.0025448 [derived-exact P19] (+1 more)
+  Unbound   mass 1.9971 [derived-exact]  readout -0.12059 [measured]
+    = embedding+mlp -0.14507 [derived-exact P19] + attention not listed 0.023999 [derived-exact P19] + remainder 0.00047376 [measured], bound 0.016137 [bound]: within
+  accounting: 4 heads, listed mass 2.002 [derived-exact], max |sum p - 1| 0.0019531 [measured] <= 0.015625 [bound], partition gap 0 [derived-exact]
+  (bindings 1-2 of 4)
+
+== 6. forecast, then verify: seal a prediction before native code runs
+forecast 1  t3.M[4,9]  sealed at t3.L1.p  record 337b9237ddd3ef89
+  method 12 identities t3.L1.A .. t3.logits (last readout_logits P19); chain not stored (no project)
+  predicted exact -0.11437 [derived-exact P19]   emulated -0.11401 [derived-exact P19]
+  worst-case rounding interval 0.030136 [bound] (information, not the verdict)
+t3.logits  logits = lm_head(fn)
+forecast 1 t3.M[4,9]: confirmed  native -0.11401 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.00073242 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.0003598 [measured] = 0.491 spacings; worst-case bound 0.030136 [bound] (holds, information)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.885 at t3.L1.sg)
+  rounding origin (sealed): t3.L1.f: exact and emulated part by 1.11 spacings at |x| 0.00644
+  order: sealed at t3.L1.p (stop 29) before the target (stop 41); cut descends through 3 receipts

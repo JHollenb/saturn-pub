@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the interchange example to Beast through mrun as one job (about 4 minutes, priority 70).
+# Submit the interchange example to our GPU host through the job scheduler (mrun) as one job (about 4 minutes, priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
@@ -22,7 +22,7 @@ rsync -a --exclude __pycache__ "$ROOT/src" "$STAGE/"
 git -C "$ROOT" rev-parse HEAD > "$STAGE/REVISION" 2>/dev/null || echo unknown > "$STAGE/REVISION"
 
 cd "$STAGE"
-# --vram and --ram are in MB. Measured peak 3866 MB VRAM, 3.5 GB RSS (smoke job-4e15b86999c5);
+# --vram and --ram are in MB. Measured peak 3866 MB VRAM, 3.5 GB RSS (smoke run);
 # the asks are the measured peak x1.3 (VRAM) and RSS with headroom.
 ~/domains/common/bin/mrun submit -e mdb-example-interchange --payload . --pin beast --gpu \
   --vram "${VRAM:-5100}" --ram "${RAM:-6000}" --priority 70 --env-alias mrun --detach \

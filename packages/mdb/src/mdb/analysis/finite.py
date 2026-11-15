@@ -13,8 +13,8 @@ roundoff. Each function returns an ``IdentityResult``:
 * ``native``     the native value as captured (a difference of captures for finite identities);
 * ``eta``        ``native - reference``: the measured arithmetic remainder of chapters 01 and 09.
 
-``eta`` is a measurement, never a bound. Sources: obsidian/model-math chapters 01-05, 07, 09 and
-the proof index. Torch is imported inside functions only, so ``IDENTITIES`` is listable without it.
+``eta`` is a measurement, never a bound. Sources: the maintainers' model-math notes (chapters 01-05, 07, 09) and
+the proof index (docs/PROOF-IDS.md). Torch is imported inside functions only, so ``IDENTITIES`` is listable without it.
 """
 
 from __future__ import annotations
@@ -1630,7 +1630,7 @@ def _entry(fn: Callable, kind: str, ports: Sequence[str], authority: str,
     return entry
 
 
-# (proof ID, title as in obsidian/model-math/proof-index.md, kind, implemented entries). An empty
+# (proof ID, title as in docs/PROOF-IDS.md, kind, implemented entries). An empty
 # entry tuple is a catalogued proof that this module does not implement (status "not implemented").
 _CATALOGUE: tuple[tuple[str, str, str, tuple[dict[str, Any], ...]], ...] = (
     ("P01", "Token lookup and complete forward expression DAG", "A", (

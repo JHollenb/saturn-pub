@@ -14,12 +14,21 @@ must resolve declared installed packages, never discover sibling checkout paths
 or patch `sys.path`. Private `saturn`, `common` and `common_harness` imports remain
 forbidden. Maintainer extraction tools require an explicit upstream source.
 
-The current engine is `src/mdb/{core,engine,analysis,ops,repl,serve}`; `README.md` in this
-directory is its documentation and `issues.jsonl` its open-issue ledger (each closed entry's
-`resolution` says what changed and what was measured). Layers import only downward and no
+The current engine is `src/mdb/{core,engine,analysis,ops,repl,serve,interop}`; `README.md` and
+`docs/` in this directory are its user documentation, `examples/` its maintainer-approved examples
+(00 runs on CPU). `packages/mdb` is the downloadable package: keep experiments, run results,
+audits, proposals and internal trackers OUT of it. They live in `../mdb-experiments`
+(`experiments/`, `results/`, `docs/`, `tools/`, loose old `examples/`), including the open-issue
+ledger `../mdb-experiments/issues.jsonl` (each closed entry's `resolution` says what changed and
+what was measured), `investigations.jsonl` and `features.json`. Append to the jsonl ledgers line by
+line; never JSON round-trip them. User-facing known issues go in `CHANGELOG.md` "Known issues";
+user docs explain an mdb object, command or API and carry no job ids, issue ids or paths into
+`../mdb-experiments` or `obsidian/`. Layers import only downward and no
 lane module (`tests/test_import_contract.py`). Run the test files of the module you touch, on
 tiny CPU models; the serve tests need the common harness environment (`fastapi`) and skip
-elsewhere. Real-model checks go through mrun, and a number in the docs carries its job id.
+elsewhere. Real-model checks go through mrun; the job id goes with the result in
+`../mdb-experiments` (or an example's `validation-job-<id>.log`), and a real-model number in the
+user docs is labelled as measured on the developers' GPU.
 
 Run MDB's tests in a separate process from the root Saturn-pub suite to avoid
 test-module collisions. Test guards must allow public `saturn_pub` imports and
@@ -42,7 +51,7 @@ No fleet refresh or private Saturn consumer migration is implied by this policy.
 New research runs must include a standalone `retrieve_weights.py` and a
 `parameter-artifacts.json` binding the required named tensors to immutable
 checkpoint files, original archive headers, shapes, dtypes and hashes. Use
-`qualification/prepare_flux_parameter_artifacts.py` for the qualified FLUX
+`../mdb-lanes/qualification/prepare_flux_parameter_artifacts.py` for the qualified FLUX
 capture format. Keep pretrained constants outside persistent per-run evidence
 once exact retrieval has been qualified; retain new activations, states,
 predictions, controls and native outcomes. Temporary weights used for execution

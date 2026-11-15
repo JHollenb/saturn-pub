@@ -24,8 +24,7 @@
 #    `Pool` rule, with its origin recorded), and two **nulls** at R1's norm.
 # 4. **continue** each branch to the logits and read the answer margin against one shared floor.
 #
-# **What the audited result says** (`results/showcase-20261114/AUDIT-SHOWCASE.md`, full panel of
-# 110 items, MEASURED, jobs job-17ce950a0f0b and job-a38bd2b83820):
+# **What the original run found** (full panel of 110 items, single seed):
 #
 # * The watch is noisy. It fires on 18/27 wrong items **and on 30/83 correct items** (false
 #   alarms). mdb's own `content(C)` readout of the same cell names the true country on 78/83
@@ -36,9 +35,10 @@
 #
 # This example runs **a subset of 39 items**: all 27 wrong items, 6 correct items on which the
 # watch fired (false alarms) and 6 correct items on which it stayed quiet (first by id in each
-# group; `items.json`). It prints every key number next to the showcase's number on the same items.
+# group; `items.json`). It prints every key number next to the original run's number on the same items.
 #
-# Everything runs as a Python library on one GPU. `MDB_MODEL` and `MDB_SAE` default to Beast paths.
+# Everything runs as a Python library on one GPU. `MDB_MODEL` and `MDB_SAE` default to the paths
+# on our GPU host; change them for a local GPU.
 
 # %%
 import json
@@ -68,8 +68,8 @@ def log(msg):
 # ## 1. Load the model through mdb, and declare custody
 #
 # `mdb.attach(model, tokenizer)` wraps a loaded Hugging Face Qwen3 (bf16, eager attention, eval
-# mode); `load_local` is the same offline loader the showcase job used. `dbg.custody(...)`
-# declares the script and the preregistration (`prereg.json`, the showcase's, copied here): every
+# mode); `load_local` is the offline loader the original run used. `dbg.custody(...)`
+# declares the script and the preregistration (`prereg.json`, the original run's, copied here): every
 # record sealed from now on carries their sha256, the library versions and the kernel path.
 # `dbg.records_to(...)` appends every sealed record (pools, branches) to a JSONL file.
 
@@ -95,7 +95,7 @@ log(f"model loaded; custody script {str(custody['script_sha256'])[:12]} "
 # ## 2. The items, the census and the SAE
 #
 # `items.json` holds the 39 items (token ids, the entity span, the true country and language
-# tokens), the candidate donors, the country token set and the showcase's random-null draws.
+# tokens), the candidate donors, the country token set and the original run's random-null draws.
 # `census.json` is the frozen country-feature census (feature -> country token, and per country
 # the truth feature with its median activation `a_truth`, a supplied constant).
 # The SAE is mdb's `FeatureBasis` over the Qwen-Scope `layer19.sae.pt` (`open_set`); its site is
@@ -118,7 +118,7 @@ print(len(ITEMS), "items:", sum(not i["correct"] for i in ITEMS), "wrong,",
       "SAE site", B19.site, "k", B19.k)
 
 # %% [markdown]
-# ## 3. The donor pool (P6 `Pool`)
+# ## 3. The donor pool (`Pool`)
 #
 # R2 needs a donor cell: the carrier cell of a *correct* item of the same country. A `Pool`
 # collects that cell once per candidate (`dbg.pool(items, "cache.L20.v[kv6,row=@carrier]")`),
@@ -127,19 +127,20 @@ print(len(ITEMS), "items:", sum(not i["correct"] for i in ITEMS), "wrong,",
 # the edit that uses it says where its value came from. The item itself is excluded by
 # construction.
 #
-# Two details keep the numbers comparable with the showcase:
+# Two details keep the numbers comparable with the original run:
 #
-# * `prefill=lambda item: item["span"][0]` collects each cell on the showcase's kernel path (the
-#   span rows stepped, not read from the batched prefill). This option was added to
-#   `pools.collect` for this example; the pool's kernel path is then `mdb-stepped`.
-# * The order is the showcase's frozen code rule, reproduced exactly:
+# * `prefill=lambda item: item["span"][0]` collects each cell on the original run's kernel path
+#   (the span rows stepped, not read from the batched prefill); the pool's kernel path is then
+#   `mdb-stepped`.
+# * The order is the original run's frozen code rule, reproduced exactly:
 #   `order = {own family: 0, "d3-lm": 1, "d3-per": 1, "d4-work": 1, "d2": 2, "d1": 3}`, sorted
 #   by `(order[family], id)`. In a Python dict literal the later `"d3-lm": 1` overrides the own
 #   family's 0, so for these d3/d4 items "same family first" (the prereg's wording) never
 #   applied: the rule that ran is "any d3/d4 first, then d2, then d1, by id".
 #
-# The `@carrier` row of each candidate is the frozen `R_argmax` row (the showcase's live value
-# for the 79 candidates it scored, the B1 job's for the 38 others; `carrier_from` in `items.json`).
+# The `@carrier` row of each candidate is the frozen `R_argmax` row (the original run's live value
+# for the 79 candidates it scored, an earlier run's for the 38 others; `carrier_from` in
+# `items.json`).
 
 # %%
 countries = {i["country"] for i in ITEMS}
@@ -154,7 +155,7 @@ log(f"pool: {len(pool)} cells, kernel path {pool.kernel_path}, record {pool_reco
 
 
 def donor_order(item):
-    """The showcase's frozen donor order (dict-literal semantics kept, see above)."""
+    """The original run's frozen donor order (dict-literal semantics kept, see above)."""
     order = {item["family"]: 0, "d3-lm": 1, "d3-per": 1, "d4-work": 1, "d2": 2, "d1": 3}
     return sorted(pool.ids, key=lambda k: (order.get(FAMILY[k], 4), k))
 
@@ -181,20 +182,20 @@ def donor_order(item):
 #    point is a checkpoint; each arm restores it, stages its edit, continues to the logits,
 #    reads the margin and restores. All arms share one floor, 2 bf16 spacings at the larger
 #    |logit| of the base margin (`verdict.margin_floor`), and each row reports `|dM|` in floors.
-#    Arms: `R1`; `R2` (the pool donor's whole cell); `RND` (the showcase's random-feature null:
-#    one random active non-country feature's component out, an inactive non-country feature's
-#    image in at the same activation, rescaled to R1's change norm; the showcase's draws are
-#    replayed from `items.json`); `rnd` (`add_null("rnd", "random", like="R1")`, the Branches
+#    Arms: `R1`; `R2` (the pool donor's whole cell); `RND` (the original run's random-feature
+#    null: one random active non-country feature's component out, an inactive non-country
+#    feature's image in at the same activation, rescaled to R1's change norm; the original draws
+#    are replayed from `items.json`); `rnd` (`add_null("rnd", "random", like="R1")`, the Branches
 #    built-in matched-norm Gaussian change at the same cell).
 # 5. `br.seal()` writes a `branches` record (every arm's edit manifest with its origin, the floor,
 #    custody) to the records file.
 #
-# **Watch over layers.** The gap audit asked for an edge-mode watch over `t@carrier.L*.h`, so
-# that "fired" would mean "first became true at layer l". The pattern machinery accepts `L*` and
+# **Watch over layers.** One could ask for an edge-mode watch over `t@carrier.L*.h`, so that
+# "fired" would mean "first became true at layer l". The pattern machinery accepts `L*` and
 # `mode="edge"`, but a `FeatureContext` is one basis at one (row, layer) site: evaluated at every
 # layer stop it would read the same L20 cell each time, a constant predicate. A layer-indexed
-# context over a per-layer SAE set (P9, feature strips) is not built, and the census labels
-# country features at L19 only. So the watch stays the showcase's level watch at `t<last>.L20.h`.
+# context over a per-layer SAE set is not built, and the census labels country features at L19
+# only. So the watch is a level watch at `t<last>.L20.h`, as in the original run.
 
 # %%
 from mdb.analysis import circuit_map as cm
@@ -250,7 +251,7 @@ def debug_item(item):
         delta = delta + cb.feature_value(tf[0], tf[1], B19)
     if fw is not None:
         # the measured component of the wrong feature: its image a_fw * d_fw at the native rho
-        # (the showcase's expression; cb.get(f"feature[{fw}]").value is the same to f64 roundoff)
+        # (the original run's expression; cb.get(f"feature[{fw}]").value is the same to f64 roundoff)
         delta = delta - cb.feature_value(fw, acts[fw], B19)
     rec["r1"] = {"wrong_feature": fw, "truth_feature": list(tf) if tf else None,
                  "delta_norm": float(delta.norm()), "cell_norm": float(cb.native.norm()),
@@ -297,7 +298,7 @@ def debug_item(item):
 # %% [markdown]
 # ## 5. Run the loop over the items
 #
-# P7 (a prompt-set `each` in Python) is not built, so the item loop is plain Python. Each line
+# The item loop is plain Python. Each line
 # shows, per arm, whether the argmax after the edit is the true language (`lang`) or not
 # (`other`), and `|dM|` in floors.
 
@@ -315,7 +316,7 @@ RESULT["items"] = RECS
 print("one R2 edit's origin (from the pool):", json.dumps(RECS[0].get("r2_origin")))
 
 # %% [markdown]
-# ## 6. The key numbers, and the showcase on the same items
+# ## 6. The key numbers, and the original run on the same items
 #
 # * **Watch**: fired on wrong items (hits) and on correct items (false alarms).
 # * **content(C)**: names the true country, on correct and on wrong items.
@@ -323,9 +324,8 @@ print("one R2 edit's origin (from the pool):", json.dumps(RECS[0].get("r2_origin
 #   R2 (whole cell), RND (random feature swap at R1's norm), rnd (Gaussian at R1's norm, new here).
 # * R1's margin move as a fraction of R2's (median over wrong items).
 #
-# `reference.json` holds the showcase's per-item outputs for these 39 items, cut from
-# `results/showcase-20261114/exp1/out/exp1-items.jsonl`. The edits, the floor rule and the kernel
-# path are the showcase's, so the per-item margins should agree exactly; any difference is listed.
+# `reference.json` holds the original run's per-item outputs for these 39 items. The edits, the
+# floor rule and the kernel path are the original run's, so the per-item margins should agree exactly; any difference is listed.
 
 # %%
 REF = json.load(open(HERE / "reference.json"))
@@ -370,7 +370,7 @@ for key in ("fired_wrong", "fired_correct", "content_true_wrong", "content_true_
     print(f"{key:34} {fmt(old) if old != '(new)' else old:>22} {fmt(now):>10}")
 print("full 110-item panel (audited):", json.dumps(REF["full_panel"]))
 
-# per-item agreement with the showcase
+# per-item agreement with the original run
 diffs = []
 for r in RECS:
     ref = REF["per_item"][r["id"]]
@@ -407,7 +407,7 @@ for d in diffs[:40]:
 # wrong and on correct items alike, while `content(C)` of the same cell separates them much
 # better. Swapping the one named country component repairs some wrong items and does far better
 # than a random swap at the same norm, but replacing the whole cell does much better still: the
-# country is carried by more of the cell than the one dictionary feature. The showcase also
+# country is carried by more of the cell than the one dictionary feature. The original run also
 # sealed a margin forecast after the R1 edit and verified it at the logits (26/26); that is a
 # check of mdb's float64 replay of layers 21-27 on an edited state, not evidence that R1
 # repairs anything, so this example does not repeat it.

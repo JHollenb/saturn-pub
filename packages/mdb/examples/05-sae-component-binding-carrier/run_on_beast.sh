@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the component-binding example to Beast through mrun as one job (about 7 minutes, priority 70).
+# Submit the component-binding example to our GPU host through the job scheduler (mrun) as one job (about 7 minutes, priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
@@ -22,7 +22,7 @@ rsync -a --exclude __pycache__ "$ROOT/src" "$STAGE/"
 git -C "$ROOT" rev-parse HEAD > "$STAGE/REVISION" 2>/dev/null || echo unknown > "$STAGE/REVISION"
 
 cd "$STAGE"
-# --vram and --ram are in MB: the smoke (job-fe18ad0cddf3) peaked at 3976 MB VRAM and 10.9 GB host RAM
+# --vram and --ram are in MB: the smoke run peaked at 3976 MB VRAM and 10.9 GB host RAM
 # (the SAE cache holds 14 layers); the asks are about the peaks x1.3.
 ~/domains/common/bin/mrun submit -e mdb-example-components --payload . --pin beast --gpu \
   --vram 5200 --ram 14200 --priority 70 --env-alias mrun --detach -- env MDB_NITEMS="$NITEMS" bash run.sh

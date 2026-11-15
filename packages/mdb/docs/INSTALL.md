@@ -1,104 +1,85 @@
-# Independent installation
+# Installing mdb
 
-In the Saturn monorepo, run these commands from `packages/mdb`. From the
-repository root, the equivalent base install is `pip install ./packages/mdb`.
-MDB retains its own distribution and depends on `saturn-pub>=0.4.1,<0.5`.
-For development from this monorepo, install both local distributions together
-from the repository root: `pip install . ./packages/mdb`.
+## Install
 
-MDB's installed runtime never searches for Saturn, Saturn-pub or a workspace
-checkout. Maintainer extraction scripts are not part of the runtime wheel.
+mdb (`mdb-runtime`, import name `mdb`) depends on `saturn-pub>=0.4.1,<0.5`, which is not on PyPI.
+Both live in the [saturn-pub repository](https://github.com/JHollenb/saturn-pub); install them
+together from a checkout:
 
 ```sh
-python -m pip install .
-mdb debug
-mdb doctor
-mdb help
-mdb capabilities
-mdb verify --root /path/to/export
+git clone https://github.com/JHollenb/saturn-pub
+cd saturn-pub
+pip install . "./packages/mdb[autoregressive]"
+# or, to edit the code:
+pip install -e . -e "./packages/mdb[autoregressive]"
 ```
 
-Of these commands only `mdb version`, `mdb engine` and `mdb serve` belong to the engine
-distribution installed here. `mdb debug`, `mdb doctor`, `mdb help`, `mdb capabilities` and
-`mdb verify` are lane-era commands that need the separate `mdb-lanes` plug-in; without it
-`mdb` answers "the mdb-lanes plug-in is not installed" and exits (checked with
-`python -m mdb help` on the engine alone). With the plug-in installed, run them as
-`mdb lanes VERB`; a bare `mdb VERB` still works after a notice on stderr.
+Python 3.10 or newer. mdb never searches for a source checkout at run time: it imports only
+installed packages.
 
-The base package has no model-library dependencies. For a caller-owned language
-model or the tiny CPU Qwen console, install `.[autoregressive]` and run
-`mdb debug --tiny qwen2`. The default `mdb debug` is a pure-Python Counter demo.
-See the [local debugger guide](../../mdb-experiments/docs/LOCAL-DEBUGGER.md) for opening local checkpoints;
-these language-model entry points need no mrun installation or scheduler.
-Qwen stateful execution requires BF16 and checks it before creating the session.
-The model-library extra retains the qualified dependency pins below.
-The port-level engine (`mdb engine`) needs `.[autoregressive]` for a model; `mdb serve` also needs
-`.[serve]` (see [the package README](../README.md)).
+## Extras
 
-Diffusion also installs mrun-pub's native
-checkpoint/phase adapter, even for a caller-owned pipeline. For scheduler launches,
-install .[all] or .[mrun]. These extras use an immutable public HTTPS Git revision
-of [mrun-pub](https://github.com/JHollenb/mrun-pub); no SSH access, manalysis,
-common workspace, MLflow or MinIO installation is required. The import namespace
-remains mrun.
+| Extra | Adds | Needed for |
+|---|---|---|
+| (none) | `saturn-pub` only, no model framework | `mdb version`, `mdb serve` of a recorded project (with `serve`), reading records |
+| `autoregressive` | torch 2.13.0, numpy, safetensors, transformers 5.14.1, accelerate 1.14.0 | `mdb engine`, `mdb.open_tiny`, `mdb.attach`, `mdb.trace`: anything that runs a model |
+| `serve` | fastapi, uvicorn, pydantic, websockets, numpy | `mdb serve` (web viewer and live sessions) |
+| `interop` | transformer-lens 4.4.0, nnsight 0.8.2 | `mdb.interop` (TransformerLens and nnsight names, imports, batched edits) |
+| `transformerlens` | `autoregressive` plus transformer-lens 4.2.0 | an older pinned TransformerLens environment |
+| `discovery` | torch, numpy, safetensors | framework-light analysis without transformers |
+| `mrun`, `diffusion`, `all` | mrun-pub from a pinned public Git revision (plus diffusers and pillow for `diffusion`/`all`) | submitting jobs to an mrun scheduler; the diffusion pipelines of the lanes plug-in |
+| `dev` | pytest, ruff, hatchling | running the tests and building |
 
-For caller-owned Transformers or custom framework runners, use
-`BenchSession.from_backend` from the [backend guide](../../mdb-experiments/docs/BACKENDS.md).
-`.[transformerlens]` supplies the independent TransformerLens 4.2.0 integration
-environment. A custom dependency-free runner needs only the base MDB package.
+The examples need further libraries (SAELens, pyvene, matplotlib); the table in
+[examples/README.md](../examples/README.md) lists them.
 
-MDB preserves guarded admission, CUDA needs, strict preflight, soft host preference
-and retry policy. Unsupported admission controls are refused.
-
-The model-backed qualification lane uses Python 3.14.6, Torch 2.13.0,
-Transformers 5.14.1, Diffusers 0.39.0 and Accelerate 1.14.0. Other dependency
-versions and the GPU driver are recorded by the worker bootstrap. Python 3.10+
-supports package mechanics; a different runtime fingerprint can refuse an old
-model cut even when its bytes verify.
-
-Configure mrun's scheduler endpoint and credentials through mrun's normal
-configuration. `MDB_HOME` selects writable local evidence indexes; it defaults
-to `~/.local/share/mdb`. Model weights remain in mrun's custody stores.
-
-Each launch stages deterministic wheels of the installed MDB, Saturn-pub and mrun packages,
-the selected worker and explicitly declared files. The bootstrap checks source,
-wheel, request and configuration hashes before executing the worker. It uses an
-offline uv environment without an editable checkout or `PYTHONPATH`. The portable worker
-cache defaults (~/.cache/mdb) can be overridden with `MDB_WORKER_UV_CACHE_DIR` and
-`MDB_WORKER_TORCH_HOME`; their resolved values are bound into the request. Model roots come from\nMDB_WORKER_MODEL_ROOTS or LLM_MODELS_EXTRA_ROOT. MDB_WORKER_PYTHON overrides\nthe recorded qualification interpreter selection.
-Workers default to uv symlink installation to avoid cloning large cached Torch
-trees across fleet filesystems. The cache must remain available for the life of
-the worker. `MDB_WORKER_UV_LINK_MODE` can select `copy`, `hardlink` or `clone`;
-the selected mode is sealed and checked by bootstrap, and recorded in the
-environment receipt. Startup timing is separate from model execution timing.
-
-The qualification fleet's FUSE/NTFS volume later refused new export and cache
-files despite available bytes. Remaining proofs use an ext4 durable root and
-`MDB_WORKER_UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache`. A cache with linked archive
-roots was not installable by uv; `qualification/materialize_cache.py` copies
-the recorded runtime's selected archives into real ext4 directories. This is
-an operational cache repair, not a requirement to copy model weights or run a
-Saturn checkout. Keep the setup inventories and failed bootstrap records.
-
-No fleet refresh, remote publication or service deployment is part of this
-extraction. Live broker operation requires an independently qualified deployed
-mrun service. Finite scripts exercise the same session operations without that
-deployment.
-
-## Maintainer validation
+## Check the install
 
 ```sh
-uv build --offline --out-dir dist
-python -m pytest tests -q
-PYTHONPATH=src python qualification/submit.py preflight mamba
+mdb version                                   # 0.2.0
+mdb engine tiny:qwen2 --tokens "1 5 9 3"      # a REPL on a random tiny model, CPU, no download
+python examples/00-hello-tiny/hello_tiny.py   # from packages/mdb: the debugger loop in ~60 lines
 ```
 
-For an independent wheel check, install the built wheel into a fresh environment,
-copy only the tests and examples outside the source repository, remove
-`PYTHONPATH`, and invoke Python with `-I`. Do not reuse the repository's pytest
-configuration, which intentionally adds `src` for development tests. The test
-import guard rejects Saturn and common-harness imports.
+`mdb engine MODEL` takes a checkpoint directory, the name of a model in the local Hugging Face
+cache, `tiny:qwen2|qwen3|llama|mistral`, or the address of a running `mdb serve`. Nothing is ever
+downloaded. A real model needs eager attention (`attn_implementation="eager"`, which `mdb engine`
+sets when it loads a checkpoint) and runs on CPU or CUDA. On Apple MPS `whatif` fails (no float64).
 
-Extraction scripts capture an upstream source closure once. MDB-specific
-adaptations are committed source changes; rerunning raw extraction can overwrite
-them. `PROVENANCE.json` records original, extracted and final file hashes.
+## The web viewer
+
+`mdb serve` needs the `serve` extra. The browser app is built from `web/` and is not checked in:
+run `npm ci && npm run build` in `web/` before building a wheel, or the server answers `/` with
+`web_build_absent` (the API still works).
+
+## Tests and building
+
+From `packages/mdb`, with the `dev` and `autoregressive` extras:
+
+```sh
+python -m pytest -q tests/test_engine_run.py     # run the test files of the module you touch
+uv build --out-dir dist                          # sdist + wheel; build the web app first
+```
+
+The test suite uses only random tiny CPU models. The serve tests need `fastapi` and `httpx` and are
+skipped without them. To test an installed wheel, install it into a fresh environment, copy
+`tests/` and `examples/` outside the checkout, and run Python with `-I` and no `PYTHONPATH`.
+
+## Lanes plug-in
+
+The commands of the older `mdb` tool (`mdb debug`, `mdb doctor`, `mdb help`, `mdb capabilities`,
+`mdb verify`, ...) are not part of this package. They come from the separate `mdb-lanes`
+plug-in (`packages/mdb-lanes` in the repository), which registers them through the `mdb.lanes`
+entry-point group:
+
+```sh
+pip install ./packages/mdb-lanes
+mdb lanes                 # lists its verbs; `mdb lanes VERB` runs one
+```
+
+Without the plug-in, `mdb lanes` prints "mdb lanes has no commands: the mdb-lanes plug-in is not
+installed" and exits with status 2; a bare `mdb debug` exits 2 with "mdb lanes cannot run
+'debug', which is not an engine verb: the mdb-lanes plug-in is not installed". The plug-in's own
+documentation lives with the maintainers' internal experiments in the repository
+(`packages/mdb-experiments/docs/`, e.g. `USAGE.md`, `LOCAL-DEBUGGER.md`, `BACKENDS.md`), not in
+this package.

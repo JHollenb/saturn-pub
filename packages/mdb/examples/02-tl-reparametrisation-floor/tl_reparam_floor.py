@@ -10,7 +10,10 @@
 #
 # * **mdb** (the authority): the real Hugging Face model, stepped row by row, every patch a
 #   native edit from one checkpoint (`Branches`), each effect `dM` read against one floor (2 bf16
-#   spacings at the margin's `|logit|`).
+#   spacings at the margin's `|logit|`). This is mdb's margin noise floor (`verdict.margin_floor`,
+#   2 spacings), deliberately wider than the 1-spacing verdict floor that `verify` and `whatif`
+#   use, because this example compares effects measured on different realisations (batched vs
+#   stepped, TransformerLens vs mdb), not a prediction against its own native run.
 # * **TransformerLens 4.4** `TransformerBridge` over the same weights: *unprocessed* (U16, the same
 #   module) and *processed* (P16, `enable_compatibility_mode()`: RMSNorm gains folded into the next
 #   linear layers, unembedding centred). Processing is a pure reparametrisation, so in exact
@@ -24,9 +27,8 @@
 # by the donor's, in sequence scope). Qwen3-0.6B-Base: carrier `L20 KV6`; Qwen2.5-0.5B:
 # `L21 KV0`.
 #
-# **What the showcase measured** (`results/showcase-20261114/exp6`, audited in
-# `AUDIT-SHOWCASE.md`, correction 1; MEASURED, jobs job-c5a45f9c2811 and job-80cc14782825, 48
-# items per model). This is an effect-size table, not a "verdicts don't hold" result:
+# **What the original run measured** (48 items per model, one seed). This is an effect-size
+# table, not a "verdicts don't hold" result:
 #
 # * Above about 4 floors, **0/214** effects lose their verdict on any path (110 Qwen3 + 104
 #   Qwen2.5). Losses sit at 1-2 floors.
@@ -38,9 +40,9 @@
 #   (Qwen2.5): processing is a pure reparametrisation.
 #
 # This example reruns both models on **24 of the 48 items** (every second base item sorted by id,
-# 6 per family; `items.json`) in one job, with the hand-rolled parts of the showcase driver
-# replaced by mdb debugger objects, and prints its numbers next to the showcase's on the same
-# items (`reference.json`, cut from the showcase's raw outputs by `make_reference.py`).
+# 6 per family; `items.json`) in one job, with the hand-rolled parts of the original driver
+# replaced by mdb debugger objects, and prints its numbers next to the original run's on the same
+# items (`reference.json`, cut from the original raw outputs by `make_reference.py`).
 
 # %%
 import gc
@@ -74,7 +76,7 @@ print(len(RUN_IDS), "items:", RUN_IDS)
 # ## 1. mdb as a library, with custody
 #
 # `dbg.custody(script=..., prereg=...)` makes every record sealed from now on carry the sha256 of
-# this script and of the showcase's sealed prereg (copied here as `prereg.json`), the library
+# this script and of the original run's sealed preregistration (copied here as `prereg.json`), the library
 # versions and the kernel path. `dbg.records_to(path)` appends every sealed record (branches,
 # supplied forecasts) to a JSONL file, each verifiable on read-back.
 
@@ -110,11 +112,10 @@ def load(path, dtype, device):
 #   `kv=(g,)`) and the `R_argmax` rule: the span row (t0 excluded, ties to the later row) where
 #   the answer row's `L_c` attention, summed over the KV group's query heads, peaks.
 #   `cm.group_heads(adapter, g)` names those query heads (the grouping `group_writers` sums over),
-#   so nothing is hard-coded per model. (`Slot` already took layers and kv; the showcase's
-#   `crow_of` re-implemented the rule because the head list had no accessor.)
+#   so nothing is hard-coded per model.
 # * U16 wraps the same module mdb is attached to (`tl.bridge`, a shared clone: same tensors).
-#   P16 is a second bf16 copy, processed. U32/P32 are fp32 copies on the CPU (the showcase's smoke
-#   was killed for VRAM with all four bridges on CUDA; prereg amendment).
+#   P16 is a second bf16 copy, processed. U32/P32 are fp32 copies on the CPU (all four bridges on
+#   the GPU did not fit in VRAM).
 
 # %%
 
@@ -139,8 +140,8 @@ def open_model(name, LC, KVC):
 # %% [markdown]
 # ## 3. The TransformerLens side, indexed by mdb's own selector planner
 #
-# The showcase's first smoke indexed TL's 4-D `hook_z` (`batch, pos, head, d_head`) as if it were
-# mdb's flat `(batch, pos, head*d_head)`: the wrong slice, silently (SC7). Here:
+# An earlier version of this experiment indexed TL's 4-D `hook_z` (`batch, pos, head, d_head`) as
+# if it were mdb's flat `(batch, pos, head*d_head)`: the wrong slice, silently. Here:
 #
 # * hook names come from `names.to_tl` (`L20.A` -> `blocks.20.attn.hook_z`, `L20.v` -> the `v`
 #   hook), and `names.tl_hook(port, fn)` hands `fn` the value **in mdb's layout** (and refuses a
@@ -223,7 +224,7 @@ def tl_base(bridge, ids, a, b):
 # %% [markdown]
 # ## 4. The mdb side: `Branches` from one checkpoint, a donor `ValueRef`, sealed TL claims
 #
-# Per item (a plain Python loop: the prompt-set `each` object, P7, is not built yet):
+# Per item (a plain Python loop):
 #
 # 1. **Donor.** Run the donor prompt, bind its carrier row with the slot, and take
 #    `donor.ref("cache.L_c.v[kv g,row=r]")`: the value **and its origin pointer** (run, address,
@@ -243,10 +244,10 @@ def tl_base(bridge, ids, a, b):
 # 7. **Judge** each sealed claim against mdb's native `dM` with `supplied.judge` on the item's
 #    floor.
 #
-# **The floor.** `Branches` takes 2 spacings at the *base* margin's larger `|logit|`. The showcase
-# took the largest `|logit|` over all of the item's arms. Each arm row now records its consumer
-# `magnitude`, so both rules come from the same rows; the comparison with the showcase uses the
-# showcase's rule (`item_floor`), and the base-rule floor is reported beside it.
+# **The floor.** `Branches` takes 2 spacings (`verdict.margin_floor`) at the *base* margin's larger
+# `|logit|`. The original run took the largest `|logit|` over all of the item's arms. Each arm row
+# records its consumer `magnitude`, so both rules come from the same rows; the comparison with the
+# original run uses its rule (`item_floor`), and the base-rule floor is reported beside it.
 
 # %%
 
@@ -394,7 +395,7 @@ json.dump(PER_MODEL, open(OUT / "tl_reparam_floor_items.json", "w"), default=str
 # | batch | TL unprocessed, batch 1 | TL unprocessed, batched |
 # | processing | TL unprocessed, batched | TL processed, batched |
 #
-# The same function scores the showcase's saved margins on the same items.
+# The same function scores the original run's saved margins on the same items.
 
 # %%
 PAIRS = {"total": ("mdb", "P16"), "kernel": ("mdb", "U16"), "batch": ("U16_b1", "U16"),
@@ -474,12 +475,12 @@ for name, *_ in MODELS:
 RESULT["summary"] = SUMMARY
 
 # %% [markdown]
-# ## 7. Showcase vs now on the same items
+# ## 7. Original run vs now on the same items
 #
-# The native arms are the same stepped edits from the same checkpoint as the showcase's
+# The native arms are the same stepped edits from the same checkpoint as the original
 # hand-written loop, so the margins should be **bitwise** equal; the TL legs run the same library
 # version on the same batches. The V arm's margin is compared directly (both from a run split at
-# the carrier row); its `dM` here is against that run's own base (`Branches`), where the showcase
+# the carrier row); its `dM` here is against that run's own base (`Branches`), where the original run
 # subtracted the unsplit run's base: the two bases differ by the split's kernel path
 # (`V_split_base_delta_max`).
 

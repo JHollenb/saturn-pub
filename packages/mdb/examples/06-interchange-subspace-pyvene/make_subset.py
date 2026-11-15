@@ -1,7 +1,10 @@
-"""Cut this example's data and showcase reference from the saved showcase outputs (light Python,
-no model).  python make_subset.py   (run from this directory; writes items.json, reference.json)
+"""Cut this example's data and reference numbers from the saved outputs of the original run (light
+Python, no model).  python make_subset.py   (run from this directory; writes items.json,
+reference.json). Kept for provenance: it needs the original run's raw outputs, which are not part
+of this package; the two JSON files it writes are already in this directory.
 
-Pairs: the first 34 of exp7's 64 Run 1a base pairs in id order (16 city, 16 currency, 2 landmark).
+Pairs: the first 34 of the original run's 64 base pairs in id order (16 city, 16 currency, 2
+landmark).
 They hold the one pair where pyvene and mdb disagree on the flip verdict (currency:rupiah) and
 all 4 pairs the SAE subspace flips.
 """
@@ -27,7 +30,7 @@ for k in range(4):
 
 base = sorted([i for i in spec["items"] if i["group"] == "base"], key=lambda i: i["id"])
 by_id = {i["id"]: i for i in base}
-assert [r["id"] for r in exp7] == [i["id"] for i in base]          # same order as the showcase
+assert [r["id"] for r in exp7] == [i["id"] for i in base]          # same order as the original run
 chosen = base[:N]
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the TL reparametrisation-floor example to Beast through mrun as one job (priority 70).
+# Submit the TL reparametrisation-floor example to our GPU host through the job scheduler (mrun) as one job (priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
@@ -10,8 +10,8 @@ MDB="$(cd "$HERE/../.." && pwd)"            # packages/mdb
 ROOT="$(cd "$MDB/../.." && pwd)"            # repo root (holds src/ = saturn_pub)
 export MRUN_URL="${MRUN_URL:-http://127.0.0.1:19025}"
 NITEMS="${MDB_NITEMS:-24}"
-VRAM="${VRAM:-13500}"                       # MB; measured peak 11930 MB (smoke job-3e99bf66571d);
-                                            # x1.3 exceeds what Beast admits (ceiling = ask x 1.1 <= ~15100)
+VRAM="${VRAM:-13500}"                       # MB; measured peak 11930 MB (smoke run);
+                                            # x1.3 exceeds what the scheduler admits (ceiling = ask x 1.1 <= ~15100)
 
 # Stage a payload: this example + the mdb source + saturn_pub, no web build or tests.
 STAGE="$(mktemp -d "${TMPDIR:-/tmp}/mdb-example-tl.XXXXXX")"
