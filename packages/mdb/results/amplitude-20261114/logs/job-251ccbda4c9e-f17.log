@@ -1,0 +1,61 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-1.7B-Base steps: replica cuda
+== step [replica cuda] budget 570s
+[    6.1s] load fp32 cuda Qwen3-1.7B-Base
+[    9.9s] F currency:afghani 3.8s
+[   13.1s] F currency:dollar 3.2s
+[   16.6s] F currency:pound sterling 3.4s
+[   19.8s] F currency:renminbi 3.3s
+[   23.1s] F currency:koruna 3.3s
+[   26.4s] F currency:forint 3.3s
+[   29.7s] F currency:rupiah 3.3s
+[   32.9s] F currency:rial 3.3s
+[   36.2s] F currency:shekel 3.3s
+[   39.5s] F currency:yen 3.3s
+[   42.8s] F person:Mozart 3.4s
+[   46.0s] F person:Charles Dickens 3.2s
+[   49.3s] F person:Pablo Neruda 3.2s
+[   52.5s] F person:Fidel Castro 3.2s
+[   55.8s] F person:Antonin Dvorak 3.3s
+[   59.1s] F person:Hans Christian Andersen 3.3s
+[   62.4s] F person:Jean Sibelius 3.3s
+[   65.6s] F person:Plato 3.2s
+[   68.9s] F person:Franz Liszt 3.3s
+[   72.2s] F person:James Joyce 3.4s
+[   75.5s] F landmark:Mount Rushmore 3.3s
+[   78.8s] F landmark:Uluru 3.3s
+[   82.2s] F landmark:Schonbrunn Palace 3.4s
+[   85.5s] F landmark:the Forbidden City 3.3s
+[   88.8s] F landmark:the Sphinx 3.3s
+[   92.1s] F landmark:the Acropolis 3.3s
+[   95.4s] F landmark:Borobudur 3.3s
+[   98.7s] F landmark:Persepolis 3.3s
+[  102.1s] F landmark:Babylon 3.4s
+[  105.3s] F city:Chicago 3.3s
+[  108.6s] F city:Melbourne 3.3s
+[  111.8s] F city:Salzburg 3.2s
+[  115.1s] F city:Antwerp 3.2s
+[  118.3s] F city:Liverpool 3.2s
+[  121.6s] F city:Plovdiv 3.3s
+[  124.8s] F city:Toronto 3.2s
+[  128.1s] F city:Valparaiso 3.3s
+[  131.5s] F city:Shanghai 3.4s
+[  134.7s] F city:Brno 3.2s
+[  138.0s] F city:Aarhus 3.2s
+[  141.2s] F city:Alexandria 3.2s
+[  141.2s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:22.73
+	Maximum resident set size (kbytes): 11107924
+1 MiB
+armA-Qwen3-1.7B-Base-0of1.jsonl
+armB-Qwen3-1.7B-Base-0of3.jsonl
+armB-Qwen3-1.7B-Base-1of3.jsonl
+armB-Qwen3-1.7B-Base-2of3.jsonl
+armC-Qwen3-1.7B-Base-0of1.jsonl
+armE1-Qwen3-1.7B-Base-0of1.jsonl
+forecast-Qwen3-1.7B-Base-0of1.jsonl
+pools-Qwen3-1.7B-Base.json
+records-native-A-Qwen3-1.7B-Base.jsonl
+records-native-B-Qwen3-1.7B-Base.jsonl
+records-native-pools-Qwen3-1.7B-Base.jsonl

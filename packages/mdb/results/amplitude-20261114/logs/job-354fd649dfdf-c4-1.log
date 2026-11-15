@@ -1,0 +1,29 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-4B-Base steps: replica cpu 1/2
+== step [replica cpu 1/2] budget 570s
+[   11.9s] load fp32 cpu Qwen3-4B-Base
+[   26.0s] C d3-lm:the Colosseum 14.1s
+[   45.1s] C d4-work:The Metamorphosis 19.1s
+[   58.6s] C d4-work:The Arcades Project 13.5s
+[   73.0s] C d5:d5-081 14.4s
+[   87.0s] C d5:d5-042 14.0s
+[  101.3s] C d5:d5-088 14.3s
+[  115.5s] C d5:d5-104 14.2s
+[  130.9s] C d5:d5-065 15.4s
+[  130.9s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:13.10
+	Maximum resident set size (kbytes): 24366104
+1 MiB
+armA-Qwen3-4B-Base-0of1.jsonl
+armB-Qwen3-4B-Base-0of4.jsonl
+armB-Qwen3-4B-Base-1of4.jsonl
+armB-Qwen3-4B-Base-2of4.jsonl
+armB-Qwen3-4B-Base-3of4.jsonl
+armC-Qwen3-4B-Base-0of2.jsonl
+armC-Qwen3-4B-Base-1of2.jsonl
+armE1-Qwen3-4B-Base-0of1.jsonl
+pools-Qwen3-4B-Base.json
+records-native-A-Qwen3-4B-Base.jsonl
+records-native-B-Qwen3-4B-Base.jsonl
+records-native-pools-Qwen3-4B-Base.jsonl

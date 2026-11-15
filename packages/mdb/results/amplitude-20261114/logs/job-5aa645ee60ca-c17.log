@@ -1,0 +1,46 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-1.7B-Base steps: replica cuda
+== step [replica cuda] budget 570s
+[    6.1s] load fp32 cuda Qwen3-1.7B-Base
+[   11.2s] C d3-lm:the Astronomical Clock of the Old Town 5.1s
+[   16.2s] C d3-lm:Tivoli Gardens 5.0s
+[   20.8s] C d3-lm:Fisherman's Bastion 4.5s
+[   25.6s] C d3-lm:the Colosseum 4.8s
+[   30.4s] C d3-per:Franz Kafka 4.8s
+[   35.5s] C d3-per:Baruch Spinoza 5.1s
+[   40.7s] C d4-work:The Blue Danube waltz 5.2s
+[   45.8s] C d4-work:the film The Great Dictator 5.1s
+[   51.0s] C d4-work:The Metamorphosis 5.2s
+[   56.1s] C d4-work:the book Either/Or 5.1s
+[   60.8s] C d4-work:The Arcades Project 4.7s
+[   65.7s] C d4-work:The Republic 4.9s
+[   70.6s] C d4-work:the Commentaries on the Gallic War 4.8s
+[   75.5s] C d4-work:The Book of Disquiet 4.9s
+[   80.8s] C d5:d5-055 5.3s
+[   86.1s] C d5:d5-081 5.3s
+[   91.1s] C d5:d5-102 5.0s
+[   96.0s] C d5:d5-022 4.9s
+[  101.0s] C d5:d5-042 5.0s
+[  106.3s] C d5:d5-005 5.4s
+[  111.3s] C d5:d5-088 5.0s
+[  116.0s] C d5:d5-064 4.7s
+[  121.0s] C d5:d5-104 4.9s
+[  126.2s] C d5:d5-094 5.2s
+[  131.4s] C d5:d5-023 5.2s
+[  136.7s] C d5:d5-065 5.3s
+[  141.7s] C d5:d5-105 5.0s
+[  141.7s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:23.30
+	Maximum resident set size (kbytes): 11106436
+1 MiB
+armA-Qwen3-1.7B-Base-0of1.jsonl
+armB-Qwen3-1.7B-Base-0of3.jsonl
+armB-Qwen3-1.7B-Base-1of3.jsonl
+armB-Qwen3-1.7B-Base-2of3.jsonl
+armC-Qwen3-1.7B-Base-0of1.jsonl
+armE1-Qwen3-1.7B-Base-0of1.jsonl
+pools-Qwen3-1.7B-Base.json
+records-native-A-Qwen3-1.7B-Base.jsonl
+records-native-B-Qwen3-1.7B-Base.jsonl
+records-native-pools-Qwen3-1.7B-Base.jsonl

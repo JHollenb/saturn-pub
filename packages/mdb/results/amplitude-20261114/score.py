@@ -80,6 +80,9 @@ def armA(model):
                 span[k] += any(r["batched"].get(f"S{k}_{x:g}", {}).get("argmax") == a for x in DOSES)
             nul = {k: v["argmax"] == a for k, v in r["nulls"].items()}
             per.append({"id": r["id"], "amp": r["amp"], "alpha_star": star, "monotone": ok, "M0": r["M0"],
+                        "T3_dM": r["stepped"]["T3"]["dM"], "rnd3_dM": r["nulls"]["null_rnd3"]["dM"],
+                        "T8_dM": r["stepped"]["T8"]["dM"], "rnd8_dM": r["nulls"]["null_rnd8"]["dM"],
+                        "slope": Ms[-1] - Ms[0],
                         "M_by_dose": Ms, "floor": fl, "null_repairs": nul,
                         "self_dM": r["nulls"]["null_self"]["dM"]})
         res[stratum] = {"n": len(it), "monotone": mono, "flipped": flips, "alpha_star_median": med(stars),
@@ -90,6 +93,11 @@ def armA(model):
                         "null_repairs": sum(any(p["null_repairs"][k] for k in ("null_rnd3", "null_rnd8")) for p in per),
                         "self_dM_max": max((abs(p["self_dM"]) for p in per), default=None),
                         "items": per}
+    allp = res["right_operand"]["items"] + res["readable"]["items"]
+    res["amp_vs_ladder_slope_spearman"] = _spearman([p["amp"] for p in allp], [p["slope"] for p in allp])
+    res["n_slope"] = len(allp)
+    res["T_beats_matched_random"] = {k: frac(sum(p[f"T{k}_dM"] > p[f"rnd{k}_dM"] for p in allp), len(allp)) for k in ("3", "8")}
+    res["median_T_minus_random"] = {k: med([p[f"T{k}_dM"] - p[f"rnd{k}_dM"] for p in allp]) for k in ("3", "8")}
     # P2: amplitudes
     E = [r for r in rows(model, "armE1") if "excluded" not in r]
     ro = [r for r in A if r["stratum"] == "right_operand"]

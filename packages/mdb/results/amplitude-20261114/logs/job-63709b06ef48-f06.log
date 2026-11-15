@@ -1,0 +1,48 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-0.6B-Base steps: replica cuda
+== step [replica cuda] budget 570s
+[    3.4s] load fp32 cuda Qwen3-0.6B-Base
+[    6.5s] F currency:pound sterling 3.1s
+[    9.2s] F currency:shekel 2.7s
+[   12.0s] F currency:yen 2.8s
+[   14.6s] F person:Mozart 2.6s
+[   17.3s] F person:Charles Dickens 2.7s
+[   20.0s] F person:Pablo Neruda 2.7s
+[   22.6s] F person:Confucius 2.7s
+[   25.3s] F person:Fidel Castro 2.7s
+[   28.0s] F person:Hans Christian Andersen 2.7s
+[   30.7s] F person:Jean Sibelius 2.7s
+[   33.5s] F person:Plato 2.8s
+[   36.2s] F person:James Joyce 2.7s
+[   38.9s] F landmark:Mount Rushmore 2.7s
+[   41.6s] F landmark:Uluru 2.7s
+[   44.4s] F landmark:Schonbrunn Palace 2.8s
+[   47.2s] F landmark:the Forbidden City 2.7s
+[   49.9s] F landmark:the Acropolis 2.7s
+[   52.7s] F landmark:Borobudur 2.7s
+[   55.4s] F landmark:Persepolis 2.8s
+[   58.3s] F city:Salzburg 2.9s
+[   61.0s] F city:Antwerp 2.7s
+[   63.7s] F city:Plovdiv 2.7s
+[   66.4s] F city:Toronto 2.7s
+[   69.2s] F city:Valparaiso 2.8s
+[   71.9s] F city:Shanghai 2.7s
+[   74.6s] F city:Brno 2.7s
+[   77.3s] F city:Aarhus 2.7s
+[   80.0s] F city:Alexandria 2.7s
+[   80.0s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:21.62
+	Maximum resident set size (kbytes): 4515276
+1 MiB
+armA-Qwen3-0.6B-Base-0of1.jsonl
+armB-Qwen3-0.6B-Base-0of3.jsonl
+armB-Qwen3-0.6B-Base-1of3.jsonl
+armB-Qwen3-0.6B-Base-2of3.jsonl
+armC-Qwen3-0.6B-Base-0of1.jsonl
+armE1-Qwen3-0.6B-Base-0of1.jsonl
+forecast-Qwen3-0.6B-Base-0of1.jsonl
+pools-Qwen3-0.6B-Base.json
+records-native-A-Qwen3-0.6B-Base.jsonl
+records-native-B-Qwen3-0.6B-Base.jsonl
+records-native-pools-Qwen3-0.6B-Base.jsonl

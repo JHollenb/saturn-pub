@@ -1,0 +1,38 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision b36c93f model Qwen3-4B-Base steps: replica cpu 2/3
+== step [replica cpu 2/3] budget 570s
+[   11.2s] load fp32 cpu Qwen3-4B-Base
+[   26.0s] F currency:pound sterling 14.8s
+[   36.7s] F currency:koruna 10.7s
+[   47.2s] F currency:rial 10.5s
+[   57.5s] F person:Mozart 10.4s
+[   68.0s] F person:Confucius 10.5s
+[   78.6s] F person:Hans Christian Andersen 10.6s
+[   89.1s] F person:Plato 10.5s
+[   99.9s] F landmark:Schonbrunn Palace 10.8s
+[  110.5s] F landmark:the Sphinx 10.6s
+[  121.0s] F landmark:Babylon 10.5s
+[  131.6s] F city:Salzburg 10.6s
+[  142.5s] F city:Plovdiv 10.8s
+[  153.0s] F city:Shanghai 10.5s
+[  163.6s] F city:Alexandria 10.6s
+[  163.6s] DONE
+STEP_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:45.65
+	Maximum resident set size (kbytes): 24531248
+1 MiB
+armA-Qwen3-4B-Base-0of1.jsonl
+armB-Qwen3-4B-Base-0of4.jsonl
+armB-Qwen3-4B-Base-1of4.jsonl
+armB-Qwen3-4B-Base-2of4.jsonl
+armB-Qwen3-4B-Base-3of4.jsonl
+armC-Qwen3-4B-Base-0of2.jsonl
+armC-Qwen3-4B-Base-1of2.jsonl
+armE1-Qwen3-4B-Base-0of1.jsonl
+forecast-Qwen3-4B-Base-0of3.jsonl
+forecast-Qwen3-4B-Base-1of3.jsonl
+forecast-Qwen3-4B-Base-2of3.jsonl
+pools-Qwen3-4B-Base.json
+records-native-A-Qwen3-4B-Base.jsonl
+records-native-B-Qwen3-4B-Base.jsonl
+records-native-pools-Qwen3-4B-Base.jsonl
