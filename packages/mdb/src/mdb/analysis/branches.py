@@ -59,7 +59,7 @@ from mdb.core.records import seal_record
 from .finite import EXACT, MEASURED, SUPPLIED, f64, num
 from .forecast import Logit, Margin, Refusal, run_session_id
 from .stability import MDB_STEPPED, stability
-from .verdict import margin_floor, spacing
+from .verdict import magnitude, margin_floor, spacing
 
 SCHEMA = "mdb-branches-v1"
 NULL_KINDS = ("random", "self", "answer")
@@ -431,6 +431,9 @@ class Branches:
             "holds": _safe([{**h, "edits_fired": fired} for h in holds], EXACT),
             "final_scale": arm.final_scale, "kernel_path": kernel_path,
             "seconds": num(seconds, MEASURED)}
+        if isinstance(self.consumer, (Margin, Logit)):
+            # the consumer's |logit| size on this arm: a floor over an item's arms (exp6's rule)
+            out["magnitude"] = num(magnitude(self.consumer, logits), MEASURED)
         if arm.final_scale == "held":
             out["final_scale_authority"] = EXACT
         if self.floor is not None:
@@ -504,6 +507,14 @@ class Branches:
         logits_all = self.base_logits
         swept = cell_sweep(self.debuggee, cells_of, batch=batch, stepped_logits=logits_all)
         extra = float(swept["null_vs_stepped"] or 0.0)
+        # the same delta over the consumer's own tokens only (the showcase floors measured it
+        # there; ``null_vs_stepped`` is the max over the whole vocabulary)
+        own = None
+        if isinstance(self.consumer, (Margin, Logit)) and len(swept["null"]):
+            ids = ([self.consumer.a, self.consumer.b] if isinstance(self.consumer, Margin)
+                   else [self.consumer.i])
+            native = logits_all.reshape(-1).float().cpu()[ids]
+            own = float(max((n[ids] - native).abs().max() for n in swept["null"]))
         rows = []
         for i, arm in enumerate(chosen):
             row_logits = swept["logits"][i]
@@ -513,6 +524,8 @@ class Branches:
                                                          for e in arm.edits], [], 0, 0.0, BATCHED,
                                    extra=2 * extra)
             arm.result["kernel_delta_null"] = num(extra, MEASURED)
+            if own is not None:
+                arm.result["kernel_delta_null_consumer_tokens"] = num(own, MEASURED)
             rows.append(arm.result)
         if recheck:
             order = sorted(range(len(chosen)), key=lambda i: -abs(rows[i]["dM"]["value"]))

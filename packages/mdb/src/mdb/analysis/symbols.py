@@ -62,7 +62,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mdb.core.kinds import SYMBOL_TABLE, procedure
-from mdb.core.records import seal_record
+from mdb.core.records import RecordError, seal_record
 
 from .finite import BOUND, EXACT, MEASURED, SUPPLIED, f64, num
 from .forecast import Margin, Refusal, run_session_id
@@ -1461,9 +1461,27 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
     if "consumer_total" in report:
         body["consumer_total"] = report["consumer_total"]
     body["procedure"] = procedure(run)
-    return [seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
-                        model_identity=run.adapter.model_identity,
-                        execution=dict(run.adapter.execution), authority=EXACT, body=body)]
+
+    def seal() -> dict[str, Any]:
+        return seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
+                           model_identity=run.adapter.model_identity,
+                           execution=dict(run.adapter.execution), authority=EXACT, body=body)
+
+    try:
+        return [seal()]
+    except RecordError:
+        if not body.get("components"):
+            raise
+    # a feature binding of a k=50 SAE (about 50 rows with content) exceeds the record bound:
+    # each section keeps its totals and partition, its rows go behind a sha256 pointer
+    # (``core.bounded.load_json``); ``report["components"]`` keeps every row
+    from mdb.core.bounded import put_json
+
+    body["components"] = [
+        {**{k: v for k, v in section.items() if k != "components"},
+         "components_full": put_json(section.get("components", []), run=run)}
+        for section in body["components"]]
+    return [seal()]
 
 
 __all__ = ["Binding", "Candidates", "LEGEND", "content", "hop_edge", "readout_basis", "PAGE", "STATUSES", "SYMBOL_TABLE", "Table", "declare",

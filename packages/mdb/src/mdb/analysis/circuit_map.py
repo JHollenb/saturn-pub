@@ -534,6 +534,16 @@ def group_writers(o_weight: Any, heads: int, kv: int) -> Any:
     return torch.stack([per_head[group == g].sum(0) for g in range(kv)])
 
 
+def group_heads(adapter: Any, kv: int) -> tuple[int, ...]:
+    """The query heads of KV group ``kv`` (``kappa^-1(kv)``, the grouping ``group_writers`` sums
+    over), for a per-model ``Slot(rule_heads=...)`` (gap audit P11; showcase exp6 built it by
+    hand)."""
+    heads, groups = int(adapter.num_heads), int(adapter.num_kv_heads)
+    if not 0 <= kv < groups:
+        raise Refusal(f"kv group {kv} is not in 0..{groups - 1}")
+    return tuple(h for h in range(heads) if h // (heads // groups) == kv)
+
+
 def group_writer(adapter: Any, layer: int, kv: int | None = None) -> Any:
     """``group_writers`` of ``layer``'s ``o_proj`` for an attached model, computed from the
     weight as it is NOW on every call (no cache: ``.data`` edits do not bump a parameter's
