@@ -51,5 +51,5 @@ Why a minor bump. The package is pre-1.0, so a breaking change moves the minor v
 ### Known issues
 
 - Open in `issues.jsonl` (2026-11-14): 33 not fixed or closed (11 medium, 22 low; includes 1 deferred, 1 known-limit, 1 partial), none high after I2. Notable: M58 (`until logits` after `prefill=K` stops at the first stepped row), M61 (a role binds the first subtoken of a multi-token word), I3/S3 (no edits at earlier rows' ports), M15 (all automated tests use tiny CPU models).
-- Pre-existing test failures on the laptop: two REPL transcript tests and DC1 (`test_head_selected_patch_on_a_second_device[mps]`, MPS has no float64). See the pre-release report for the full list.
+- Pre-existing test failures on the laptop (all also fail at a66ec51): `test_two_logits_are_indexed_then_cast` (`stage_checks` casts the full logits row), DC1 (`test_head_selected_patch_on_a_second_device[mps]`), and in the common env `test_golden_transcript[predict_forecast]` and `test_the_script_names_every_registered_op` (5 ops missing from the live script). mdb-lanes: 266 env-dependent failures (missing diffusers/mrun/installed wheel, frozen helper hashes). See obsidian/reviews/2026-11-14-mdb-pre-release-checks.md.
 - The amplitude programme's missing arm-B shard records and replica records are not recovered by the sink fix.
