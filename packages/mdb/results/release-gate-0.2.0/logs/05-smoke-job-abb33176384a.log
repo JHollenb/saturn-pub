@@ -1,0 +1,70 @@
+mrun: job-abb33176384a -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  items 2
+[    7.1s] model loaded; custody script 10560aafdab4 prereg 0f4a82dc0341
+{
+ "basis": {
+  "hook_name": "blocks.19.hook_resid_post",
+  "release": "qwen-scope-3-1.7b-base-w32k-l50",
+  "sae_id": "layer19",
+  "model": "Qwen/Qwen3-1.7B-Base"
+ },
+ "sae_lens_version": "6.55.5",
+ "registry_load": {
+  "ok": false,
+  "error": "LocalEntryNotFoundError"
+ },
+ "to_saelens": "ok"
+}
+[   23.9s] SAEs ready
+currency:yen                 f32521 (showcase f32521) share  0.77/ 0.77  L20 top/zero  0.81/ 0.81  rnd -0.14  gauss -0.24  err  0.19  [12.49s]
+currency:won                 f11471 (showcase f11471) share  0.66/ 0.66  L20 top/zero  0.48/ 0.48  rnd -0.12  gauss -0.00  err  0.16  [10.6s]
+[   47.0s] items done
+key number                                                now     showcase
+L2 median top/zero                                     0.6448       0.6448
+L2 median random-component/zero                       -0.1314      -0.1314
+L2 median error/zero                                   0.1752       0.1752
+L2 median gauss-null/zero (new)                        -0.119            -
+L1 median top share                                    0.7124       0.7124
+L1 median error share                                  0.1418       0.1418
+L1 top share >= 0.5 (count)                                 2            2
+L1 error share <= 0.2 (count)                               1            1
+L3 median onset                                             9            9
+L3 onset >= L15 (count)                                     0            0
+L4 only inside L17..21, showcase floor rule                 2            2
+L4 only inside L17..21, Branches floor                      2            -
+L4 above floor at L20, showcase floor rule                  2            2
+partition max gap (code check)                      1.332e-15    1.332e-15
+SAELens active set agrees (count)                           2            2
+correct (count)                                             2            2
+L4 layer histogram now (Branches floor): {'15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 2, '21': 0, '22': 0, '23': 0}
+L4 layer histogram now (showcase rule):  {'15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 2, '21': 0, '22': 0, '23': 0}
+L4 layer histogram showcase:             {'15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 2, '21': 0, '22': 0, '23': 0}
+{
+ "carrier_row": "2/2",
+ "top_feature": "2/2",
+ "layer_tops": "2/2",
+ "random_picks": "2/2",
+ "arms_dM": "2/2",
+ "max_abs_arm_dM_difference": 0.0,
+ "max_liveness_vs_zero_arm": 0.25,
+ "max_batched_vs_stepped_recheck": 0.25,
+ "median_floor_branches": 0.85546875,
+ "median_floor_showcase_rule": 0.3125,
+ "records_sealed": 4
+}
+L2 prereg bars on this subset (information): top >= 0.5 True | random <= 0.15 True | error <= 0.2 True
+PASS L2 medians equal the showcase's on these items
+PASS partition holds on every item (code check)
+PASS SAELens active set agrees on every item
+PASS same top country feature as the showcase
+PASS every batched arm dM equals the showcase's
+PASS L4 (showcase floor rule) equals the showcase's
+6/6 checks pass
+done in 47.2s; wrote out/sae_component_binding_results.json
+RESULT_JSON {"n_items": 2, "summary": {"now_branches_floor": {"n": 2, "L1": {"top_share_ge_0.5": 2, "error_share_le_0.2": 1, "median_top_share": 0.7124290114221785, "median_error_share": 0.14184174475165784, "median_random_share": 0.0018260545533223885}, "L2": {"top": 0.6447619047619048, "random": -0.13142857142857142, "error": 0.17523809523809525, "gauss": -0.11904761904761904, "n": 2}, "L4": {"only_inside_L17_21": 2, "never_above_floor": 0, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 2, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 9.0, "onset_ge_L15": 0, "n": 2}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 2, "correct": 2}, "now_showcase_floor_rule": {"n": 2, "L1": {"top_share_ge_0.5": 2, "error_share_le_0.2": 1, "median_top_share": 0.7124290114221785, "median_error_share": 0.14184174475165784, "median_random_share": 0.0018260545533223885}, "L2": {"top": 0.6447619047619048, "random": -0.13142857142857142, "error": 0.17523809523809525, "gauss": -0.11904761904761904, "n": 2}, "L4": {"only_inside_L17_21": 2, "never_above_floor": 0, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 2, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 9.0, "onset_ge_L15": 0, "n": 2}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 2, "correct": 2}, "showcase_same_items": {"n": 2, "L1": {"top_share_ge_0.5": 2, "error_share_le_0.2": 1, "median_top_share": 0.7124290114221785, "median_error_share": 0.14184174475165784, "median_random_share": 0.0018260545533223885}, "L2": {"top": 0.6447619047619048, "random": -0.13142857142857142, "error": 0.17523809523809525, "n": 2}, "L4": {"only_inside_L17_21": 2, "never_above_floor": 0, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 2, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 9.0, "onset_ge_L15": 0, "n": 2}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 2, "correct": 2}}, "agreement": {"carrier_row": "2/2", "top_feature": "2/2", "layer_tops": "2/2", "random_picks": "2/2", "arms_dM": "2/2", "max_abs_arm_dM_difference": 0.0, "max_liveness_vs_zero_arm": 0.25, "max_batched_vs_stepped_recheck": 0.25, "median_floor_branches": 0.85546875, "median_floor_showcase_rule": 0.3125, "records_sealed": 4}, "checks": {"L2 medians equal the showcase's on these items": true, "partition holds on every item (code check)": true, "SAELens active set agrees on every item": true, "same top country feature as the showcase": true, "every batched arm dM equals the showcase's": true, "L4 (showcase floor rule) equals the showcase's": true}, "seconds": 47.2}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:48.49
+	Maximum resident set size (kbytes): 11005312
+mrun: job-abb33176384a -> succeeded
+mrun: job-abb33176384a finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 48.81, 'peak_rss_mb': 10781.2, 'peak_vram_mb': 3976.0}

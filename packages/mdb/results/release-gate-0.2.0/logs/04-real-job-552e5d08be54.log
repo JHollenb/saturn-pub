@@ -1,0 +1,69 @@
+mrun: job-552e5d08be54 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6
+281a40fb1cc279f3e2fb08ce9bb24e86bc909dbb035732318df3278dc8511ac8  watch_edit_continue.py
+75e0a97d9d16a4998dec910df8a21ad7f0e788bc4d6f7bbfdb8a033cd88ba361  packages/mdb/src/mdb/analysis/pools.py  smoke 0
+[    4.8s] model loaded; custody script 281a40fb1cc2 prereg 0adac2733d6e
+39 items: 27 wrong, 12 correct; 58 country features; SAE site L19.h_out k 50
+[  130.6s] pool: 117 cells, kernel path mdb-stepped, record 5de3504ee855b868
+[  136.6s] d3-lm:Anitkabir                            right watch=FIRE content=true donor=d2:Ankara R1:lang(0.5fl) R2:lang(0.8fl) RND:lang(0.0fl) rnd:lang(0.0fl) [5.98s]
+[  139.2s] d3-lm:Big Ben                              right watch=quiet content=true donor=d3-lm:Buckingham Palace R1:lang(0.2fl) R2:lang(1.5fl) RND:lang(0.5fl) rnd:lang(0.2fl) [2.56s]
+[  141.9s] d3-lm:Buckingham Palace                    right watch=quiet content=true donor=d3-lm:Big Ben R1:lang(0.5fl) R2:lang(0.8fl) RND:lang(0.2fl) rnd:lang(0.2fl) [2.69s]
+[  146.3s] d3-lm:Fisherman's Bastion                  wrong watch=FIRE content=other donor=d3-lm:the Szechenyi ther R1:other(3.0fl) R2:other(8.0fl) RND:other(0.5fl) rnd:other(0.0fl) [4.39s]
+[  152.7s] d3-lm:Gyeongbokgung Palace                 right watch=quiet content=true donor=d2:Seoul R1:lang(0.0fl) R2:lang(0.8fl) RND:lang(0.0fl) rnd:lang(0.0fl) [6.43s]
+[  156.6s] d3-lm:Notre-Dame Cathedral                 right watch=quiet content=true donor=d3-lm:the Eiffel Tower R1:lang(1.0fl) R2:lang(1.2fl) RND:lang(0.8fl) rnd:lang(0.0fl) [3.92s]
+[  159.2s] d3-lm:Red Square                           right watch=FIRE content=true donor=d3-lm:Saint Basil's Cath R1:lang(0.0fl) R2:lang(1.0fl) RND:lang(0.2fl) rnd:lang(0.0fl) [2.55s]
+[  162.5s] d3-lm:Retiro Park                          right watch=FIRE content=other donor=d3-lm:the Prado Museum R1:lang(0.5fl) R2:lang(0.8fl) RND:lang(0.0fl) rnd:lang(0.2fl) [3.32s]
+[  166.3s] d3-lm:Saint Basil's Cathedral              right watch=quiet content=true donor=d3-lm:Red Square R1:lang(0.5fl) R2:lang(0.2fl) RND:lang(0.2fl) rnd:lang(0.2fl) [3.77s]
+[  170.8s] d3-lm:Schonbrunn Palace                    right watch=quiet content=true donor=d3-lm:St. Stephen's Cath R1:lang(0.5fl) R2:lang(11.0fl) RND:lang(0.5fl) rnd:lang(0.0fl) [4.55s]
+[  174.0s] d3-lm:Shibuya Crossing                     right watch=FIRE content=true donor=d3-lm:the Meiji Shrine R1:lang(0.2fl) R2:lang(0.0fl) RND:lang(0.2fl) rnd:lang(0.2fl) [3.17s]
+[  178.0s] d3-lm:Tivoli Gardens                       right watch=FIRE content=true donor=d3-lm:the Little Mermaid R1:lang(3.8fl) R2:lang(2.0fl) RND:lang(0.5fl) rnd:other(0.5fl) [4.01s]
+[  187.3s] d3-lm:the Astronomical Clock of the Old To wrong watch=FIRE content=other donor=d3-lm:the Charles Bridge R1:lang(6.5fl) R2:lang(25.5fl) RND:other(0.5fl) rnd:other(3.5fl) [9.26s]
+[  191.9s] d3-lm:the Belvedere palace                 right watch=FIRE content=true donor=d3-lm:Schonbrunn Palace R1:lang(0.2fl) R2:lang(0.8fl) RND:lang(0.2fl) rnd:lang(0.5fl) [4.57s]
+[  196.3s] d3-lm:the Colosseum                        wrong watch=quiet content=true donor=d3-lm:the Trevi Fountain R1:lang(2.0fl) R2:lang(3.0fl) RND:other(1.0fl) rnd:other(1.0fl) [4.39s]
+[  199.6s] d3-lm:the Pantheon                         wrong watch=FIRE content=other donor=d3-lm:the Trevi Fountain R1:lang(11.2fl) R2:lang(9.2fl) RND:other(0.5fl) rnd:other(1.0fl) [3.31s]
+[  204.0s] d3-per:Baruch Spinoza                      wrong watch=quiet content=true donor=d3-lm:the Anne Frank Hou R1:lang(9.5fl) R2:lang(5.0fl) RND:lang(5.5fl) rnd:other(1.5fl) [4.43s]
+[  206.7s] d3-per:Franz Kafka                         wrong watch=FIRE content=other donor=d3-lm:the Charles Bridge R1:lang(4.5fl) R2:lang(14.0fl) RND:other(0.5fl) rnd:other(0.0fl) [2.72s]
+[  210.6s] d3-per:Harry Houdini                       wrong watch=FIRE content=true donor=d3-lm:the Szechenyi ther R1:lang(3.5fl) R2:lang(8.8fl) RND:other(0.8fl) rnd:other(1.0fl) [3.82s]
+[  213.3s] d3-per:Julius Caesar                       wrong watch=FIRE content=other donor=d3-lm:the Trevi Fountain R1:other(3.8fl) R2:other(7.2fl) RND:other(0.2fl) rnd:other(0.5fl) [2.74s]
+[  217.8s] d3-per:Marie Curie                         wrong watch=FIRE content=other donor=d3-lm:the Palace of Cult R1:lang(3.5fl) R2:lang(8.2fl) RND:other(0.5fl) rnd:other(0.0fl) [4.46s]
+[  223.1s] d3-per:Rainer Maria Rilke                  wrong watch=quiet content=other donor=d3-lm:the Charles Bridge R1:other(2.5fl) R2:other(6.8fl) RND:other(0.5fl) rnd:other(0.2fl) [5.3s]
+[  226.9s] d4-work:The Arcades Project                wrong watch=FIRE content=other donor=d3-lm:the Brandenburg Ga R1:other(4.5fl) R2:lang(7.2fl) RND:other(0.2fl) rnd:other(0.2fl) [3.88s]
+[  232.9s] d4-work:The Blue Danube waltz              wrong watch=quiet content=true donor=d3-lm:Schonbrunn Palace R1:other(1.0fl) R2:lang(5.0fl) RND:other(0.0fl) rnd:other(0.0fl) [5.96s]
+[  237.6s] d4-work:The Book of Disquiet               wrong watch=FIRE content=other donor=d3-lm:the Belem Tower R1:other(6.0fl) R2:lang(24.0fl) RND:other(0.0fl) rnd:other(0.0fl) [4.68s]
+[  242.1s] d4-work:The Metamorphosis                  wrong watch=quiet content=other donor=d3-lm:the Charles Bridge R1:other(4.0fl) R2:lang(10.2fl) RND:other(0.2fl) rnd:other(0.2fl) [4.51s]
+[  244.9s] d4-work:The Republic                       wrong watch=FIRE content=other donor=d3-lm:the Acropolis R1:other(1.5fl) R2:lang(13.5fl) RND:other(0.0fl) rnd:other(0.5fl) [2.81s]
+[  252.9s] d4-work:the Commentaries on the Gallic War wrong watch=FIRE content=other donor=d3-lm:the Trevi Fountain R1:other(4.0fl) R2:other(4.8fl) RND:other(0.2fl) rnd:other(0.0fl) [7.97s]
+[  258.2s] d4-work:the Duino Elegies                  wrong watch=FIRE content=other donor=d3-lm:the Charles Bridge R1:other(5.5fl) R2:lang(24.5fl) RND:other(1.5fl) rnd:other(0.0fl) [5.33s]
+[  262.1s] d4-work:the Unfinished Symphony            wrong watch=quiet content=true donor=d3-lm:Schonbrunn Palace R1:other(0.5fl) R2:lang(5.0fl) RND:other(0.5fl) rnd:other(0.0fl) [3.88s]
+[  266.8s] d4-work:the book Either/Or                 wrong watch=FIRE content=other donor=d3-lm:Tivoli Gardens R1:other(8.0fl) R2:lang(9.2fl) RND:other(1.0fl) rnd:other(0.5fl) [4.67s]
+[  272.1s] d4-work:the book Fear and Trembling        wrong watch=quiet content=other donor=d3-lm:Tivoli Gardens R1:other(1.5fl) R2:lang(16.0fl) RND:other(0.0fl) rnd:other(0.0fl) [5.32s]
+[  277.5s] d4-work:the film The Great Dictator        wrong watch=FIRE content=other donor=d3-lm:Big Ben R1:lang(6.0fl) R2:lang(10.5fl) RND:lang(3.5fl) rnd:other(0.5fl) [5.33s]
+[  281.3s] d4-work:the novel Palace Walk              wrong watch=quiet content=other donor=d3-lm:the Khan el-Khalil R1:lang(0.5fl) R2:other(1.0fl) RND:other(1.0fl) rnd:lang(0.0fl) [3.88s]
+[  286.6s] d4-work:the novel The Sound of Waves       wrong watch=FIRE content=other donor=d3-lm:Shibuya Crossing R1:other(5.0fl) R2:lang(13.0fl) RND:other(0.5fl) rnd:other(0.0fl) [5.31s]
+[  290.5s] d4-work:the novel The Trial                wrong watch=FIRE content=other donor=d3-lm:the Charles Bridge R1:lang(10.5fl) R2:lang(32.0fl) RND:other(2.0fl) rnd:other(0.0fl) [3.89s]
+[  294.5s] d4-work:the opera Carmen                   wrong watch=FIRE content=other donor=d3-lm:Notre-Dame Cathedr R1:lang(4.5fl) R2:lang(10.8fl) RND:other(0.2fl) rnd:other(0.8fl) [3.98s]
+[  299.6s] d4-work:the play Life Is a Dream           wrong watch=quiet content=other donor=d3-lm:Retiro Park R2:lang(11.5fl) [5.11s]
+[  304.0s] d4-work:the play Miss Julie                wrong watch=FIRE content=other donor=d3-lm:the Vasa Museum R1:lang(7.2fl) R2:lang(13.8fl) RND:other(0.0fl) rnd:other(0.5fl) [4.36s]
+one R2 edit's origin (from the pool): {"kind": "pool", "pool": "carrier-v", "rule": "donor (same:country)", "donor": "d2:Ankara", "record": "5de3504ee855b8680d905d9b8298041389733806c4fd5182068ee5685e72335e"}
+key number                          showcase (same items)        now
+fired_wrong                                         18/27      18/27
+fired_correct                                        6/12       6/12
+content_true_wrong                                   5/27       5/27
+content_true_correct                                11/12      11/12
+R1_repairs_wrong                                    12/27      12/27
+R1_repairs_where_fired                               9/18       9/18
+R2_repairs_wrong                                    22/27      22/27
+RND_repairs_wrong                                    2/26       2/26
+R1_on_correct_argmax_changes                         1/12       1/12
+median_R1_over_R2                                   0.387      0.387
+rnd_gauss_repairs_wrong                             (new)       1/26
+full 110-item panel (audited): {"n": 110, "fired_wrong": "18/27", "fired_correct": "30/83", "content_true_correct": "78/83", "content_true_wrong": "5/27", "R1_repairs_wrong": "12/27", "R2_repairs_wrong": "22/27", "RND_repairs_wrong": "2/26", "R1_repairs_where_fired": "9/18", "median_R1_over_R2": 0.387}
+per-item agreement with the showcase: 39/39 items identical on every compared field
+[  304.3s] done; 40 sealed records in out/records.jsonl
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "smoke": false, "custody": {"script_sha256": "281a40fb1cc279f3e2fb08ce9bb24e86bc909dbb035732318df3278dc8511ac8", "prereg_sha256": "0adac2733d6e9a17eb77d8bca39f205cac4958020b621ec914e18415c4418a71", "kernel_path": "mdb-stepped"}, "pool": {"n": 117, "kernel_path": "mdb-stepped", "record": "5de3504ee855b8680d905d9b8298041389733806c4fd5182068ee5685e72335e"}, "summary": {"n": 39, "wrong": 27, "correct": 12, "fired_wrong": "18/27", "fired_correct": "6/12", "content_true_wrong": "5/27", "content_true_correct": "11/12", "R1_repairs_wrong": "12/27", "R1_repairs_where_fired": "9/18", "R2_repairs_wrong": "22/27", "RND_repairs_wrong": "2/26", "rnd_gauss_repairs_wrong": "1/26", "R1_on_correct_argmax_changes": "1/12", "median_R1_over_R2": 0.38742964352720455, "n_ratio": 26}, "per_item_differences": [], "records": {"path": "out/records.jsonl", "n": 40}, "seconds": 304.3, "peak_vram_mb": 3388}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:05.67
+	Maximum resident set size (kbytes): 4437744
+mrun: job-552e5d08be54 -> succeeded
+mrun: job-552e5d08be54 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 305.97, 'peak_rss_mb': 2778.9, 'peak_vram_mb': 3842.0}

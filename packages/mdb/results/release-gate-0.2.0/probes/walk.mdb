@@ -1,0 +1,53 @@
+start name=base The Eiffel Tower is located in the city of
+where
+step 3
+until L3.p
+print top=3
+backtrace
+list
+checkpoint pre
+set L3.m = 0 scale
+info edits
+until logits
+print logits top=3
+explain M[" Paris"," Rome"]
+restart pre
+info edits
+abort
+run name=donor The Colosseum is located in the city of
+until logits
+frame base:
+until L12.h
+checkpoint s0
+set L12.A[h3] = donor:L12.A[h3]
+info edits
+until logits
+x logits 4 12095
+restart s0
+whatif L12.m = donor:L12.m consumer=M[" Paris"," Rome"]
+symbol city = whatif
+symbol show city
+break L5.p
+watch L6.o change
+info breakpoints
+continue
+continue
+reverse-continue
+delete
+restart s0
+forecast M[" Paris"," Rome"]
+until logits
+verify
+restart s0
+until logits
+symbols consumer=M[" Paris"," Rome"] limit=5
+symbols consumer=M[" Paris"," Rome"] offset=5 limit=5
+reads t3 consumer=M[" Paris"," Rome"] top=3
+circuit M[" Paris"," Rome"] top=3 depth=2
+compare L12.m=donor:L12.m L14.m=donor:L14.m consumer=M[" Paris"," Rome"]
+restart s0
+sweep m rows=8:10 layers=10:13 = donor --consumer M[" Paris"," Rome"]
+reverse-step 3
+step 2 layer
+info checkpoints
+info runs

@@ -1,0 +1,5 @@
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 6724.50it/s]
+mdb serve: web build absent at /Users/jakeholl/domains/.worktrees/mdb-pre-release/packages/mdb/src/mdb/serve/static; run `npm run build` in packages/mdb/web (the API at /api/v1 is served without it)
+mdb serve: http://127.0.0.1:8799/  (project /private/tmp/claude-501/-Users-jakeholl-domains/f9daae27-47d0-4118-8855-2c7a6f58eecf/scratchpad/serve-proj; live session qwen2-62fe6641bff6)
+/Users/jakeholl/.pyenv/versions/3.10.14/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

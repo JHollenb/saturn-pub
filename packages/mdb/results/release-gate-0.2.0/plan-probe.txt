@@ -1,0 +1,1 @@
+03-probe|stage||../../../examples/03-composer-neurons-sealed-forecasts mdb-rg-probe03 9000 12000 -- bash probes/run_probe03.sh

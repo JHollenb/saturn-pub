@@ -1,0 +1,334 @@
+(mdb) source -k /Users/jakeholl/domains/.worktrees/mdb-pre-release/packages/mdb/results/release-gate-0.2.0/probes/walk.mdb
+(mdb) start name=base The Eiffel Tower is located in the city of
+run base
+t10.L0.h  h = layer input (residual stream)  {P01}
+(mdb) where
+t10.L0.h  h = layer input (residual stream)  {P01}
+tokens: 785:"The" 468:" E" 3092:"iff" 301:"el" 21938:" Tower" 374:" is" 7407:" located" 304:" in" 279:" the" 3283:" city" 315:" of"
+staged edits: 0, lookahead none
+(mdb) step 3
+t10.L0.k  k = W_k a + b_k (pre-RoPE, flat)  {P04}
+(mdb) until L3.p
+t10.L3.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) print top=3
+t10.L3.p  bfloat16 [1, 14, 1, 11]  (batch, head, row, src)
+  norm 3.0727 min 2.3429e-09 max 1 mean 0.090913 abs_max 1 [measured]
+  top |v|: [0,5,0,0] 1, [0,0,0,0] 0.98828, [0,4,0,0] 0.97656 [measured]
+  pointer occurrence ~stepped sha256 7373e117ec5de13e cut 21fca0789273
+(mdb) backtrace
+p <- s <- qr,kr <- q,k <- a <- h
+#0  t10.L3.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}  <- s
+#1  t10.L3.s  s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)  {P05 P07 P08 P09}  <- qr,kr
+#2  t10.L3.qr  qr = RoPE(q) (query argument of eager attention)  {P04}  <- q
+#2  t10.L3.kr  kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)  {P04}  <- k + cache
+#3  t10.L3.q  q = W_q a + b_q (pre-RoPE, flat)  {P04}  <- a
+#3  t10.L3.k  k = W_k a + b_k (pre-RoPE, flat)  {P04}  <- a
+#4  t10.L3.a  a = RMSNorm(h) * w_in  {P02 P03}  <- h
+#5  t10.L3.h  h = layer input (residual stream)  {P01}  <- prev_layer
+(mdb) list
+L3 at row 10  (cursor t10.L3.p)
+   h     h = layer input (residual stream)  {P01}
+   a     a = RMSNorm(h) * w_in  {P02 P03}
+   q     q = W_q a + b_q (pre-RoPE, flat)  {P04}
+   k     k = W_k a + b_k (pre-RoPE, flat)  {P04}
+   v     v = W_v a + b_v (flat)  {P04}
+   qr    qr = RoPE(q) (query argument of eager attention)  {P04}
+   kr    kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)  {P04}
+   s     s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)  {P05 P07 P08 P09}
+=> p     p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+   A     A = concat_heads(p repeat_kv([cache; v])) (o_proj input)  {P06 P07}  .
+   o     o = W_o A  {P06 P07}  .
+   r     r = h + o  {P06 P07 P14}  .
+   n     n = RMSNorm(r) * w_post (mlp input)  {P02 P03}  .
+   g     g = W_gate n  {P10 P15}  .
+   sg    sg = silu(g)  {P10 P15}  .
+   u     u = W_up n  {P10 P15}  .
+   f     f = sg * u (down_proj input)  {P10 P15}  .
+   m     m = W_down f  {P14}  .
+   h_out h_out = r + m (layer output)  {P14}  .
+   replica check s: equal
+(mdb) checkpoint pre
+checkpoint pre at t10.L3.p (752 bytes)
+(mdb) set L3.m = 0 scale
+staged at t10.L3.m: m scale 0 [supplied] (not fired yet)  (1 staged)
+(mdb) info edits
+staged at t10.L3.p: m scale 0 [supplied] (not fired yet)
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) print logits top=3
+t10.logits  bfloat16 [1, 151936]  (batch, vocab)
+  norm 1904.6 min -22.375 max 18.125 mean -3.6168 abs_max 22.375 [measured, under edit t10.L3.m]
+  top |v|: [0,141758] -22.375 " appr\u00e9", [0,41538] -18.625 "itet", [0,12095] 18.125 " Paris" [measured, under edit t10.L3.m]
+  pointer occurrence ~stepped sha256 7c66058c0596d732 cut 6b72086f7843
+(mdb) explain M[" Paris"," Rome"]
+explain t10.M[12095,21718]  native 13.594 [measured P19]  float64 13.548 [derived-exact P19]  eta 0.045951 [measured P19]
+  embedding          0.014161 [derived-exact P19]
+  L0.attn            0.0083622 [derived-exact P19]
+  L0.mlp             0.25451 [derived-exact P19]
+  L1.attn            -0.26546 [derived-exact P19]
+  L1.mlp             -0.61919 [derived-exact P19]
+  L2.attn            0.12051 [derived-exact P19]
+  L2.mlp             0.035947 [derived-exact P19]
+  L3.attn            0.049745 [derived-exact P19]
+  L3.mlp             0 [derived-exact P19]
+  L4.attn            0.10732 [derived-exact P19]
+  L4.mlp             0.017333 [derived-exact P19]
+  L5.attn            -0.169 [derived-exact P19]
+  L5.mlp             0.3901 [derived-exact P19]
+  L6.attn            0.064386 [derived-exact P19]
+  L6.mlp             -0.25374 [derived-exact P19]
+  L7.attn            0.34616 [derived-exact P19]
+  L7.mlp             -0.66609 [derived-exact P19]
+  L8.attn            -0.22629 [derived-exact P19]
+  L8.mlp             -0.29707 [derived-exact P19]
+  L9.attn            0.18175 [derived-exact P19]
+  L9.mlp             0.16917 [derived-exact P19]
+  L10.attn           0.12765 [derived-exact P19]
+  L10.mlp            -0.055966 [derived-exact P19]
+  L11.attn           0.066778 [derived-exact P19]
+  L11.mlp            -0.1852 [derived-exact P19]
+  L12.attn           -0.1046 [derived-exact P19]
+  L12.mlp            -0.42518 [derived-exact P19]
+  L13.attn           -0.089259 [derived-exact P19]
+  L13.mlp            -0.13535 [derived-exact P19]
+  L14.attn           0.12899 [derived-exact P19]
+  L14.mlp            0.42203 [derived-exact P19]
+  L15.attn           -0.2396 [derived-exact P19]
+  L15.mlp            0.74078 [derived-exact P19]
+  L16.attn           -0.003086 [derived-exact P19]
+  L16.mlp            0.19411 [derived-exact P19]
+  L17.attn           1.1261 [derived-exact P19]
+  L17.mlp            0.22407 [derived-exact P19]
+  L18.attn           -0.11349 [derived-exact P19]
+  L18.mlp            0.58999 [derived-exact P19]
+  L19.attn           0.21665 [derived-exact P19]
+  L19.mlp            -0.348 [derived-exact P19]
+  L20.attn           2.9179 [derived-exact P19]
+  L20.mlp            0.45285 [derived-exact P19]
+  L21.attn           7.2685 [derived-exact P19]
+  L21.mlp            4.1272 [derived-exact P19]
+  L22.attn           0.12972 [derived-exact P19]
+  L22.mlp            -1.0087 [derived-exact P19]
+  L23.attn           0.20788 [derived-exact P19]
+  L23.mlp            -1.9201 [derived-exact P19]
+  ~residual_rounding -0.02752 [measured P01]  scale 2.596 [bound P19] k 1 within
+  ~unlisted          0 [derived-exact P19]
+  ~final_norm        0.0016416 [measured P19]  scale 5.8289 [derived-exact P19] k 2 within
+  ~head              0.04431 [measured P19]  scale 0.083516 [bound P19] k 1 within
+  listed_sum 13.575 [derived-exact P19]  closure -3.5527e-15 [derived-exact P19]
+(mdb) restart pre
+t10.L3.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) info edits
+staged at t10.L3.p: none
+(mdb) abort
+dropped 0 staged edit(s)
+t10.L3.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) run name=donor The Colosseum is located in the city of
+stopped: no-breakpoints
+run donor
+t10.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) frame base:
+run base
+t10.L3.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) until L12.h
+t10.L12.h  h = layer input (residual stream)  {P01}
+(mdb) checkpoint s0
+checkpoint s0 at t10.L12.h (753 bytes)
+(mdb) set L12.A[h3] = donor:L12.A[h3]
+staged at t10.L12.A[h3]: A replace tensor [1, 1, 896] bfloat16 sha256 51a73e22a0f9 from donor:t10.L12.A[h3] (live) on [h3] (64 elements) (not fired yet)  (1 staged)
+  value from donor:t10.L12.A[h3]
+  realised as one masked replace on the selected elements
+(mdb) info edits
+staged at t10.L12.h: A replace tensor [1, 1, 896] bfloat16 sha256 51a73e22a0f9 from donor:t10.L12.A[h3] (live) on [h3] (64 elements) (not fired yet)
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) x logits 4 12095
+t10.logits  [12095:12099] of 151936: 18.25 -1.6406 0.98047 2.2656 [measured, under edit t10.L12.A]
+(mdb) restart s0
+t10.L12.h  h = layer input (residual stream)  {P01}
+(mdb) whatif L12.m = donor:L12.m consumer=M[" Paris"," Rome"]
+whatif t10.L12.m replace tensor 50ac9847da19 from donor:t10.L12.m -> t10.M[12095,21718]  (mode pending, record 0c34d648e835f9ab)
+  sealed  linear ΔM = 0.12887 [derived-local P14]   exact ΔM = 0.0025358 [derived-exact]  (worst-case rounding interval not informative from t10.L12.p (score interval 6.58 at |s| 15.2, softmax worst case exp(2*6.58) = 5.2e+05); not carried past t10.L13.p (score interval 7.44e+21 at |s| 7.65, softmax worst case exp(2*7.44e+21) = 1e6.46e+21, beyond float64))  (operands forecast from t10.L12.h)   emulated ΔM = -0.03125 [derived-exact]
+  native  ΔM = -0.03125 [measured]   (base 13.875 [measured] -> edited 13.844 [measured])
+  error split (P20): linear 0.12887 [derived-local P14] + nonlinear -0.12633 [derived-exact P20] + operands -0.0079072 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.025879 [derived-exact P20] (worst-case rounding interval not informative from t10.L13.s (interval 12.5 >= |x| 7.66); not carried past t10.L14.p (score interval 1.39e+69 at |s| 8.21, softmax worst case exp(2*1.39e+69) = 1e1.21e+69, beyond float64)) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM -0.03125 [measured P20] = 0.25 spacings, emulated ΔM -0.03125 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.0053714 [derived-exact P20]; floor 0.125 [supplied P20] = 1 bfloat16 spacing (supplied)
+  edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 228/228 (worst |native - identity|/bound 0.996 at t10.L12.r); 1 not checked
+  base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 229/229 (worst |native - identity|/bound 0.996 at t10.L12.r)
+  session unchanged at t10.L12.h  (5 moves, restored)
+(mdb) symbol city = whatif
+symbol city = t@last.L12.m  (record 6193acf871dec34a, stored 6193acf871dec34a)
+  role    writer L12.m (occurrence, L12 m)
+  row     t10 " of": role @last (the prompt's last row); prompt 11 rows sha256 168b6acf9340
+  readers unresolved (reads follows cache cells (k, v); a m value is read by the later stops of its own row, not by attention)
+  effect  whatif t10.L12.m = donor:t10.L12.m -> t10.M[12095,21718]: base 13.875 [measured] -> edited 13.844 [measured], Δ -0.03125 [measured], verdict effect
+  origin  the last whatif; donor donor:t10.L12.m sha256 50ac9847da19; run base; prefill=10: rows 0..9 batched, first stepped row t10
+state: unresolved
+(mdb) symbol show city
+symbol city = t@last.L12.m  (record 6193acf871dec34a)
+  role    writer L12.m (occurrence, L12 m)
+  row     t10 " of": role @last (the prompt's last row); prompt 11 rows sha256 168b6acf9340
+  readers unresolved (reads follows cache cells (k, v); a m value is read by the later stops of its own row, not by attention)
+  effect  whatif t10.L12.m = donor:t10.L12.m -> t10.M[12095,21718]: base 13.875 [measured] -> edited 13.844 [measured], Δ -0.03125 [measured], verdict effect
+  origin  the last whatif; donor donor:t10.L12.m sha256 50ac9847da19; run base; prefill=10: rows 0..9 batched, first stepped row t10
+  here: t10.L12.m (row 10: its declaring prompt)
+state: unresolved
+(mdb) break L5.p
+Breakpoint 1 at L5.p
+(mdb) watch L6.o change
+Watch 2 (change) on L6.o
+(mdb) info breakpoints
+1   break  L5.p  hits 0
+2   watch  L6.o change  hits 0
+(mdb) continue
+Breakpoint 1, L5.p
+t11.L5.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) continue
+Breakpoint 1, L5.p
+t12.L5.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) reverse-continue
+Breakpoint 1, L5.p
+t11.L5.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) delete
+deleted 1 2
+(mdb) restart s0
+t10.L12.h  h = layer input (residual stream)  {P01}
+(mdb) forecast M[" Paris"," Rome"]
+forecast 1  t10.M[12095,21718]  sealed at t10.L12.h  record 989c87e890422b8a
+  method 229 identities t10.L12.a .. t10.logits (last readout_logits P19); chain blob c4baf59e09dc3c52
+  predicted exact 13.864 [derived-exact P19]   emulated 13.875 [derived-exact P19]
+  worst-case rounding interval not informative from t10.L12.p (score interval 6.58 at |s| 15.2, softmax worst case exp(2*6.58) = 5.2e+05); not carried past t10.L13.p (score interval 3.27e+54 at |s| 7.53, softmax worst case exp(2*3.27e+54) = 1e2.84e+54, beyond float64)
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) verify
+forecast 1 t10.M[12095,21718]: confirmed  native 13.875 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.15625 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.01113 [measured] = 0.0712 spacings; worst-case rounding interval not informative from t10.L12.p (score interval 6.58 at |s| 15.2, softmax worst case exp(2*6.58) = 5.2e+05); not carried past t10.L13.p (score interval 3.27e+54 at |s| 7.53, softmax worst case exp(2*3.27e+54) = 1e2.84e+54, beyond float64)
+  stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 229/229 (worst |native - identity|/bound 0.996 at t10.L12.r)
+  rounding origin (sealed): t10.L12.p[h8]: score spacing 0.03125 at |s| 4.75; exact and emulated part by 2 spacings
+  order: sealed at t10.L12.h (stop 230) before the target (stop 459); cut descends through 14 receipts
+(mdb) restart s0
+t10.L12.h  h = layer input (residual stream)  {P01}
+(mdb) until logits
+t10.logits  logits = lm_head(fn)
+(mdb) symbols consumer=M[" Paris"," Rome"] limit=5
+symbols at t10.logits  consumer t10.M[12095,21718] = 13.875 [measured]  min_mass 0.1 [supplied]
+  mass: a sum over the heads and layers that read the binding (n reads, mean per read)
+  life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
+  t0 "The"    read   mass 170.03 [derived-exact] over 336 reads (mean 0.50603 [derived-exact])  to_consumer -0.24638 [derived-exact P19]  life t10:######################## (t10.L0..t10.L23)
+    defined t0.L*.k, t0.L*.v
+    readers t10.L10.h1 mass 0.85938 [measured] effect 0.11893 [derived-exact P19]; t10.L21.h3 mass 0.67188 [measured] effect -0.0992 [derived-exact P19]; t10.L21.h0 mass 0.70703 [measured] effect -0.064592 [derived-exact P19] (+333 more)
+  t1 " E"     read   mass 3.2841 [derived-exact] over 336 reads (mean 0.009774 [derived-exact])  to_consumer 0.062594 [derived-exact P19]  life t10:.#...................... (t10.L1..t10.L1)
+    defined t1.L*.k, t1.L*.v
+    readers t10.L22.h0 mass 0.014404 [measured] effect 0.013214 [derived-exact P19]; t10.L16.h10 mass 0.028564 [measured] effect 0.011976 [derived-exact P19]; t10.L20.h9 mass 0.012268 [measured] effect 0.011865 [derived-exact P19] (+333 more)
+  t2 "iff"    read   mass 14.79 [derived-exact] over 336 reads (mean 0.044018 [derived-exact])  to_consumer 8.1685 [derived-exact P19]  life t10:.....#....############.. (t10.L5..t10.L21)
+    defined t2.L*.k, t2.L*.v
+    readers t10.L21.h6 mass 0.51953 [measured] effect 2.6627 [derived-exact P19]; t10.L21.h1 mass 0.76562 [measured] effect 2.2297 [derived-exact P19]; t10.L20.h6 mass 0.87109 [measured] effect 0.86217 [derived-exact P19] (+333 more)
+  t3 "el"     read   mass 5.378 [derived-exact] over 336 reads (mean 0.016006 [derived-exact])  to_consumer 2.8864 [derived-exact P19]  life t10:....#.#.......##.#...#.. (t10.L4..t10.L21)
+    defined t3.L*.k, t3.L*.v
+    readers t10.L21.h6 mass 0.33594 [measured] effect 1.7831 [derived-exact P19]; t10.L21.h1 mass 0.1875 [measured] effect 0.48857 [derived-exact P19]; t10.L17.h1 mass 0.19043 [measured] effect 0.18171 [derived-exact P19] (+333 more)
+  t4 " Tower" read   mass 10.752 [derived-exact] over 336 reads (mean 0.031999 [derived-exact])  to_consumer 0.61938 [derived-exact P19]  life t10:##..###..#######.###.... (t10.L0..t10.L19)
+    defined t4.L*.k, t4.L*.v
+    readers t10.L21.h6 mass 0.050293 [measured] effect 0.097047 [derived-exact P19]; t10.L17.h2 mass 0.28711 [measured] effect 0.067403 [derived-exact P19]; t10.L21.h8 mass 0.06543 [measured] effect 0.057483 [derived-exact P19] (+333 more)
+  named city = t@last.L12.m -> t10.M[12095,21718]  Δ -0.03125 [measured] effect  here t10.L12.m (row 10: its declaring prompt)
+  Unbound     mass 131.78 [derived-exact]  readout 2.3845 [measured]
+    = embedding+mlp 2.1842 [derived-exact P19] + attention not listed 0.24197 [derived-exact P19] + remainder -0.041667 [measured], bound 14.319 [bound]: within
+  accounting: 336 heads, listed mass 204.23 [derived-exact], max |sum p - 1| 0.0023346 [measured] <= 0.04297 [bound], partition gap 0 [derived-exact]
+  (bindings 1-5 of 11)
+  stored 1 record(s): 711621f95ebc9783
+(mdb) symbols consumer=M[" Paris"," Rome"] offset=5 limit=5
+symbols at t10.logits  consumer t10.M[12095,21718] = 13.875 [measured]  min_mass 0.1 [supplied]
+  mass: a sum over the heads and layers that read the binding (n reads, mean per read)
+  life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
+  t5 " is"      read   mass 18.536 [derived-exact] over 336 reads (mean 0.055168 [derived-exact])  to_consumer 0.23591 [derived-exact P19]  life t10:#######.##...###....#### (t10.L0..t10.L23)
+    defined t5.L*.k, t5.L*.v
+    readers t10.L22.h9 mass 0.42383 [measured] effect -0.18589 [derived-exact P19]; t10.L22.h8 mass 0.38867 [measured] effect 0.14264 [derived-exact P19]; t10.L21.h0 mass 0.10254 [measured] effect 0.10061 [derived-exact P19] (+333 more)
+  t6 " located" read   mass 8.7083 [derived-exact] over 336 reads (mean 0.025917 [derived-exact])  to_consumer 0.15575 [derived-exact P19]  life t10:#####..####.####........ (t10.L0..t10.L15)
+    defined t6.L*.k, t6.L*.v
+    readers t10.L12.h6 mass 0.10791 [measured] effect 0.034759 [derived-exact P19]; t10.L14.h4 mass 0.12598 [measured] effect 0.029464 [derived-exact P19]; t10.L15.h3 mass 0.125 [measured] effect 0.028871 [derived-exact P19] (+333 more)
+  t7 " in"      read   mass 21.628 [derived-exact] over 336 reads (mean 0.064369 [derived-exact])  to_consumer 0.42698 [derived-exact P19]  life t10:###.#.##########.####.## (t10.L0..t10.L23)
+    defined t7.L*.k, t7.L*.v
+    readers t10.L23.h7 mass 0.25977 [measured] effect -0.15771 [derived-exact P19]; t10.L22.h0 mass 0.21094 [measured] effect 0.12649 [derived-exact P19]; t10.L22.h8 mass 0.26758 [measured] effect 0.11599 [derived-exact P19] (+333 more)
+  t8 " the"     read   mass 19.269 [derived-exact] over 336 reads (mean 0.057348 [derived-exact])  to_consumer 0.42684 [derived-exact P19]  life t10:#####.###.#.##.#...#..## (t10.L0..t10.L23)
+    defined t8.L*.k, t8.L*.v
+    readers t10.L6.h4 mass 0.32031 [measured] effect 0.057417 [derived-exact P19]; t10.L23.h7 mass 0.13965 [measured] effect -0.055112 [derived-exact P19]; t10.L8.h13 mass 0.20312 [measured] effect 0.05187 [derived-exact P19] (+333 more)
+  t9 " city"    read   mass 31.453 [derived-exact] over 336 reads (mean 0.093611 [derived-exact])  to_consumer -1.0538 [derived-exact P19]  life t10:###########.#####.##.... (t10.L0..t10.L19)
+    defined t9.L*.k, t9.L*.v
+    readers t10.L1.h0 mass 0.91406 [measured] effect -0.17281 [derived-exact P19]; t10.L8.h7 mass 0.97656 [measured] effect -0.11099 [derived-exact P19]; t10.L15.h2 mass 0.71875 [measured] effect -0.10426 [derived-exact P19] (+333 more)
+  named city = t@last.L12.m -> t10.M[12095,21718]  Δ -0.03125 [measured] effect  here t10.L12.m (row 10: its declaring prompt)
+  Unbound       mass 236.41 [derived-exact]  readout 13.683 [measured]
+    = embedding+mlp 2.1842 [derived-exact P19] + attention not listed 11.541 [derived-exact P19] + remainder -0.041667 [measured], bound 14.319 [bound]: within
+  accounting: 336 heads, listed mass 99.595 [derived-exact], max |sum p - 1| 0.0023346 [measured] <= 0.04297 [bound], partition gap 0 [derived-exact]
+  (bindings 6-10 of 11)
+  stored 1 record(s): 8eb156a96ba62651
+(mdb) reads t3 consumer=M[" Paris"," Rome"] top=3
+reads t3 at t10.logits  rows t10  consumer t10.M[12095,21718]  (336 reads)
+  t10.L21.h6 mass 0.33594 [measured]  effect 1.7831 [derived-exact P19]
+    causal: Δ -0.96875 [measured], emulated -0.96875 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.95581 [derived-exact]; floor 0.125 [supplied P20]
+  t10.L21.h1 mass 0.1875 [measured]  effect 0.48857 [derived-exact P19]
+    causal: Δ -0.1875 [measured], emulated -0.1875 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.20641 [derived-exact]; floor 0.125 [supplied P20]
+  t10.L17.h1 mass 0.19043 [measured]  effect 0.18171 [derived-exact P19]
+    causal: Δ -0.0625 [measured], emulated -0.0625 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.078358 [derived-exact]; floor 0.125 [supplied P20]
+  +333 more: mass Σ 4.6641 [derived-exact]  effect Σ 0.43302 [derived-exact]
+  value_mix: eta_max_abs 0.014771 [measured P06] worst |eta|/bound 0.99089 [measured P06] within bound (24 layer rows)
+  head_write: eta_max_abs 0.0076449 [measured P07] worst |eta|/bound 0.9139 [measured P07] within bound (24 layer rows)
+(mdb) circuit M[" Paris"," Rome"] top=3 depth=2
+circuit 1  t10.M[12095,21718]  top 3 depth 2  (21 nodes, record 1911ceb41870e158)
+  t10.M[12095,21718]  13.875 [measured]
+    L21.attn  t10.L21.o  7.9105 [derived-exact P19]
+      L21.h6  t10.L21.A[h6]  4.5667 [derived-exact P07]
+      L21.h1  t10.L21.A[h1]  2.7487 [derived-exact P07]
+      L21.h9  t10.L21.A[h9]  0.60246 [derived-exact P07]
+      +11 more  t10.L21.o (unlisted)  -0.0048037 [derived-exact]
+      L21.attn remainder  t10.L21.o  -0.0025591 [measured] within 0.096294 [bound]
+    L21.mlp  t10.L21.m  4.0156 [derived-exact P19]
+      L21.f4090  t10.L21.f[i=4090]  4.1433 [derived-exact P15]
+      L21.f264  t10.L21.f[i=264]  -0.35805 [derived-exact P15]
+      L21.f2930  t10.L21.f[i=2930]  0.34332 [derived-exact P15]
+      +4861 more  t10.L21.m (unlisted)  -0.11404 [derived-exact]
+      L21.mlp remainder  t10.L21.m  0.0010698 [measured] within 0.30979 [bound]
+    L20.attn  t10.L20.o  2.3926 [derived-exact P19]
+      L20.h6  t10.L20.A[h6]  0.94757 [derived-exact P07]
+      L20.h5  t10.L20.A[h5]  0.92919 [derived-exact P07]
+      L20.h0  t10.L20.A[h0]  0.33746 [derived-exact P07]
+      +11 more  t10.L20.o (unlisted)  0.17902 [derived-exact]
+      L20.attn remainder  t10.L20.o  -0.00063132 [measured] within 0.055478 [bound]
+    +46 more  t10.M[12095,21718] (unlisted)  -0.402 [derived-exact]  (not examined, 45 subtree(s) not expanded)
+    remainder  t10.M[12095,21718]  -0.041667 [measured] within 14.319 [bound]
+  closure 3.5527e-15 [derived-exact P19] within 2.0348e-13 [bound] (zero by construction: float64 summation only)
+  remainders: 45 dropped subtree(s) not examined; no claim about their rounding bounds; 0 edit node(s)
+  stored record 1911ceb41870e158
+(mdb) compare L12.m=donor:L12.m L14.m=donor:L14.m consumer=M[" Paris"," Rome"]
+error (bad-args): write compare A B [--consumer C]; a side is ADDR=VALUE [op] (ADDR += X ...) or a checkpoint
+(mdb) restart s0
+t10.L12.h  h = layer input (residual stream)  {P01}
+(mdb) sweep m rows=8:10 layers=10:13 = donor --consumer M[" Paris"," Rome"]
+error (refused): rows 8..: t8 is before the start of this run: it computes prompt rows 0..9 in one batched call (prefill=10), so they have no ports; start the run with `start ... prefill=K` for a K <= 8 to step t8 (prefill=0 steps every row)
+(mdb) reverse-step 3
+t10.L11.f  f = sg * u (down_proj input)  {P10 P15}
+(mdb) step 2 layer
+t10.L12.h_out  h_out = r + m (layer output)  {P14}
+(mdb) info checkpoints
+pre       t10.L3.p  staged 0, committed 0
+s0        t10.L12.h  staged 0, committed 0
+(mdb) info runs
+* base      t10.L12.h_out  11 tokens, staged 0
+  donor     t10.logits  11 tokens, staged 0
+        9.60 real         0.06 user         0.02 sys
+            24018944  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                2836  page reclaims
+                   7  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 107  messages sent
+                  54  messages received
+                   0  signals received
+                  36  voluntary context switches
+                 350  involuntary context switches
+           752040577  instructions retired
+           322262803  cycles elapsed
+            17925248  peak memory footprint

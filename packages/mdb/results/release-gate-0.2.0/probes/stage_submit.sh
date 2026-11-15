@@ -12,7 +12,7 @@ STAGE="$(mktemp -d "${TMPDIR:-/tmp}/mdb-rg.XXXXXX")"
 trap 'rm -rf "$STAGE"' EXIT
 mkdir -p "$STAGE/packages/mdb" "$STAGE/probes"
 find "$EX" -maxdepth 1 -type f ! -name '*.ipynb' ! -name '*.log' ! -name 'run_on_beast.sh' -exec cp {} "$STAGE/" \;
-cp "$PROBES"/*.py "$STAGE/probes/"
+cp "$PROBES"/*.py "$PROBES"/run_probe03.sh "$STAGE/probes/"
 rsync -a --exclude __pycache__ --exclude static "$MDB/src" "$STAGE/packages/mdb/"
 rsync -a --exclude __pycache__ "$ROOT/src" "$STAGE/"
 git -C "$ROOT" rev-parse HEAD > "$STAGE/REVISION"

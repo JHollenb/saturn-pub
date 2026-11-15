@@ -1,0 +1,97 @@
+mrun: job-131d710c264e -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  npairs 2
+2 pairs: city:Barcelona, city:Busan
+model loaded in 5s; head_dim 128, 8 KV groups; script sha256 bcd8e5207ce6, prereg be363361ba04
+SAE L19.h_out k 50 | census country features 58 | pyvene registered ['Qwen3Model', 'Qwen3ForCausalLM', 'Qwen3ForSequenceClassification'] | config model.layers[20].self_attn.v_proj.output
+2 donors; example pointer: {'origin': 'donor', 'via': 'live', 'address': 't36.L20.v[kv6]', 'sha256': 'b90cf93c5e9bf56f853a15d427b1df1c1bfa990d8754eb1be477559ffd441f40', 'shape': [1, 1, 128], 'dtype': 'bfloat16', 'where': 't37.logits'}
+pool donor-carrier-v: n=2, kernel path mdb-stepped, record efb684f437be1b43; bitwise equal to Run.ref on every donor: True
+readout span full69: k=32, authority derived-exact, explained 0.950, digest 281bd2261a81
+readout span a69: k=32, authority derived-exact, explained 0.942, digest bea1ba0bece3
+city:Barcelona               crow 36 rank 5  M0   5.250 (showcase   5.250)  whole   0.625 (  0.625)  pyvene   0.625 (  0.625)  sae   5.000 (  5.000)  random  5.250  full69  1.125  a69  2.125  self dM 0.0  [4.98s]
+city:Busan                   crow 37 rank 3  M0   4.125 (showcase   4.125)  whole  -3.625 ( -3.625)  pyvene  -3.500 ( -3.500)  sae   0.750 (  0.750)  random  3.875  full69 -3.000  a69  0.375  self dM 0.0  [5.47s]
+{
+ "pairs": 2,
+ "flips": {
+  "whole": "1/2",
+  "pyvene": "1/2",
+  "sae": "0/2",
+  "random": "0/2",
+  "full69_k32": "1/2",
+  "a69_k32": "0/2"
+ },
+ "flips_margin4": {
+  "whole": "1/2",
+  "pyvene": "1/2",
+  "sae": "0/2",
+  "random": "0/2",
+  "full69_k32": "1/2",
+  "a69_k32": "0/2"
+ },
+ "whole_flips_with_branches_M0": "1/2",
+ "pyvene_mdb_verdict_agree": "2/2",
+ "disagree": [],
+ "pyvene_mdb_gap": {
+  "median": 0.0625,
+  "max": 0.125
+ },
+ "kernel_path_clean_gap": {
+  "median": 0.0,
+  "max": 0.0
+ },
+ "sae_rank": {
+  "median": 4.0,
+  "max": 5
+ },
+ "median_frac_moved": {
+  "sae": 0.244768962510898,
+  "random": 0.016129032258064516,
+  "full69_k32": 0.9056233653007846,
+  "a69_k32": 0.5797733217088056
+ },
+ "self_null_max_abs_dM": 0.0,
+ "median_mass_of_delta_sae": 0.32536625074117204
+}
+symbol table for city:Barcelona at t37.logits (1.1s, records ['6bb4224245687e5188d2292705ac5147f925aa39072ea1df5133b49df4ee3da6'])
+  sae-country      k=  5  derived-exact mass_native 0.180  to_consumer -0.182 of cell +0.917  share -0.198  labels ['iia_panel', 'interchange']
+  random           k=  5  supplied      mass_native 0.050  to_consumer +0.162 of cell +0.917  share 0.177  labels ['iia_panel', 'interchange']
+  readout-full69   k= 32  derived-exact mass_native 0.686  to_consumer +0.693 of cell +0.917  share 0.756  labels ['iia_panel', 'interchange']
+  readout-a69      k= 32  derived-exact mass_native 0.574  to_consumer +0.689 of cell +0.917  share 0.751  labels ['iia_panel', 'interchange']
+M0            equal on 2/2
+crow          equal on 2/2
+donor_crow    equal on 2/2
+rank          equal on 2/2
+features      equal on 2/2
+whole         equal on 2/2
+pyvene        equal on 2/2
+pyvene_clean  equal on 2/2
+branches_M0   equal on 2/2
+full69_k32    equal on 2/2
+a69_k32       equal on 1/2  max |diff| 0.125
+sae           equal on 2/2
+random        equal on 1/2  max |diff| 0.125
+sae_vnative   equal to showcase sae on 2/2
+a69_vnative   equal to showcase a69_k32 on 2/2
+recipient cell differs between the native run and the branched run on 1/2 pairs (max |dv| 0.328125)
+
+number                               showcase        now
+flips @1 floor whole                        1          1
+flips @1 floor pyvene                       1          1
+flips @1 floor sae                          0          0
+flips @1 floor random                       0          0
+flips @1 floor full69_k32                   1          1
+flips @1 floor a69_k32                      0          0
+flips @4 floors whole                       1          1
+flips @4 floors pyvene                      1          1
+flips @4 floors sae                         0          0
+flips @4 floors random                      0          0
+flips @4 floors full69_k32                  1          1
+flips @4 floors a69_k32                     0          0
+self-patch null: max |dM| 0.0 (must be 0)
+done in 20.0s; wrote out/interchange_subspace_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "npairs": 2, "pool": {"n": 2, "kernel_path": "mdb-stepped", "equal_to_run_ref": true, "record": "efb684f437be1b43dc56f098d0074f4b06f24835de780656e270792742c64729"}, "summary": {"pairs": 2, "flips": {"whole": "1/2", "pyvene": "1/2", "sae": "0/2", "random": "0/2", "full69_k32": "1/2", "a69_k32": "0/2"}, "flips_margin4": {"whole": "1/2", "pyvene": "1/2", "sae": "0/2", "random": "0/2", "full69_k32": "1/2", "a69_k32": "0/2"}, "whole_flips_with_branches_M0": "1/2", "pyvene_mdb_verdict_agree": "2/2", "disagree": [], "pyvene_mdb_gap": {"median": 0.0625, "max": 0.125}, "kernel_path_clean_gap": {"median": 0.0, "max": 0.0}, "sae_rank": {"median": 4.0, "max": 5}, "median_frac_moved": {"sae": 0.244768962510898, "random": 0.016129032258064516, "full69_k32": 0.9056233653007846, "a69_k32": 0.5797733217088056}, "self_null_max_abs_dM": 0.0, "median_mass_of_delta_sae": 0.32536625074117204}, "symbol_table": {"pair": "city:Barcelona", "subspaces": [{"name": "sae-country", "k": 5, "authority": "derived-exact", "mass_native": 0.18031661714651323, "subspace_to_consumer": -0.1818453615483214, "cell_to_consumer": 0.9174568246296316}, {"name": "random", "k": 5, "authority": "supplied", "mass_native": 0.04959659573074193, "subspace_to_consumer": 0.16200424323613993, "cell_to_consumer": 0.9174568246296316}, {"name": "readout-full69", "k": 32, "authority": "derived-exact", "mass_native": 0.6863635527166593, "subspace_to_consumer": 0.6933703179802697, "cell_to_consumer": 0.9174568246296316}, {"name": "readout-a69", "k": 32, "authority": "derived-exact", "mass_native": 0.573539120098088, "subspace_to_consumer": 0.6888161259656695, "cell_to_consumer": 0.9174568246296316}]}, "equal_counts": {"M0": 2, "crow": 2, "donor_crow": 2, "rank": 2, "features": 2, "whole": 2, "pyvene": 2, "pyvene_clean": 2, "branches_M0": 2, "full69_k32": 2, "a69_k32": 1, "sae": 2, "random": 1, "sae_vnative": 2, "a69_vnative": 2}, "showcase_reference": {"flips": {"whole": 1, "pyvene": 1, "sae": 0, "random": 0, "full69_k32": 1, "a69_k32": 0}, "flips_margin4": {"whole": 1, "pyvene": 1, "sae": 0, "random": 0, "full69_k32": 1, "a69_k32": 0}}, "seconds": 20.0, "records": "out/records.jsonl"}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.94
+	Maximum resident set size (kbytes): 4353464
+mrun: job-131d710c264e -> succeeded
+mrun: job-131d710c264e finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 21.96, 'peak_rss_mb': 3008.5, 'peak_vram_mb': 3876.0}

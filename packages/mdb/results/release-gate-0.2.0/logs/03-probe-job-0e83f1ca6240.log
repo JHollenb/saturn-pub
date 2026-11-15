@@ -1,0 +1,8 @@
+mrun: job-0e83f1ca6240 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+bash: probes/run_probe03.sh: No such file or directory
+mrun: job-0e83f1ca6240 -> failed
+mrun: job-0e83f1ca6240 finished: failed result={'status': 'failed', 'returncode': 127, 'elapsed_s': 0.32, 'peak_rss_mb': 14.1, 'peak_vram_mb': 0.0}
+mrun: failure diagnostics: kind=process_exit phase=process.finalize message=child exited with return code 127 returncode=127
+mrun: failure class=env_resolution retry=do-not-retry (deterministic: the same submit fails the same way; fix before retrying)
+mrun: failure log tail available via `mrun why job-0e83f1ca6240`

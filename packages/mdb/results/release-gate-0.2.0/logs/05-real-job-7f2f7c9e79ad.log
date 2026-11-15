@@ -1,0 +1,92 @@
+mrun: job-7f2f7c9e79ad -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  items 24
+[    4.9s] model loaded; custody script 10560aafdab4 prereg 0f4a82dc0341
+{
+ "basis": {
+  "hook_name": "blocks.19.hook_resid_post",
+  "release": "qwen-scope-3-1.7b-base-w32k-l50",
+  "sae_id": "layer19",
+  "model": "Qwen/Qwen3-1.7B-Base"
+ },
+ "sae_lens_version": "6.55.5",
+ "registry_load": {
+  "ok": false,
+  "error": "LocalEntryNotFoundError"
+ },
+ "to_saelens": "ok"
+}
+[   16.1s] SAEs ready
+currency:yen                 f32521 (showcase f32521) share  0.77/ 0.77  L20 top/zero  0.81/ 0.81  rnd -0.14  gauss -0.24  err  0.19  [16.33s]
+currency:won                 f11471 (showcase f11471) share  0.66/ 0.66  L20 top/zero  0.48/ 0.48  rnd -0.12  gauss -0.00  err  0.16  [13.5s]
+currency:ruble               f23913 (showcase f23913) share  0.97/ 0.97  L20 top/zero  2.33/ 2.33  rnd  1.67  gauss -0.33  err -0.67  [14.77s]
+currency:rouble              f23913 (showcase f23913) share  0.85/ 0.85  L20 top/zero  0.67/ 0.67  rnd  0.11  gauss  0.07  err  0.11  [14.9s]
+currency:yuan                f17491 (showcase f17491) share  1.00/ 1.00  L20 top/zero  1.38/ 1.38  rnd  0.19  gauss -0.25  err -0.25  [13.27s]
+currency:renminbi            f17491 (showcase f17491) share  0.95/ 0.95  L20 top/zero  0.86/ 0.86  rnd -0.00  gauss  0.14  err -0.00  [16.14s]
+currency:baht                f29308 (showcase f29308) share  0.50/ 0.50  L20 top/zero  0.44/ 0.44  rnd -0.12  gauss  0.07  err  0.40  [14.91s]
+currency:zloty               f5792 (showcase f5792) share  0.04/ 0.04  L20 top/zero -0.00/-0.00  rnd -0.02  gauss  0.02  err -0.00  [15.95s]
+currency:forint              f23868 (showcase f23868) share  0.47/ 0.47  L20 top/zero  0.29/ 0.29  rnd -0.12  gauss  0.08  err  0.25  [14.89s]
+currency:krona               fNone (showcase fNone) share   -  /  -    L20 top/zero   -  /  -    rnd   -    gauss   -    err -0.22  [7.57s]
+currency:rupiah              f23115 (showcase f23115) share  0.04/ 0.04  L20 top/zero  0.06/ 0.06  rnd  0.02  gauss  0.02  err  0.48  [16.28s]
+currency:shekel              f28432 (showcase f28432) share  0.35/ 0.35  L20 top/zero  0.17/ 0.17  rnd -0.00  gauss -0.00  err  0.29  [14.66s]
+currency:koruna              f24531 (showcase f24531) share  0.45/ 0.45  L20 top/zero  1.25/ 1.25  rnd  0.17  gauss -0.08  err  0.50  [14.69s]
+currency:pound sterling      f10710 (showcase f10710) share  0.56/ 0.56  L20 top/zero  0.42/ 0.42  rnd  0.21  gauss  0.05  err -0.11  [15.01s]
+currency:sterling            f10710 (showcase f10710) share  0.53/ 0.53  L20 top/zero  0.30/ 0.30  rnd -0.00  gauss -0.06  err -0.12  [13.23s]
+currency:rial                f24255 (showcase f24255) share  0.38/ 0.38  L20 top/zero  0.52/ 0.52  rnd  0.05  gauss -0.00  err -0.10  [14.87s]
+person:Hokusai               f32521 (showcase f32521) share  0.95/ 0.95  L20 top/zero  1.23/ 1.23  rnd -0.05  gauss  0.05  err  0.09  [17.81s]
+person:Akira Kurosawa        f32521 (showcase f32521) share  0.84/ 0.84  L20 top/zero  1.11/ 1.11  rnd -0.22  gauss  0.22  err -0.00  [18.63s]
+person:Haruki Murakami       f32521 (showcase f32521) share  0.68/ 0.68  L20 top/zero  0.78/ 0.78  rnd -0.56  gauss -0.00  err  0.22  [18.61s]
+person:Mao Zedong            f17491 (showcase f17491) share  1.01/ 1.01  L20 top/zero  0.29/ 0.29  rnd -0.00  gauss  0.14  err  0.43  [17.6s]
+person:Miguel de Cervantes   f11201 (showcase f11201) share  0.87/ 0.87  L20 top/zero  1.15/ 1.15  rnd  0.23  gauss -0.31  err  0.38  [18.68s]
+person:Giuseppe Verdi        f26232 (showcase f26232) share  0.80/ 0.80  L20 top/zero  0.71/ 0.71  rnd -0.06  gauss  0.18  err  0.24  [17.43s]
+person:Mozart                f29692 (showcase f29692) share  0.10/ 0.10  L20 top/zero  0.08/ 0.08  rnd -0.06  gauss  0.03  err  0.47  [13.21s]
+person:Frederic Chopin       f6798 (showcase f6798) share  0.01/ 0.01  L20 top/zero -0.00/-0.00  rnd -0.05  gauss -0.03  err  0.24  [17.45s]
+[  386.5s] items done
+key number                                                now     showcase
+L2 median top/zero                                     0.5238       0.5238
+L2 median random-component/zero                            -0           -0
+L2 median error/zero                                   0.1752       0.1752
+L2 median gauss-null/zero (new)                       0.01923            -
+L1 median top share                                    0.6586       0.6586
+L1 median error share                                  0.1236       0.1236
+L1 top share >= 0.5 (count)                                14           14
+L1 error share <= 0.2 (count)                              15           15
+L3 median onset                                            18           18
+L3 onset >= L15 (count)                                    17           17
+L4 only inside L17..21, showcase floor rule                19           19
+L4 only inside L17..21, Branches floor                     14            -
+L4 above floor at L20, showcase floor rule                 18           18
+partition max gap (code check)                      1.332e-15    1.332e-15
+SAELens active set agrees (count)                          24           24
+correct (count)                                            24           24
+L4 layer histogram now (Branches floor): {'15': 0, '16': 0, '17': 0, '18': 0, '19': 0, '20': 14, '21': 0, '22': 0, '23': 0}
+L4 layer histogram now (showcase rule):  {'15': 0, '16': 0, '17': 0, '18': 1, '19': 0, '20': 18, '21': 0, '22': 0, '23': 0}
+L4 layer histogram showcase:             {'15': 0, '16': 0, '17': 0, '18': 1, '19': 0, '20': 18, '21': 0, '22': 0, '23': 0}
+{
+ "carrier_row": "24/24",
+ "top_feature": "24/24",
+ "layer_tops": "24/24",
+ "random_picks": "24/24",
+ "arms_dM": "24/24",
+ "max_abs_arm_dM_difference": 0.0,
+ "max_liveness_vs_zero_arm": 0.375,
+ "max_batched_vs_stepped_recheck": 0.375,
+ "median_floor_branches": 0.94921875,
+ "median_floor_showcase_rule": 0.375,
+ "records_sealed": 48
+}
+L2 prereg bars on this subset (information): top >= 0.5 True | random <= 0.15 True | error <= 0.2 True
+PASS L2 medians equal the showcase's on these items
+PASS partition holds on every item (code check)
+PASS SAELens active set agrees on every item
+PASS same top country feature as the showcase
+PASS every batched arm dM equals the showcase's
+PASS L4 (showcase floor rule) equals the showcase's
+6/6 checks pass
+done in 386.7s; wrote out/sae_component_binding_results.json
+RESULT_JSON {"n_items": 24, "summary": {"now_branches_floor": {"n": 24, "L1": {"top_share_ge_0.5": 14, "error_share_le_0.2": 15, "median_top_share": 0.6585896586331925, "median_error_share": 0.12357950485017517, "median_random_share": 0.001807518218984208}, "L2": {"top": 0.5238095238095238, "random": -0.0, "error": 0.17523809523809525, "gauss": 0.019230769230769232, "n": 23}, "L4": {"only_inside_L17_21": 14, "never_above_floor": 10, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 0, "19": 0, "20": 14, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 18, "onset_ge_L15": 17, "n": 23}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 24, "correct": 24}, "now_showcase_floor_rule": {"n": 24, "L1": {"top_share_ge_0.5": 14, "error_share_le_0.2": 15, "median_top_share": 0.6585896586331925, "median_error_share": 0.12357950485017517, "median_random_share": 0.001807518218984208}, "L2": {"top": 0.5238095238095238, "random": -0.0, "error": 0.17523809523809525, "gauss": 0.019230769230769232, "n": 23}, "L4": {"only_inside_L17_21": 19, "never_above_floor": 5, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 1, "19": 0, "20": 18, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 18, "onset_ge_L15": 17, "n": 23}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 24, "correct": 24}, "showcase_same_items": {"n": 24, "L1": {"top_share_ge_0.5": 14, "error_share_le_0.2": 15, "median_top_share": 0.6585896586331925, "median_error_share": 0.12357950485017517, "median_random_share": 0.001807518218984208}, "L2": {"top": 0.5238095238095238, "random": -0.0, "error": 0.17523809523809525, "n": 23}, "L4": {"only_inside_L17_21": 19, "never_above_floor": 5, "layer_histogram": {"15": 0, "16": 0, "17": 0, "18": 1, "19": 0, "20": 18, "21": 0, "22": 0, "23": 0}}, "L3": {"median_onset": 18, "onset_ge_L15": 17, "n": 23}, "partition_max_gap": 1.3322676295501878e-15, "saelens_agrees": 24, "correct": 24}}, "agreement": {"carrier_row": "24/24", "top_feature": "24/24", "layer_tops": "24/24", "random_picks": "24/24", "arms_dM": "24/24", "max_abs_arm_dM_difference": 0.0, "max_liveness_vs_zero_arm": 0.375, "max_batched_vs_stepped_recheck": 0.375, "median_floor_branches": 0.94921875, "median_floor_showcase_rule": 0.375, "records_sealed": 48}, "checks": {"L2 medians equal the showcase's on these items": true, "partition holds on every item (code check)": true, "SAELens active set agrees on every item": true, "same top country feature as the showcase": true, "every batched arm dM equals the showcase's": true, "L4 (showcase floor rule) equals the showcase's": true}, "seconds": 386.7}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:28.06
+	Maximum resident set size (kbytes): 11230584
+mrun: job-7f2f7c9e79ad -> succeeded
+mrun: job-7f2f7c9e79ad finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 388.4, 'peak_rss_mb': 10986.1, 'peak_vram_mb': 3994.0}

@@ -1,0 +1,67 @@
+mrun: job-6f7a1a047230 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  items 0,1
+[    4.6s] model loaded: 28 layers, d_model 2048
+[   12.9s] city:Barcelona: M0 5.250 floor 0.25 nodes 6 arms 22 [8.11s]
+[   19.2s] city:Busan: M0 4.250 floor 0.25 nodes 6 arms 22 [6.32s]
+city:Barcelona  M0 5.25  floor 0.25
+        node  -direct     edge    arm0    arm1     arm2 reroute/fl  norm/fl nonlin/fl
+  L22.f16584   -1.167   -1.466  -1.375  -1.375   -1.461       0.00     0.35      0.02
+   L21.f2252   -1.026   -1.148  -0.750  -1.125   -1.205       1.50     0.32     -0.23
+  L23.f51712   -0.960   -0.937  -0.875  -1.000   -0.944       0.50    -0.22     -0.03
+  L22.f88556   -0.906   -0.821  -0.875  -0.750   -0.729      -0.50    -0.09      0.37
+ L22.f102162   -0.238   -0.011   0.000   0.000   -0.024       0.00     0.10     -0.05
+L22.f160929*   -0.034   -0.106  -0.250  -0.250   -0.083       0.00    -0.67      0.09
+(* = the random node)
+key number (same items)                            showcase        now
+items                                                     2          2
+node_items                                               10         10
+>1fl.n                                                    7          7
+>1fl.G1_rerouting_over_arm0                          0.1429     0.1429
+>1fl.arm0_over_edge                                  0.9022     0.9022
+>1fl.arm0_over_direct                                0.9110     0.9110
+>1fl.edge_over_direct                                0.9758     0.9758
+>4fl.n                                                    2          2
+>4fl.G1_rerouting_over_arm0                          0.0385     0.0385
+>4fl.arm0_over_edge                                  0.9180     0.9180
+>4fl.arm0_over_direct                                0.7939     0.7939
+>4fl.edge_over_direct                                0.8561     0.8561
+direct_overstatement_>1fl                            1.0976     1.0976
+any_bracket_above_floor                                   2          2
+G1_all                                               0.1429     0.1429
+G3_norm_below_floor                                       9          9
+G4_spearman_edge_arm0                                0.9451     0.9451
+median_abs_brackets.rerouting                        0.1250     0.1250
+median_abs_brackets.norm                             0.0526     0.0526
+median_abs_brackets.nonlin                           0.0219     0.0219
+null_machinery_within_floor                              12         12
+random_node_all_brackets_within_floor                     2          2
+random_nodes                                              2          2
+Gaussian matched-norm null (new) within floor: 1/2
+edge sign agrees with the native removal (above floor): 7/7
+{
+ "counts": {
+  "branch_base_same": 2,
+  "nodes_same": 2,
+  "items": 2,
+  "arm0_equal": 12,
+  "arm1_equal": 12,
+  "edge_equal": 1,
+  "null_equal": 12,
+  "node_items": 12
+ },
+ "max_abs_diff": {
+  "direct": 8.881784197001252e-16,
+  "edge": 1.5543122344752192e-15,
+  "arm2_f64": 4.440892098500626e-15,
+  "arm2_bf16_vs_f64_floors": 0.31967243411725477
+ }
+}
+records: {'supplied-forecast': 12, 'branches': 2} custody: {"script_sha256": "cf86f5515cfa047987d04537ec22059a30edd3909e70cf0666b2e6079dae5303", "prereg_sha256": "ee85a40742e921b6640f912d5f50c796a8d30e103e3db089dbe3731b5fd28e01", "kernel_path": "mdb-stepped"}
+done in 19.6s; wrote out/brackets_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "transcoders": "/mnt/big/llm-models/qwen3-1.7b-transcoders-lowl0", "items": ["city:Barcelona", "city:Busan"], "summary_now": {"items": 2, "node_items": 10, ">1fl": {"n": 7, "G1_rerouting_over_arm0": 0.14285714285714285, "arm0_over_edge": 0.9021556736003629, "arm0_over_direct": 0.9110436721015814, "edge_over_direct": 0.9758019506312956}, ">4fl": {"n": 2, "G1_rerouting_over_arm0": 0.038461538461538464, "arm0_over_edge": 0.9180103738296177, "arm0_over_direct": 0.7939150158439454, "edge_over_direct": 0.8561274109848569}, "direct_overstatement_>1fl": 1.0976422213582973, "any_bracket_above_floor": 2, "G1_all": 0.14285714285714285, "G3_norm_below_floor": 9, "G4_spearman_edge_arm0": 0.9451395216446115, "median_abs_brackets": {"rerouting": 0.125, "norm": 0.05259459264583333, "nonlin": 0.02185690359353784}, "null_machinery_within_floor": 12, "random_node_all_brackets_within_floor": 2, "random_nodes": 2}, "summary_showcase_same_items": {"items": 2, "node_items": 10, ">1fl": {"n": 7, "G1_rerouting_over_arm0": 0.14285714285714285, "arm0_over_edge": 0.9021556736003621, "arm0_over_direct": 0.9110436721015817, "edge_over_direct": 0.9758019506312963}, ">4fl": {"n": 2, "G1_rerouting_over_arm0": 0.038461538461538464, "arm0_over_edge": 0.9180103738296181, "arm0_over_direct": 0.7939150158439454, "edge_over_direct": 0.8561274109848567}, "direct_overstatement_>1fl": 1.097642221358297, "any_bracket_above_floor": 2, "G1_all": 0.14285714285714285, "G3_norm_below_floor": 9, "G4_spearman_edge_arm0": 0.9451395216446115, "median_abs_brackets": {"rerouting": 0.125, "norm": 0.05259459264583444, "nonlin": 0.021856903593538896}, "null_machinery_within_floor": 12, "random_node_all_brackets_within_floor": 2, "random_nodes": 2}, "full_panel_audited": {"items": 32, "node_items": 160, "arm0_above_floor": 103, "any_bracket_above_floor": 44, "G1_all": 0.105, "G1_above_floor": 0.095, "arm0_over_edge_above_floor": 0.92, "arm0_over_edge_above_4_floors": 0.97, "arm0_over_direct_above_floor": "0.61-0.64", "G4_spearman": 0.932, "audit": "results/showcase-20261114/AUDIT-SHOWCASE.md (exp4 row, correction 3)"}, "random_gauss_within_floor": "1/2", "edge_sign_agrees_above_floor": "7/7", "reproduction": {"counts": {"branch_base_same": 2, "nodes_same": 2, "items": 2, "arm0_equal": 12, "arm1_equal": 12, "edge_equal": 1, "null_equal": 12, "node_items": 12}, "max_abs_diff": {"direct": 8.881784197001252e-16, "edge": 1.5543122344752192e-15, "arm2_f64": 4.440892098500626e-15, "arm2_bf16_vs_f64_floors": 0.31967243411725477}}, "records": {"path": "out/records.jsonl", "kinds": {"supplied-forecast": 12, "branches": 2}}, "custody": {"script_sha256": "cf86f5515cfa047987d04537ec22059a30edd3909e70cf0666b2e6079dae5303", "prereg_sha256": "ee85a40742e921b6640f912d5f50c796a8d30e103e3db089dbe3731b5fd28e01", "kernel_path": "mdb-stepped"}, "seconds": 19.6}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.51
+	Maximum resident set size (kbytes): 9813576
+mrun: job-6f7a1a047230 -> succeeded
+mrun: job-6f7a1a047230 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 20.83, 'peak_rss_mb': 8817.2, 'peak_vram_mb': 3908.0}

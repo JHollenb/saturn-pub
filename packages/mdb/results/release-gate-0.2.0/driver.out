@@ -1,0 +1,73 @@
+19:29:39 submit 01-smoke
+19:29:40 01-smoke -> job-4304837b7925
+19:31:10 01-smoke job-4304837b7925 succeeded
+19:31:10 submit 01-real
+19:31:11 01-real -> job-d4d71d08aa05
+19:33:38 01-real job-d4d71d08aa05 succeeded
+19:33:38 submit 02-smoke
+19:33:42 02-smoke -> job-4fe1d24a2312
+19:34:30 02-smoke job-4fe1d24a2312 succeeded
+19:34:30 submit 02-real
+19:34:32 02-real -> job-7c705c20930b
+19:39:16 02-real job-7c705c20930b succeeded
+19:39:16 submit 03-smoke
+19:39:18 03-smoke -> job-01191f53da61
+19:41:47 03-smoke job-01191f53da61 succeeded
+19:41:49 submit 03-real
+19:41:51 03-real -> job-94ef6e455e42
+19:45:26 03-real job-94ef6e455e42 succeeded
+19:45:26 beast busy (running=1 queued=0); waiting
+19:45:57 beast busy (running=1 queued=0); waiting
+19:46:27 beast busy (running=1 queued=0); waiting
+19:46:58 beast busy (running=1 queued=0); waiting
+19:47:29 beast busy (running=1 queued=0); waiting
+19:47:59 beast busy (running=1 queued=0); waiting
+19:48:30 beast busy (running=1 queued=0); waiting
+19:49:01 beast busy (running=1 queued=0); waiting
+19:49:31 beast busy (running=1 queued=0); waiting
+19:50:02 beast busy (running=1 queued=0); waiting
+19:50:33 beast busy (running=1 queued=0); waiting
+19:51:03 beast busy (running=1 queued=0); waiting
+19:51:34 beast busy (running=1 queued=0); waiting
+19:52:05 beast busy (running=1 queued=0); waiting
+19:52:35 beast busy (running=1 queued=0); waiting
+19:53:06 beast busy (running=1 queued=0); waiting
+19:53:37 beast busy (running=1 queued=0); waiting
+19:54:07 submit 04-smoke
+19:54:09 04-smoke -> job-25d7c6caf76f
+19:54:49 04-smoke job-25d7c6caf76f succeeded
+19:54:51 beast busy (running=1 queued=0); waiting
+19:55:22 beast busy (running=1 queued=0); waiting
+19:55:54 beast busy (running=1 queued=0); waiting
+19:56:24 submit 04-real
+19:56:26 04-real -> job-552e5d08be54
+20:01:42 04-real job-552e5d08be54 succeeded
+20:01:43 beast busy (running=1 queued=0); waiting
+20:02:13 beast busy (running=1 queued=0); waiting
+20:02:44 beast busy (running=1 queued=0); waiting
+20:03:15 beast busy (running=1 queued=0); waiting
+20:03:45 beast busy (running=1 queued=0); waiting
+20:04:16 beast busy (running=1 queued=0); waiting
+20:04:47 beast busy (running=1 queued=0); waiting
+20:05:17 submit 05-smoke
+20:05:19 05-smoke -> job-abb33176384a
+20:06:18 05-smoke job-abb33176384a succeeded
+20:06:18 submit 05-real
+20:06:19 05-real -> job-7f2f7c9e79ad
+20:12:58 05-real job-7f2f7c9e79ad succeeded
+20:12:59 submit 06-smoke
+20:13:00 06-smoke -> job-131d710c264e
+20:13:43 06-smoke job-131d710c264e succeeded
+20:13:43 submit 06-real
+20:13:44 06-real -> job-67314961952c
+20:17:58 06-real job-67314961952c succeeded
+20:17:59 submit 07-smoke
+20:18:00 07-smoke -> job-6f7a1a047230
+20:18:31 07-smoke job-6f7a1a047230 succeeded
+20:18:31 submit 07-real
+20:18:32 07-real -> job-4db206d0dd7c
+20:22:14 07-real job-4db206d0dd7c succeeded
+20:22:14 submit 03-probe
+20:22:16 03-probe -> job-0e83f1ca6240
+20:22:26 03-probe job-0e83f1ca6240 failed:unknown
+20:22:26 plan done

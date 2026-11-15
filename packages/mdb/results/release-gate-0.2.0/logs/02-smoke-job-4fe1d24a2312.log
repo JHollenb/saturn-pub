@@ -1,0 +1,69 @@
+mrun: job-4fe1d24a2312 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  items per model 2
+2 items: ['city:Aarhus', 'city:Antwerp']
+transformer-lens 4.4.0 torch 2.13.0+cu130
+[   10.7s] Qwen3-0.6B-Base: loaded; H=16 KV=8 d_head=128; carrier L20 KV6, query heads (12, 13)
+[   17.4s] Qwen3-0.6B-Base city:Aarhus crow=37 6.67s
+[   24.0s] Qwen3-0.6B-Base city:Antwerp crow=37 6.66s
+[   24.0s] Qwen3-0.6B-Base: done; cuda peak allocated 11482.97705078125 MB
+[   29.4s] Qwen2.5-0.5B: loaded; H=14 KV=2 d_head=64; carrier L21 KV0, query heads (0, 1, 2, 3, 4, 5, 6)
+[   33.0s] Qwen2.5-0.5B city:Aarhus crow=37 3.51s
+[   36.3s] Qwen2.5-0.5B city:Antwerp crow=37 3.33s
+[   36.3s] Qwen2.5-0.5B: done; cuda peak allocated 10791.45849609375 MB
+
+Qwen3-0.6B-Base: |effect| / floor bins, lost (sign reversed) -- now | showcase, same items
+  path                        1-1.5                 1.5-2                   2-4                    >4             all       k
+  total               4/6 (0) | 4/6         1/1 (0) | 1/1         0/4 (0) | 0/4         0/4 (0) | 0/4     5/15 | 5/15   1.75
+  kernel              3/6 (0) | 3/6         0/1 (0) | 0/1         0/4 (0) | 0/4         0/4 (0) | 0/4     3/15 | 3/15   1.50
+  batch               0/3 (0) | 0/3         1/3 (0) | 1/3         0/2 (0) | 0/2         0/4 (0) | 0/4     1/12 | 1/12   1.75
+  processing          2/4 (0) | 2/4         0/1 (0) | 0/1         0/3 (0) | 0/3         0/4 (0) | 0/4     2/12 | 2/12   1.50
+  above 4 floors: 4 effects, lost on any path: 0; sign reversals total 0/15, kernel 0/15
+  fp32 pure reparametrisation: max |P32 - U32| = 8.58e-06 (showcase on these items 8.58e-06)
+  sealed TL claims judged: 15 native effects, sign disagrees 0, stable (> 4 floors) 4
+  self-patch null max |dM| 0.0; items whose base-rule floor != item floor: 0/2
+
+Qwen2.5-0.5B: |effect| / floor bins, lost (sign reversed) -- now | showcase, same items
+  path                        1-1.5                 1.5-2                   2-4                    >4             all       k
+  total               1/1 (0) | 1/1         0/0 (0) | 0/0         0/1 (0) | 0/1         0/5 (0) | 0/5     1/7 | 1/7   1.25
+  kernel              0/1 (0) | 0/1         0/0 (0) | 0/0         0/1 (0) | 0/1         0/5 (0) | 0/5     0/7 | 0/7   1.00
+  batch               0/2 (0) | 0/2         0/1 (0) | 0/1         0/0 (0) | 0/0         0/6 (0) | 0/6     0/9 | 0/9   1.00
+  processing          3/3 (3) | 3/3         1/1 (0) | 1/1         0/1 (0) | 0/1         0/5 (0) | 0/5     4/10 | 4/10   2.00
+  above 4 floors: 5 effects, lost on any path: 0; sign reversals total 0/7, kernel 0/7
+  fp32 pure reparametrisation: max |P32 - U32| = 8.58e-06 (showcase on these items 8.58e-06)
+  sealed TL claims judged: 7 native effects, sign disagrees 0, stable (> 4 floors) 5
+  self-patch null max |dM| 0.0; items whose base-rule floor != item floor: 0/2
+PASS Qwen3-0.6B-Base: carrier rows equal (item and donor)
+PASS Qwen3-0.6B-Base: mdb native margins equal the showcase's (max |diff| 0)
+PASS Qwen3-0.6B-Base: TL U16 margins equal the showcase's (max |diff| 0)
+PASS Qwen3-0.6B-Base: TL P16 margins equal the showcase's (max |diff| 0)
+PASS Qwen3-0.6B-Base: TL U16_b1 margins equal the showcase's (max |diff| 0)
+PASS Qwen3-0.6B-Base: fp32 base margins within 1e-4 of the showcase's (0)
+PASS Qwen3-0.6B-Base: loss-by-bin tables equal the showcase's on these items
+PASS Qwen3-0.6B-Base: 0 verdicts lost above 4 floors on any path
+PASS Qwen3-0.6B-Base: fp32 processing is a pure reparametrisation (max |P32-U32| <= 1e-4)
+PASS Qwen3-0.6B-Base: self-patch null dM == 0
+PASS Qwen3-0.6B-Base: judged native effects == above-floor count
+PASS Qwen2.5-0.5B: carrier rows equal (item and donor)
+PASS Qwen2.5-0.5B: mdb native margins equal the showcase's (max |diff| 0)
+PASS Qwen2.5-0.5B: TL U16 margins equal the showcase's (max |diff| 0)
+PASS Qwen2.5-0.5B: TL P16 margins equal the showcase's (max |diff| 0)
+PASS Qwen2.5-0.5B: TL U16_b1 margins equal the showcase's (max |diff| 0)
+PASS Qwen2.5-0.5B: fp32 base margins within 1e-4 of the showcase's (0)
+PASS Qwen2.5-0.5B: loss-by-bin tables equal the showcase's on these items
+PASS Qwen2.5-0.5B: 0 verdicts lost above 4 floors on any path
+PASS Qwen2.5-0.5B: fp32 processing is a pure reparametrisation (max |P32-U32| <= 1e-4)
+PASS Qwen2.5-0.5B: self-patch null dM == 0
+PASS Qwen2.5-0.5B: judged native effects == above-floor count
+PASS kernel path dominates on Qwen3 (kernel lost >= processing lost)
+PASS processing dominates on Qwen2.5 (processing lost > kernel lost)
+24/24 checks pass
+records verified: {'supplied-forecast': 124, 'branches': 8}
+done in 36.8s; wrote out/tl_reparam_floor_results.json
+RESULT_JSON {"items_per_model": 2, "models": {"Qwen3-0.6B-Base": {"carrier": [20, 6], "heads": 16, "query_heads_of_group": [12, 13], "processing": {"U16": {"processed": false, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": false}, "P16": {"processed": true, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": true}, "U32": {"processed": false, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": false}, "P32": {"processed": true, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": true}}, "tl": "4.4.0", "hooks": {"A": ["blocks.20.attn.hook_z", "blocks.21.attn.hook_z"], "v": "blocks.20.attn.v.hook_out"}, "branches_records": 4, "seconds": 21.8, "cuda_peak_allocated_mb": 11482.97705078125}, "Qwen2.5-0.5B": {"carrier": [21, 0], "heads": 14, "query_heads_of_group": [0, 1, 2, 3, 4, 5, 6], "processing": {"U16": {"processed": false, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": false}, "P16": {"processed": true, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": true}, "U32": {"processed": false, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": false}, "P32": {"processed": true, "normalization_type": "RMS", "final_rms": true, "residual_centred": false, "norm_gains_folded": true}}, "tl": "4.4.0", "hooks": {"A": ["blocks.21.attn.hook_z", "blocks.22.attn.hook_z"], "v": "blocks.21.attn.v.hook_out"}, "branches_records": 4, "seconds": 11.8, "cuda_peak_allocated_mb": 10791.45849609375}}, "checks": {"Qwen3-0.6B-Base: carrier rows equal (item and donor)": true, "Qwen3-0.6B-Base: mdb native margins equal the showcase's (max |diff| 0)": true, "Qwen3-0.6B-Base: TL U16 margins equal the showcase's (max |diff| 0)": true, "Qwen3-0.6B-Base: TL P16 margins equal the showcase's (max |diff| 0)": true, "Qwen3-0.6B-Base: TL U16_b1 margins equal the showcase's (max |diff| 0)": true, "Qwen3-0.6B-Base: fp32 base margins within 1e-4 of the showcase's (0)": true, "Qwen3-0.6B-Base: loss-by-bin tables equal the showcase's on these items": true, "Qwen3-0.6B-Base: 0 verdicts lost above 4 floors on any path": true, "Qwen3-0.6B-Base: fp32 processing is a pure reparametrisation (max |P32-U32| <= 1e-4)": true, "Qwen3-0.6B-Base: self-patch null dM == 0": true, "Qwen3-0.6B-Base: judged native effects == above-floor count": true, "Qwen2.5-0.5B: carrier rows equal (item and donor)": true, "Qwen2.5-0.5B: mdb native margins equal the showcase's (max |diff| 0)": true, "Qwen2.5-0.5B: TL U16 margins equal the showcase's (max |diff| 0)": true, "Qwen2.5-0.5B: TL P16 margins equal the showcase's (max |diff| 0)": true, "Qwen2.5-0.5B: TL U16_b1 margins equal the showcase's (max |diff| 0)": true, "Qwen2.5-0.5B: fp32 base margins within 1e-4 of the showcase's (0)": true, "Qwen2.5-0.5B: loss-by-bin tables equal the showcase's on these items": true, "Qwen2.5-0.5B: 0 verdicts lost above 4 floors on any path": true, "Qwen2.5-0.5B: fp32 processing is a pure reparametrisation (max |P32-U32| <= 1e-4)": true, "Qwen2.5-0.5B: self-patch null dM == 0": true, "Qwen2.5-0.5B: judged native effects == above-floor count": true, "kernel path dominates on Qwen3 (kernel lost >= processing lost)": true, "processing dominates on Qwen2.5 (processing lost > kernel lost)": true}, "records": {"path": "out/records.jsonl", "kinds": {"supplied-forecast": 124, "branches": 8}, "custody_script_sha256": "379a43d51ecf263c079267782239bb4662207e75aededcd041019824c494276c", "custody_prereg_sha256": "39005a29c21a1b56cbb53451868bfa081a703cec43a91cf348c8ebee4714d4da"}, "seconds": 36.8, "summary": {"Qwen3-0.6B-Base": {"above_4_floors": {"n": 4, "lost_any_path": 0}, "sign_reversed_total": "0/15", "sign_reversed_kernel": "0/15", "lost_kernel_vs_processing": [3, 2], "fp32_max_abs_P32_minus_U32": 8.58306884765625e-06, "fp32_max_abs_showcase": 8.58306884765625e-06, "judged_native_effect": 15, "judged_sign_disagrees": 0, "judged_stable": 4, "self_null_max_abs_dM": 0.0, "items_floor_rules_differ": 0, "V_split_base_delta_max": 0.25, "memo_null_U16_b1_base_bitwise_eq_mdb": 0}, "Qwen2.5-0.5B": {"above_4_floors": {"n": 5, "lost_any_path": 0}, "sign_reversed_total": "0/7", "sign_reversed_kernel": "0/7", "lost_kernel_vs_processing": [0, 4], "fp32_max_abs_P32_minus_U32": 8.58306884765625e-06, "fp32_max_abs_showcase": 8.58306884765625e-06, "judged_native_effect": 7, "judged_sign_disagrees": 0, "judged_stable": 5, "self_null_max_abs_dM": 0.0, "items_floor_rules_differ": 0, "V_split_base_delta_max": 0.125, "memo_null_U16_b1_base_bitwise_eq_mdb": 1}}}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:37.80
+	Maximum resident set size (kbytes): 15801472
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+mrun: job-4fe1d24a2312 -> succeeded
+mrun: job-4fe1d24a2312 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 38.11, 'peak_rss_mb': 14562.7, 'peak_vram_mb': 11928.0}

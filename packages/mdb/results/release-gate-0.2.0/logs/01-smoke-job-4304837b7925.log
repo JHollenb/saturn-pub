@@ -1,0 +1,95 @@
+mrun: job-4304837b7925 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  npairs 1
+model loaded in 5s on cuda; 28 layers, d_model 2048
+mdb sae load: ok
+site L20.h_out k 50 d_sae 32768 revision ce1a79d9c5163932d65c417380e53230e1086370
+SAELens ref: {'hook_name': 'blocks.20.hook_resid_post', 'release': 'qwen-scope-3-1.7b-base-w32k-l50', 'sae_id': 'layer20', 'model': 'Qwen/Qwen3-1.7B-Base'}
+{
+ "row3": {
+  "same_active_set": true,
+  "n_active": 50,
+  "error_frac_of_norm": 0.3101327121257782
+ },
+ "row0": {
+  "same_active_set": true,
+  "n_active": 50,
+  "error_frac_of_norm": 0.4538646936416626
+ }
+}
+row 0 error fraction exceeds row 3 (the t0 caveat): True
+19 entries; 1 pairs: ['Paris->Rome']
+whatif cache.L20.v[row=3] <- cf:  native -8.25  state resolved
+symbol: declared: entity
+Paris->Rome            base   8.25 L*=20 cell   -8.250 Delta   -8.250 Phi   -8.000 E   0.000  [15.8s]
+recall margin 9.5
+largest direct feature at L22: {'id': 1077, 'direct': 6.804586985318218}
+error splice L14: native dM = -0.5
+error splice L22: native dM = -0.375
+ablate top feature at L22: {'native': -1.75, 'linear': 0.29785464134303297, 'exact': -1.7521147857025277}
+replacement model margin -3.234375 top token '-wide'
+{
+ "n_pairs": 1,
+ "median_sigma_phi": 0.9696969696969697,
+ "median_sigma_E": -0.0,
+ "delta_matches_cell": "1/1",
+ "splice": {
+  "8": {
+   "median_abs_native": 0.375,
+   "median_abs_A": NaN,
+   "n_A": 0
+  },
+  "14": {
+   "median_abs_native": 1.875,
+   "median_abs_A": NaN,
+   "n_A": 0
+  },
+  "18": {
+   "median_abs_native": 0.5,
+   "median_abs_A": 3.368330806776345,
+   "n_A": 1
+  },
+  "22": {
+   "median_abs_native": 1.0,
+   "median_abs_A": 2.358977829114801,
+   "n_A": 1
+  }
+ },
+ "source": {
+  "4": {
+   "median_full": -15.625,
+   "median_phi_share": 0.952,
+   "median_E_share": 0.024
+  },
+  "10": {
+   "median_full": -15.25,
+   "median_phi_share": 0.9508196721311475,
+   "median_E_share": -0.01639344262295082
+  },
+  "16": {
+   "median_full": -15.25,
+   "median_phi_share": 0.9344262295081968,
+   "median_E_share": 0.040983606557377046
+  }
+ }
+}
+PASS source side Paris->Rome (L4, L10, L16)
+PASS census Paris->Rome
+PASS recall base margin 9.5
+PASS top direct feature is f1077
+PASS replacement model margin ~ -3.23 (within 0.5)
+PASS replacement model top token '-wide'
+PASS ablate f1077 native ~ -1.75 (within 0.5)
+PASS ablate f1077 linear estimate ~ +0.30 (within 0.1)
+PASS error splice L14 on recall ~ -0.5 (within 0.5)
+PASS SAELens active set == mdb active set (rows 3 and 0)
+PASS row 0 error fraction > row 3 (t0 caveat)
+11/11 checks pass
+done in 67.1s; wrote out/sae_census_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "npairs": 1, "saelens_check": {"row3": {"same_active_set": true, "n_active": 50, "error_frac_of_norm": 0.3101327121257782}, "row0": {"same_active_set": true, "n_active": 50, "error_frac_of_norm": 0.4538646936416626}}, "symbol": "declared: entity", "rows": [{"pair": "Paris->Rome", "cf_margin": -8.25, "base": 8.25, "argmax_text": " France", "cell": {"16": 0.0, "18": -0.125, "19": 0.125, "20": -8.25, "21": -0.75, "22": -0.875}, "best_layer": 20, "reader": {"delta": -8.25, "phi": -8.0, "E": 0.0}, "splice": {"8": {"native": 0.375, "error_direct": 0.039044592919675256}, "14": {"native": 1.875, "error_direct": -0.021536079873371826}, "18": {"native": -0.5, "error_direct": 0.14844147700520072}, "22": {"native": 1.0, "error_direct": 0.42391241988706896}}, "source": {"4": {"null": 0.0, "full": -15.625, "phi": -14.875, "E": -0.375}, "10": {"null": 0.0, "full": -15.25, "phi": -14.5, "E": 0.25}, "16": {"null": 0.0, "full": -15.25, "phi": -14.25, "E": -0.625}}, "seconds": 15.8}], "detail": {"base": 9.5, "splice": {"14": -0.5, "22": -0.375}, "top_feature": {"id": 1077, "direct": 6.804586985318218}, "ablate": {"native": -1.75, "linear": 0.29785464134303297, "exact": -1.7521147857025277}, "chain": {"margin": -3.234375, "top_token": "-wide"}}, "summary": {"n_pairs": 1, "median_sigma_phi": 0.9696969696969697, "median_sigma_E": -0.0, "delta_matches_cell": "1/1", "splice": {"8": {"median_abs_native": 0.375, "median_abs_A": NaN, "n_A": 0}, "14": {"median_abs_native": 1.875, "median_abs_A": NaN, "n_A": 0}, "18": {"median_abs_native": 0.5, "median_abs_A": 3.368330806776345, "n_A": 1}, "22": {"median_abs_native": 1.0, "median_abs_A": 2.358977829114801, "n_A": 1}}, "source": {"4": {"median_full": -15.625, "median_phi_share": 0.952, "median_E_share": 0.024}, "10": {"median_full": -15.25, "median_phi_share": 0.9508196721311475, "median_E_share": -0.01639344262295082}, "16": {"median_full": -15.25, "median_phi_share": 0.9344262295081968, "median_E_share": 0.040983606557377046}}}, "checks": {"source side Paris->Rome (L4, L10, L16)": true, "census Paris->Rome": true, "recall base margin 9.5": true, "top direct feature is f1077": true, "replacement model margin ~ -3.23 (within 0.5)": true, "replacement model top token '-wide'": true, "ablate f1077 native ~ -1.75 (within 0.5)": true, "ablate f1077 linear estimate ~ +0.30 (within 0.1)": true, "error splice L14 on recall ~ -0.5 (within 0.5)": true, "SAELens active set == mdb active set (rows 3 and 0)": true, "row 0 error fraction > row 3 (t0 caveat)": true}, "seconds": 67.1}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:08.12
+	Maximum resident set size (kbytes): 6722880
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+mrun: job-4304837b7925 -> succeeded
+mrun: job-4304837b7925 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 69.29, 'peak_rss_mb': 6347.8, 'peak_vram_mb': 4580.0}

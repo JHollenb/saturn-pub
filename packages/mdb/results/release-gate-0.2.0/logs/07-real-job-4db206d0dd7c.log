@@ -1,0 +1,97 @@
+mrun: job-4db206d0dd7c -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 165a3e145d4ef2c20850db630dd9f3135eada8c6  items all
+[    4.6s] model loaded: 28 layers, d_model 2048
+[   11.3s] city:Barcelona: M0 5.250 floor 0.25 nodes 6 arms 22 [6.55s]
+[   17.5s] city:Busan: M0 4.250 floor 0.25 nodes 6 arms 22 [6.22s]
+[   24.2s] city:Gdansk: M0 4.625 floor 0.25 nodes 6 arms 23 [6.63s]
+[   30.5s] city:Gothenburg: M0 8.125 floor 0.25 nodes 6 arms 22 [6.32s]
+[   36.8s] city:Hamburg: M0 4.625 floor 0.25 nodes 6 arms 22 [6.28s]
+[   43.2s] city:Krakow: M0 2.000 floor 0.25 nodes 6 arms 23 [6.49s]
+[   49.6s] city:Kyoto: M0 3.500 floor 0.25 nodes 6 arms 23 [6.4s]
+[   55.8s] city:Milan: M0 4.125 floor 0.25 nodes 6 arms 22 [6.18s]
+[   62.2s] currency:baht: M0 11.750 floor 0.25 nodes 6 arms 22 [6.35s]
+[   68.7s] currency:forint: M0 9.375 floor 0.25 nodes 6 arms 22 [6.53s]
+[   74.9s] currency:koruna: M0 7.125 floor 0.25 nodes 6 arms 22 [6.23s]
+[   81.2s] currency:krona: M0 8.625 floor 0.25 nodes 6 arms 22 [6.25s]
+[   87.5s] currency:pound sterling: M0 13.625 floor 0.5 nodes 6 arms 22 [6.26s]
+[   94.2s] currency:renminbi: M0 11.125 floor 0.5 nodes 6 arms 24 [6.72s]
+[  100.7s] currency:rial: M0 5.000 floor 0.25 nodes 6 arms 23 [6.51s]
+[  107.1s] currency:rouble: M0 11.500 floor 0.25 nodes 6 arms 23 [6.45s]
+[  113.6s] landmark:Borobudur: M0 7.125 floor 0.25 nodes 6 arms 22 [6.49s]
+[  120.1s] landmark:Masada: M0 10.000 floor 0.25 nodes 6 arms 23 [6.44s]
+[  126.5s] landmark:Mount Fuji: M0 12.500 floor 0.5 nodes 6 arms 23 [6.42s]
+[  132.7s] landmark:Mount Rushmore: M0 10.875 floor 0.25 nodes 6 arms 22 [6.25s]
+[  139.0s] landmark:Persepolis: M0 4.375 floor 0.25 nodes 6 arms 22 [6.27s]
+[  145.5s] landmark:Schonbrunn Palace: M0 9.000 floor 0.5 nodes 6 arms 23 [6.49s]
+[  151.9s] landmark:Uluru: M0 6.750 floor 0.25 nodes 6 arms 23 [6.44s]
+[  158.6s] landmark:the Acropolis: M0 6.750 floor 0.5 nodes 6 arms 23 [6.63s]
+[  164.8s] person:Akira Kurosawa: M0 10.125 floor 0.25 nodes 6 arms 22 [6.24s]
+[  171.1s] person:Edvard Munch: M0 4.625 floor 0.25 nodes 6 arms 22 [6.26s]
+[  177.5s] person:Frederic Chopin: M0 11.500 floor 0.25 nodes 6 arms 23 [6.47s]
+[  183.8s] person:Giuseppe Verdi: M0 7.625 floor 0.25 nodes 6 arms 22 [6.26s]
+[  190.1s] person:Hans Christian Andersen: M0 8.125 floor 0.25 nodes 6 arms 22 [6.3s]
+[  196.4s] person:Haruki Murakami: M0 10.875 floor 0.5 nodes 6 arms 22 [6.27s]
+[  202.8s] person:Henrik Ibsen: M0 4.500 floor 0.25 nodes 6 arms 22 [6.42s]
+[  209.5s] person:Hokusai: M0 8.500 floor 0.25 nodes 6 arms 24 [6.68s]
+city:Barcelona  M0 5.25  floor 0.25
+        node  -direct     edge    arm0    arm1     arm2 reroute/fl  norm/fl nonlin/fl
+  L22.f16584   -1.167   -1.466  -1.375  -1.375   -1.461       0.00     0.35      0.02
+   L21.f2252   -1.026   -1.148  -0.750  -1.125   -1.205       1.50     0.32     -0.23
+  L23.f51712   -0.960   -0.937  -0.875  -1.000   -0.944       0.50    -0.22     -0.03
+  L22.f88556   -0.906   -0.821  -0.875  -0.750   -0.729      -0.50    -0.09      0.37
+ L22.f102162   -0.238   -0.011   0.000   0.000   -0.024       0.00     0.10     -0.05
+L22.f160929*   -0.034   -0.106  -0.250  -0.250   -0.083       0.00    -0.67      0.09
+(* = the random node)
+key number (same items)                            showcase        now
+items                                                    32         32
+node_items                                              160        160
+>1fl.n                                                  103        103
+>1fl.G1_rerouting_over_arm0                          0.0952     0.0952
+>1fl.arm0_over_edge                                  0.9220     0.9220
+>1fl.arm0_over_direct                                0.6108     0.6108
+>1fl.edge_over_direct                                0.7353     0.7353
+>4fl.n                                                   31         31
+>4fl.G1_rerouting_over_arm0                          0.0870     0.0870
+>4fl.arm0_over_edge                                  0.9742     0.9742
+>4fl.arm0_over_direct                                0.6388     0.6388
+>4fl.edge_over_direct                                0.7353     0.7353
+direct_overstatement_>1fl                            1.6373     1.6373
+any_bracket_above_floor                                  44         44
+G1_all                                               0.1053     0.1053
+G3_norm_below_floor                                     135        135
+G4_spearman_edge_arm0                                0.9320     0.9320
+median_abs_brackets.rerouting                        0.1250     0.1250
+median_abs_brackets.norm                             0.0952     0.0952
+median_abs_brackets.nonlin                           0.0487     0.0487
+null_machinery_within_floor                             192        192
+random_node_all_brackets_within_floor                    26         26
+random_nodes                                             32         32
+Gaussian matched-norm null (new) within floor: 17/32
+edge sign agrees with the native removal (above floor): 102/103
+{
+ "counts": {
+  "branch_base_same": 32,
+  "nodes_same": 32,
+  "items": 32,
+  "arm0_equal": 192,
+  "arm1_equal": 192,
+  "edge_equal": 14,
+  "null_equal": 192,
+  "node_items": 192
+ },
+ "max_abs_diff": {
+  "direct": 2.6645352591003757e-15,
+  "edge": 4.440892098500626e-15,
+  "arm2_f64": 1.0658141036401503e-14,
+  "arm2_bf16_vs_f64_floors": 0.6957756442143435
+ }
+}
+records: {'supplied-forecast': 192, 'branches': 32} custody: {"script_sha256": "cf86f5515cfa047987d04537ec22059a30edd3909e70cf0666b2e6079dae5303", "prereg_sha256": "ee85a40742e921b6640f912d5f50c796a8d30e103e3db089dbe3731b5fd28e01", "kernel_path": "mdb-stepped"}
+done in 210.0s; wrote out/brackets_results.json
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "transcoders": "/mnt/big/llm-models/qwen3-1.7b-transcoders-lowl0", "items": ["city:Barcelona", "city:Busan", "city:Gdansk", "city:Gothenburg", "city:Hamburg", "city:Krakow", "city:Kyoto", "city:Milan", "currency:baht", "currency:forint", "currency:koruna", "currency:krona", "currency:pound sterling", "currency:renminbi", "currency:rial", "currency:rouble", "landmark:Borobudur", "landmark:Masada", "landmark:Mount Fuji", "landmark:Mount Rushmore", "landmark:Persepolis", "landmark:Schonbrunn Palace", "landmark:Uluru", "landmark:the Acropolis", "person:Akira Kurosawa", "person:Edvard Munch", "person:Frederic Chopin", "person:Giuseppe Verdi", "person:Hans Christian Andersen", "person:Haruki Murakami", "person:Henrik Ibsen", "person:Hokusai"], "summary_now": {"items": 32, "node_items": 160, ">1fl": {"n": 103, "G1_rerouting_over_arm0": 0.09523809523809523, "arm0_over_edge": 0.9219986814399364, "arm0_over_direct": 0.6107607244793258, "edge_over_direct": 0.7353390300376135}, ">4fl": {"n": 31, "G1_rerouting_over_arm0": 0.08695652173913043, "arm0_over_edge": 0.9742316505531671, "arm0_over_direct": 0.6387606399512016, "edge_over_direct": 0.7353390300376135}, "direct_overstatement_>1fl": 1.6373023999742307, "any_bracket_above_floor": 44, "G1_all": 0.10526315789473684, "G3_norm_below_floor": 135, "G4_spearman_edge_arm0": 0.9320421884935253, "median_abs_brackets": {"rerouting": 0.125, "norm": 0.09524437590235868, "nonlin": 0.04872874763818903}, "null_machinery_within_floor": 192, "random_node_all_brackets_within_floor": 26, "random_nodes": 32}, "summary_showcase_same_items": {"items": 32, "node_items": 160, ">1fl": {"n": 103, "G1_rerouting_over_arm0": 0.09523809523809523, "arm0_over_edge": 0.9219986814399362, "arm0_over_direct": 0.6107607244793258, "edge_over_direct": 0.7353390300376133}, ">4fl": {"n": 31, "G1_rerouting_over_arm0": 0.08695652173913043, "arm0_over_edge": 0.9742316505531662, "arm0_over_direct": 0.6387606399512016, "edge_over_direct": 0.7353390300376133}, "direct_overstatement_>1fl": 1.6373023999742307, "any_bracket_above_floor": 44, "G1_all": 0.10526315789473684, "G3_norm_below_floor": 135, "G4_spearman_edge_arm0": 0.9320421884935253, "median_abs_brackets": {"rerouting": 0.125, "norm": 0.09524437590235779, "nonlin": 0.04872874763818895}, "null_machinery_within_floor": 192, "random_node_all_brackets_within_floor": 26, "random_nodes": 32}, "full_panel_audited": {"items": 32, "node_items": 160, "arm0_above_floor": 103, "any_bracket_above_floor": 44, "G1_all": 0.105, "G1_above_floor": 0.095, "arm0_over_edge_above_floor": 0.92, "arm0_over_edge_above_4_floors": 0.97, "arm0_over_direct_above_floor": "0.61-0.64", "G4_spearman": 0.932, "audit": "results/showcase-20261114/AUDIT-SHOWCASE.md (exp4 row, correction 3)"}, "random_gauss_within_floor": "17/32", "edge_sign_agrees_above_floor": "102/103", "reproduction": {"counts": {"branch_base_same": 32, "nodes_same": 32, "items": 32, "arm0_equal": 192, "arm1_equal": 192, "edge_equal": 14, "null_equal": 192, "node_items": 192}, "max_abs_diff": {"direct": 2.6645352591003757e-15, "edge": 4.440892098500626e-15, "arm2_f64": 1.0658141036401503e-14, "arm2_bf16_vs_f64_floors": 0.6957756442143435}}, "records": {"path": "out/records.jsonl", "kinds": {"supplied-forecast": 192, "branches": 32}}, "custody": {"script_sha256": "cf86f5515cfa047987d04537ec22059a30edd3909e70cf0666b2e6079dae5303", "prereg_sha256": "ee85a40742e921b6640f912d5f50c796a8d30e103e3db089dbe3731b5fd28e01", "kernel_path": "mdb-stepped"}, "seconds": 210.0}
+SCRIPT_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:30.88
+	Maximum resident set size (kbytes): 9815632
+mrun: job-4db206d0dd7c -> succeeded
+mrun: job-4db206d0dd7c finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 211.4, 'peak_rss_mb': 9624.6, 'peak_vram_mb': 3918.0}
