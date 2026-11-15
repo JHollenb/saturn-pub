@@ -405,6 +405,28 @@ Scheduler limit: one mrun job may run at most 256 local work items (`scheduling_
 
 What gated mass does not include: the text-receiver part of a head's write (`others:<w>` receivers, 70–86% of the predicted write in that experiment) and per-unit detail of `g ⊙ O_h v` beyond one scale per stratum. Whether those add anything to selecting heads whose cut removes a word is the question of `experiments/predicted_write_20261113/PREREG-ADDENDUM-2.md`.
 
+## Ranking heads: predicted write, with gated mass as the trivial baseline (2026-11-14)
+
+The two rankings are library code in `mdb_lanes` (promoted from `packages/mdb-lanes/experiments/predicted_write_20261113`, same arithmetic):
+
+| What | Function | Role |
+|---|---|---|
+| gated read mass | `flux_read_panels.gated_unit_mass` + `stratum_gate_scale` | the **trivial baseline**: any ranking claim is checked against it, not against raw `unit_mass` |
+| predicted write (PW) per head | `predicted_write.receiver_write_scores(p, v, m, groups)`: zero-cut `-(p·m)@v` and mask-cut `(p_S a - (p·m)@v)/(1 - p_S)` through the head's output map `O_h` and outer gate `g`, norm summed over each receiver group (`img`: image receivers, `oth`: text receivers other than the word's rows) | the **ranking** |
+| PW per unit | `predicted_write.pw_shares(zero_img, zero_oth, mask_img, mask_oth)`: `pw_both` (zero share + mask share), its image-receiver part `pw_img` and text-receiver part `pw_txt`, and `pw_img_only` | inputs to selection |
+| matched sets | `predicted_write.top_units`, `matched_min` (constraint within 10%, objective minimised) | named and dissociation sets |
+| random controls | `predicted_write.clean_random_draws(reference, n_units, named=..., previous=..., seed=, item=, names=, strata=, blocks=)`: stratum- and block-matched, disjoint from the reference, from every named set, from earlier draws and from each other | clean random draws |
+
+Measured (offline, 2026-11-14): on the saved capture job-86df2dd47809 these functions reproduce the experiment's addendum-2 selection exactly for all six words (`pw_both`, `pw_img`, `pw_txt`, `pw_img_only` bit-equal to `followup2/select2.py`; `gmass60`, `gmassmatch-lowtextpw`, `rand60c`, `rand60d` equal to `followup2/plans2/sets2.json`). Tests: `packages/mdb-lanes/tests/test_predicted_write.py`.
+
+What the experiment found, with its caveats (all FLUX.2 Klein 4B, prompt `cat`/`car`, **seed 4242 only, one seed**; FINDINGS: `packages/mdb-lanes/experiments/predicted_write_20261113/FINDINGS.md`, sections "Audit corrections" and "Addendum 2 results"):
+
+- MEASURED: the original "mass without PW does nothing" contrast (F1) was the joint/single gate, so raw mass is the wrong baseline (audit correction C1, C2).
+- MEASURED: against gated mass, PW still adds something for red, black and ball: the 60 heads with the most gated mass remove about what `own60` removes, not what `pw60` removes; at equal gated mass a set with 0.41–0.63× of pw60's text-receiver PW removes 0.14–0.43 of pw60's effect in red and ball and nothing in black (H1 failed, H3 held). The difference sits mainly in the text-receiver term.
+- MEASURED: for snow gated mass matches PW; for night PW is ahead; rain is near its floor.
+- MEASURED: F3 (rank correlation with per-unit effect at 10-head cuts) had little power: mean Spearman raw mass 0.016, gated mass 0.143, PW 0.210, PW_both 0.230; PW beats gated mass in 9/12 cells.
+- Not yet known: other seeds, other set sizes (10, 120 heads) for the text-receiver term, other prompts.
+
 ## Lease check fix (2026-11-14)
 
 `check_lease` rebuilt the lease hash body without `seal_sha256` and `replicated`, while `Panel.leases` includes them when set. The worker therefore refused every lease with replicated shared references (job-c1b2bf48ff0d of the predicted-write experiment) and would have refused every lease built with `seal=`. Fixed by adding those two fields to the body when present; `tests/test_flux_read_panel.py::test_check_lease_accepts_replicated_and_sealed_leases` covers both, including the real lease that failed.

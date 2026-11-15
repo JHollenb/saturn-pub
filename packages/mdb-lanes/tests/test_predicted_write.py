@@ -156,3 +156,57 @@ def test_spearman_matches_rank_definition():
     assert pw.spearman([1, 2, 3, 4], [10, 20, 30, 40]) == pytest.approx(1.0)
     assert pw.spearman([1, 2, 3, 4], [4, 3, 2, 1]) == pytest.approx(-1.0)
     assert pw.spearman([1, 1, 2], [1, 2, 3]) == pytest.approx(0.8660254, abs=1e-6)
+
+
+# ------------------------------------------------------------- promoted from the experiment
+
+
+def test_receiver_write_scores_are_the_gated_cut_write_norms():
+    scores, v, m = _case(seed=3, h=3, r=6, sk=9, d=4)
+    p = pw.softmax_rows(scores)
+    rng = np.random.default_rng(4)
+    maps_i, maps_t = rng.normal(size=(3, 4, 7)), rng.normal(size=(3, 4, 7))
+    g_i, g_t = rng.normal(size=7), np.ones(7)
+    img, oth = np.array([3, 4, 5]), np.array([0, 2])
+    got = pw.receiver_write_scores(p, v, m, {"img": (img, maps_i, g_i), "oth": (oth, maps_t, g_t)})
+    assert set(got) == {"zero_img", "zero_oth", "mask_img", "mask_oth"}
+    a = p @ v
+    for kind, delta in (("zero", (p * (1 - m)) @ v - a),
+                        ("mask", (p * (1 - m) / (p * (1 - m)).sum(-1, keepdims=True)) @ v - a)):
+        for name, idx, maps, gate in (("img", img, maps_i, g_i), ("oth", oth, maps_t, g_t)):
+            write = np.einsum("hrd,hdc->hrc", delta[:, idx], maps) * gate
+            assert np.allclose(got[f"{kind}_{name}"], np.linalg.norm(write, axis=-1).sum(-1), atol=1e-12)
+
+
+def test_pw_shares_parts_and_normalisation():
+    rng = np.random.default_rng(5)
+    zi, zo, mi, mo = (rng.random((4, 3, 5)) for _ in range(4))
+    s = pw.pw_shares(zi, zo, mi, mo)
+    assert s["pw_both"].shape == (15,)
+    assert s["pw_both"].sum() == pytest.approx(2.0) and s["pw_img_only"].sum() == pytest.approx(2.0)
+    assert np.allclose(s["pw_img"] + s["pw_txt"], s["pw_both"], atol=1e-15)
+    flat = zi.sum(0).ravel()
+    assert s["pw_img_only"][7] == pytest.approx(flat[7] / flat.sum() + mi.sum(0).ravel()[7] / mi.sum(0).ravel().sum())
+
+
+def test_clean_random_draws_exclude_named_previous_and_each_other():
+    n = 60
+    strata = np.array([0] * 15 + [1] * 45)
+    blocks = np.arange(n) // 6
+    reference = [0, 7, 20, 21, 33, 40]
+    named = [[1, 2, 3], [50, 51]]
+    previous = [[10, 11, 12, 13, 14, 15]]
+    draws, reports = pw.clean_random_draws(reference, n, named=named, previous=previous, seed=7, item="red",
+                                           names=("rand_c", "rand_d"), strata=strata, blocks=blocks)
+    again, _ = pw.clean_random_draws(reference, n, named=named, previous=previous, seed=7, item="red",
+                                     names=("rand_c", "rand_d"), strata=strata, blocks=blocks)
+    assert draws == again                                    # deterministic
+    banned = set(reference) | {1, 2, 3, 50, 51} | set(previous[0])
+    c, d = set(draws["rand_c"]), set(draws["rand_d"])
+    assert not (c & banned) and not (d & banned) and not (c & d)
+    for units in (c, d):
+        assert len(units) == len(reference)
+        assert sorted(strata[list(units)]) == sorted(strata[reference])
+    other, _ = pw.clean_random_draws(reference, n, named=named, previous=previous, seed=7, item="ball",
+                                     names=("rand_c",), strata=strata, blocks=blocks)
+    assert set(reports) == {"rand_c", "rand_d"} and isinstance(other["rand_c"], list)

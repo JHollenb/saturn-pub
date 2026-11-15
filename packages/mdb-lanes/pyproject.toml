@@ -12,6 +12,8 @@ dev = ["mdb-runtime[dev]"]
 diffusion = ["mdb-runtime[diffusion]"]
 discovery = ["mdb-runtime[discovery]"]
 mrun = ["mdb-runtime[mrun]"]
+# optional FLUX access layer (mdb_lanes.flux_nnsight); port parity measured on this version only
+nnsight = ["nnsight==0.8.2"]
 serve = ["mdb-runtime[serve]"]
 transformerlens = ["mdb-runtime[transformerlens]"]
 
