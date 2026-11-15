@@ -9,7 +9,7 @@ from mdb_lanes.debugger_protocol import ActSpec
 
 
 def experiment():
-    path = Path(__file__).parents[1].parent / "mdb" / "examples/project-navigation/explore_dags.py"
+    path = Path(__file__).parents[1].parent / "mdb-experiments" / "examples/project-navigation/explore_dags.py"
     spec = importlib.util.spec_from_file_location("dag_experiment", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

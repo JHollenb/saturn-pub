@@ -13,7 +13,8 @@
 # as a declared config (`v_proj.output` of layer 20, KV group 6 as a subspace partition, base and
 # source positions). mdb is a debugger: it runs the model one port at a time, takes the donor's
 # value with its origin (`Run.ref`), branches the recipient's run from one checkpoint and
-# measures every arm natively against **one floor** (the bf16 noise floor of the margin). So we
+# measures every arm natively against **one floor** (the bf16 noise floor of the margin,
+# `verdict.margin_floor`: 2 spacings). So we
 # can check that the two tools agree, and then use mdb's objects to ask the subspace question:
 #
 # * `SubspaceBinding`: a named subspace of the cell with its basis authority and provenance.
@@ -23,8 +24,7 @@
 #   whole-cell swap on one branch point, with nulls added to the same object.
 # * `symbols.table(subspaces=...)`: the subspace shown as a binding in the carrier's symbol table.
 #
-# **Measured result** (showcase exp7, `job-c8144767543d`, 64 pairs; framing from
-# `results/showcase-20261114/AUDIT-SHOWCASE.md`): pyvene and mdb agree on 63/64 flip verdicts
+# **Measured result** (an earlier run on all 64 pairs): pyvene and mdb agree on 63/64 flip verdicts
 # (whole-cell IIA 44/64 mdb, 43/64 pyvene). Their margin gap has the same median as the
 # no-intervention kernel-path gap (0.125) but a heavier tail (max 0.75 vs 0.375). The honest
 # negative: the SAE subspace (median rank 4) moves a median 0.34 of the whole-cell margin change
@@ -32,7 +32,7 @@
 #
 # This example runs the first 34 of the 64 pairs (`MDB_NPAIRS`), which hold the one pair where
 # the two tools disagree and all four SAE flips. Everything runs as a Python library; `MODEL`
-# and `SAE` default to Beast paths.
+# and `SAE` default to the paths on our GPU host; change them for a local GPU.
 
 # %%
 import json
@@ -62,7 +62,7 @@ print(len(PAIRS), "pairs:", ", ".join(p["recipient"]["id"] for p in PAIRS))
 # ## 1. Load the model through mdb, declare custody
 #
 # `mdb.attach` wraps a loaded Hugging Face model (bf16, eager attention). `dbg.custody` declares
-# the script and the preregistration (`prereg.json`, the showcase's sealed predictions for this
+# the script and the preregistration (`prereg.json`, the original run's sealed predictions for this
 # experiment): every record sealed from now on carries their sha256, the library versions and
 # the kernel path. `dbg.records_to` appends every sealed record (branches, pools, symbol tables)
 # to a JSONL file, so the results persist with no project attached.
@@ -89,12 +89,12 @@ print(f"model loaded in {time.monotonic() - T0:.0f}s; head_dim {DH}, {KV} KV gro
 # %% [markdown]
 # ## 2. The carrier rule, the SAE and the pyvene model
 #
-# * The carrier row is the frozen B1 rule: the argmax over the bridge span of the answer row's
+# * The carrier row is the frozen `R_argmax` rule: the argmax over the bridge span of the answer row's
 #   L20 attention, heads 12 and 13 (the two query heads of KV group 6). `circuit_map.slot_rows`
 #   evaluates it on a run.
 # * Qwen-Scope's layer-19 SAE reads `L19.h_out`, which is mdb's `L20.h`: the input of the layer
 #   whose value projection writes the cell. The country features are the 58 features of the
-#   frozen exp1 census.
+#   frozen country-feature census.
 # * pyvene 0.1.8 maps Qwen2 but not Qwen3; `register_qwen3()` copies Qwen2's module mapping to
 #   the Qwen3 classes. `value_cell_config` is mdb's cell `cache.L20.v[kv6]` as a pyvene config.
 #   pyvene gets a `shared_clone` of the model (same weights, its own module tree), so mdb's
@@ -253,9 +253,8 @@ def sae_subspace(run, item, crow, acts_r, acts_d):
 #    (`M_clean`): pyvene runs one batched forward, mdb steps, so `M_clean - M0` is the kernel-path
 #    gap with no intervention at all.
 #
-# A **flip**: `M0 > floor` and `M_after < -floor` (the showcase rule; `subspace.iia` also counts
-# it at 4 floors). The item loop is plain Python: prompt-set iteration (`each`, gap-audit P7) is
-# not built in mdb yet.
+# A **flip**: `M0 > floor` and `M_after < -floor` (the original run's rule; `subspace.iia` also counts
+# it at 4 floors). The item loop is plain Python.
 
 # %%
 from mdb.analysis.branches import edit
@@ -304,7 +303,7 @@ for index, pair in enumerate(PAIRS):
                            origin={"kind": "subspace-interchange", "subspace": sb.name,
                                    "digest": sb.digest(), "source": ref.pointer})])
     # diagnostic arms: the same swaps against the cell of the native run (prefill = start of the
-    # span), as the showcase built them; section 8 uses them to explain any difference
+    # span), as the original run built them; section 8 uses them to explain any difference
     for name, sb in (("sae_vnative", sae_sb), ("a69_vnative", READOUT["a69"])):
         if sb is not None:
             br.add(name, [edit(target, sb.swap(v_run, v_don),
@@ -324,7 +323,7 @@ for index, pair in enumerate(PAIRS):
     row = {"id": item["id"], "donor": did, "crow": crow, "donor_crow": donor["crow"],
            "M0": M0, "floor": floor, "branches_M0": br.M0, "rank": rank, "features": feats,
            "whole": table["M_whole"]["M"],
-           "sae": table["M"]["M"] if rank else M0,     # no subspace: no change (the showcase rule)
+           "sae": table["M"]["M"] if rank else M0,     # no subspace: no change (the original run's rule)
            "random": table["random"]["M"] if rank else M0,
            "full69_k32": table["full69"]["M"], "a69_k32": table["a69"]["M"],
            "self_dM": table["self"]["dM"],
@@ -352,8 +351,8 @@ RESULT["rows"] = ROWS
 # %% [markdown]
 # ## 6. IIA, pyvene against mdb, and the subspace in the symbol table
 #
-# `subspace.iia` counts flips over the records at 1 floor (the showcase rule) and at 4 floors
-# (the audit's stable-verdict margin). The fraction of the whole-cell margin change a subspace
+# `subspace.iia` counts flips over the records at 1 floor (the original run's rule) and at 4 floors
+# (the stable-verdict margin). The fraction of the whole-cell margin change a subspace
 # moves is `(M0 - M_sub) / (M0 - M_whole)`.
 
 # %%
@@ -435,24 +434,23 @@ RESULT["symbol_table"] = {"pair": show["id"], "subspaces": [
      "cell_to_consumer": r["cell_to_consumer"]["value"]} for r in rows_sub]}
 
 # %% [markdown]
-# ## 7. Context: DAS and the readout span (audited, not re-run here)
+# ## 7. Context: DAS and the readout span (an earlier study, not re-run here)
 #
-# The DAS study (tracker entry 11b, `results/showcase-20261114/das/`) trained pyvene DAS
-# rotations on 38 other countries and scored them on the same 64 pairs, through the same mdb
-# branches. Audited numbers (`das/AUDIT-DAS.md`, `das/followup/AUDIT-FOLLOWUP.md`), flips at
-# 1 floor out of 64:
+# An earlier study trained pyvene DAS (distributed alignment search) rotations on 38 other
+# countries and scored them on the same 64 pairs, through the same mdb branches. Numbers from
+# that study, flips at 1 floor out of 64:
 #
-# | subspace (k = 32 unless stated) | flips | jobs |
-# |---|---|---|
-# | whole cell | 44 | job-c8144767543d (exp7), reproduced bitwise in 11b |
-# | DAS, trained on 38 other countries (held out) | 16 | train job-14bfa70f5ddb; score job-70dfc80ed3c4, job-f9da01e895ef, job-5ce9e8d2f078 |
-# | country readout span, 69 tokens incl. the test countries (`full69`) | 35 | same scoring jobs |
-# | readout span with no test country (69 or 91 tokens) | 20-22 | job-8b01f1a12d84, job-33a4b67a28eb, job-60bce10afa0c, job-70ebd29d8f10 |
-# | readout span minus only the pair's own two countries | 22 | same follow-up jobs |
-# | SAE pushforward, per pair (median rank 4) | 4 | exp7 |
-# | random | 0 | 11b |
+# | subspace (k = 32 unless stated) | flips |
+# |---|---|
+# | whole cell | 44 |
+# | DAS, trained on 38 other countries (held out) | 16 |
+# | country readout span, 69 tokens incl. the test countries (`full69`) | 35 |
+# | readout span with no test country (69 or 91 tokens) | 20-22 |
+# | readout span minus only the pair's own two countries | 22 |
+# | SAE pushforward, per pair (median rank 4) | 4 |
+# | random | 0 |
 #
-# How to read it (per the audits): the readout span's lead is mostly per-pair identity. Removing
+# How to read it: the readout span's lead is mostly per-pair identity. Removing
 # only the pair's two country tokens costs 13 of 35 flips; the other test countries add nothing
 # beyond a same-size generic span. A test-free span (20-22) does at least as well as held-out
 # DAS (16), not significantly better on 64 pairs. At rank 4 or below the per-pair SAE set is the
@@ -462,18 +460,18 @@ RESULT["symbol_table"] = {"pair": show["id"], "subspaces": [
 # this example; section 5 re-measures the `full69` and `a69` k=32 arms on this subset.
 
 # %% [markdown]
-# ## 8. Showcase against now, on the same pairs
+# ## 8. Original run against now, on the same pairs
 #
-# `reference.json` holds the showcase's per-pair numbers for these pairs (exp7
-# `job-c8144767543d`; the readout arms from the follow-up jobs), cut by `make_subset.py`. Exact
+# `reference.json` holds the original run's per-pair numbers for these pairs (the readout arms
+# come from the follow-up runs), cut by `make_subset.py`. Exact
 # equality is expected for `M0`, the carrier rows, the SAE rank and features, the whole-cell
 # margin, both pyvene margins and the readout arms. The SAE and random arms can differ: the
-# showcase swapped against the recipient's cell from the native run (prefill = start of the
+# original run swapped against the recipient's cell from the native run (prefill = start of the
 # span), while `subspace.interchange` swaps against the cell of the branched run itself
 # (prefill = carrier row), so the complement of the subspace keeps that run's own value. The
 # random basis is also drawn per pair here (`SEED + index`), not from one stream over all 64.
 # The diagnostic arms `sae_vnative` and `a69_vnative` redo the swap against the native run's
-# cell, the showcase convention, and must then equal the showcase exactly.
+# cell, the original run's convention, and must then equal it exactly.
 
 # %%
 ref_rows = [REF_BY_ID[r["id"]] for r in ROWS]

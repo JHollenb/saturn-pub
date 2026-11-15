@@ -267,11 +267,11 @@ Start with the [documentation index](docs/README.md) to choose a package and wor
 - [Engine README: `mdb engine` REPL, `mdb serve` and web viewer, state-cell edits, measured numbers](packages/mdb/README.md)
 - [Overview, use cases and quickstart](docs/mdb.md) (lane-era tool)
 - [Installation](packages/mdb/docs/INSTALL.md)
-- [Usage, memory and debugger](packages/mdb/docs/USAGE.md)
-- [Local MDB console: Counter, tiny Qwen and local checkpoints](packages/mdb/docs/LOCAL-DEBUGGER.md)
-- [Experiment walkthroughs](packages/mdb/docs/EXPERIMENTS.md)
-- [Model-backed qualification and boundaries](packages/mdb/docs/QUALIFICATION.md)
-- [E6/E20 paper experiments](packages/mdb/experiments/time_circuits/README.md)
+- [Usage, memory and debugger](packages/mdb-experiments/docs/USAGE.md)
+- [Local MDB console: Counter, tiny Qwen and local checkpoints](packages/mdb-experiments/docs/LOCAL-DEBUGGER.md)
+- [Experiment walkthroughs](packages/mdb-experiments/docs/EXPERIMENTS.md)
+- [Model-backed qualification and boundaries](packages/mdb-experiments/docs/QUALIFICATION.md)
+- [E6/E20 paper experiments](packages/mdb-experiments/experiments/time_circuits/README.md)
 - [Repository layout and independent builds](docs/monorepo.md)
 
 ### Saturn toolkit

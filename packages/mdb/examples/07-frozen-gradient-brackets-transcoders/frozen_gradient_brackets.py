@@ -23,26 +23,26 @@
 # re-routing `arm0 - arm1`, norm `arm1 - arm2` and nonlinearity `arm2 - (-A)` (what is left: the
 # MLPs' nonlinearity over a finite edit).
 #
-# **The experiment** (showcase exp4, `results/showcase-20261114/exp4/`, one seed, bf16, eager):
-# all 32 of exp4's two-hop items (`items.json`; `MDB_ITEMS=0,1` picks a subset), consumer `M = logit(answer) - logit(donor
-# answer)` at the last row. Nodes are the 5 active features of the mwhanna
+# **The experiment** (one seed, bf16, eager): all 32 of the original run's two-hop items
+# (`items.json`; `MDB_ITEMS=0,1` picks a subset), consumer
+# `M = logit(answer) - logit(donor answer)` at the last row. Nodes are the 5 active features of the mwhanna
 # `qwen3-1.7b-transcoders-lowl0` transcoders (layers L20..L24, answer row) with the largest
 # direct effect, plus one random active feature at node 1's layer rescaled to node 1's write
 # norm.
 #
-# **Framing (from the independent audit, `results/showcase-20261114/AUDIT-SHOWCASE.md`).** Most
+# **Framing (from an independent review of the original run).** Most
 # brackets are tiny. The median bracket is about one bf16 step against a floor of 2 steps, and
-# only 44 of exp4's 160 node-items have any bracket above the floor. So the prereg's pass/fail
+# only 44 of the original run's 160 node-items have any bracket above the floor. So the prereg's pass/fail
 # lines (G1's 0.105 "fail", G2's largest-bracket vote) sit at quantisation resolution. The
 # example therefore reads the result **on the node-items whose native removal is above the
-# floor** (`|arm0| > floor`). There, on exp4's 32 items, the re-routing bracket is 0.095 of
+# floor** (`|arm0| > floor`). There, on the original run's 32 items, the re-routing bracket is 0.095 of
 # `|arm0|` (G1), the frozen-gradient edge accounts for 0.92 of the native effect (0.97 above 4
 # floors) and the direct edge's native share is 0.61-0.64. The transcoder direct edge
 # overstates the native effect by about 1.6x on above-floor nodes, not 2x. The frozen-gradient
 # edge explains that gap: it is later layers' linear response. G4 (rank agreement of the edge
 # and `arm0`) is Spearman 0.93.
 #
-# Everything runs as a Python library on Beast through mrun (`run_on_beast.sh`).
+# Everything runs as a Python library on a CUDA GPU (`run_on_beast.sh` submits it to ours).
 
 # %%
 import json
@@ -56,7 +56,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
 MODEL = Path(os.environ.get("MDB_MODEL", "/mnt/big/llm-models/Qwen3-1.7B-Base"))
 TC_DIR = os.environ.get("MDB_TRANSCODERS", "/mnt/big/llm-models/qwen3-1.7b-transcoders-lowl0")
-LAYERS = list(range(20, 25))                 # the transcoder layers exp4 used (Base-fit)
+LAYERS = list(range(20, 25))                 # the transcoder layers the original run used (Base-fit)
 PICK = os.environ.get("MDB_ITEMS", "")      # e.g. "0,1" for a smoke run (indices into items.json)
 OUT = Path(os.environ.get("MRUN_ARTIFACTS_DIR") or os.environ.get("MDB_OUT") or "out")
 OUT.mkdir(parents=True, exist_ok=True)
@@ -75,8 +75,9 @@ def log(msg):
 # %% [markdown]
 # ## 1. Load the model, declare custody, open a record sink
 #
-# `load_local` + `attach` give the debugger (bf16, eager attention, as exp4). `dbg.custody`
-# declares the script and the preregistration (`prereg.json`, exp4's, copied here): every record
+# `load_local` + `attach` give the debugger (bf16, eager attention, as in the original run). `dbg.custody`
+# declares the script and the preregistration (`prereg.json`, the original run's, copied here):
+# every record
 # sealed from now on carries their sha256, the library versions and the kernel path.
 # `dbg.records_to` appends every sealed record (the supplied-forecast edges, the branches
 # records) to a JSONL file, verified on read-back.
@@ -97,7 +98,7 @@ sink = dbg.records_to(OUT / "records.jsonl")
 log(f"model loaded: {NL} layers, d_model {dbg.adapter.hidden_size}")
 
 # %% [markdown]
-# ## 2. Transcoders as an mdb decomposition (P3)
+# ## 2. Transcoders as an mdb decomposition
 #
 # `sae.open_transcoders` opens the mwhanna directory (`layer_<L>.safetensors`, nothing loaded
 # until a layer is used). A `TranscoderBasis` reads the MLP input `L<l>.n` and writes the MLP
@@ -109,9 +110,9 @@ log(f"model loaded: {NL} layers, d_model {dbg.adapter.hidden_size}")
 # native final-norm scale: that is the **direct edge** (`rho_F c . a_s d_s`), the same vector
 # as `reads.readout(run, Margin).vector`.
 #
-# exp4 hand-wrote this loader, the encoder, the float64 re-encode and the direct effect; here
-# they are mdb objects. The node rule (top 5 by direct effect, P10 "suspect lists") is not an
-# mdb object yet, so it stays as three lines of plain Python.
+# The original run hand-wrote this loader, the encoder, the float64 re-encode and the direct effect; here
+# they are mdb objects. The node rule (top 5 by direct effect) is not an
+# mdb object, so it stays as three lines of plain Python.
 
 # %%
 from mdb.analysis import components, sae
@@ -124,7 +125,7 @@ TSET = sae.open_transcoders("lowl0", TC_DIR, layers=LAYERS, cache=len(LAYERS))
 
 def nominate(nat, last, consumer, item):
     """Nodes: the 5 active features (L20..L24, answer row) with the largest direct effect, plus
-    exp4's random node (its recorded pick) rescaled to node 1's write norm. Plain Python (P10)."""
+    the original run's random node (its recorded pick) rescaled to node 1's write norm. Plain Python."""
     nodes, writes = [], {}
     for x in LAYERS:
         cb = components.transcoder_binding(nat, f"tc{x}", f"t{last}.L{x}.m", TSET.get(x))
@@ -163,7 +164,7 @@ def nominate(nat, last, consumer, item):
 # removal is `-A_s`.
 #
 # The nnsight module paths come from `interop.names.to_nnsight` (mdb's port name table, checked
-# bitwise against nnsight in `tests/test_interop.py`) instead of exp4's hand-typed map.
+# bitwise against nnsight in `tests/test_interop.py`) instead of the original run's hand-typed map.
 # nnsight writes module outputs, so the norm writes go to the module whose *input* is the mdb
 # port read (`L.h` -> `input_layernorm`, `L.r` -> `post_attention_layernorm`, `fn` -> the final
 # norm).
@@ -243,13 +244,13 @@ def frozen_grad(ids, layer, a, b):
     return g[0]
 
 # %% [markdown]
-# ## 4. The native arms: `Branches` with holds (P1 + P4)
+# ## 4. The native arms: `Branches` with holds
 #
 # `dbg.branches(run, Margin(last, a, b), at="t<last>.L20.h")` takes a checkpoint at the branch
 # point. Each arm restores it, switches its holds on, stages its edits at their layers, runs to
 # the consumer's logits, reads `M`, releases the holds and restores again. All arms share one
-# floor: 2 bf16 spacings at the base margin's larger `|logit|` (`verdict.margin_floor`, exp4's
-# `floor_of`). Each arm row records `dM`, `|dM|` in floors and the stability band.
+# floor: 2 bf16 spacings at the base margin's larger `|logit|` (`verdict.margin_floor`, 2 spacings, as in the
+# original run). Each arm row records `dM`, `|dM|` in floors and the stability band.
 #
 # Per node (layer `l`, write `w = a_s d_s`):
 #
@@ -265,12 +266,12 @@ def frozen_grad(ids, layer, a, b):
 # `random-gauss` (`add_null("random", like="n0.arm0")`: a seeded Gaussian at node 1's address
 # with its write norm). The random-feature node gets its own three arms.
 #
-# exp4 built `arm1`/`arm2` by stepping every later layer and re-setting `p`, `a` and `n` by
-# hand. The holds stage the same edits as labelled hold edits. exp4 read `arm2` as a float64
+# The original run built `arm1`/`arm2` by stepping every later layer and re-setting `p`, `a` and `n` by
+# hand. The holds stage the same edits as labelled hold edits. The original run read `arm2` as a float64
 # linear readout of the final state at the base final scale (`rho_F,base c . (h_out -
 # h_out,base)`), not through bf16 logits. To compare with it on the same footing, we also run
 # each `arm2` once more with the holds switched on directly (`run.hold`) and read that float64
-# readout (`arm2_f64`). The brackets use `arm2_f64`, as exp4's did.
+# readout (`arm2_f64`). The brackets use `arm2_f64`, as the original run did.
 
 # %%
 from mdb.analysis.branches import edit
@@ -283,7 +284,7 @@ def hold_names(x, norms):
 
 
 def arm2_f64(br, run, x, value, ro_vec, h_ref):
-    """arm2 read as exp4 did: float64 rho_F,base c . (h_out - h_out,base) (holds on directly)."""
+    """arm2 read as the original run did: float64 rho_F,base c . (h_out - h_out,base) (holds on directly)."""
     last = br.row
     br.restore()
     for held in hold_names(x, True):
@@ -400,10 +401,10 @@ for n in r["nodes"]:
 print("(* = the random node)")
 
 # %% [markdown]
-# ## 7. The key numbers, on the above-floor node-items, next to the showcase
+# ## 7. The key numbers, on the above-floor node-items, next to the original run
 #
-# One rule (`summarise`) over the nodes measured now and over exp4's saved records for the
-# **same items** (`reference.json`, job-09feeeb61cbe). Ratios are medians over node-items with
+# One rule (`summarise`) over the nodes measured now and over the original run's saved records for the
+# **same items** (`reference.json`). Ratios are medians over node-items with
 # `|arm0| > floor` (and `> 4` floors). `arm0/(-direct)` is the native share of the direct edge;
 # its inverse is the direct edge's overstatement.
 
@@ -487,21 +488,21 @@ RESULT["edge_sign_agrees_above_floor"] = f"{sum(bool(n['edge_sign_agrees']) for 
 print("edge sign agrees with the native removal (above floor):", RESULT["edge_sign_agrees_above_floor"])
 
 # %% [markdown]
-# ## 8. Do the mdb objects reproduce the showcase, node for node?
+# ## 8. Do the mdb objects reproduce the original run, node for node?
 #
 # Same items, same model, same kernel path, so the numbers should be equal:
 #
 # * the nodes (layer, feature) and the random node;
-# * `direct` and `edge`: mdb's float64 re-encode (`TranscoderBasis.encode`) and exp4's
+# * `direct` and `edge`: mdb's float64 re-encode (`TranscoderBasis.encode`) and the original run's
 #   hand-written one run the same float64 matmul over a different set of rows, so the
 #   activations, and hence `direct` and `A = g . a_s d_s`, can differ in the last bit
-#   (smoke job-2092d2852921: 2e-16 and 9e-16). We report the max difference;
-# * `arm0`, `arm1` (bf16 logits through `Branches` and holds vs exp4's hand-stepped arms:
+#   (in a smoke run: 2e-16 and 9e-16). We report the max difference;
+# * `arm0`, `arm1` (bf16 logits through `Branches` and holds vs the original run's hand-stepped arms:
 #   bitwise expected);
-# * `arm2_f64` (holds vs exp4's hand-set `p`, `a`, `n`, same float64 readout: equal up to
+# * `arm2_f64` (holds vs the original run's hand-set `p`, `a`, `n`, same float64 readout: equal up to
 #   float64 association order in the readout);
 # * `arm2` from `Branches` reads bf16 logits through `final_held_logits`, so it differs from
-#   exp4's float64 readout by bf16 rounding; we report that difference in floors.
+#   the original run's float64 readout by bf16 rounding; we report that difference in floors.
 
 # %%
 checks = {"branch_base_same": sum(r["branch_base_same"] for r in ROWS), "nodes_same": 0, "items": 0, "arm0_equal": 0, "arm1_equal": 0, "edge_equal": 0,

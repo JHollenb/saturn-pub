@@ -1,25 +1,30 @@
-# Expected outputs: TL weight processing as a reparametrisation null (showcase exp6)
+# Expected outputs: TL weight processing as a reparametrisation null
 
-Source experiment: `results/showcase-20261114/exp6/` (driver `exp6_tlnull.py`, scorer `score.py`,
-sealed prereg `prereg.json`, copied here and declared as custody). Audit:
-`results/showcase-20261114/AUDIT-SHOWCASE.md`, correction 1, which this example follows: the result
-is an effect-size table, not "verdicts don't hold across kernel paths".
+Source experiment: an earlier, larger run of this experiment (48 items per model) with a sealed
+preregistration (`prereg.json`, copied here and declared as custody). This example follows its
+corrected reading: the result is an effect-size table, not "verdicts don't hold across kernel
+paths".
 
 Models: Qwen3-0.6B-Base (carrier L20 KV6, query heads 12, 13) and Qwen2.5-0.5B (carrier L21 KV0,
-query heads 0-6); bf16, eager attention, CUDA on Beast; TransformerLens 4.4.0 `TransformerBridge`.
+query heads 0-6); bf16, eager attention, one CUDA GPU; TransformerLens 4.4.0 `TransformerBridge`.
 Single seed. Floor: 2 bf16 spacings at the largest `|logit|` of (answer, foil) over the item's
-native arms (the prereg's rule). "Lost" = sign reversed, or at or below the floor, on the other path.
+native arms (the prereg's rule). This is mdb's margin noise floor (`verdict.margin_floor`, 2
+spacings), deliberately wider than the 1-spacing verdict floor that `verify` and `whatif` use,
+because these effects are compared across different realisations (batched vs stepped, TL vs mdb),
+not a prediction against its own native run. "Lost" = sign reversed, or at or below the floor, on the other path.
 
-## Showcase (MEASURED, 48 items per model, audited)
+## Original run (48 items per model)
 
-| Job | What |
+| Model | What |
 |---|---|
-| job-c5a45f9c2811 | Qwen3-0.6B-Base, 48 items, 290 s, peak VRAM 11980 MB |
-| job-80cc14782825 | Qwen2.5-0.5B, 48 items, 147 s, peak VRAM 10356 MB |
-| job-c5870c6a3277 | combined smoke, killed_vram at 15.3 GB with all four bridges on CUDA (led to the fp32-on-CPU amendment) |
+| Qwen3-0.6B-Base | 48 items, 290 s, peak VRAM 11980 MB |
+| Qwen2.5-0.5B | 48 items, 147 s, peak VRAM 10356 MB |
+
+An earlier combined smoke run with all four bridges on the GPU was killed at 15.3 GB VRAM, so the
+fp32 bridges run on the CPU.
 
 Loss by `|effect| / floor` bin, total (mdb stepped vs TL processed batched) / kernel only (mdb
-stepped vs TL unprocessed batched), from the audit:
+stepped vs TL unprocessed batched), from the original run:
 
 | \|effect\| / floor | Qwen3 n | Qwen3 lost (total / kernel) | Qwen2.5 n | Qwen2.5 lost (total / kernel) |
 |---|---|---|---|---|
@@ -36,18 +41,18 @@ path dominates on Qwen3 (60/274 kernel vs 46/257 processing); processing dominat
 `|P32 - U32|` base margin 2.3e-5 (Qwen3) / 1.8e-5 (Qwen2.5), 48/48 within 1e-4.
 
 Bins are `low < |effect|/floor <= high` (mdb's `stability.calibrate`); with this convention the
-function reproduces the audit table above exactly from the showcase's raw JSONL.
+function reproduces the table above exactly from the original run's raw per-item output.
 
 ## This example
 
 Subset: **24 of the 48 base items per model**, every second item sorted by id (6 per family:
 city, currency, landmark, person); the same 24 for both models; `items.json` (cut by
-`make_reference.py`, with the donors). `reference.json` holds the showcase's raw margins for those
+`make_reference.py`, with the donors). `reference.json` holds the original run's raw margins for those
 items; the script scores both with the same function.
 
-What replaced the showcase driver's hand-rolled parts (its `TODO(mdb)` lines):
+What replaced the original driver's hand-rolled parts:
 
-| Showcase | Here |
+| Original driver | Here |
 |---|---|
 | `GH` hand-built query-head list; `crow_of` re-implementing the carrier rule | `cm.Slot(..., layers=(L_c,), kv=(g,), rule_heads=cm.group_heads(adapter, g))` + `cm.slot_rows` (new 8-line accessor `group_heads`) |
 | checkpoint / zero head / until logits / restore loop | `dbg.branches(run, Margin(last, a, b), at="t<last>.L<L_c>.h")`, one arm per head, `br.run()` |
@@ -57,17 +62,17 @@ What replaced the showcase driver's hand-rolled parts (its `TODO(mdb)` lines):
 | `floor_of` / `score.py` bins | `verdict.magnitude` / `verdict.spacing` for the floor, `stability.calibrate` for the loss tables, the `stability` band (k = 4) on every arm |
 | judged record ids only | `supplied.seal` before the native arm, `supplied.judge` after; every record through `dbg.records_to` with `dbg.custody(script, prereg)` |
 
-Not built, kept as plain Python: the item loop (P7 `each`), the kernel-path deltas as
-`numeric_scope` entries (Q2.7). No `Pool`: the donor is fixed per item by the panel.
+Kept as plain Python: the item loop and the kernel-path deltas. No `Pool`: the donor is fixed per
+item by the panel.
 
-### Validation run (MEASURED)
+### Validation run (measured)
 
-`job-285ed57bae28` (Beast, priority 70, `--vram 13500`): succeeded, 261.8 s wall, peak VRAM 11936
-MB (torch peak allocated 11483 MB Qwen3 / 10791 MB Qwen2.5), peak RSS 16.3 GB. Log:
-`validation-job-285ed57bae28.log`. **24/24 checks pass.** Smoke: `job-3e99bf66571d` (2 items per
-model, 37 s, peak VRAM 11930 MB, 24/24).
+One job on one CUDA GPU (RTX 4080) through our job scheduler: succeeded, 261.8 s wall, peak VRAM
+11936 MB (torch peak allocated 11483 MB Qwen3 / 10791 MB Qwen2.5), peak RSS 16.3 GB. Validation
+log: `validation-job-285ed57bae28.log` in this directory. **24/24 checks pass.** Smoke run: 2 items
+per model, 37 s, peak VRAM 11930 MB, 24/24.
 
-Showcase vs now, same 24 items: **every margin is bitwise equal** (mdb native base, 2H head arms
+Original run vs now, same 24 items: **every margin is bitwise equal** (mdb native base, 2H head arms
 and V arm; TL U16, P16, U16 batch 1; fp32 within 0, max diff 0), carrier rows and donor carrier rows
 equal, so every table is identical:
 
@@ -85,12 +90,12 @@ equal, so every table is identical:
 (lost / n per bin; `k` = `calibrate`'s smallest margin in floors above which nothing was lost.)
 
 - Above 4 floors: 0/57 (Qwen3) and 0/55 (Qwen2.5) effects lose their verdict on any path: 0/112
-  on this subset (the showcase's 0/214 on all 48).
+  on this subset (the original run's 0/214 on all 48).
 - Sign reversals (total path): 0/146 Qwen3, 11/107 Qwen2.5; kernel path 0 on both. Processing
   reversals on Qwen2.5: 17/120.
 - Kernel path dominates on Qwen3 (39 lost vs 24 by processing); processing on Qwen2.5 (37 vs 4).
 - fp32: max `|P32 - U32|` = 2.29e-5 (Qwen3) / 1.62e-5 (Qwen2.5) on these items (same as the
-  showcase's on these items; the 48-item maxima are 2.3e-5 / 1.8e-5).
+  original run's on these items; the 48-item maxima are 2.3e-5 / 1.8e-5).
 - Self-patch null (`add_null("self")`): `dM` exactly 0 on every item.
 - Sealed TL claims: 146 / 107 judged native effects (= the above-floor counts), 57 / 55 `stable`.
   `sign_agrees` is False on 2 / 13: the 0 / 11 reversals plus 2 / 2 effects where the processed
@@ -99,22 +104,22 @@ equal, so every table is identical:
 - Records: 1488 `supplied-forecast` + 96 `branches`, all read back and verified, carrying the
   script and prereg sha256.
 
-Differences from the showcase, and why they do not move a number:
+Differences from the original run, and why they do not move a number:
 
 - **V arm `dM`.** `Branches` measures the V interchange against the base of its own run (split at
-  the carrier row); the showcase subtracted the unsplit run's base. The V margin itself is bitwise
+  the carrier row); the original run subtracted the unsplit run's base. The V margin itself is bitwise
   equal; the two bases differ by at most 0.25 (Qwen3) / 0.125 (Qwen2.5) logits (the split's kernel
   path). The V effects on these items range 0.4-18.8 logits (2.5-75 floors); on this subset the
-  base shift moved no V effect across a bin edge or the floor: every table equals the showcase's.
+  base shift moved no V effect across a bin edge or the floor: every table equals the original run's.
   On other items it could, by at most that base delta.
-- **Floor rule.** `Branches`' own floor is 2 spacings at the *base* margin's `|logit|`; the showcase
+- **Floor rule.** `Branches`' own floor is 2 spacings at the *base* margin's `|logit|`; the original run
   (and these tables) use the largest `|logit|` over the item's arms, read from the arm rows' new
   `magnitude` field. The two rules differ on 1/24 (Qwen3) and 2/24 (Qwen2.5) items.
-- The memo null "unprocessed bridge bitwise equal to mdb" was not met in the showcase (13/48, 7/48)
+- The null "unprocessed bridge bitwise equal to mdb" was not met in the original run (13/48, 7/48)
   and is not a check here; TL batch 1 is a full-sequence forward, mdb's is stepped.
-- `--vram`: measured peak 11936 MB x 1.3 = 15.5 GB exceeds what Beast admits (the scheduler's
+- `--vram`: measured peak 11936 MB x 1.3 = 15.5 GB exceeds what the scheduler admits (its
   ceiling is ask x 1.1 <= ~15.1 GB), so the ask is 13500 MB (x 1.13).
-- Not rerun: the attention-pattern check (R4) and the per-head pattern lists.
+- Not rerun: the attention-pattern check and the per-head pattern lists.
 
 ## mdb source changes made for this example
 

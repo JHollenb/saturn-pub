@@ -1,8 +1,8 @@
 # Capability and numerical boundaries
 
 These are the `saturn_pub` package's contracts. MDB has its own
-[usage and capability boundaries](../packages/mdb/docs/USAGE.md) and
-[qualification record](../packages/mdb/docs/QUALIFICATION.md); see the
+[usage and capability boundaries](../packages/mdb-experiments/docs/USAGE.md) and
+[qualification record](../packages/mdb-experiments/docs/QUALIFICATION.md); see the
 [MDB overview](mdb.md) to choose between the packages. The boundaries of the current port-level
 engine (supported families, `circuit test` disabled, known limits) are the "Known limits" section
 of the [package README](../packages/mdb/README.md).

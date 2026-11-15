@@ -7,7 +7,7 @@ MDB may depend on and import the public `saturn_pub` package through declared
 package requirements. The dependency direction is `mdb -> saturn_pub`; the
 Saturn-pub core remains independent of MDB. MDB declares `saturn-pub>=0.4.1,<0.5`
 and retains its existing state and numerical contracts. The new public-session
-adapter delegates execution to Saturn-pub; see [public-session projects](../packages/mdb/docs/SATURN-PUB-PROJECTS.md).
+adapter delegates execution to Saturn-pub; see [public-session projects](../packages/mdb-experiments/docs/SATURN-PUB-PROJECTS.md).
 The [documentation index](README.md) covers both packages; start with the
 [MDB overview](mdb.md) or [Saturn capability guide](usage.md).
 

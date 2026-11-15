@@ -1,8 +1,12 @@
-"""Cut the example's data from the showcase (light Python, no model): ``items.json`` (the 24
-items per model this example runs, plus their donors) and ``reference.json`` (the showcase's raw
-exp6 margins on those items, jobs job-c5a45f9c2811 Qwen3 / job-80cc14782825 Qwen2.5).
+"""Cut the example's data from the original run (light Python, no model): ``items.json`` (the 24
+items per model this example runs, plus their donors) and ``reference.json`` (the original run's
+raw margins on those items).
 
-    python3 make_reference.py   # from this directory, in the repo checkout
+This script is kept for provenance. It needs the original run's raw outputs (the 48-item panel
+and the per-model JSONL files), which are not part of this package; the two JSON files it writes
+are already in this directory.
+
+    python3 make_reference.py   # from this directory, with the original outputs in place
 """
 import json
 from pathlib import Path

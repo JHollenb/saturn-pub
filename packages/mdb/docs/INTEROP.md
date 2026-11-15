@@ -1,6 +1,6 @@
 # mdb with TransformerLens and nnsight
 
-`mdb.interop` lets the three tools work on one loaded Hugging Face model: one name table, values that cross between them, batched nnsight interventions written as mdb edits, and mdb's native re-measurement of what the other tools claim. Install the tools with the `interop` extra (`transformer-lens==4.4.0`, `nnsight==0.8.2`); on Beast they live in `/mnt/ssd1tb/cache/beast/mdb-interop/site-tl440-nn082` (a `uv pip install --target --no-deps` overlay on the `mrun` env, which has torch 2.13.0 and transformers 5.13.1).
+`mdb.interop` lets the three tools work on one loaded Hugging Face model: one name table, values that cross between them, batched nnsight interventions written as mdb edits, and mdb's native re-measurement of what the other tools claim. Install the tools with the `interop` extra (`transformer-lens==4.4.0`, `nnsight==0.8.2`).
 
 ## One name table
 
@@ -34,12 +34,12 @@ names.table()                 # rows for docs / tooling
 | `m` | `blocks.l.hook_mlp_out` | `.mlp.down_proj.output` | none |
 | `h_out` | `blocks.l.hook_resid_post` | `.output` | none |
 
-MEASURED (tests, tiny Qwen2 fp32/bf16 and Qwen3 bf16 on CPU): every mapped value is bitwise equal across `mdb.trace`, an unprocessed bridge over the same weights and nnsight. Real-model parity is in `results/interop-20261113/` and the report below.
+MEASURED (tests, tiny Qwen2 fp32/bf16 and Qwen3 bf16 on CPU): every mapped value is bitwise equal across `mdb.trace`, an unprocessed bridge over the same weights and nnsight. Real-model parity was measured on the developers' GPU; see the report below.
 
 ## Two tools rewrite the module tree they are handed
 
 - `TransformerBridge.boot_transformers(hf_model=m)` replaces `m`'s modules in place (tiny Qwen2: 33 modules become 155). The plain forward stays bitwise equal, but `mdb.trace` then refuses `p` because native eager attention no longer runs (issue I1).
-- nnsight's `.source` replaces an attention module's forward body for good. mdb's eager interceptor never fires there again; before the fix `Run.read("t17.L0.qr")` raised `KeyError` on Qwen2.5-1.5B (issue I2).
+- nnsight's `.source` replaces an attention module's forward body for good. mdb's eager interceptor never fires there again; before the fix `Run.read("t17.L0.qr")` raised `KeyError` on Qwen2.5-1.5B.
 
 So `mdb.interop.tl.bridge(model, tok)` boots the bridge on `shared_clone(model)` (a new module tree over the same parameter tensors, no weight copy), `mdb.interop.nn.read` sources a shared clone, and `mdb.attach` refuses a tree rewritten by either tool. Never call `enable_compatibility_mode()` on a bridge that shares weights with a model in use: weight processing writes the parameters.
 
@@ -91,9 +91,9 @@ out["grads"]["L14.h"]        # (batch, pos, d): dM_i/dh for every row of every p
 
 ## TransformerLens weight processing on RMSNorm models
 
-`tl.processed(bridge_or_cache)` reads the flag TL sets on the bridge itself (`bridge._weights_processed`). Never read `bridge.model`: `TransformerBridge.__getattr__` falls through to the Hugging Face module, which has no flag. Before 2026-11-14 the helper read it there. It returned False for every bridge, but it was right for an `ActivationCache`, whose `.model` is the bridge (measured on tiny Qwen3). So `import_cache(..., bridge_model=bridge)` could import processed values without the refusal firing, and TP1 recorded `processed: false` for a bridge that had been processed. `tl.processing(...)` adds what TL's own gates did (TL 4.4.0 `ProcessWeights.process_weights`). `fold_ln` folds the norm gains for LN and RMS. Writing-weight centring runs only for `normalization_type` LN/LNPre without `final_rms`. So on Qwen2/Qwen3/Llama, compatibility mode folds gains and centres the unembedding but leaves the residual stream uncentred (`residual_centred: False`). If you want centred residuals on an RMSNorm model, subtract the mean yourself and label the result derived. TL will not do it.
+`tl.processed(bridge_or_cache)` reads the flag TL sets on the bridge itself (`bridge._weights_processed`). Never read `bridge.model`: `TransformerBridge.__getattr__` falls through to the Hugging Face module, which has no flag. Before 2026-11-14 the helper read it there. It returned False for every bridge, but it was right for an `ActivationCache`, whose `.model` is the bridge (measured on tiny Qwen3). So `import_cache(..., bridge_model=bridge)` could import processed values without the refusal firing, and an earlier experiment recorded `processed: false` for a bridge that had been processed. `tl.processing(...)` adds what TL's own gates did (TL 4.4.0 `ProcessWeights.process_weights`). `fold_ln` folds the norm gains for LN and RMS. Writing-weight centring runs only for `normalization_type` LN/LNPre without `final_rms`. So on Qwen2/Qwen3/Llama, compatibility mode folds gains and centres the unembedding but leaves the residual stream uncentred (`residual_centred: False`). If you want centred residuals on an RMSNorm model, subtract the mean yourself and label the result derived. TL will not do it.
 
-Cache only what you read: `bridge.run_with_cache(ids, names_filter=lambda n: n.endswith("hook_resid_pre"))`. An unfiltered cache of a 1.7B model holds every hook. Combined with the fp32 CPU copy that processing needs, it peaked at 21–24 GB of RAM in TP1.
+Cache only what you read: `bridge.run_with_cache(ids, names_filter=lambda n: n.endswith("hook_resid_pre"))`. An unfiltered cache of a 1.7B model holds every hook. Combined with the fp32 CPU copy that processing needs, it peaked at 21–24 GB of RAM in one of our runs.
 
 ## mdb verifies another tool's claim natively
 
@@ -105,9 +105,9 @@ rows = verify.verify(dbg, run, [verify.Claim("L22.A[h6]", 0.0, "scale", "M[9625,
 # native (measured, batch-1 stepped), verdict and floor (P20), claim_minus_native
 ```
 
-Limits: mdb edits ports only at the pending row (issue I3), so position-wise activation patching at earlier rows has no native counterpart yet; native verification costs about 5 s per edit on a 1.5B model (issue I4).
+Limits: mdb edits ports only at the pending row, so position-wise activation patching at earlier rows needs `start prefill=K` (rows from `K` on are stepped and have ports) or `sweep`; native verification costs about 5 s per edit on a 1.5B model.
 
-## circuit-tracer attribution graphs (SC8)
+## circuit-tracer attribution graphs
 
 `mdb.interop.circuit_tracer_graph` reads a circuit-tracer 0.5.0 `Graph` (the object, its
 `to_pt` file, or a plain dict of its tensors: `adjacency_matrix`, `active_features`,

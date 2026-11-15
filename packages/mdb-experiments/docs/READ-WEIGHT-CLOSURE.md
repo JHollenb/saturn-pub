@@ -74,7 +74,7 @@ At K=32, receiver-median compilation plus evaluation takes 43.697ms versus 35.79
 With MDB installed, run from the repository root:
 
 ```sh
-python packages/mdb/examples/read_weight_centered_demo.py \
+python packages/mdb-experiments/examples/read_weight_centered_demo.py \
   --program packages/mdb/qualification/read_weight_closure_20261110/DEMO-PROGRAM.json \
   --dose 1
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the SAE census to Beast through mrun as one job (about 8 minutes, priority 70).
+# Submit the SAE census to our GPU host through the job scheduler (mrun) as one job (about 8 minutes, priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running

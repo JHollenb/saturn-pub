@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the composer-neuron example to Beast through mrun as one job (about 3.5 minutes, priority 70).
+# Submit the composer-neuron example to our GPU host through the job scheduler (mrun) as one job (about 3.5 minutes, priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
@@ -25,7 +25,7 @@ if [ -n "${MDB_COUNTRIES:-}" ]; then
 fi
 
 cd "$STAGE"
-# --vram and --ram are in MB. Measured peak (job-a6c4f49f1615): 6890 MB VRAM, 2.4 GB RSS;
+# --vram and --ram are in MB. Measured peak: 6890 MB VRAM, 2.4 GB RSS;
 # --vram = peak x 1.3. mrun clamps --ram to its measured-history grant.
 ~/domains/common/bin/mrun submit -e mdb-example-composer --payload . --pin beast --gpu \
   --vram "${MDB_VRAM:-9000}" --ram 12000 --priority 70 --env-alias mrun --detach -- bash run.sh

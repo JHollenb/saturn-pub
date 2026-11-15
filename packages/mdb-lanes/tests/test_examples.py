@@ -14,7 +14,7 @@ def test_finite_qwen_example(tmp_path):
         intermediate_size=64, num_hidden_layers=2, num_attention_heads=4,
         num_key_value_heads=2, attn_implementation="eager")).eval().to(torch.bfloat16)
     root = Path(__file__).resolve().parents[1]
-    commands = json.loads((root.parent / "mdb" / "examples/qwen-commands.json").read_text())
+    commands = json.loads((root.parent / "mdb-experiments" / "examples/qwen-commands.json").read_text())
     with BenchSession.from_resident(model, root=tmp_path / "session") as session:
         session.prefill([1, 2, 3])
         rows = run_commands(session, commands)

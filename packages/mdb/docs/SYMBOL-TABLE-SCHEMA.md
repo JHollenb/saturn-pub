@@ -1,6 +1,6 @@
 # Symbol table schema reference
 
-This is the column reference for `mdb.analysis.symbols.table` (record kind `symbol-table`, schema `mdb-symbol-table-v1`), its long-frame export (`Table.to_frame`) and the related record kinds. It was written for branch `mdb-symtab` (2026-11-14), which builds the recommendations of `obsidian/reviews/2026-11-14-symbol-table-additions-review.md`.
+This is the column reference for `mdb.analysis.symbols.table` (record kind `symbol-table`, schema `mdb-symbol-table-v1`), its long-frame export (`Table.to_frame`) and the related record kinds.
 
 The tables in the "Columns" section are generated from `mdb.analysis.frame.COLUMNS` / `READ_COLUMNS` / `HEAD_COLUMNS` (`frame.schema_markdown()`). `frame.json_schema(name)` builds a JSON Schema (draft 2020-12) for `mdb-symbol-table-v1`, `mdb-circuit-map-v1` and `mdb-trace-v1` from the same list and the record kinds' required fields. Edit `COLUMNS` and regenerate rather than editing those tables by hand.
 
@@ -8,7 +8,7 @@ The tables in the "Columns" section are generated from `mdb.analysis.frame.COLUM
 
 Every number in a table row is a claim `{value, authority}`. The labels are the record layer's (`core.records.AUTHORITIES`):
 
-- `derived-exact`: float64 arithmetic on the run's own values (an identity, P06/P07/P19 and the like). Exact up to float64 summation order.
+- `derived-exact`: float64 arithmetic on the run's own values (an identity, P06/P07/P19 and the like; see [PROOF-IDS.md](PROOF-IDS.md)). Exact up to float64 summation order.
 - `measured`: read from a native forward (a cache cell, a native consumer, a native arm).
 - `supplied`: given by the caller (an edit's value, a label, a projection subspace, a Neuronpedia id mapping).
 - `bound`: a rounding bound.
@@ -41,12 +41,12 @@ Declaring candidate sets on the REPL: `candidates countries = countries.json`, `
 
 ## Caveats that the columns encode
 
-- `mass` and `to_consumer` stay exact and partition the head mass and the consumer; t0 cannot be removed from them without breaking the sum (AUDIT-Z1-Z2). The discounted forms (`contrast`, `mass_nonsink`) are added beside them.
+- `mass` and `to_consumer` stay exact and partition the head mass and the consumer; t0 cannot be removed from them without breaking the sum. The discounted forms (`contrast`, `mass_nonsink`) are added beside them.
 - `mask_delta` is a direct-path quantity: the change of the consumer's direct term if that one read were masked with renormalisation, every other input held. On FT1 it was within 2 bf16 spacings of the native mask on 6/32 items (measured, `next/ft1-full-summary.json`). It is not the native mask effect.
 - `share` flips sign with a negative margin; `share_of_abs` divides by `|consumer_total|` instead.
-- A co-readout projects out the whole span of the other set (or its top-k principal directions with `:K`), not one direction. Projecting one direction leaves the true country in the write (AUDIT-SCALE.md:133-157). The removed part's own readout is reported as the lexical null, and `counts` is true only when the projected readout names the truth and the removed part alone does not.
+- A co-readout projects out the whole span of the other set (or its top-k principal directions with `:K`), not one direction. Projecting one direction leaves the true country in the write (measured on a real model). The removed part's own readout is reported as the lexical null, and `counts` is true only when the projected readout names the truth and the removed part alone does not.
 - `causal` is measured with batch-1 stepped arms from a fresh prefix cache. The floor is the null arm's difference from the run's own stepped consumer. The `mask` and `zero` forms are the same number at the reader row (zeroing `p[h, j, s]` and zeroing `v_s` give the same row-j output). The column refuses a run that carries edits.
-- Cross-item position means must be leave-one-out (`frame.loo_position_mean`): identical prefixes put copies of a row in its own mean (AUDIT-RUN1-TP1).
+- Cross-item position means must be leave-one-out (`frame.loo_position_mean`): identical prefixes put copies of a row in its own mean.
 
 ## Foreign names and their verification status
 

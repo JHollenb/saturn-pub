@@ -24,22 +24,23 @@
 #    mdb's nulls (`add_null`: a matched-norm random change on the same neurons, a self-patch, and
 #    an answer-direction write) and one shared floor.
 # 7. **mdb `supplied.judge`**: every sealed forecast is scored against the native change with
-#    mdb's floor (`verdict.margin_floor`: 2 bf16 spacings at the larger |logit| + the measured
-#    batched-vs-stepped base gap).
+#    mdb's margin noise floor (`verdict.margin_floor`: 2 bf16 spacings at the larger |logit| + the
+#    measured batched-vs-stepped base gap). This is deliberately wider than the 1-spacing verdict
+#    floor that `verify` and `whatif` use, because here we compare effects measured on different
+#    realisations (batched vs stepped), not a prediction against its own native run.
 #
-# **Showcase result** (job-09feeeb61cbe, audited in `results/showcase-20261114/AUDIT-SHOWCASE.md`;
-# single seed, bf16): the named set beats the random neuron set by >= 0.5 on 26/26 held-out items
+# **Original result** (an earlier run of this experiment; single seed, bf16): the named set beats the random neuron set by >= 0.5 on 26/26 held-out items
 # (median dM -4.06 named vs 0.0 random vs 0.06 for an answer-token neuron null); the forecasts rank
 # the single-neuron effects well (Spearman 0.94 over 71 neurons above the floor) but overstate
 # their size (median forecast/native 0.83, outside the preregistered 0.4-0.7 band); nnsight
 # batched and mdb stepped agree within 2 spacings on 51/52 arms.
 #
-# **What "out of sample" means here** (audit): panel B items are *held-out items of the same
+# **What "out of sample" means here:** panel B items are *held-out items of the same
 # country*, so they share the answer token with the A items that named the neurons. That closes
 # item-level selection, not answer-level selection. The answer-direction null below asks how much
 # of a write of the same size could come from pointing it straight at the answer's unembedding.
 #
-# This example runs the whole showcase panel (64 items, 38 A, 26 B in 19 countries) in about
+# This example runs the whole original panel (64 items, 38 A, 26 B in 19 countries) in about
 # 4 minutes on one GPU; `MDB_COUNTRIES=Spain,Japan` limits the measured countries (the smoke).
 
 # %%
@@ -61,7 +62,7 @@ LAYERS = list(range(20, 28))
 SEED = 20261114
 T0 = time.monotonic()
 ITEMS = json.load(open(HERE / "items.json"))["items"]        # the 64 base items, sorted by id
-REF = json.load(open(HERE / "reference.json"))                # the showcase's saved numbers
+REF = json.load(open(HERE / "reference.json"))                # the original run's saved numbers
 RESULT: dict = {"model": str(MODEL), "countries": COUNTRIES or "all"}
 
 
@@ -73,7 +74,7 @@ def log(msg):
 # ## 1. Load the model through mdb, declare custody, open a record sink
 #
 # `dbg.custody(script=, prereg=)` stamps every record sealed from now on with the sha256 of this
-# script and of the preregistration (`prereg.json`, copied unchanged from the showcase), the
+# script and of the preregistration (`prereg.json`, copied unchanged from the original run), the
 # library versions and the kernel path. `dbg.records_to(path)` appends every sealed record
 # (supplied forecasts, pools, branches) to a JSONL file, whole, so nothing is reduced to an id.
 
@@ -128,9 +129,9 @@ log(f"grads: {len(by_len)} length groups, {len(G)} items")
 # `dbg.pool(items, "t@last.L20.f")` runs each item on mdb's stepped path to the answer row's
 # `f` and keeps the value with its origin. `pool.mean_for(item)` is the mean over every *other*
 # item (the item cannot be in it), returned as a `ValueRef` whose pointer names the pool's sealed
-# record, the rule and the items digest. The showcase used the 64-item mean, which includes the
-# item itself (an audit caveat); leave-one-out removes it, so the edits here are 1/63 of
-# `mean - f` further from `f` than the showcase's, and the forecasts move with them.
+# record, the rule and the items digest. The original run used the 64-item mean, which includes the
+# item itself; leave-one-out removes it, so the edits here are 1/63 of
+# `mean - f` further from `f` than the original's, and the forecasts move with them.
 #
 # The pool's values are mdb's *stepped* `f`; nnsight's come from a batched full-sequence forward.
 # They differ by bf16 rounding on a kernel path (printed below in spacings). The forecast of an
@@ -159,15 +160,14 @@ FC = {k: G[k] * (LOO[k] - V[k]) for k in G}           # nnsight's forecast of ea
 # %% [markdown]
 # ## 4. Panels and nomination (plain Python)
 #
-# Prompt-set roles (P7) and sealed suspect lists (P10) are not built in mdb yet, so the A/B split
-# and the nomination rule stay short Python, exactly as preregistered: within each country
+# The A/B split and the nomination rule are short plain Python, exactly as preregistered: within each country
 # (sorted by id) items alternate A, B, A, ...; one-item countries are A only. Per country and
 # layer, the 8 neurons with the most negative summed forecast over the country's A items, kept
 # only if the forecast is negative on every A item.
 #
 # The nomination statistic is the preregistered one, on the library's own values: the forecast
-# to the 64-item mean of nnsight's `f`. Only A items enter it, and it is the showcase's statistic
-# bit for bit, so the named sets are the showcase's. (On held-out items the edits and forecasts
+# to the 64-item mean of nnsight's `f`. Only A items enter it, and it is the original run's
+# statistic bit for bit, so the named sets are the original run's. (On held-out items the edits and forecasts
 # use the pool's leave-one-out mean.) We also report how many named neurons would change if the
 # nomination used the pool forecast `FC` instead: a ranking of near-tied sums moves with
 # bf16-level differences in `f`.
@@ -251,7 +251,7 @@ log(f"sealed {sum(len(r) for r in SEALED.values())} forecasts on {len(SEALED)} B
 #
 # One `batch_whatif` per country over its B items: 64 single-neuron arms, the named set, and a
 # random neuron set (same count per layer, named excluded, seed 20261114). Each item gets its own
-# leave-one-out value (a per-prompt tensor). The random draw replays the showcase's seeded stream
+# leave-one-out value (a per-prompt tensor). The random draw replays the original run's seeded stream
 # exactly (its answer-token neuron null drew from the same stream; that null is replaced by
 # mdb's answer-direction null in step 7, and its draw is consumed here only to keep the stream
 # aligned). A random *set of other neurons* is a selection null; mdb's built-in nulls are change
@@ -278,7 +278,7 @@ for c, sel in named.items():                       # every country, in order: th
     for li, cnt in collections.Counter(li for li, _ in sel).items():
         taken = {k for l2, k in sel if l2 == li}
         rnd += [(li, k) for k in rng.sample([k for k in range(6144) if k not in taken], cnt)]
-        rng.sample(range(5 * cnt), cnt)            # the showcase's answer-token null draw
+        rng.sample(range(5 * cnt), cnt)            # the original run's answer-token null draw
     RANDOM_SET[c] = rnd
 
 NATIVE = {}
@@ -399,7 +399,7 @@ with open(OUT / "items.jsonl", "w") as fh:
         fh.write(json.dumps(r, default=float) + "\n")
 
 # %% [markdown]
-# ## 8. Score (the showcase's `score.py` rules) and compare with the showcase on the same items
+# ## 8. Score (the original run's scoring rules) and compare with the original run on the same items
 #
 # * **N1** named set vs random neuron set: `|dM_set| - |dM_random_set| >= 0.5` (batched, as
 #   preregistered), plus the same on the stepped path and against mdb's two change nulls.
@@ -428,7 +428,7 @@ def spearman(x, y):
 
 
 def score(rows, batched, stepped):
-    """The showcase scorer on rows of {batched: {...}, stepped: {...}} (functions pick the arms)."""
+    """The original run's scorer on rows of {batched: {...}, stepped: {...}} (functions pick the arms)."""
     n = len(rows)
     fc, nat, lay = [], [], collections.defaultdict(list)
     for r in rows:
@@ -520,7 +520,7 @@ for r in ROWS:
 # %% [markdown]
 # ## 9. Reading the result
 #
-# Look for: the named neuron sets identical to the showcase's (same statistic, step 4);
+# Look for: the named neuron sets identical to the original run's (same statistic, step 4);
 # the named set moving the margin by several logits on every held-out item while the random
 # neuron set and the matched-norm random change on the same neurons stay near 0; the self-patch
 # at exactly 0 (the stepped kernel path reproduces itself); nnsight batched and mdb stepped

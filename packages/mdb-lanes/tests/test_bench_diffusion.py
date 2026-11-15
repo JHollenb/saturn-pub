@@ -36,7 +36,7 @@ def pipeline(tmp_path):
 def test_finite_diffusion_example(pipeline, tmp_path):
     from pathlib import Path
     from mdb_lanes.bench_cli import run_commands
-    commands = json.loads((Path(__file__).resolve().parents[1].parent / "mdb" /
+    commands = json.loads((Path(__file__).resolve().parents[1].parent / "mdb-experiments" /
                            "examples/diffusion-commands.json").read_text())
     with BenchSession.from_resident(pipeline, root=tmp_path / "session") as session:
         session.prepare("a", seed=17, height=16, width=16, num_inference_steps=2)

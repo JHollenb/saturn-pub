@@ -1,11 +1,14 @@
-"""Cut items.json and reference.json for this example from the saved showcase outputs (light
-Python, no model). Run from this directory:  python3 make_reference.py
+"""Cut items.json and reference.json for this example from the saved outputs of the original run
+(light Python, no model). Run from this directory:  python3 make_reference.py
 
-items.json      exp4's 32 base items: token ids, answer, donor answer, and the
-                random-node feature exp4 drew for each item (its seeded rng ran over the whole
+Kept for provenance: it needs the original run's raw outputs, which are not part of this package;
+the two JSON files it writes are already in this directory.
+
+items.json      the original run's 32 base items: token ids, answer, donor answer, and the
+                random-node feature it drew for each item (its seeded rng ran over the whole
                 panel, so a subset cannot redraw it; the example reuses the recorded pick).
-reference.json  exp4's raw per-item records for the same items (exp4/out/exp4-items.jsonl,
-                job-09feeeb61cbe), plus the full-panel audited numbers for context.
+reference.json  the original run's raw per-item records for the same items, plus the full-panel
+                numbers for context.
 """
 import json
 from pathlib import Path
@@ -15,7 +18,7 @@ MDB = HERE.parents[1]
 SHOW = MDB / "results/showcase-20261114/exp4"
 ITEMS = MDB / "results/twohop-20261113/next/r1_items.json"
 
-# exp4's panel: the first 8 base items by id of each 1a family (exp4_brackets.py:56-60).
+# The original panel: the first 8 base items by id of each two-hop family.
 spec = json.load(open(ITEMS))
 fams: dict = {}
 for item in sorted((i for i in spec["items"] if i["group"] == "base"), key=lambda i: i["id"]):
@@ -24,7 +27,7 @@ panel = [i for f in sorted(fams) for i in fams[f][:8]]
 raw = {r["id"]: r for r in map(json.loads, open(SHOW / "out/exp4-items.jsonl"))}
 assert [i["id"] for i in panel] == list(raw), "panel order differs from the showcase output"
 
-# All 32 items of exp4's panel: the full example runs in about 4 minutes, so no subset is needed
+# All 32 items of the original panel: the full example runs in about 4 minutes, so no subset is needed
 # (MDB_ITEMS picks a subset for a smoke run). Above-floor node-items: 103 of 160.
 def above(r):
     return sum(abs(n["arm0"]) > r["floor"] for n in r["nodes"] if n["kind"] == "node")

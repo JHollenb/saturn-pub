@@ -1,110 +1,57 @@
 # mdb examples
 
-**Only experiments approved by the owner are added here.**
+Each example is a directory with a script, and for 01-07 the same cells as a notebook. Only
+examples approved by the maintainers are added here.
 
-Numbered directories (`01-...`, `02-...`) are experiment examples: one measured experiment, a
-notebook that walks a newcomer through it, an equivalent script for mrun, a launcher, and the
-numbers the original run measured (`expected_outputs.md`, with job ids). The loose scripts below
-are older primitive demos.
+Start with **00**: it runs on a laptop CPU in a few seconds with nothing downloaded. Examples 01-07
+are real experiments on Qwen3/Qwen2.5 checkpoints and need a CUDA GPU and local model files.
 
-Runnable examples over caller-owned `BenchSession` state and saved scalar programs.
-Examples load no model on import; real-model examples run inside an admitted mrun worker.
+| Example | What it teaches | Needs |
+|---|---|---|
+| [`00-hello-tiny/`](00-hello-tiny/) | The debugger loop in about 60 lines: `step` through a layer's ports, `set` an edit, `watch` a value, `Branches` from one checkpoint with a null arm, the `symbols` table, `forecast` then `verify`. | CPU only; `mdb-runtime[autoregressive]`; random tiny Qwen2, no download. About 3 s. |
+| [`01-sae-census-qwen3-1.7b/`](01-sae-census-qwen3-1.7b/) | SAEs with mdb: `sae load`, `features` with the error term, a variable census (feature vs error share), splicing out the SAE error, steering a feature. | GPU (peak 4.6 GB VRAM); Qwen3-1.7B-Base; Qwen-Scope SAE `SAE-Res-Qwen3-1.7B-Base-W32K-L0_50`; `matplotlib`. |
+| [`02-tl-reparametrisation-floor/`](02-tl-reparametrisation-floor/) | How large an effect must be before its verdict survives another realisation of the same forward: mdb vs TransformerLens processed and unprocessed bridges. `names.tl_hook`, selectors, `Branches`, sealed supplied forecasts, the stability band. | GPU (peak 12 GB VRAM, 16 GB host RAM); Qwen3-0.6B-Base and Qwen2.5-0.5B; TransformerLens 4.4 (`interop` extra). |
+| [`03-composer-neurons-sealed-forecasts/`](03-composer-neurons-sealed-forecasts/) | Another library nominates, mdb measures: nnsight gradients nominate MLP neurons, mdb seals the forecasts and measures the knock-outs natively on held-out items. `Pool` (leave-one-out mean), `f`-port selectors, `Branches` nulls, custody. | GPU (peak 6.9 GB VRAM); Qwen3-1.7B-Base; nnsight (`interop` extra). |
+| [`04-watch-edit-continue-country-feature/`](04-watch-edit-continue-country-feature/) | The gdb loop on a real model: a `FeatureCondition` watch on an SAE feature (false alarms shown), break, `Branches` with a one-component repair, a pool donor and a matched-norm null, continue. | GPU (peak 3.8 GB VRAM); Qwen3-1.7B-Base; the Qwen-Scope SAE; `matplotlib`. |
+| [`05-sae-component-binding-carrier/`](05-sae-component-binding-carrier/) | SAE features as component bindings of one KV-cache value cell: the named country-feature component moves 0.59 of the cell, a random component 0.0. `Binding.component`, the symbol table, `Branches` over layers. | GPU (peak 4.0 GB VRAM, 11 GB host RAM); Qwen3-1.7B-Base; the Qwen-Scope SAE; SAELens; `matplotlib`. |
+| [`06-interchange-subspace-pyvene/`](06-interchange-subspace-pyvene/) | Interchange interventions at one cell: pyvene and mdb on the same flips; `SubspaceBinding` for a training-free SAE subspace (a negative result) and readout subspaces. | GPU (peak 3.9 GB VRAM); Qwen3-1.7B-Base; the Qwen-Scope SAE; pyvene 0.1.8; `matplotlib`. |
+| [`07-frozen-gradient-brackets-transcoders/`](07-frozen-gradient-brackets-transcoders/) | Transcoder nodes and a frozen-gradient edge from nnsight, measured natively with holds (frozen attention pattern and norm scales) as `Branches` arms: the edge explains 0.92-0.97 of the native effect; the direct edge overstates it about 1.6x. | GPU (peak 3.9 GB VRAM, 9.6 GB host RAM); Qwen3-1.7B-Base; Qwen3-1.7B transcoders; nnsight; `matplotlib`. |
 
-| Example | What it shows |
-| --- | --- |
-| `resident_lab.py` | Rewind/replay, residual preview/commit/abort, sibling memory, circuit panel (tiny random CPU model). |
-| `pass_indexed_baseline.py` | The pass-indexed-baseline R0 drift recipe as BenchSession primitives. |
-| `collect_session.py` | Collecting an exported session. |
-| [`01-sae-census-qwen3-1.7b/`](01-sae-census-qwen3-1.7b/) | First SAELens x mdb experiment: SAE variable census on Qwen3-1.7B-Base with Qwen-Scope SAEs (features vs error term, error splice, steering). Notebook, script, Beast launcher. |
-| [`02-tl-reparametrisation-floor/`](02-tl-reparametrisation-floor/) | 2026-11-14, owner-approved (showcase exp6). TransformerLens processed/unprocessed bridges as a second realisation of the same forward, judged against mdb's floor: an effect-size table (above ~4 floors 0/214 verdicts change). `names.tl_hook`, selectors, Branches, supplied-forecast judging. Qwen3-0.6B-Base and Qwen2.5-0.5B. |
-| [`03-composer-neurons-sealed-forecasts/`](03-composer-neurons-sealed-forecasts/) | 2026-11-14, owner-approved (showcase exp5). nnsight gradients nominate composer neurons, mdb seals the forecasts and measures the knock-outs natively on held-out items (26/26, large effect). Pools (leave-one-out mean), f-port selectors, Branches nulls, custody. |
-| [`04-watch-edit-continue-country-feature/`](04-watch-edit-continue-country-feature/) | 2026-11-14, owner-approved (showcase exp1). The debugger loop: FeatureCondition watch on the carrier's SAE country feature (false alarms shown), break, Branches with a one-component repair, a pool donor and a matched-norm null, continue. |
-| [`05-sae-component-binding-carrier/`](05-sae-component-binding-carrier/) | 2026-11-14, owner-approved (showcase exp2). SAE features as component bindings of the carrier value cell: the named country component moves 0.59 of the cell, a random one 0.0. `Binding.component`, symbol table, Branches over layers. |
-| [`06-interchange-subspace-pyvene/`](06-interchange-subspace-pyvene/) | 2026-11-14, owner-approved (showcase exp7). Interchange at the carrier cell: pyvene and mdb agree on flip verdicts; `SubspaceBinding` for the training-free SAE subspace (an honest negative) and readout spans, with the audited DAS comparison. |
-| [`07-frozen-gradient-brackets-transcoders/`](07-frozen-gradient-brackets-transcoders/) | 2026-11-14, owner-approved (showcase exp4; presented on above-floor nodes). Transcoder nodes, nnsight frozen-gradient edge, mdb holds (pattern, norm scales) as Branches arms; the edge explains 0.92-0.97 of native, direct-edge overstatement ~1.6x. |
-| [`read_weight_transport_demo.py`](read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../docs/READ-WEIGHT-TRANSPORT.md). |
-| [`read_weight_taylor_demo.py`](read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../docs/READ-WEIGHT-TAYLOR.md). |
-| [`read_weight_centered_demo.py`](read_weight_centered_demo.py) | Replay measured midpoint coefficients and their zero residual without a framework; [native-profile state/KV closure and measured costs](../docs/READ-WEIGHT-CLOSURE.md). |
+## 00: run it
 
-## `pass_indexed_baseline.py`
-
-Expresses the six-line recipe from
-`research/papers/pass-indexed-baseline/paper.md` section 7 in mdb's own
-primitives — `prefill` (the scene prefix becomes the pass-0/fixed parent cut),
-`stage_input`+`step` (teacher-force the exact question tokens), `step` (commit
-the model's own greedy answer), `checkpoint` (the per-turn cut), and
-`fork`/`restore`/`checkout` (a retained-cache fork that shares the immutable
-prefix ancestor). For each of the four preregistered turns it scores the turn's
-answer token under (a) the pass-indexed native continuation of the retained
-trunk and (b) a fork of the fixed pass-0 prefix, and reports
-
-    Drift(t) = logp_rebaselined(answer_t) - logp_fixed(answer_t)
-
-plus the fact-span K/V bit-identity canary (the prefix keys/values read on the
-trunk and on the fixed fork, which must be bit-identical).
-
-**Run it:**
-
-```sh
-# Mechanics only — tiny random CPU Qwen2, no download, no tokenizer. Validates
-# that the primitives compose and the fact-span canary is exact. (drift numbers
-# are meaningless on random weights.)
-python pass_indexed_baseline.py --self-test --root ./selftest
-
-# Real model, inside an admitted mrun worker (BF16 CUDA):
-python pass_indexed_baseline.py --model-path /mnt/big/llm-models/Qwen2.5-1.5B \
-    --root /mnt/usb-storage/mdb/pass-indexed --scenes S0        # smoke, one scene
-python pass_indexed_baseline.py --model-path /mnt/big/llm-models/Qwen2.5-1.5B \
-    --root /mnt/usb-storage/mdb/pass-indexed                    # all four scenes
+```
+pip install . "./packages/mdb[autoregressive]"     # from the saturn-pub checkout, see ../README.md
+python packages/mdb/examples/00-hello-tiny/hello_tiny.py
 ```
 
-Numeric regime: mdb's Qwen lane (CausalContextVM) runs **BF16**; it refuses
-FP32. The paper's primary R0 numbers are FP32. This example reproduces the
-*direction and magnitude* of the base R0 drift in BF16, not a bit match.
+The output should equal [`00-hello-tiny/expected_output.txt`](00-hello-tiny/expected_output.txt)
+except the `record` id of the forecast, which digests the installed library versions.
+`tests/test_example_hello_tiny.py` checks this.
 
-### Measured reproduction (MEASURED)
+## 01-07: what is in a directory
 
-Run on Beast through mrun (Qwen2.5-1.5B base, BF16 CUDA eager, greedy,
-`gen_budget=3`), tunnel `MRUN_URL=http://127.0.0.1:19025`, priority 100.
+`<name>.py` is the walkthrough as a script (percent-format cells); `<name>.ipynb` is the same cells
+as a notebook, generated from the script. `expected_outputs.md` has the numbers the validation run
+measured and what each one means; `validation-job-<id>.log` is that run's log. `items.json`,
+`prereg.json` and `reference.json` are the example's inputs, its preregistered rules and the
+numbers of the original, larger run it is compared against. `run.sh` is the job entry point.
 
-| per-pass **median** Drift (nats) | pass 1 | pass 2 | pass 3 | fact-span K/V canary |
-| --- | ---: | ---: | ---: | --- |
-| base FP32, 4 scenes (paper §3; `job-35d4adaeed36`) | +3.125 | +2.202 | +2.063 | max-abs 0.0 |
-| **mdb BF16 example, 4 scenes** (`job-30443c340ead`) | **+3.327** | **+2.083** | **+2.217** | **max-abs 0.0 (all 4 scenes)** |
-| mdb BF16 example, smoke scene S0 (`job-221789dc049b`) | +3.075 | +1.777 | +2.856 | max-abs 0.0 |
+## 01-07: run them
 
-All three per-pass medians are positive and within ~0.1–0.2 nats of the FP32
-base, and the fact-span K/V bit-identity canary is exact (max-abs 0.0) on every
-scene. One individual scene×pass cell differs in sign under BF16 (scene S2, the
-recap turn T3: −0.95), a BF16-regime difference on the one referential turn; the
-per-pass medians remain positive. Full per-scene drift and the canary are in the
-job report's `scenes` array (measured peak VRAM 3582 MB; wall ~520 s for four
-scenes). These are BF16 numbers, a different numeric regime than the paper's FP32
-primary and the same regime as the paper's 7B replication and BF16 VM
-cross-check.
+- Your own GPU: install `mdb-runtime[autoregressive]` plus the libraries in the table, set
+  `MDB_MODEL` (and `MDB_SAE` or `MDB_TRANSCODERS`, or `MDB_MODELS` for 02) to local checkpoint
+  directories, `MDB_DEVICE` if not `cuda`, and run `python <name>.py` or open the notebook.
+  Models are read from local disk only (`local_files_only`); nothing is downloaded. Outputs go to
+  `MDB_OUT` (default `out/`); records are appended to `out/records.jsonl`, so a rerun into the
+  same directory needs `append=True`, a fresh `MDB_OUT` or deleting the old file.
+- `run_on_beast.sh` is how the maintainers ran them: it stages the example with the package
+  sources and submits one job to their GPU host through the mrun scheduler. It needs that
+  scheduler and is not required to run an example.
 
-## Experiment examples
+The numbers in `expected_outputs.md` were measured on one RTX 4080 (16 GB), bf16, eager attention,
+one seed; each run took under 10 minutes.
 
-### How to run
-
-Each experiment directory holds `<name>.ipynb` (the walkthrough), `<name>.py` (the same cells as a
-plain script; the notebook is generated from it, cell for cell), `run.sh` (the payload entry point),
-`run_on_beast.sh` (submit through mrun) and `expected_outputs.md`.
-
-- Beast through mrun (the way the numbers were measured): open the tunnel
-  (`ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast`, `MRUN_URL=http://127.0.0.1:19025`), check
-  the GPU is free (`~/domains/common/bin/common mrun jobs --state running`), then
-  `bash run_on_beast.sh`. It stages the payload (the example, `packages/mdb/src`, `src`) and
-  submits one job at priority 70. Results land in the job log (`RESULT_JSON ...`) and
-  `$MRUN_ARTIFACTS_DIR`.
-- Local GPU: install `mdb-runtime[autoregressive]` (torch, transformers 5.x), `sae-lens` and
-  `matplotlib`, set `MDB_MODEL` and `MDB_SAE` to local checkpoints, and either open the notebook or
-  run `python <name>.py`.
-
-### Hardware
-
-One CUDA GPU with about 8 GB free and about 12 GB of host RAM. The first example measured a 3.7 GB
-VRAM peak (bf16 1.7B model, eager attention) and runs in under 10 minutes. Examples 02-07 each
-validated in one Beast job under 10 minutes; peaks are in each `expected_outputs.md` (the largest,
-03, measured 6.9 GB VRAM; 07 about 9.6 GB host RAM). The models are read
-from local disk only (`local_files_only`); nothing is downloaded.
+The validation runs sealed the sha256 of each script as it ran. The scripts' comments and
+markdown cells were edited afterwards to remove internal references; the code is unchanged (the
+syntax trees without comments and docstrings are identical), so a rerun computes the same numbers
+but its custody records carry a different script sha256.

@@ -3,7 +3,7 @@
 The `saturn_pub` package contains small executable foundations from these
 investigations. Names below describe its concrete mechanisms and boundaries.
 The same repository also contains [MDB](mdb.md), whose
-[managed branch memory and durable backing](../packages/mdb/docs/USAGE.md#memory-and-addresses)
+[managed branch memory and durable backing](../packages/mdb-experiments/docs/USAGE.md#memory-and-addresses)
 have separate runtime and numerical contracts.
 
 The [usage guide](usage.md) explains which mechanics are automatic, which APIs must

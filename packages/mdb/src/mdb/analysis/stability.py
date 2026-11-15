@@ -3,7 +3,7 @@
 The floor (``supplied.judge``: ``floor_spacings`` x the dtype spacing at the consumer's
 magnitude, 2 spacings by default) is a noise bound: it says whether one realisation of a forward
 moved the consumer. It does not say the verdict survives another realisation of the same forward.
-Showcase exp6 (``results/showcase-20261114/exp6``, audit ``AUDIT-SHOWCASE.md`` correction 1)
+Showcase exp6 (``mdb-experiments/results/showcase-20261114/exp6`` in the repository, audit ``AUDIT-SHOWCASE.md`` correction 1)
 measured, over mdb's above-floor patch effects on Qwen3-0.6B-Base and Qwen2.5-0.5B, how many
 lose their verdict (sign reversed, or fall to or below the floor) when the same forward runs
 another way: every loss sits at or below 4 floors, and no effect above 4 floors lost its verdict

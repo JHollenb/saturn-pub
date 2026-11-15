@@ -27,8 +27,8 @@
 # share 0.970, error share 0.046 over 18 pairs), but the SAE error still carries a lot of
 # *computation* (removing it at layer 14 moves the answer by a median 1.25 logits).
 #
-# Everything runs as a Python library. `MODEL` and `SAE` below default to Beast paths; change
-# them for a local GPU.
+# Everything runs as a Python library. `MODEL` and `SAE` below default to the paths on our GPU
+# host; change them for a local GPU.
 
 # %%
 import json
@@ -404,13 +404,13 @@ print(json.dumps(summary, indent=1))
 # the study used) and the detail numbers within the stated tolerances.
 
 # %%
-EXPECTED_PAIRS = {   # pair: (base, Delta, Phi, E) from job-6aa7bc89a6ed (census rows)
+EXPECTED_PAIRS = {   # pair: (base, Delta, Phi, E) from the original run (census rows)
     "Paris->Rome": (8.25, -8.25, -8.0, 0.0), "Rome->Berlin": (9.0, -14.375, -14.125, -1.25),
     "Berlin->Moscow": (10.625, -11.5, -12.5, 0.75),
     "Moscow->Athens": (12.75, -16.5, -14.75, -1.75),
     "Athens->Beijing": (10.25, -12.875, -11.125, -0.625),
     "Beijing->Madrid": (15.5, -13.25, -10.625, -2.0)}
-EXPECTED_SOURCE = {   # pair: {layer: (full, phi, E)}, null-subtracted, from job-6aa7bc89a6ed
+EXPECTED_SOURCE = {   # pair: {layer: (full, phi, E)}, null-subtracted, from the original run
     "Paris->Rome": {4: (-15.625, -14.875, -0.375), 10: (-15.25, -14.5, 0.25),
                     16: (-15.25, -14.25, -0.625)},
     "Rome->Berlin": {4: (-20.0, -19.125, -0.375), 10: (-19.875, -19.5, -0.375),

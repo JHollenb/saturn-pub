@@ -22,8 +22,8 @@ is a framework-free algebra demo. It evaluates the normalized score equation
 for six query heads reading one KV head, with five key rows per head:
 
 ```sh
-python packages/mdb/examples/read_weight_transport_demo.py --dose 0.5
-python packages/mdb/examples/read_weight_transport_demo.py --dose 0.5 --json
+python packages/mdb-experiments/examples/read_weight_transport_demo.py --dose 0.5
+python packages/mdb-experiments/examples/read_weight_transport_demo.py --dose 0.5 --json
 ```
 
 The output is explicitly `toy-anchored scalar algebra; no trained coefficients

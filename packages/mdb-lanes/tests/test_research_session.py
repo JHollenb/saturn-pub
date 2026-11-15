@@ -7,7 +7,7 @@ import torch
 
 from mdb_lanes.research_session import NativeResearchSession, tensor_sha256
 
-sys.path.insert(0, str(Path(__file__).parents[1].parent / "mdb" / "experiments/time_circuits"))
+sys.path.insert(0, str(Path(__file__).parents[1].parent / "mdb-experiments" / "experiments/time_circuits"))
 from verify import verify_session
 
 

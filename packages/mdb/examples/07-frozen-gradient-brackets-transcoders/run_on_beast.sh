@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Submit the bracket example to Beast through mrun as one job (about 4 minutes, priority 70).
+# Submit the bracket example to our GPU host through the job scheduler (mrun) as one job (about 4 minutes, priority 70).
 # Needs the mrun tunnel (MRUN_URL=http://127.0.0.1:19025):
 #   ssh -f -N -L 127.0.0.1:19025:127.0.0.1:9025 beast
 # Check first that the GPU is free: ~/domains/common/bin/common mrun jobs --state running
@@ -23,7 +23,7 @@ if [ -n "${MDB_ITEMS:-}" ]; then sed -i.bak "s/^export MDB_ITEMS=.*/export MDB_I
 
 cd "$STAGE"
 # --vram and --ram are in MB. VRAM_MB / RAM_MB override; defaults come from the measured peaks
-# (smoke job-2092d2852921: 3.9 GB VRAM, 8.5 GB host RAM with five 1.3 GB transcoder layers
+# (smoke run: 3.9 GB VRAM, 8.5 GB host RAM with five 1.3 GB transcoder layers
 # cached) x1.3 / with headroom.
 ~/domains/common/bin/mrun submit -e mdb-example-brackets --payload . --pin beast --gpu \
   --vram "${VRAM_MB:-5200}" --ram "${RAM_MB:-12000}" --priority 70 --env-alias mrun --detach -- bash run.sh

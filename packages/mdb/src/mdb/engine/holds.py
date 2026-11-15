@@ -4,7 +4,7 @@
 The attribution-graph "frozen attention and norms" linearisation, and exp4's held arms, kept the
 answer row's attention weights and RMSNorm scales at the base run's values at every layer after
 an edit; exp4 did it by stepping each later layer and re-setting ``p``, ``a`` and ``n`` by hand
-(``results/showcase-20261114/exp4/exp4_brackets.py``). A hold is that as a debugger switch:
+(``mdb-experiments/results/showcase-20261114/exp4/exp4_brackets.py`` in the repository). A hold is that as a debugger switch:
 
 ``run.hold("t@last.L>1.p", source=base)`` / ``run.hold("t@last.L>1.norm_scale", source=base)``
 

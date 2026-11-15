@@ -1,6 +1,6 @@
 """Mathematical analysis layer: proof-series identities over captured ports.
 
-``finite`` holds one function per identity (proof IDs of obsidian/model-math/proof-index.md) and
+``finite`` holds one function per identity (proof IDs: docs/PROOF-IDS.md) and
 the ``IDENTITIES`` catalogue; ``explain`` holds ``explain_margin`` and ``explain_port``;
 ``forecast`` seals predictions of native values at a run's cursor and verifies them;
 ``propagate`` predicts and then measures the change an edit makes in a downstream consumer;
