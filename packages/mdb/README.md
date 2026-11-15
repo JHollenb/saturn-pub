@@ -898,7 +898,11 @@ Debugger objects for the loops experiment drivers kept writing by hand (gap audi
 - `dbg.pool(items, "cache.L20.v[kv6,row=@carrier]")` gives sealed value sets with a leave-one-out mean (the item excluded by construction), donor rules and matched-norm random.
 - `run.dump(path)` and `dbg.run_from(path)` write a core file and reload it as a steppable run on any device/dtype, with a null check on load.
 - `sae.open_transcoders` and `components.transcoder_binding` handle transcoders as MLP-write component bindings.
-- `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink.
+- `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink. With no path, a directory or `{run}` in the name the sink file is unique per process and mrun job; an existing file another run wrote is refused unless `append=True`; pointer payloads with no store (a compact branches record's `arms_payload`) are written into the sink too.
+- `br.run(mode="batched")` batches whole-cell and native-port arms; the default `recheck="band"` re-measures stepped only arms within `1/k..k` floors. `Branches(..., probes={...})` reads named values on every stepped arm before restore; a branches record too large for one line is sealed compact with the full rows by pointer.
+- `analysis.subspace.SubspaceBinding` names a `k`-dimensional subspace of one value cell `cache.L<l>.v[kv<g>,row=r]` by an orthonormal basis with provenance and a basis authority (`derived-exact` from `readout_subspace`, `fitted` from `from_pyvene` DAS or `class_mean_subspace`, `supplied`); `decompose()` returns a `ComponentBinding`, and `subspace.interchange` (measured) rides on `Branches`.
+- `FeatureCondition(text, contexts)` watches several feature sites at once (`features.feature_sites({layer: basis}, row=r)`), one memory per layer, hits carrying site and layer.
+- `symbols.gate_switch_forecast(run, edited, reader, cell_layer=L)` gives the F1/F2/F3 first-order forecasts of a cell edit's consumer change with and without exact SwiGLU gate switches, beside `hop_edge`.
 
 The direct-effect vector `rho_F gamma (W_U[a] - W_U[b])` is `reads.readout(run, Margin(row, a, b)).vector`. Do not recompute it.
 

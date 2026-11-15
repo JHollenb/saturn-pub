@@ -49,6 +49,10 @@ The branch point is a checkpoint. Each arm restores it, turns its holds on, stag
 
 `subspace.interchange` now rides on `Branches`: its arms `M` and `M_whole` share the branch point's floor, and `keep=True` returns the object so nulls can be added. `seal()` writes a `branches` record with custody.
 
+**Probes.** `Branches(run, consumer, at=..., probes={"v": fn, ...})` takes named callables `probe(run) -> number | list`. Each stepped arm runs every probe after its logits and before the restore, so a probe reads another value of the arm's own continuation (a later cache cell, a port's norm). The base values are `br.base_probes`, and each arm row stores its values under `probes` (measured). Batched arms carry no probes, because their forward is not a `Run`. Tested against a hand run (`test_probes_read_each_arm_before_restore`).
+
+**Large records.** When the arms (with edits and probes) exceed one record's bound, `seal()` keeps a compact per-arm table (`name, kind, M, dM, argmax, stability, effect_floors, kernel_path`), sets `arms_compact: true`, and stores the full rows under `arms_payload`, a sha256 pointer (`bounded.put_json`). With no project store that pointer is `state: "absent"`: the rows are held in memory on the run (`bounded.load_json(pointer, run=run)`) and, while a record sink is open, written to the sink file (P8 below, `sink.load_json`).
+
 ## P6: pools (`analysis/pools.py`)
 
 ```python
