@@ -1,0 +1,16 @@
+# label|kind|skip-if-failed|args   (beast: run from packages/mdb/examples)
+01-smoke|stage||../../../examples/01-sae-census-qwen3-1.7b mdb-example-sae 6000 12000 -- env MDB_NPAIRS=1 bash run.sh
+01-real|beast|01-smoke|cd 01-sae-census-qwen3-1.7b && bash run_on_beast.sh
+02-smoke|beast||cd 02-tl-reparametrisation-floor && MDB_NITEMS=2 bash run_on_beast.sh
+02-real|beast|02-smoke|cd 02-tl-reparametrisation-floor && bash run_on_beast.sh
+03-smoke|beast||cd 03-composer-neurons-sealed-forecasts && MDB_COUNTRIES=Spain,Japan bash run_on_beast.sh
+03-real|beast|03-smoke|cd 03-composer-neurons-sealed-forecasts && bash run_on_beast.sh
+04-smoke|beast||cd 04-watch-edit-continue-country-feature && MDB_SMOKE=1 bash run_on_beast.sh
+04-real|beast|04-smoke|cd 04-watch-edit-continue-country-feature && bash run_on_beast.sh
+05-smoke|beast||cd 05-sae-component-binding-carrier && MDB_NITEMS=2 bash run_on_beast.sh
+05-real|beast|05-smoke|cd 05-sae-component-binding-carrier && bash run_on_beast.sh
+06-smoke|beast||cd 06-interchange-subspace-pyvene && MDB_NPAIRS=2 bash run_on_beast.sh
+06-real|beast|06-smoke|cd 06-interchange-subspace-pyvene && bash run_on_beast.sh
+07-smoke|beast||cd 07-frozen-gradient-brackets-transcoders && MDB_ITEMS=0,1 bash run_on_beast.sh
+07-real|beast|07-smoke|cd 07-frozen-gradient-brackets-transcoders && bash run_on_beast.sh
+03-probe|stage||../../../examples/03-composer-neurons-sealed-forecasts mdb-rg-probe03 9000 12000 -- bash probes/run_probe03.sh
