@@ -296,6 +296,31 @@ def test_nnsight_source_reads_leave_mdb_model_untouched():
         mdb.attach(other)
 
 
+def test_source_after_attach_refuses_instead_of_crashing():
+    """Issue I2 (rest): nnsight .source on a model AFTER attach rewrote attention.forward, so
+    Run.read('t5.L0.qr') raised KeyError 'qr' and edits at qr/kr/s/p would not apply. Every
+    layer step now re-checks and refuses with the reason; a shared clone is still fine."""
+    _tools()
+    import mdb
+    from mdb.interop import nn
+    from mdb.interop.clone import shared_clone
+
+    warnings.filterwarnings("ignore")
+    model = _model("qwen2", "bf16")
+    dbg = mdb.attach(model)
+    clone = nn.wrap(shared_clone(model))
+    with torch.no_grad(), clone.trace(torch.tensor(TOKENS[:1])):
+        clone.model.layers[0].self_attn.source.attention_interface_1.inputs.save()
+    run = dbg.run(TOKENS[0])
+    run.until("logits")
+    assert tuple(run.read("t5.L0.qr").shape) == (1, 2, 1, 8)     # the clone left model intact
+    nm = nn.wrap(model)
+    with torch.no_grad(), nm.trace(torch.tensor(TOKENS[:1])):
+        nm.model.layers[0].self_attn.source.attention_interface_1.inputs.save()
+    with pytest.raises(ValueError, match="rewritten forward"):
+        dbg.run(TOKENS[0]).until("logits")
+
+
 def test_processed_reads_the_bridge_flag():
     """TL sets ``_weights_processed`` on the bridge; ``bridge.model`` falls through to the HF
     module, which never has it (the old helper read it there and always said False)."""

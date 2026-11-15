@@ -756,13 +756,10 @@ def attach(
 
 
 def _rewritten_forward(module: Any) -> bool:
-    """An instance-level forward whose body is not the class's forward (duck-typed on
-    nnsight's ``Controller``: ``forward.state.body``; plain pass-through wrappers are fine)."""
-    forward = vars(module).get("forward")
-    body = getattr(getattr(forward, "state", None), "body", None)
-    if body is None:
-        return False
-    return getattr(body, "__func__", body) is not type(module).forward
+    """``engine.ports.rewritten_forward`` (one rule for attach and for every layer step)."""
+    from mdb.engine.ports import rewritten_forward
+
+    return rewritten_forward(module)
 
 
 def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: str | None):

@@ -788,6 +788,16 @@ def _module(layer: Any, path: str) -> Any:
     return module
 
 
+def rewritten_forward(module: Any) -> bool:
+    """An instance-level forward whose body is not the class's forward (duck-typed on
+    nnsight's ``Controller``: ``forward.state.body``; plain pass-through wrappers are fine)."""
+    forward = vars(module).get("forward")
+    body = getattr(getattr(forward, "state", None), "body", None)
+    if body is None:
+        return False
+    return getattr(body, "__func__", body) is not type(module).forward
+
+
 # --- the one process-wide eager-attention interceptor ------------------------------------
 #
 # The family's modeling module has one module-level ``eager_attention_forward``. It is patched
@@ -1107,6 +1117,17 @@ class PortController:
         if adapter.execution.get("residency", "resident") != "resident":
             raise ValueError("port stepping supports resident execution only")
         check_deterministic(layer_module)
+        patched = [name or "<layer>" for name, module in layer_module.named_modules()
+                   if rewritten_forward(module)]
+        if patched:
+            # issue I2: a tool (nnsight .source) rewrote a forward AFTER attach; the eager
+            # interceptor would not fire there, so qr/kr/s/p reads would crash and edits at
+            # them would silently not apply. Refuse with the reason instead.
+            raise ValueError(
+                f"{len(patched)} module(s) of this layer run a rewritten forward (e.g. "
+                f"{patched[0]!r}), as nnsight's .source leaves behind after attach; mdb's "
+                "attention interceptor would not run there. Instrument "
+                "mdb.interop.clone.shared_clone(model) (same weights) instead")
         for site in self.program.sites():
             _module(layer_module, site)
 
