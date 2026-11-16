@@ -63,7 +63,7 @@ TINY = ("qwen2", "qwen3", "llama", "mistral")
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="python -m mdb.repl",
+    parser = argparse.ArgumentParser(prog="mdb engine",
                                      description="gdb-style port-level model debugger")
     parser.add_argument("target", nargs="?", metavar="MODEL",
                         help="checkpoint directory, cached model name, tiny:FAMILY, "

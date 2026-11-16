@@ -120,3 +120,20 @@ def test_importing_the_engine_cli_loads_no_lane_module_and_no_framework():
         "('torch', 'numpy', 'fastapi', 'mdb_lanes') or (m.startswith('mdb.') and "
         f"m.split('.')[1] not in {engine!r}))))"))
     assert loaded == []
+
+
+@pytest.mark.parametrize("verb", ["migrate", "verify"])
+def test_records_verb_help_is_real_help(verb, capsys):
+    assert cli.main(["records", verb, "--help"]) == 0
+    out = capsys.readouterr()
+    assert f"mdb records {verb}" in out.out and "no record files" not in out.err
+
+
+def test_engine_and_serve_help_name_the_verb(capsys):
+    for verb in ("engine", "serve"):
+        with pytest.raises(SystemExit) as stop:
+            cli.main([verb, "--help"])
+        assert stop.value.code == 0
+        out = capsys.readouterr().out
+        assert f"usage: mdb {verb}" in out
+        assert "python -m" not in out.split("options:")[0] and "``" not in out

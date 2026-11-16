@@ -236,6 +236,9 @@ def main(argv: list[str]) -> int:
         print(USAGE, file=sys.stderr if argv and argv[0] not in ("-h", "--help") else sys.stdout)
         return 0 if argv and argv[0] in ("-h", "--help") else 2
     verb, rest = argv[0], argv[1:]
+    if any(a in ("-h", "--help") for a in rest):
+        print(USAGE)
+        return 0
     out = force = None
     paths = []
     i = 0

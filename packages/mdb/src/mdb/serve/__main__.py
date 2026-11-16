@@ -34,7 +34,11 @@ def is_loopback(host: str) -> bool:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="mdb serve", description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(prog="mdb serve",
+        description="Web viewer of a recorded project. With --tiny or --model it also holds a "
+                    "live debugger that the web app steps (live mode executes model code and "
+                    "accepts edits). Binds loopback only unless --allow-remote is given; "
+                    "there is no authentication.")
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
