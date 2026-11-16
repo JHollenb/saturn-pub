@@ -35,8 +35,9 @@ intended: the record says what ran. A project file is trusted less than the user
   `load_local` (dtype, device; a name or alias as `path`), `tiny_model` (dtype), `open_tiny`,
   `attach` (project dir and session; `project=False` for none), `custody.declare`
   (kernel_path), `custody.records_to` and `Debugger.records_to` (sink, append, payloads).
-- saturn-pub: `shared_store.set_shared_store(root)` names the shared tensor pool explicitly
-  (before `MDB_SHARED_TENSOR_STORE` and `.mdb-storage.json`); `shared_store_root()` reads it.
+- saturn-pub 0.4.2 (mdb now requires `saturn-pub>=0.4.2`): `shared_store.set_shared_store(root)`
+  names the shared tensor pool explicitly (before `MDB_SHARED_TENSOR_STORE` and
+  `.mdb-storage.json`); `shared_store_root()` reads it.
   mdb passes `[storage] shared_tensor_store` through it and does not change the environment.
 - Trust model for project files (they may come from a cloned repository): a project file may
   not set `repl.history`, `serve.allow_hosts` or `repl.trusted_projects`; its `project.dir`,
@@ -64,8 +65,9 @@ intended: the record says what ran. A project file is trusted less than the user
   configurable). `Arg(configurable=True)` marks the arguments that may be set this way.
 - Environment names follow `MDB_<SECTION>_<KEY>`: `MDB_MODEL_DTYPE`, `MDB_MODEL_DEVICE`,
   `MDB_MODEL_ROOTS`, `MDB_PROJECT_DIR`, `MDB_PROJECT_SESSION`, `MDB_RECORDS_SINK`,
-  `MDB_RECORDS_PAYLOADS`, `MDB_CUSTODY_KERNEL_PATH`, `MDB_SERVE_HOST`, `MDB_SERVE_PORT`,
-  `MDB_SERVE_ALLOW_HOSTS`, `MDB_REPL_INIT`, `MDB_REPL_HISTORY`, `MDB_STORAGE_SHARED_TENSOR_STORE`.
+  `MDB_RECORDS_APPEND`, `MDB_RECORDS_PAYLOADS`, `MDB_CUSTODY_KERNEL_PATH`, `MDB_SERVE_HOST`,
+  `MDB_SERVE_PORT`, `MDB_SERVE_ALLOW_HOSTS`, `MDB_REPL_INIT`, `MDB_REPL_TRUSTED_PROJECTS`,
+  `MDB_REPL_HISTORY`, `MDB_STORAGE_SHARED_TENSOR_STORE`.
   The older `MDB_RECORDS`, `MDB_KERNEL_PATH`, `MDB_SHARED_TENSOR_STORE` and
   `LLM_MODELS_EXTRA_ROOT` still work. Setting an old and a new name to different values is an
   error.

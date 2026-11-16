@@ -2,7 +2,8 @@
 
 ## Install
 
-mdb (`mdb-runtime`, import name `mdb`) depends on `saturn-pub>=0.4.1,<0.5`, which is not on PyPI.
+mdb (`mdb-runtime`, import name `mdb`) depends on `saturn-pub` (`>=0.4.2,<0.5` on `main`,
+`>=0.4.1,<0.5` for 0.2.3), which is not on PyPI.
 Both live in the [saturn-pub repository](https://github.com/JHollenb/saturn-pub); install them
 together from a checkout:
 

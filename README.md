@@ -242,6 +242,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | TrainingTransaction | Inspect candidate updates; promote or restore the registered closure |
 | Experimental memory | Immutable shared Qwen ancestry, private tails, modular phase transport |
 | Evidence plane (`saturn_pub.evidence`) | Stdlib-only, torch-free: first-divergence bisect over a cut lattice, hash-chained claim registry with drift audit, SQLite cross-reference index, and index-ready citations |
+| Shared tensor store (`saturn_pub.shared_store`) | Immutable tensor files shared by hardlink across stores on one filesystem; the pool is `set_shared_store(root)` if set, else `MDB_SHARED_TENSOR_STORE`, else the nearest `.mdb-storage.json` |
 | Metadata-delta route (`saturn_pub.route`) | Payload-free catalog of candidate deltas: select by tag before hydrating any bytes, resolve the chosen delta through a caller-owned content-verified resolver (deduplicated, byte-accounted), then apply, replay vs native, and roll back exactly |
 
 The circuit-tracer interop is exercised as a flagship on real `google/gemma-2-2b` weights with

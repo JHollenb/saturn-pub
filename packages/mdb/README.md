@@ -131,8 +131,9 @@ sink and a REPL init file can live in `~/.config/mdb/config.toml` or a project's
 (`mdb config init`, `mdb config show`). Settings that change a verdict (floors, `lookahead`,
 `prefill`, `retain_rows`, branch options) are refused there and stay in the command. When a
 config file sets a setting that reaches a record (model, dtype, device, session, kernel path,
-SAE sources), every record names the file and its sha256. Python calls (`open_tiny`, `attach`,
-`load_local`, `records_to`) read the same settings for arguments you leave out. See [docs/CONFIG.md](docs/CONFIG.md).
+SAE sources, init file, REPL defaults), every record names the file and its sha256. Python
+calls (`open_tiny`, `attach`, `load_local`, `records_to`) read the same settings for arguments
+you leave out. See [docs/CONFIG.md](docs/CONFIG.md).
 
 ## Coming from TransformerLens or nnsight
 
@@ -525,11 +526,11 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `reverse-finish` | `reverse-finish` | navigate | Step back to the boundary before the pending layer (its input) |
 | `reverse-next` | `reverse-next [N]` | navigate | Step back to the previous sublayer end |
 | `reverse-step` | `reverse-step [N] [unit] [budget=ROWS]` | navigate | Step back one port (or N units; layer/token units enter at most `budget` rows) |
-| `run` | `run [name=NAME] [prefill=K] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
+| `run` | `run [name=NAME] [prefill=K] [lookahead=MODE] [retain_rows=N] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
 | `seek` | `seek ADDR \| seek ORIGIN:ADDR \| seek POINTER-JSON` | navigate | Move the session to an occurrence: forward, backward, or by replaying a stored recipe (ORIGIN:ADDR or an occurrence pointer) |
-| `sae` | `sae load NAME PATH [layers=A:B] [k=K] [cache=N] [verify=true] \| sae list \| sae drop NAME` | mutate | Load, list or drop SAE feature bases (per-layer residual SAEs) |
+| `sae` | `sae load NAME [PATH] [layers=A:B] [k=K] [cache=N] [verify=true] \| sae list \| sae drop NAME` | mutate | Load, list or drop SAE feature bases (per-layer residual SAEs) |
 | `set` | `set ADDR = VALUE\|ADDR\|ORIGIN:ADDR [replace\|add\|scale\|mix DOSE]` | mutate | Stage an edit at a port of the pending layer, or of a state cell (cache.L<i>.k\|v[kv,row,d]): set ADDR = VALUE [op] |
-| `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
+| `start` | `start [name=NAME] [prefill=K] [lookahead=none\|layer\|auto] [retain_rows=N] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
 | `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K] [max_calls=N]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
 | `symbol` | `symbol NAME = ADDR[,ADDR...] \| symbol NAME = whatif\|compare.a\|compare.b\|EACH:ITEM [role=R] [readers=K] [causal=false] \| symbol show\|delete NAME` | mutate | Declare a user symbol over cache rows, or a named symbol from a transplant result (role, source row, readers, measured effect), usable as an address |

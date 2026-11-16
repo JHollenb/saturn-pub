@@ -66,7 +66,7 @@ allow_hosts = ["mdb.lan"]
 [repl]
 init = ".mdbinit"
 history = "~/.local/state/mdb/history"
-defaults = { print = { top = 8 }, x = { count = 32 }, step = { budget = 16 } }
+defaults = { print = { top = 8 }, x = { count = 32 }, sweep = { max_calls = 100000 } }
 
 [storage]
 shared_tensor_store = "/data/mdb-store"
