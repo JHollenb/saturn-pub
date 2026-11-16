@@ -1,0 +1,44 @@
+{
+ "program": "bigadd-O0",
+ "T": 168,
+ "cells": 1454,
+ "live": 387,
+ "bindings": 72,
+ "lanes": 14078,
+ "edges": 356,
+ "lanes_equal_binctr": "33/33",
+ "duplicate_exec_keys": false,
+ "method_seconds": 7.7,
+ "device": "cuda",
+ "torch": "2.13.0+cu130",
+ "grid": {
+  "rows": 50310,
+  "seconds": 8.6,
+  "verdicts": {
+   "zero/step": {
+    "effect": 166,
+    "no effect": 221
+   },
+   "zero/exec": {
+    "effect": 166,
+    "no effect": 221
+   },
+   "unaligned/step": {
+    "effect": 10344,
+    "no effect": 2040
+   },
+   "unaligned/exec": {
+    "effect": 10344,
+    "no effect": 2040
+   },
+   "aligned/step": {
+    "effect": 11224,
+    "no effect": 1160
+   },
+   "aligned/exec": {
+    "effect": 11224,
+    "no effect": 1160
+   }
+  }
+ }
+}

@@ -1,0 +1,54 @@
+{
+ "program": "fsm-O0",
+ "T": 336,
+ "cells": 1915,
+ "live": 207,
+ "bindings": 76,
+ "lanes": 3309,
+ "edges": 953,
+ "lanes_equal_binctr": "33/33",
+ "duplicate_exec_keys": false,
+ "method_seconds": 5.5,
+ "device": "cuda",
+ "torch": "2.13.0+cu130",
+ "grid": {
+  "rows": 26910,
+  "seconds": 3.3,
+  "verdicts": {
+   "zero/step": {
+    "effect": 80,
+    "no effect": 71,
+    "path-diverged": 56
+   },
+   "zero/exec": {
+    "effect": 80,
+    "no effect": 71,
+    "path-diverged": 56
+   },
+   "unaligned/step": {
+    "effect": 2747,
+    "no effect": 2296,
+    "no-donor": 18,
+    "path-diverged": 1563
+   },
+   "unaligned/exec": {
+    "effect": 2747,
+    "no effect": 2296,
+    "no-donor": 18,
+    "path-diverged": 1563
+   },
+   "aligned/step": {
+    "effect": 1115,
+    "no effect": 1149,
+    "no-donor": 3456,
+    "path-diverged": 904
+   },
+   "aligned/exec": {
+    "effect": 1350,
+    "no effect": 876,
+    "no-donor": 3831,
+    "path-diverged": 567
+   }
+  }
+ }
+}

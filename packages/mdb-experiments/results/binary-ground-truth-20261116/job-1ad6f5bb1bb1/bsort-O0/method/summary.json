@@ -1,0 +1,52 @@
+{
+ "program": "bsort-O0",
+ "T": 743,
+ "cells": 5922,
+ "live": 913,
+ "bindings": 98,
+ "lanes": 24201,
+ "edges": 582,
+ "lanes_equal_binctr": "33/33",
+ "duplicate_exec_keys": false,
+ "method_seconds": 26.0,
+ "device": "cuda",
+ "torch": "2.13.0+cu130",
+ "grid": {
+  "rows": 118690,
+  "seconds": 46.1,
+  "verdicts": {
+   "zero/step": {
+    "effect": 175,
+    "no effect": 654,
+    "path-diverged": 84
+   },
+   "zero/exec": {
+    "effect": 175,
+    "no effect": 654,
+    "path-diverged": 84
+   },
+   "unaligned/step": {
+    "effect": 9975,
+    "no effect": 11142,
+    "path-diverged": 8099
+   },
+   "unaligned/exec": {
+    "effect": 9975,
+    "no effect": 11142,
+    "path-diverged": 8099
+   },
+   "aligned/step": {
+    "effect": 10123,
+    "no effect": 8676,
+    "no-donor": 884,
+    "path-diverged": 9533
+   },
+   "aligned/exec": {
+    "effect": 6969,
+    "no effect": 4609,
+    "no-donor": 11376,
+    "path-diverged": 6262
+   }
+  }
+ }
+}
