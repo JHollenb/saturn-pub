@@ -61,7 +61,11 @@ class Key:
     env: tuple[str, ...] = ()          # current name first, then older names still read
     choices: tuple[str, ...] = ()
     recorded: bool = False             # it reaches a record: which model, dtype, device, session,
-                                       # SAE basis or custody label a record is about
+                                       # SAE basis or custody label a record is about, or what
+                                       # REPL commands run before the script (init, defaults)
+    project: str = "yes"               # in a project file: "yes"; "inside" (a path that must
+                                       # resolve inside the project file's directory); "no"
+                                       # (command line, environment, MDB_CONFIG or user file only)
     help: str = ""
 
 
@@ -74,11 +78,11 @@ KEYS: dict[str, Key] = {key.name: key for key in (
         help="weights dtype of a model mdb loads (recorded in every record's execution)"),
     Key("model.device", "str", DEFAULT_DEVICE, ("MDB_MODEL_DEVICE",), recorded=True,
         help="torch device of a model mdb loads (recorded in every record's execution)"),
-    Key("project.dir", "path", None, ("MDB_PROJECT_DIR",),
+    Key("project.dir", "path", None, ("MDB_PROJECT_DIR",), project="inside",
         help="project attached when no --project is given"),
     Key("project.session", "str", "auto", ("MDB_PROJECT_SESSION",), recorded=True,
         help="session id in the project; auto = family + digest of model and execution"),
-    Key("records.sink", "str", None, ("MDB_RECORDS_SINK", "MDB_RECORDS"),
+    Key("records.sink", "str", None, ("MDB_RECORDS_SINK", "MDB_RECORDS"), project="inside",
         help="record sink: a file, a directory, or a name with {run}"),
     Key("records.append", "bool", False, ("MDB_RECORDS_APPEND",),
         help="add to a sink file another run wrote"),
@@ -88,16 +92,19 @@ KEYS: dict[str, Key] = {key.name: key for key in (
         recorded=True, help="kernel path named in every record's custody block"),
     Key("serve.host", "str", DEFAULT_HOST, ("MDB_SERVE_HOST",), help="mdb serve bind host"),
     Key("serve.port", "int", DEFAULT_PORT, ("MDB_SERVE_PORT",), help="mdb serve port"),
-    Key("serve.allow_hosts", "strs", (), ("MDB_SERVE_ALLOW_HOSTS",),
+    Key("serve.allow_hosts", "strs", (), ("MDB_SERVE_ALLOW_HOSTS",), project="no",
         help="extra Host headers mdb serve accepts (HOST or HOST:PORT)"),
-    Key("repl.init", "path", None, ("MDB_REPL_INIT",),
-        help="command file run before --script or the prompt"),
-    Key("repl.history", "path", None, ("MDB_REPL_HISTORY",),
+    Key("repl.init", "path", None, ("MDB_REPL_INIT",), recorded=True, project="inside",
+        help="command file run before --script or the prompt (a project file's runs only "
+             "from a trusted project directory)"),
+    Key("repl.trusted_projects", "paths", (), ("MDB_REPL_TRUSTED_PROJECTS",), project="no",
+        help="directories whose project files may run their repl.init"),
+    Key("repl.history", "path", None, ("MDB_REPL_HISTORY",), project="no",
         help="file keeping interactive command history"),
-    Key("repl.defaults", "defaults", {},
+    Key("repl.defaults", "defaults", {}, recorded=True,
         help="OP.ARG = value: display and budget defaults of REPL commands"),
     Key("storage.shared_tensor_store", "path", None,
-        ("MDB_STORAGE_SHARED_TENSOR_STORE", "MDB_SHARED_TENSOR_STORE"),
+        ("MDB_STORAGE_SHARED_TENSOR_STORE", "MDB_SHARED_TENSOR_STORE"), project="inside",
         help="shared tensor pool (same filesystem as the projects using it)"),
     Key("sae.sources", "sae", {}, recorded=True, help="NAME = {path, layers, k, port, cache, verify, layer}"),
 )}
@@ -166,7 +173,18 @@ def _toml(path: Path) -> dict[str, Any]:
 
 
 def _pyproject_table(path: Path) -> dict[str, Any] | None:
-    data = _toml(path)
+    """``[tool.mdb]`` of a pyproject.toml, or None. An unparseable file with no ``[tool.mdb``
+    text is not mdb's and is skipped; one that has it is an error."""
+    try:
+        data = _toml(path)
+    except ConfigError:
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            return None
+        if "[tool.mdb" in text:
+            raise
+        return None
     tool = data.get("tool")
     table = tool.get("mdb") if isinstance(tool, dict) else None
     return table if isinstance(table, dict) else None
@@ -214,6 +232,9 @@ def _check_value(where: str, key: Key, value: Any, base: Path | None) -> Any:
         if not isinstance(value, dict):
             raise bad("a table of NAME = \"model\"")
         for name, target in value.items():
+            if name.startswith(("tiny:", "http://", "https://")):
+                raise ConfigError(f"{where}.{name}: an alias may not shadow a tiny:FAMILY or "
+                                  "http(s):// target")
             if not isinstance(target, str) or not target.strip():
                 raise ConfigError(f"{where}.{name}: expected a model name or path, got "
                                   f"{target!r}")
@@ -289,8 +310,21 @@ def _sae(where: str, value: Any, base: Path | None) -> dict[str, dict[str, Any]]
     return out
 
 
+def _inside(value: str, base: Path) -> bool:
+    target = Path(str(value).replace("{run}", "run")).expanduser()
+    target = (base / target) if not target.is_absolute() else target
+    try:
+        Path(os.path.realpath(target)).relative_to(os.path.realpath(base))
+        return True
+    except ValueError:
+        return False
+
+
 def _file_layer(path: Path, label: str, table: dict[str, Any] | None = None) -> Layer:
-    """A config file's values, validated: unknown keys, refused keys and types are errors."""
+    """A config file's values, validated: unknown keys, refused keys and types are errors. A
+    project file (``label == "project"``: found from the project or by walking up, so possibly
+    from a cloned repository) may not set the keys marked ``project="no"``, and the paths marked
+    ``"inside"`` must resolve inside its directory."""
     raw = path.read_bytes() if path.is_file() else None
     if raw is None:
         raise ConfigError(f"{path}: no such config file")
@@ -316,7 +350,17 @@ def _file_layer(path: Path, label: str, table: dict[str, Any] | None = None) -> 
                 known = ", ".join(k.split(".", 1)[1] for k in KEYS if k.startswith(section + "."))
                 raise ConfigError(f"{where}:{section}.{name}: unknown key (in [{section}]: "
                                   f"{known})")
-            values[key.name] = _check_value(f"{where}:{key.name}", key, value, base)
+            checked = _check_value(f"{where}:{key.name}", key, value, base)
+            if label == "project" and key.project == "no":
+                raise ConfigError(f"{where}:{key.name}: a project file may not set this (it names "
+                                  "a file mdb writes or a host it trusts); set it on the command "
+                                  "line, in the environment or in the user file")
+            if label == "project" and key.project == "inside" and not _inside(checked, base):
+                raise ConfigError(f"{where}:{key.name}: {value!r} is outside the project "
+                                  f"directory {base}; a project file names paths inside its "
+                                  "own tree (set others on the command line, in the environment "
+                                  "or in the user file)")
+            values[key.name] = checked
     return Layer("file", label, values, path=path.resolve(),
                  sha256=hashlib.sha256(raw).hexdigest())
 
@@ -375,21 +419,40 @@ def _repository_root(start: Path) -> Path | None:
     return None
 
 
+SKIPPED: list[str] = []   # files discovery passed over (not the user's); config check prints them
+
+
+def _owned(path: Path) -> bool:
+    """Whether the current user owns ``path`` (as git's safe.directory: a file another user
+    wrote is not read)."""
+    getuid = getattr(os, "getuid", None)
+    return getuid is None or path.stat().st_uid == getuid()
+
+
 def find_project_file(start: Path) -> tuple[Path, dict[str, Any] | None] | None:
     """The first ``mdb.toml`` (table None) or ``pyproject.toml`` with ``[tool.mdb]`` walking up
-    from ``start``, stopping at the repository root (or the home directory)."""
+    from ``start``, stopping at the repository root or the home directory. With neither above
+    ``start`` (a scratch directory under /tmp), only ``start`` itself is looked at. A file the
+    current user does not own is skipped (listed in ``SKIPPED``)."""
     start = start.resolve()
     stop = _repository_root(start)
     home = Path.home().resolve()
+    if stop is None and home not in (start, *start.parents):
+        stop = start
     for directory in (start, *start.parents):
         candidate = directory / FILE_NAME
         if candidate.is_file():
-            return candidate, None
+            if _owned(candidate):
+                return candidate, None
+            SKIPPED.append(f"{candidate}: not owned by the current user; not read")
         pyproject = directory / "pyproject.toml"
         if pyproject.is_file():
-            table = _pyproject_table(pyproject)
-            if table is not None:
-                return pyproject, table
+            if not _owned(pyproject):
+                SKIPPED.append(f"{pyproject}: not owned by the current user; not read")
+            else:
+                table = _pyproject_table(pyproject)
+                if table is not None:
+                    return pyproject, table
         if directory == stop or directory == home:
             return None
     return None
@@ -413,6 +476,26 @@ class Settings:
     def get(self, name: str) -> Any:
         return self._winner(name).values[name]
 
+    def layer_of(self, name: str) -> Layer:
+        return self._winner(name)
+
+    def init_file(self) -> tuple[str | None, str | None]:
+        """``(path, None)`` of the init file to run, or ``(None, reason)`` when a project
+        file's ``repl.init`` is not trusted (its directory is not under a
+        ``repl.trusted_projects`` entry): gdb's auto-load safe-path rule."""
+        path = self.get("repl.init")
+        layer = self._winner("repl.init")
+        if path is None or layer.kind != "file" or layer.label != "project":
+            return path, None
+        here = os.path.realpath(layer.path.parent)
+        for trusted in self.get("repl.trusted_projects"):
+            root = os.path.realpath(os.path.expanduser(trusted))
+            if here == root or here.startswith(root.rstrip(os.sep) + os.sep):
+                return path, None
+        return None, (f"not running the init file {path} named by the project file "
+                      f"{layer.path}: add {layer.path.parent} to [repl] trusted_projects in the "
+                      "user file, or pass --init FILE")
+
     def origin(self, name: str) -> str:
         return describe(self._winner(name), name)
 
@@ -433,12 +516,13 @@ class Settings:
     def provenance(self) -> dict[str, Any] | None:
         """The block custody records, or None. Only files that set a key reaching a record
         (``Key.recorded``: model roots, aliases, dtype, device, session, kernel path, SAE
-        sources) count: each such file's path, sha256 and the recorded keys it sets, then the
-        winning value and source of each of those keys. A file of locations only (serve, repl,
+        sources, REPL init and defaults) count: each such file's path, sha256 and the recorded
+        keys it sets, then the winning value and source of each of those keys. Values are JSON
+        text (``"\"fp32\""``), so numbers in a setting are never read as measured claims. A file of locations only (serve, repl,
         records, storage, project dir) adds nothing, so record ids stay as without it."""
         sources, keys = [], []
         for layer in self.files:
-            mine = {name: _jsonable(value) for name, value in layer.values.items()
+            mine = {name: _text(value) for name, value in layer.values.items()
                     if KEYS[name].recorded}
             if mine:
                 sources.append({"path": str(layer.path), "sha256": layer.sha256,
@@ -447,15 +531,29 @@ class Settings:
         if not sources:
             return None
         keys = [name for name in KEYS if name in keys]
-        return {"schema": PROVENANCE_SCHEMA, "sources": sources,
-                "resolved": {name: _jsonable(self.get(name)) for name in keys},
-                "origins": {name: self.origin(name) for name in keys}}
+        out = {"schema": PROVENANCE_SCHEMA, "sources": sources,
+               "resolved": {name: _text(self.get(name)) for name in keys},
+               "origins": {name: self.origin(name) for name in keys}}
+        given = {name: sorted(values, key=repr) for name, values in EXPLICIT.items()
+                 if name in keys}
+        if given:   # a call argument overrode the setting (the record's execution says what ran)
+            out["call_arguments"] = {name: [_text(v) for v in values]
+                                     for name, values in given.items()}
+        return out
 
 
 def _jsonable(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: _jsonable(item) for key, item in value.items()}
     return list(value) if isinstance(value, tuple) else value
+
+
+def _text(value: Any) -> str:
+    """A setting's value as canonical JSON text: a record holds no bare numbers outside
+    labelled claims, and a config value is a supplied setting, not a measurement."""
+    import json
+
+    return json.dumps(_jsonable(value), sort_keys=True, separators=(",", ":"))
 
 
 def describe(layer: Layer, name: str) -> str:
@@ -552,9 +650,19 @@ def current() -> Settings:
     return _ACTIVE[0]
 
 
+EXPLICIT: dict[str, set] = {}   # setting -> values Python calls passed explicitly instead
+
+
 def value(name: str, given: Any = None) -> Any:
-    """``given`` when not None (an explicit argument wins), else the resolved setting."""
-    return given if given is not None else current().get(name)
+    """``given`` when not None (an explicit argument wins), else the resolved setting. An
+    explicit value that differs from the setting is remembered, so the custody config block
+    shows that a call overrode it (``call_arguments``)."""
+    resolved = current().get(name)
+    if given is None:
+        return resolved
+    if isinstance(given, (str, int, float, bool)) and given != resolved:
+        EXPLICIT.setdefault(name, set()).add(given)
+    return given
 
 
 def refresh() -> Settings:
@@ -569,6 +677,8 @@ def refresh() -> Settings:
 def reset() -> None:
     """Forget the process's settings and clear a store this module set (tests)."""
     _ACTIVE.clear()
+    EXPLICIT.clear()
+    SKIPPED.clear()
     _apply_store(None)
 
 

@@ -6,12 +6,14 @@ All notable changes to `mdb-runtime` (packages/mdb). The version number is set b
 
 Config files. With no config file, nothing changes: `examples/00-hello-tiny` prints the same
 record id (`d0c1d6c733c4bfa1` with torch 2.13 and transformers 5.13.1), and so does a config
-file that holds only locations (serve, repl, sink, project directory, storage). When a loaded
-file sets a key that reaches a record (model roots, aliases, dtype, device, session, kernel path,
-SAE sources), every record carries custody that names the file, its sha256 and those keys, so
-its id differs from the same record sealed without the file (hello-tiny with only
-`[model] dtype = "bf16"` in a file: `6bad22acbe76b92b`). That is intended: the record says what
-ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
+file that holds only locations (serve, history, sink, project directory, storage). When a
+loaded file sets a key that reaches a record (model roots, aliases, dtype, device, session,
+kernel path, SAE sources, REPL init or defaults), every record carries custody that names the
+file, its sha256 and those keys, so its id differs from the same record sealed without the file
+(hello-tiny with only `[model] dtype = "bf16"` in a file gets a different id, which depends on
+the file's path and bytes). An init file that runs is hashed into custody too. That is
+intended: the record says what ran. A project file is trusted less than the user file: see
+"Trust model" in docs/CONFIG.md. Details: [docs/CONFIG.md](docs/CONFIG.md).
 
 ### Added
 
@@ -36,7 +38,18 @@ ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
 - saturn-pub: `shared_store.set_shared_store(root)` names the shared tensor pool explicitly
   (before `MDB_SHARED_TENSOR_STORE` and `.mdb-storage.json`); `shared_store_root()` reads it.
   mdb passes `[storage] shared_tensor_store` through it and does not change the environment.
-- `mdb engine --session NAME`, `--records PATH`, `--records-append`, `--no-payloads`,
+- Trust model for project files (they may come from a cloned repository): a project file may
+  not set `repl.history`, `serve.allow_hosts` or `repl.trusted_projects`; its `project.dir`,
+  `records.sink`, `storage.shared_tensor_store` and `repl.init` must resolve inside its
+  directory; its init file runs only from a directory listed in the user file's
+  `[repl] trusted_projects` (or when passed with `--init`). Discovery skips files the user does
+  not own, and outside a repository and the home directory looks only in the working
+  directory. An unparseable `pyproject.toml` without `[tool.mdb]` is skipped.
+- Init files are hashed into custody (`init: [{path, sha256}]`) and may not pass `lookahead=`,
+  `prefill=`, `retain_rows=` or other verdict arguments (nested `source` included).
+- An alias may not be named `tiny:...`, `http://...` or `https://...`; `mdb engine` and
+  `mdb serve` print `alias NAME -> TARGET (source)` when one is used.
+- `mdb engine --session NAME`, `--records PATH`, `--[no-]records-append`, `--[no-]payloads`,
   `--kernel-path NAME`, `--prereg FILE`, `--init FILE`, `--no-init`; `mdb serve --session`.
   `mdb serve --project` is optional when `[project] dir` is set.
 - `start` and `run` take `lookahead=none|layer|auto` and `retain_rows=N` (previously only
@@ -45,8 +58,10 @@ ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
   cache. `[model] aliases`: short names for a directory, a model name or `tiny:FAMILY`.
 - `sae load NAME` with no path loads a `[sae] sources` entry.
 - REPL init file (`[repl] init`, run before the start line and `--script`), interactive history
-  file (`[repl] history`), and display or budget defaults (`[repl] defaults`, for example
-  `print.top`). `Arg(configurable=True)` marks the arguments that may be set this way.
+  file (`[repl] history`; never written over a file that is not readline history), and display
+  defaults (`[repl] defaults`: `print.top`, `print.slice`, `x.count`, `info.limit`,
+  `checkpoints.limit`, `sweep.max_calls`; budgets and `symbols limit` change results and are not
+  configurable). `Arg(configurable=True)` marks the arguments that may be set this way.
 - Environment names follow `MDB_<SECTION>_<KEY>`: `MDB_MODEL_DTYPE`, `MDB_MODEL_DEVICE`,
   `MDB_MODEL_ROOTS`, `MDB_PROJECT_DIR`, `MDB_PROJECT_SESSION`, `MDB_RECORDS_SINK`,
   `MDB_RECORDS_PAYLOADS`, `MDB_CUSTODY_KERNEL_PATH`, `MDB_SERVE_HOST`, `MDB_SERVE_PORT`,
@@ -79,6 +94,11 @@ ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
   when loading), so that a configured source's values apply unless given on the command line.
 
 ### Fixed
+
+- `--device cuda` without CUDA, or a bad device string, is a one-line error (`check_device`),
+  not a traceback.
+- A refused record sink stays an error after `custody.declare()` or `custody.clear()`; it used
+  to be cleared, and records then sealed with no sink file and no error.
 
 - A record sink from the environment (`MDB_RECORDS`) was not opened when a script declared
   custody in code (`custody.declare`, `dbg.custody`) before the first record was sealed: the

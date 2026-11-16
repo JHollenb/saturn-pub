@@ -46,8 +46,10 @@ INTEGER_KEYS = frozenset({
 @dataclass(frozen=True)
 class Arg:
     """One argument. ``positional`` args fill in order from a command line. ``configurable``:
-    a display or budget default a config file may change (``[repl] defaults``); never an
-    argument that changes what is measured or a verdict."""
+    a display default a config file may change (``[repl] defaults``): it changes how much of a
+    result is shown, never what is measured, where a run stops, or what a sealed record holds
+    as a reading (``symbols limit`` sets the Unbound row and budgets move the cursor, so neither
+    is configurable)."""
 
     name: str
     type: str
@@ -173,7 +175,7 @@ def check_default(name: str, value: Any) -> tuple[str, str, Any]:
     if not arg.configurable:
         allowed = sorted(f"{o.name}.{a.name}" for o in _REGISTRY.values() for a in o.args
                          if a.configurable)
-        raise BadArgs(f"{name} is not a display or budget default a config file may set "
+        raise BadArgs(f"{name} is not a display default a config file may set "
                       f"(those are: {', '.join(allowed)})")
     return op_name, arg_name, _check(arg, value)
 

@@ -709,7 +709,7 @@ def _op_start(ctx, prompt, name, prefill, lookahead, retain_rows):
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
     Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-        help="token rows continue may enter (minimum 1, at most 4096)", configurable=True),
+        help="token rows continue may enter (minimum 1, at most 4096)"),
     _NAME, _PREFILL, _LOOKAHEAD, _RETAIN,
     effect="native", needs_live=False,
     usage="run [name=NAME] [prefill=K] [lookahead=MODE] [retain_rows=N] [TEXT | ID ID ...] "
@@ -772,8 +772,7 @@ def _op_frame(ctx, address):
 
 _N = Arg("n", "int", default=1, minimum=1, maximum=STEP_CAP, help="repeat count (at most 4096)")
 _BUDGET = Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-              help="token rows that may be entered before stopping (minimum 1, at most 4096)",
-              configurable=True)
+              help="token rows that may be entered before stopping (minimum 1, at most 4096)")
 _ENGINE_UNITS = {
     "port": lambda label: True,
     "sublayer": lambda label: label in addresses.DEFAULT_GLOBALS or label == "start"

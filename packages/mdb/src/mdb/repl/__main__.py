@@ -2,7 +2,7 @@
 
     mdb engine MODEL [PROMPT] [--project DIR [--session NAME]] [--dtype bf16|fp32]
         [--device cpu|cuda] [--tokens "1 5 9 3"] [--script FILE] [--json]
-        [--records PATH [--records-append] [--no-payloads]] [--kernel-path NAME]
+        [--records PATH [--[no-]records-append] [--[no-]payloads]] [--kernel-path NAME]
         [--prereg FILE] [--init FILE | --no-init]
 
 ``MODEL`` is what to debug, as ``gdb PROGRAM`` names a program: a checkpoint directory, the
@@ -65,8 +65,16 @@ def _missing(error: ModuleNotFoundError) -> int:
 # setting name -> the flag that sets it (``mdb config explain`` names the flag)
 FLAGS = {"model.dtype": "--dtype", "model.device": "--device", "project.dir": "--project",
          "project.session": "--session", "records.sink": "--records",
-         "records.append": "--records-append", "records.payloads": "--no-payloads",
+         "records.append": "--[no-]records-append", "records.payloads": "--[no-]payloads",
          "custody.kernel_path": "--kernel-path", "repl.init": "--init"}
+
+
+def _say_alias(prog: str, config: Any, name: str) -> None:
+    """``alias NAME -> TARGET (source)`` on stderr whenever a configured alias was used."""
+    target = config.get("model.aliases").get(str(name).strip())
+    if target is not None:
+        print(f"{prog}: alias {name} -> {target} ({config.origin('model.aliases')})",
+              file=sys.stderr)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -106,10 +114,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--records", metavar="PATH",
                         help="record sink: every sealed record is appended to PATH (a file, a "
                              "directory, or a name with {run}; [records] sink)")
-    parser.add_argument("--records-append", action="store_true", default=None,
-                        help="add to a sink file another run wrote")
-    parser.add_argument("--no-payloads", action="store_false", dest="payloads", default=None,
-                        help="keep large payloads out of the sink")
+    parser.add_argument("--records-append", action=argparse.BooleanOptionalAction,
+                        default=None, help="add to a sink file another run wrote "
+                                           "(--no-records-append overrides a config file)")
+    parser.add_argument("--payloads", action=argparse.BooleanOptionalAction, default=None,
+                        help="write large payloads to the sink (default yes; --no-payloads)")
     parser.add_argument("--kernel-path", metavar="NAME",
                         help="kernel path recorded in custody ([custody] kernel_path)")
     parser.add_argument("--prereg", metavar="FILE",
@@ -128,7 +137,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.target is not None and flagged:
             parser.error("give MODEL or one of --tiny/--model/--connect, not both")
         if args.target is not None or args.model:
-            kind, value = parse_target(args.target if args.target is not None else args.model)
+            named = args.target if args.target is not None else args.model
+            kind, value = parse_target(named)
+            _say_alias("mdb engine", config, named)
             if kind == "connect":
                 args.model, args.connect = None, value
             elif kind == "tiny":
@@ -208,13 +219,15 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except ModuleNotFoundError as error:
         return _missing(error)
-    init = None if args.no_init else config.get("repl.init")
+    init, untrusted = (None, None) if args.no_init else config.init_file()
+    if untrusted:
+        print(f"mdb engine: {untrusted}", file=sys.stderr)
     if init is not None:
         if not Path(init).expanduser().is_file():
             print(f"mdb engine: init file {init} ({config.origin('repl.init')}) does not exist",
                   file=sys.stderr)
             return 2
-        shell.source(str(init), echo=not args.json)
+        shell.source_init(str(init), echo=not args.json)
     if args.tokens or args.prompt:
         words = (args.tokens or "").replace(",", " ").split()
         line = "start " + (" ".join(words) if args.tokens else json.dumps(args.prompt))

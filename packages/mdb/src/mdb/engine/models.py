@@ -15,7 +15,7 @@ from mdb.core.settings import DTYPES as DTYPE_NAMES
 
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
 assert tuple(DTYPES) == DTYPE_NAMES, "core.settings.DTYPES names the dtypes this module maps"
-__all__ = ["DTYPES", "TINY_FAMILIES", "cast_weights", "load_local", "tiny_model"]
+__all__ = ["DTYPES", "TINY_FAMILIES", "cast_weights", "check_device", "load_local", "tiny_model"]
 
 
 def _dtype(dtype: Any) -> torch.dtype:
@@ -24,6 +24,22 @@ def _dtype(dtype: Any) -> torch.dtype:
     if dtype not in DTYPES:
         raise ValueError("dtype must be bf16 or fp32")
     return DTYPES[dtype]
+
+
+def check_device(device: Any) -> torch.device:
+    """``device`` as a torch device this machine has; a bad string or an absent CUDA/MPS is a
+    ``BadArgs`` naming it (never a traceback from deep in torch)."""
+    from mdb.core.errors import BadArgs
+
+    try:
+        found = torch.device(device)
+    except (RuntimeError, TypeError) as error:
+        raise BadArgs(f"device {device!r} is not a torch device: {error}") from None
+    if found.type == "cuda" and not torch.cuda.is_available():
+        raise BadArgs(f"device {device!r}: CUDA is not available in this torch build or machine")
+    if found.type == "mps" and not torch.backends.mps.is_available():
+        raise BadArgs(f"device {device!r}: MPS is not available on this machine")
+    return found
 
 
 def cast_weights(model: Any, dtype: torch.dtype) -> Any:
@@ -141,7 +157,7 @@ def load_local(path: str, *, dtype: Any = None, device: Any = None) -> Any:
 
     path = locate_model(str(path))
     dtype = settings.value("model.dtype", dtype)
-    device = settings.value("model.device", device)
+    device = check_device(settings.value("model.device", device))
 
     # The dtype is given to the loader and the module is then moved by device only:
     # ``module.to(dtype=...)`` also casts buffers, and a bf16 copy of RoPE's float32
@@ -153,4 +169,4 @@ def load_local(path: str, *, dtype: Any = None, device: Any = None) -> Any:
         attn_implementation="eager",
         dtype=_dtype(dtype),
     )
-    return model.eval().to(torch.device(device))
+    return model.eval().to(device)

@@ -71,8 +71,11 @@ _LOCK = threading.Lock()
 # env_read: custody from the environment/settings done (also set by declare/clear);
 # sinks_read: the configured sink opened (independent: declaring custody in code first must not
 # skip the sink).
+# sink_error: the configured sink was refused; kept apart from env_error so that declare()/clear()
+# (which reset custody) never hide it: every later seal raises until the sink is read again.
+# inits: init files the REPL ran ({path, sha256}); they change what later records measure.
 _STATE: dict[str, Any] = {"declared": None, "env_read": False, "sinks_read": False,
-                          "env_error": None}
+                          "env_error": None, "sink_error": None, "inits": []}
 _SINKS: list[Sink] = []
 _OWNED: set[str] = set()          # sink files this process opened (it may reopen and append)
 PAYLOAD_SCHEMA = "mdb-payload-v1"
@@ -141,9 +144,11 @@ def declare(*, script: str | Path | None = None, prereg: str | Path | None = Non
 
 
 def clear() -> None:
-    """Forget declared custody (records seal as before)."""
+    """Forget declared custody and noted init files (records seal as before). A refused sink
+    stays an error until the environment is read again."""
     with _LOCK:
         _STATE["declared"] = None
+        _STATE["inits"] = []
         _STATE["env_read"] = True
         _STATE["env_error"] = None
 
@@ -162,17 +167,22 @@ def _from_env() -> None:
     if _STATE["env_read"] and _STATE["sinks_read"]:
         if _STATE["env_error"] is not None:
             raise _STATE["env_error"]
+        if _STATE["sink_error"] is not None:
+            raise _STATE["sink_error"]
         return
     again = not _STATE["env_read"]
+    stage = "custody"
     try:
-        settings = _settings()
-        resolved = settings.refresh() if again else settings.current()
+        # the settings the process loaded with (a file edited later must not change the block)
+        resolved = _settings().current()
         if again:
             script, prereg = os.environ.get("MDB_SCRIPT"), os.environ.get("MDB_PREREG")
             kernel = resolved.get("custody.kernel_path")
             if script or prereg or kernel:
                 declare(script=script, prereg=prereg, kernel_path=kernel)
+        stage = "sink"
         if again or not _STATE["sinks_read"]:
+            _STATE["sink_error"] = None
             sink = resolved.get("records.sink")
             if sink:
                 target = sink_path(sink)
@@ -180,9 +190,29 @@ def _from_env() -> None:
                     records_to(target, append=resolved.get("records.append"),
                                payloads=resolved.get("records.payloads"))
     except BaseException as error:
-        _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, error
+        _STATE["env_read"], _STATE["sinks_read"] = True, True
+        _STATE["sink_error" if stage == "sink" else "env_error"] = error
         raise
     _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, None
+
+
+def reread() -> None:
+    """Read the environment and config files again at the next seal, as a new process would
+    (the settings are otherwise fixed when first loaded). Declared custody is kept."""
+    _settings().reset()
+    with _LOCK:
+        _STATE["env_read"], _STATE["sinks_read"] = False, False
+        _STATE["env_error"], _STATE["sink_error"] = None, None
+
+
+def ran_init(path: str | Path) -> dict[str, Any]:
+    """Note that the REPL ran the init file ``path`` (hashed now): every record sealed from now
+    on carries custody with ``init: [{path, sha256}]``. Returns the entry."""
+    entry = {"path": str(Path(path).expanduser().absolute()), "sha256": file_sha256(path)}
+    with _LOCK:
+        if entry not in _STATE["inits"]:
+            _STATE["inits"].append(entry)
+    return entry
 
 
 def config_block() -> dict[str, Any] | None:
@@ -212,6 +242,9 @@ def current() -> dict[str, Any] | None:
     config = config_block()
     if config is not None:
         block = {**(block if block is not None else _undeclared()), "config": config}
+    if _STATE["inits"]:
+        block = {**(block if block is not None else _undeclared()),
+                 "init": [dict(entry) for entry in _STATE["inits"]]}
     return None if block is None else block_with_libraries(block)
 
 
@@ -454,4 +487,5 @@ def emit(record: dict[str, Any]) -> None:
 
 __all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "PAYLOAD_SCHEMA", "SCHEMA", "Sink",
            "attach_custody", "clear", "config_block", "current", "custody", "declare", "emit",
-           "emit_payload", "file_sha256", "libraries", "records_to", "run_tag", "sink_path", "sinks"]
+           "emit_payload", "file_sha256", "libraries", "ran_init", "records_to", "reread", "run_tag",
+           "sink_path", "sinks"]

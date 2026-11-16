@@ -53,6 +53,12 @@ from .render import render, render_error
 
 LOCAL = ("help", "source", "record", "quit")
 MAX_SOURCE_DEPTH = 16
+# Arguments an init file may not pass: they change what is measured, and an init file is not the
+# script custody hashes (``mdb.core.settings.REFUSED`` minus ``mode``, which ``watch`` uses for
+# its trigger kind).
+INIT_REFUSED = ("lookahead", "prefill", "retain_rows", "recheck", "batch", "seed", "floor",
+                "floors", "floor_spacings", "margin_floor_spacings", "stability_floor_spacings",
+                "stable_k")
 
 
 # --------------------------------------------------------------------------- shell
@@ -83,6 +89,7 @@ class Shell:
         self.depth = 0  # nesting of `source`
         self._interrupted = False  # Ctrl-C seen: a running script stops
         self._failed = False       # the last command (or a nested non -k source) failed
+        self._init = False         # sourcing an init file (INIT_REFUSED arguments refused)
         if not json_mode and hasattr(ctx, "notice"):
             ctx.notice = self._notice   # an op's line before its result (sweep's plan)
 
@@ -154,6 +161,13 @@ class Shell:
             for arg_name, value in self.defaults.get(name, {}).items():
                 if args.get(arg_name) is None:
                     args[arg_name] = value
+            if self._init:
+                banned = sorted(k for k, v in args.items() if k in INIT_REFUSED and v is not None)
+                if banned:
+                    names = ", ".join(f"{b}=" for b in banned)
+                    raise BadArgs(f"an init file may not pass {names}: it changes what is "
+                                  "measured; put it in the script (--script) or the command "
+                                  "line")
             result = dispatch(self.ctx, name, args)
         except OpError as error:
             self._error(error)
@@ -288,6 +302,19 @@ class Shell:
             lines.append(text)
         return "\n".join(lines)
 
+    def source_init(self, path: str, *, echo: bool = True) -> int:
+        """Run an init file (``[repl] init``, ``--init``): hashed into custody first
+        (``custody.ran_init``), and its commands may not pass ``INIT_REFUSED`` arguments
+        (nested ``source`` included). Returns the number of errors."""
+        from mdb.core import custody
+
+        custody.ran_init(path)
+        self._init = True
+        try:
+            return self.source(path, echo=echo)
+        finally:
+            self._init = False
+
     def source(self, path: str, *, echo: bool = True, keep_going: bool = False) -> int:
         """Run a command file. It stops at the first error (as gdb) unless ``keep_going``
         (``source -k``); nested ``source`` stops too, and at most ``MAX_SOURCE_DEPTH`` deep.
@@ -336,7 +363,11 @@ class Shell:
             try:
                 readline.read_history_file(str(self.history))
             except OSError:
-                pass   # no history yet
+                if self.history.exists() and self.history.stat().st_size > 0:
+                    # not a history file (or unreadable): never write over it
+                    self.write(f"warning: {self.history} is not a readline history file; "
+                               "history is off for this session")
+                    self.history = None
         try:
             return self._loop(stream, interactive)
         finally:

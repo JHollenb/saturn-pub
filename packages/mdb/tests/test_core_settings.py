@@ -5,6 +5,7 @@ config file. The autouse fixture in conftest.py points the user file at an empty
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 
@@ -293,7 +294,7 @@ def _seal():
 def fresh_custody():
     """As in a new process: nothing declared, environment and sink not read yet."""
     custody.clear()
-    custody._STATE["env_read"] = custody._STATE["sinks_read"] = False
+    custody.reread()
     for sink in custody.sinks():
         sink.close()
     yield
@@ -310,7 +311,7 @@ def test_no_config_file_leaves_records_unchanged_and_a_file_is_recorded(place, m
                   '[model]\ndtype = "fp32"\n[custody]\nkernel_path = "stepped"\n'
                   '[serve]\nport = 9000\n')
     monkeypatch.setenv("MDB_CONFIG", str(path))
-    custody._STATE["env_read"] = False
+    custody.reread()
     held = _seal()
     block = held["body"]["custody"]
     assert held["id"] != plain["id"]
@@ -319,20 +320,20 @@ def test_no_config_file_leaves_records_unchanged_and_a_file_is_recorded(place, m
     assert config["sources"] == [{
         "path": str(path.resolve()), "layer": "MDB_CONFIG",
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        "settings": {"model.dtype": "fp32", "custody.kernel_path": "stepped"}}]
-    assert config["resolved"] == {"model.dtype": "fp32", "custody.kernel_path": "stepped"}
+        "settings": {"model.dtype": '"fp32"', "custody.kernel_path": '"stepped"'}}]
+    assert config["resolved"] == {"model.dtype": '"fp32"', "custody.kernel_path": '"stepped"'}
     assert config["origins"]["model.dtype"].startswith("MDB_CONFIG file")
     monkeypatch.delenv("MDB_CONFIG")
-    custody._STATE["env_read"] = False
+    custody.reread()
     custody.clear()
-    custody._STATE["env_read"] = False
+    custody.reread()
     again = _seal()
     assert again["id"] == plain["id"] and "custody" not in again["body"]
 
 
 @pytest.mark.parametrize("text", [
     '[serve]\nport = 9000\nallow_hosts = ["mdb.lan"]\n',
-    '[repl]\nhistory = "h"\ndefaults = { print = { top = 8 } }\n',
+    '[storage]\nshared_tensor_store = "pool"\n',
     '[records]\npayloads = false\nappend = true\n',
     '[project]\ndir = "runs/x"\n',
 ])
@@ -340,7 +341,7 @@ def test_a_file_of_locations_only_leaves_ids_unchanged(place, monkeypatch, fresh
     plain = _seal()
     path = _write(place["tmp"] / "c.toml", text)
     monkeypatch.setenv("MDB_CONFIG", str(path))
-    custody._STATE["env_read"] = False
+    custody.reread()
     held = _seal()
     assert settings.current().files and settings.current().provenance() is None
     assert "custody" not in held["body"] and held["id"] == plain["id"]
@@ -351,15 +352,15 @@ def test_every_recorded_key_is_listed_by_the_file_that_sets_it(place, monkeypatc
     _write(place["user"], '[model]\ndevice = "cpu"\n[serve]\nport = 9000\n')
     named = _write(place["tmp"] / "c.toml", '[model]\nroots = ["m"]\naliases = { a = "b" }\n'
                    '[project]\nsession = "s1"\n[sae]\nsources = { l = { path = "p" } }\n')
-    _write(place["work"] / "mdb.toml", '[repl]\nhistory = "h"\n')     # no recorded key
+    _write(place["work"] / "mdb.toml", '[serve]\nport = 9001\n')     # no recorded key
     got = resolve({"model.device": "meta"}, env=_env(place, MDB_CONFIG=str(named)),
                   cwd=place["work"]).provenance()
     assert [(s["layer"], sorted(s["settings"])) for s in got["sources"]] == [
         ("MDB_CONFIG", ["model.aliases", "model.roots", "project.session", "sae.sources"]),
         ("user", ["model.device"])]
-    assert got["resolved"]["model.device"] == "meta"                    # the flag won
+    assert got["resolved"]["model.device"] == '"meta"'                  # the flag won
     assert got["origins"]["model.device"] == "command line model.device"
-    assert got["resolved"]["model.roots"] == [str((place["tmp"] / "m").resolve())]
+    assert json.loads(got["resolved"]["model.roots"]) == [str((place["tmp"] / "m").resolve())]
     assert set(got["resolved"]) == {"model.roots", "model.aliases", "model.device",
                                     "project.session", "sae.sources"}
 
@@ -378,7 +379,7 @@ def test_config_sink_with_payloads_off(place, monkeypatch, fresh_custody):
 
     path = _write(place["tmp"] / "c.toml", '[records]\nsink = "out/r.jsonl"\npayloads = false\n')
     monkeypatch.setenv("MDB_CONFIG", str(path))
-    custody._STATE["env_read"] = False
+    custody.reread()
     put_json([{"x": list(range(10))}])
     _seal()
     sink = custody.Sink(place["tmp"] / "out" / "r.jsonl")

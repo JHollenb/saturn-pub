@@ -815,7 +815,7 @@ def _tiny(family: str, dtype: str | None, seed: int, device: str | None = None) 
     device = settings.value("model.device", device)
     model = tiny_model(family, settings.value("model.dtype", dtype), seed=seed)
     if str(device) != "cpu":
-        import torch
+        from mdb.engine.models import check_device
 
-        model = model.to(torch.device(device))
+        model = model.to(check_device(device))
     return model

@@ -89,7 +89,7 @@ def test_environment_declares(tmp_path, monkeypatch):
     sink_path = tmp_path / "env.jsonl"
     monkeypatch.setenv("MDB_SCRIPT", str(script))
     monkeypatch.setenv("MDB_RECORDS", str(sink_path))
-    custody._STATE["env_read"] = False
+    custody.reread()
     record = _seal()
     assert record["body"]["custody"]["script_sha256"] == custody.file_sha256(script)
     assert len(_record_lines(sink_path)) == 1
@@ -131,10 +131,10 @@ def test_sink_refuses_a_file_another_run_wrote(tmp_path, monkeypatch):
     assert [r["id"] for r in sink.records()] == [first["id"], second["id"], third["id"]]
     monkeypatch.setenv("MDB_RECORDS", str(tmp_path / "env-foreign.jsonl"))
     (tmp_path / "env-foreign.jsonl").write_text(path.read_text())
-    custody._STATE["env_read"] = False
+    custody.reread()
     with pytest.raises(FileExistsError):
         _seal()
-    custody._STATE["env_read"] = False
+    custody.reread()
     monkeypatch.setenv("MDB_RECORDS_APPEND", "1")
     _seal()
     assert len(_record_lines(tmp_path / "env-foreign.jsonl")) == 3
@@ -187,7 +187,7 @@ def test_environment_sink_opens_when_custody_is_declared_in_code_first(tmp_path,
     ``MDB_RECORDS`` sink never opened and the records were sealed but not written."""
     sink_path = tmp_path / "declared-first.jsonl"
     monkeypatch.setenv("MDB_RECORDS", str(sink_path))
-    custody._STATE["env_read"] = custody._STATE["sinks_read"] = False   # a new process
+    custody.reread()   # a new process
     custody.declare(kernel_path="k")
     record = _seal()
     assert [r["id"] for r in custody.Sink(sink_path).records()] == [record["id"]]

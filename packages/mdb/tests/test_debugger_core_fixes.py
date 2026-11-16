@@ -279,7 +279,7 @@ def clean_env(monkeypatch):
     for k in ("MDB_SCRIPT", "MDB_PREREG", "MDB_RECORDS", "MDB_KERNEL_PATH"):
         monkeypatch.delenv(k, raising=False)
     custody.clear()
-    custody._STATE["env_read"] = False
+    custody.reread()
     yield monkeypatch
     custody.clear()
 

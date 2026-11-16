@@ -26,7 +26,7 @@ def here(tmp_path, monkeypatch):
     (tmp_path / ".git").mkdir()          # the walk-up for a project file stops here
     monkeypatch.chdir(tmp_path)
     custody.clear()
-    custody._STATE["env_read"] = custody._STATE["sinks_read"] = False
+    custody.reread()
     yield tmp_path
     custody.clear()
     for sink in custody.sinks():
@@ -75,7 +75,7 @@ def test_config_check_reports_bad_defaults_and_the_deprecated_storage_file(here,
     _write(here / "mdb.toml", '[repl]\ndefaults = { reads = { top = 3 } }\n')
     assert cli_main(["config", "check"]) == 2
     err = capsys.readouterr().err
-    assert "repl.defaults.reads.top" in err and "not a display or budget default" in err
+    assert "repl.defaults.reads.top" in err and "not a display default" in err
     _write(here / "mdb.toml", '[repl]\ndefaults = { print = { top = 99 } }\n')
     assert cli_main(["config", "check"]) == 2
     assert "<= 16" in capsys.readouterr().err
@@ -108,6 +108,7 @@ def test_engine_reads_config_defaults_and_flags_win(here, capsys):
     project = here / "proj"
     script = _write(here / "s.mdb", "where\nprint L0.h\nx L0.h\n")
     _write(here / ".mdbinit", "# init\nbreak L1.p\n")
+    _write(settings.user_file(), f'[repl]\ntrusted_projects = ["{here}"]\n')
     _write(here / "mdb.toml", f'''[model]
 dtype = "fp32"
 [project]
@@ -157,8 +158,15 @@ def test_engine_honours_device_for_tiny_models(here, capsys, monkeypatch):
     assert _engine("tiny:qwen2", "--device", "cpu", "--tokens", "1 2", "--script",
                    str(script), "--json") == 0
     assert seen == ["cpu"]
-    with pytest.raises(RuntimeError):
+    with pytest.raises(BadArgs, match="not a torch device"):
         real("qwen2", device="no-such-device")
+    if not torch.cuda.is_available():
+        with pytest.raises(BadArgs, match="CUDA is not available"):
+            real("qwen2", device="cuda")
+        capsys.readouterr()
+        assert _engine("tiny:qwen2", "--device", "cuda", "--tokens", "1 2") == 2
+        err = capsys.readouterr().err
+        assert "CUDA is not available" in err and "Traceback" not in err
 
 
 def test_engine_start_takes_lookahead_and_retain_rows(here, capsys):

@@ -19,7 +19,8 @@ from mdb.core import settings
 
 TEMPLATE = f'''# mdb configuration (docs/CONFIG.md). Precedence: command line > MDB_* environment >
 # MDB_CONFIG file > project mdb.toml > this user file > built-in defaults.
-# Relative paths are relative to this file's directory. Settings that change a verdict
+# Relative paths are relative to this file's directory. A project mdb.toml may not set
+# repl.history, repl.trusted_projects or serve.allow_hosts, and its paths stay inside its tree. Settings that change a verdict
 # (floors, recheck, lookahead, prefill, retain_rows, branch mode/batch, prereg, seed) are
 # refused here: pass them per call, where custody sees them.
 schema = "{settings.SCHEMA}"
@@ -49,8 +50,9 @@ schema = "{settings.SCHEMA}"
 
 [repl]
 # init = ".mdbinit"                      # commands run before --script or the prompt
-# history = "~/.local/state/mdb/history"
-# defaults = {{ print = {{ top = 8 }}, x = {{ count = 32 }} }}   # display/budget defaults only
+# history = "~/.local/state/mdb/history" # user file only
+# trusted_projects = ["~/work"]          # user file only: projects whose init files may run
+# defaults = {{ print = {{ top = 8 }}, x = {{ count = 32 }} }}   # display defaults only
 
 [storage]
 # shared_tensor_store = "/data/mdb-store"   # same filesystem as the projects using it
@@ -102,6 +104,10 @@ def _warnings(resolved: settings.Settings, project: str | None) -> list[str]:
         if not Path(source["path"]).expanduser().exists():
             out.append(f"sae.sources.{name}: {source['path']} does not exist "
                        f"({resolved.origin('sae.sources')})")
+    out += list(settings.SKIPPED)
+    _, untrusted = resolved.init_file()
+    if untrusted:
+        out.append(untrusted)
     legacy = settings.legacy_storage_file(project or Path.cwd())
     if legacy is not None:
         note = ("it is ignored: storage.shared_tensor_store is set "

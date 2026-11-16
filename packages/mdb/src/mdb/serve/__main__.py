@@ -4,7 +4,8 @@
 ``--model`` takes the same forms as ``mdb engine MODEL`` (a directory, a cached name, an alias
 from the config, ``tiny:FAMILY``). Defaults (project, host, port, allowed hosts, dtype, device)
 may come from a config file or ``MDB_*`` variables (``mdb.core.settings``); a flag wins.
-``--allow-remote`` is never read from a config file.
+``--allow-remote`` is never read from a config file, ``serve.allow_hosts`` never from a project
+file, and only ``--allow-host`` typed on the command line satisfies ``--allow-remote``.
 
 Without ``--tiny``/``--model`` the server is a read-only viewer of the recorded project. With
 one of them it also holds a live debugger attached with ``--project`` (``mdb serve --project
@@ -85,6 +86,9 @@ def main(argv=None):
         config = settings.activate(settings.resolve(cli, flags=FLAGS, project=args.project))
         if args.model:
             kind, value = parse_target(args.model)
+            from ..repl.__main__ import _say_alias
+
+            _say_alias("mdb serve", config, args.model)
             if kind == "connect":
                 raise BadArgs("--model names a model to load here, not a server address")
             if kind == "tiny":
@@ -98,12 +102,13 @@ def main(argv=None):
         parser.error("name the project: --project DIR (or [project] dir in a config file)")
     args.project = Path(config.get("project.dir"))
     args.host, args.port = config.get("serve.host"), config.get("serve.port")
+    typed_hosts = list(args.allow_host or [])    # --allow-remote needs these typed
     args.allow_host = list(config.get("serve.allow_hosts"))
     args.dtype, args.device = config.get("model.dtype"), config.get("model.device")
     session = config.get("project.session")
     args.session = None if session == "auto" else session
     live_mode = bool(args.tiny or args.model)
-    if args.allow_remote and not args.allow_host:
+    if args.allow_remote and not typed_hosts:
         print("mdb serve: --allow-remote needs --allow-host HOST[:PORT] naming how clients will "
               "reach this server (a request whose Host is not listed is refused)",
               file=sys.stderr)
