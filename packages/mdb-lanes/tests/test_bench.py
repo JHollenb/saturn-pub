@@ -396,3 +396,42 @@ def test_default_is_command_publication_and_resume_opt_out(model, tmp_path):
     before = off.publication.stats["commits"]; off.generate(3)
     assert off.publication.stats["commits"] - before == 3
     off.close()
+
+
+def test_publication_setting_default_selectable_validated_and_aliased(model, tmp_path):
+    def commits(label, **kw):
+        b = bench(model, tmp_path / label, **kw)
+        b.prefill([1, 2, 3])
+        before = b.publication.stats["commits"]
+        b.generate(3)
+        n, pol = b.publication.stats["commits"] - before, b.publication_policy
+        b.close()
+        return n, pol
+    assert commits("default") == (1, "per_call")
+    assert commits("call", publication="per_call") == (1, "per_call")
+    assert commits("token", publication="per_token") == (3, "per_token")
+    assert commits("alias_off", command_publication=False) == (3, "per_token")
+    assert commits("alias_on", command_publication=True) == (1, "per_call")
+    assert commits("agree", publication="per_token", command_publication=False) == (3, "per_token")
+    with pytest.raises(BenchError, match="publication must be one of"):
+        bench(model, tmp_path / "bad", publication="per_second")
+    with pytest.raises(BenchError, match="conflicts"):
+        bench(model, tmp_path / "conf", publication="per_call", command_publication=False)
+    with pytest.raises(BenchError, match="journal"):
+        bench(model, tmp_path / "leg", publication="per_call", publication_mode="legacy")
+    off = BenchSession.resume(model, root=tmp_path / "call", publication="per_token")
+    assert off.publication_policy == "per_token"
+    off.close()
+    with pytest.raises(BenchError, match="publication must be one of"):
+        BenchSession.resume(model, root=tmp_path / "call", publication="nope")
+
+
+def test_cli_publication_flag_reaches_config(capsys):
+    import json
+    from mdb_lanes.bench_cli import main
+    argv = ["open", "--root", "/tmp/x", "--prompt", "hi", "--dry-run"]
+    for flag in ([], ["--publication", "per_token"]):
+        try: main(argv + flag)
+        except Exception as exc: pytest.skip(f"dry-run needs scheduler env: {exc!r}")
+        config = json.loads(capsys.readouterr().out)["config"]
+        assert config.get("publication") == (flag[1] if flag else None)

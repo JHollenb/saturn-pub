@@ -46,13 +46,15 @@ class BenchSession:
         if resolved == "qwen2":
             from .bench_qwen import QwenBenchSession
             return QwenBenchSession.from_resident(model, tokenizer, **kwargs)
+        if kwargs.get("publication") is not None or kwargs.get("command_publication") is not None:
+            raise BenchError("publication setting is currently Qwen-specific")
         from .bench_family import FamilyBenchSession
         return FamilyBenchSession.from_resident(model, tokenizer, family=resolved, **kwargs)
 
     @classmethod
     def resume(cls, model, tokenizer=None, *, root, model_sha256=None, family=None,
                legacy_numerical_environment=None, _adapter=None, lazy_branches=False,
-               command_publication=None):
+               publication=None, command_publication=None):
         resolved = resident_family(model, family)
         path = Path(root)
         writer, selected = recover_locked(path)
@@ -65,7 +67,9 @@ class BenchSession:
                 from .bench_qwen import QwenBenchSession
                 return QwenBenchSession.resume(model, tokenizer, root=root, model_sha256=model_sha256,
                     _writer=writer, _manifest=manifest, lazy_branches=lazy_branches,
-                    command_publication=command_publication)
+                    publication=publication, command_publication=command_publication)
+            if publication is not None or command_publication is not None:
+                raise BenchError("publication setting is currently Qwen-specific")
             if lazy_branches:
                 raise BenchError("selected-branch hydration is currently Qwen-specific")
             from .bench_family import FamilyBenchSession

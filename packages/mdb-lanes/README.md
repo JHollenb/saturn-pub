@@ -38,6 +38,27 @@ mdb lanes flux-read-panels --qualification $W/packages/mdb-lanes/qualification s
 (`mdb.trace`, `analysis/reads.py`, `propagate.whatif`, replay recipe v2) is in
 [`docs/ENGINE-INTEGRATION.md`](docs/ENGINE-INTEGRATION.md).
 
+## Publication mode
+
+Qwen bench sessions (`BenchSession.from_resident` / `BenchSession.resume` on a Qwen2 model, and
+`mdb bench open|resume --publication ...`) take one setting, `publication`:
+
+| value | behaviour |
+| --- | --- |
+| `"per_call"` (default, journal mode) | one durable publish (fsync) per `step`/`generate` call. Faster: on Beast a 32-token Qwen2.5-0.5B decode took 2.60 s in total with per-token publication, 0.79 s of it in 128 fsyncs. Each token cut is still its own immutable artifact in the call's sealed pack and restorable by ref; the call is all-or-nothing. A crash mid-call loses the whole call's tokens. |
+| `"per_token"` | durable after every token, so a crash loses at most the token in flight. Slower. |
+
+```python
+BenchSession.from_resident(model, tok, root=r)                          # per_call
+BenchSession.from_resident(model, tok, root=r, publication="per_token")
+BenchSession.resume(model, tok, root=r, publication="per_token")       # not stored in the session
+```
+
+Anything else is refused; `"per_call"` needs `publication_mode="journal"`. The older
+`command_publication=True/False` still works as an alias for `"per_call"`/`"per_token"`.
+`session.publication_policy` reports what is in force. Mamba and FLUX sessions refuse the
+setting.
+
 ## Tests
 
 ```

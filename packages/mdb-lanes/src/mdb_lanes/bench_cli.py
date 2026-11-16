@@ -31,6 +31,9 @@ def main(argv=None):
         else:
             p.add_argument("--legacy-numerical-environment", type=Path,
                            help="explicit qualified environment JSON for older Mamba identities")
+        p.add_argument("--publication", choices=("per_call", "per_token"), default=None,
+                       help="Qwen only. per_call (default): one durable publish per step/generate call, "
+                            "faster, a crash mid-call loses that call's tokens. per_token: durable after every token, slower")
         p.add_argument("--lane", choices=("virtual", "native"), default="virtual")
         p.add_argument("--capacity", type=int, default=128)
         p.add_argument("--kv-budget-bytes", type=int, default=64 << 20)
@@ -80,6 +83,9 @@ def main(argv=None):
         "resident_state_bytes": args.state_budget_bytes, "seed": args.seed, "height": args.height,
         "width": args.width, "num_inference_steps": args.steps, "guidance_scale": args.guidance_scale,
         "commands": json.loads(args.commands.read_text()) if args.commands else None}
+    if args.publication is not None:
+        if spec.family != "qwen2": parser.error("--publication applies to Qwen sessions only")
+        config["publication"] = args.publication
     if getattr(args, "legacy_numerical_environment", None) is not None:
         config["legacy_numerical_environment"] = json.loads(args.legacy_numerical_environment.read_text())
     if resource_basis and resource_basis.get("phase_vram_budget_decimal_mb") is not None:

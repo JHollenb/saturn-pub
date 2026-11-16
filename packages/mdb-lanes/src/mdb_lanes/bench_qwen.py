@@ -141,6 +141,22 @@ class BenchBranch:
     intervention_lineage: list[str] = field(default_factory=list)
 
 
+PUBLICATION_POLICIES = ("per_call", "per_token")
+_POLICY_FLAG = {None: None, "per_call": True, "per_token": False}
+
+
+def resolve_publication(publication=None, command_publication=None):
+    """Validate the public ``publication`` setting and its ``command_publication`` alias."""
+    if publication not in (None, *PUBLICATION_POLICIES):
+        raise BenchError(f"publication must be one of {PUBLICATION_POLICIES} or None, got {publication!r}")
+    if command_publication is not None:
+        alias = "per_call" if command_publication else "per_token"
+        if publication not in (None, alias):
+            raise BenchError(f"publication={publication!r} conflicts with command_publication={command_publication!r}")
+        publication = alias
+    return publication
+
+
 class QwenBenchSession:
     """One resident model, one cut registry, many independently owned futures.
 
@@ -154,27 +170,42 @@ class QwenBenchSession:
                       revision="local", model_sha256=None, session_id="bench",
                       lane="virtual", attention_backend=None, resident_kv_bytes=64 << 20,
                       continuation_capacity=128, publication_mode="journal",
-                      command_publication=None):
-        """Journal-mode sessions publish once per step/generate call (default): every token
-        cut is still written as its own immutable artifact and carried in the call's single
-        sealed pack, so each cut stays restorable by ref, but the durable ``selected.json``
-        pointer (and its fsyncs) advance once when the call returns. The call is
-        all-or-nothing: a failure rolls back to the pre-call state. A crash mid-call loses the
-        whole call, not individual tokens.
-        ``command_publication=False`` restores the old one-durable-commit-per-token behaviour;
-        ``True`` on a non-journal session is an error, ``None`` means "journal only"."""
+                      publication=None, command_publication=None):
+        """Open a new journal-backed Qwen2 session.
+
+        ``publication`` chooses when the durable ``selected.json`` pointer advances:
+
+        - ``"per_call"`` (default for journal sessions): once per ``step``/``generate`` call.
+          Faster: Beast measured a 32-token Qwen2.5-0.5B decode at 2.60 s total, 0.79 s of it
+          in 128 fsyncs, with per-token publication. Every token cut is still its own immutable
+          artifact in the call's sealed pack and stays restorable by ref, and the call is
+          all-or-nothing (a failure rolls back to the pre-call state), but a crash mid-call
+          loses the whole call's tokens.
+        - ``"per_token"``: one durable publish (with its fsyncs) after every token, so a crash
+          loses at most the token in flight. Slower.
+
+        ``None`` means ``"per_call"`` on a journal session. ``"per_call"`` with
+        ``publication_mode != "journal"`` is an error. ``command_publication=True/False`` is
+        the older spelling of ``"per_call"``/``"per_token"``. Resume with
+        ``BenchSession.resume(..., publication=...)``; the choice is not stored in the session."""
         if (Path(root)/"selected.json").exists():
             raise BenchError("session already exists; use BenchSession.resume")
-        if command_publication is True and publication_mode != "journal":
-            raise BenchError("command publication requires journal publication mode")
+        policy = resolve_publication(publication, command_publication)
+        if policy == "per_call" and publication_mode != "journal":
+            raise BenchError("per_call publication requires journal publication mode")
         session = cls(model, tokenizer, root=root, model_id=model_id, revision=revision,
                    model_sha256=model_sha256, session_id=session_id, lane=lane,
                    attention_backend=attention_backend, resident_kv_bytes=resident_kv_bytes,
                    continuation_capacity=continuation_capacity, publication_mode=publication_mode)
-        session.command_publication = None if command_publication is None else bool(command_publication)
+        session.command_publication = _POLICY_FLAG[policy]
         return session
 
     command_publication = None
+
+    @property
+    def publication_policy(self):
+        """``"per_call"`` or ``"per_token"``: what this session does now."""
+        return "per_call" if self._command_publication_enabled() else "per_token"
 
     def _command_publication_enabled(self):
         if self.command_publication is None:
@@ -1232,7 +1263,7 @@ class QwenBenchSession:
 
     @classmethod
     def resume(cls, model, tokenizer=None, *, root, model_sha256=None, _writer=None, _manifest=None,
-               lazy_branches=False, command_publication=None):
+               lazy_branches=False, publication=None, command_publication=None):
         root = Path(root)
         if _writer is None: _writer, selected = recover_locked(root)
         else: selected = json.loads((root/"selected.json").read_text())
@@ -1246,7 +1277,7 @@ class QwenBenchSession:
         if result.identity != manifest["identity"]:
             result._writer.close()
             raise BenchError("resume model/tokenizer identity mismatch")
-        result.command_publication = None if command_publication is None else bool(command_publication)
+        result.command_publication = _POLICY_FLAG[resolve_publication(publication, command_publication)]
         result.cuts, result.events = manifest["cuts"], manifest["events"]
         result.vm.memory_events = list(manifest.get("vm_events", []))
         for name, branch in manifest["branches"].items():
