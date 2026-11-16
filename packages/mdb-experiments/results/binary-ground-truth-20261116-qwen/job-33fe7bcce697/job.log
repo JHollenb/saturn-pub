@@ -1,0 +1,190 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision c534ae9
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 17808.01it/s]
+[    2.1s] load: 28 layers, attn eager
+[    3.4s] donor cache
+[    3.4s] family city: 16/16 correct
+[    3.4s] family currency: 16/16 correct
+[    3.4s] family landmark: 16/16 correct
+[    3.4s] family person: 16/16 correct
+[    3.9s] city:Kyoto: 256 lanes, 2 batches, bitwise True, floor 0.375
+[    5.0s] city:Busan: 512 lanes, 3 batches, bitwise True, floor 0.25
+[    5.5s] city:Shanghai: 256 lanes, 2 batches, bitwise True, floor 0.5
+[    6.5s] city:Shenzhen: 512 lanes, 3 batches, bitwise True, floor 0.5
+[    7.6s] city:Saint Petersburg: 512 lanes, 3 batches, bitwise True, floor 0.25
+[    8.1s] city:Munich: 256 lanes, 2 batches, bitwise True, floor 0.5
+[    8.6s] city:Hamburg: 256 lanes, 2 batches, bitwise True, floor 0.375
+[    9.1s] city:Milan: 256 lanes, 2 batches, bitwise True, floor 0.25
+[    9.6s] currency:yen: 256 lanes, 2 batches, bitwise True, floor 0.375
+[   10.1s] currency:won: 256 lanes, 2 batches, bitwise True, floor 0.375
+[   11.1s] currency:ruble: 512 lanes, 3 batches, bitwise True, floor 0.375
+[   12.1s] currency:rouble: 480 lanes, 3 batches, bitwise True, floor 0.25
+[   12.6s] currency:yuan: 256 lanes, 2 batches, bitwise True, floor 0.625
+[   14.0s] currency:renminbi: 688 lanes, 4 batches, bitwise True, floor 0.5
+[   15.0s] currency:baht: 512 lanes, 3 batches, bitwise True, floor 0.5
+[   16.4s] currency:zloty: 688 lanes, 4 batches, bitwise True, floor 0.25
+[   17.5s] landmark:Mount Fuji: 512 lanes, 3 batches, bitwise True, floor 0.875
+[   19.1s] landmark:the Great Wall: 768 lanes, 5 batches, bitwise True, floor 0.625
+[   20.7s] landmark:the Forbidden City: 768 lanes, 5 batches, bitwise True, floor 0.75
+[   22.9s] landmark:the Colosseum: 1040 lanes, 6 batches, bitwise True, floor 0.375
+[   24.9s] landmark:the Parthenon: 944 lanes, 5 batches, bitwise True, floor 0.625
+[   26.5s] landmark:the Acropolis: 768 lanes, 5 batches, bitwise True, floor 0.75
+[   28.9s] landmark:the pyramids of Giza: 1120 lanes, 6 batches, bitwise True, floor 0.25
+[   30.0s] landmark:the Sphinx: 496 lanes, 3 batches, bitwise True, floor 0.25
+[   31.4s] person:Hokusai: 736 lanes, 4 batches, bitwise True, floor 0.25
+[   33.6s] person:Akira Kurosawa: 1104 lanes, 6 batches, bitwise True, floor 0.25
+[   35.8s] person:Haruki Murakami: 1104 lanes, 6 batches, bitwise True, floor 0.5
+[   37.8s] person:Mao Zedong: 944 lanes, 5 batches, bitwise True, floor 0.5
+[   40.0s] person:Miguel de Cervantes: 1104 lanes, 6 batches, bitwise True, floor 0.25
+[   41.9s] person:Giuseppe Verdi: 944 lanes, 5 batches, bitwise True, floor 0.25
+[   42.4s] person:Mozart: 256 lanes, 2 batches, bitwise True, floor 0.25
+[   44.3s] person:Frederic Chopin: 944 lanes, 5 batches, bitwise True, floor 0.25
+[   53.3s] crosscheck {'item': 'city:Kyoto', 'layer': 7, 'row': 36, 'donor': 'city:Shanghai', 'stepped': {'total': -6.375, 'frozen': -6.125, 'verdict': 'path-diverged', 'moved': 24}, 'batched': {'total': -6.375, 'frozen': -6.125, 'moved': 26}}
+[   59.5s] crosscheck {'item': 'city:Kyoto', 'layer': 19, 'row': 36, 'donor': 'city:Busan', 'stepped': {'total': -3.625, 'frozen': -3.375, 'verdict': 'path-diverged', 'moved': 13}, 'batched': {'total': -3.625, 'frozen': -3.375, 'moved': 13}}
+[   67.1s] crosscheck {'item': 'city:Kyoto', 'layer': 0, 'row': 36, 'donor': 'city:Shenzhen', 'stepped': {'total': -3.5, 'frozen': -4.625, 'verdict': 'path-diverged', 'moved': 137}, 'batched': {'total': -3.5, 'frozen': -4.625, 'moved': 139}}
+{
+ "items": 32,
+ "correct": 32,
+ "eager_bitwise_all": true,
+ "cells": 680,
+ "patches": 10008,
+ "informative": 9840,
+ "a": {
+  "canonical_single_nulls": 313,
+  "flip_to_effect_16": 157,
+  "G1_fraction": 0.5015974440894568,
+  "G2_canonical_null_uninformative": 0.07667731629392971,
+  "any_single_nulls": 4875,
+  "any_flip": 2417,
+  "any_fraction": 0.4957948717948718,
+  "patches_effect": 5133,
+  "patches_uninformative": 168
+ },
+ "b": {
+  "G3_path_diverged_all_heads": 0.9447154471544715,
+  "G4_path_diverged_last_row": 0.6182926829268293,
+  "diverged_effect": 5131,
+  "G5_median_frozen_over_total": 1.0,
+  "frac_ratio_below_half": 0.2410836094328591,
+  "q25_q75": [
+   0.5,
+   1.2
+  ],
+  "median_moved_selections": 26,
+  "uninformative_diverged": 0,
+  "by_layer": {
+   "0": {
+    "informative": 1192,
+    "path_diverged": 1192,
+    "path_diverged_last_row": 1192,
+    "diverged_effect": 1110,
+    "median_frozen_over_total": 1.0
+   },
+   "3": {
+    "informative": 1208,
+    "path_diverged": 1204,
+    "path_diverged_last_row": 1178,
+    "diverged_effect": 870,
+    "median_frozen_over_total": 0.9733333333333334
+   },
+   "7": {
+    "informative": 1236,
+    "path_diverged": 1208,
+    "path_diverged_last_row": 1135,
+    "diverged_effect": 820,
+    "median_frozen_over_total": 0.975
+   },
+   "11": {
+    "informative": 1236,
+    "path_diverged": 1222,
+    "path_diverged_last_row": 1054,
+    "diverged_effect": 807,
+    "median_frozen_over_total": 1.0
+   },
+   "15": {
+    "informative": 1242,
+    "path_diverged": 1202,
+    "path_diverged_last_row": 829,
+    "diverged_effect": 782,
+    "median_frozen_over_total": 1.0
+   },
+   "19": {
+    "informative": 1242,
+    "path_diverged": 1179,
+    "path_diverged_last_row": 668,
+    "diverged_effect": 702,
+    "median_frozen_over_total": 1.0
+   },
+   "23": {
+    "informative": 1242,
+    "path_diverged": 1086,
+    "path_diverged_last_row": 27,
+    "diverged_effect": 39,
+    "median_frozen_over_total": 0.4
+   },
+   "26": {
+    "informative": 1242,
+    "path_diverged": 1003,
+    "path_diverged_last_row": 1,
+    "diverged_effect": 1,
+    "median_frozen_over_total": 0.3333333333333333
+   }
+  }
+ },
+ "stepped_crosscheck": [
+  {
+   "item": "city:Kyoto",
+   "layer": 7,
+   "row": 36,
+   "donor": "city:Shanghai",
+   "stepped": {
+    "total": -6.375,
+    "frozen": -6.125,
+    "verdict": "path-diverged",
+    "moved": 24
+   },
+   "batched": {
+    "total": -6.375,
+    "frozen": -6.125,
+    "moved": 26
+   }
+  },
+  {
+   "item": "city:Kyoto",
+   "layer": 19,
+   "row": 36,
+   "donor": "city:Busan",
+   "stepped": {
+    "total": -3.625,
+    "frozen": -3.375,
+    "verdict": "path-diverged",
+    "moved": 13
+   },
+   "batched": {
+    "total": -3.625,
+    "frozen": -3.375,
+    "moved": 13
+   }
+  },
+  {
+   "item": "city:Kyoto",
+   "layer": 0,
+   "row": 36,
+   "donor": "city:Shenzhen",
+   "stepped": {
+    "total": -3.5,
+    "frozen": -4.625,
+    "verdict": "path-diverged",
+    "moved": 137
+   },
+   "batched": {
+    "total": -3.5,
+    "frozen": -4.625,
+    "moved": 139
+   }
+  }
+ ],
+ "seconds": 67.2,
+ "cuda_peak_mb": 4871
+}
+DRIVER_RC 0 OUT /mnt/ssd1tb/cache/beast/binlessons/c534ae9
