@@ -1,0 +1,75 @@
+symbol table  bin:bigadd-O0  T=168  cells=1454  live=387  bindings=72  donors=32  lanes=14078
+  sym cells bits*ticks        life  slots (pc.operand) / first definitions
+   b0     5       1736   init..168  init.mem[0x403000:1], 0x40105b.rdx[0:8], 0x401067.rax[0:8] (+2 slots)
+   b1     5       1736   init..168  init.mem[0x403001:1], 0x40105b.rdx[8:16], 0x401067.rax[8:16] (+2 slots)
+   b2     5       1736   init..168  init.mem[0x403002:1], 0x40105b.rdx[16:24], 0x401067.rax[16:24] (+2 slots)
+   b3     5       1736   init..168  init.mem[0x403003:1], 0x40105b.rdx[24:32], 0x401067.rax[24:32] (+2 slots)
+   b4     5       1736   init..168  init.mem[0x403004:1], 0x40105b.rdx[32:40], 0x401067.rax[32:40] (+2 slots)
+   b5     5       1736   init..168  init.mem[0x403005:1], 0x40105b.rdx[40:48], 0x401067.rax[40:48] (+2 slots)
+   b6     5       1736   init..168  init.mem[0x403006:1], 0x40105b.rdx[48:56], 0x401067.rax[48:56] (+2 slots)
+   b7     5       1736   init..168  init.mem[0x403007:1], 0x40105b.rdx[56:64], 0x401067.rax[56:64] (+2 slots)
+   b8     2       1448   init..168  init.mem[0x403008:1], 0x40105b.rdx[0:8]
+   b9     2       1448   init..168  init.mem[0x403009:1], 0x40105b.rdx[8:16]
+  b10     2       1448   init..168  init.mem[0x40300a:1], 0x40105b.rdx[16:24]
+  b11     2       1448   init..168  init.mem[0x40300b:1], 0x40105b.rdx[24:32]
+  b12     7       2616   init..168  init.mem[0x40300c:1], 0x40105b.rdx[32:40], 0x401094.rax[32:40] (+4 slots)
+  b13    10       2904   init..168  init.mem[0x40300d:1], 0x40105b.rdx[40:48], 0x401067.rax[40:48] (+7 slots)
+  b14    10       2904   init..168  init.mem[0x40300e:1], 0x40105b.rdx[48:56], 0x401067.rax[48:56] (+7 slots)
+  b15    10       2904   init..168  init.mem[0x40300f:1], 0x40105b.rdx[56:64], 0x401067.rax[56:64] (+7 slots)
+  b16     2       1448   init..168  init.mem[0x403010:1], 0x40105b.rdx[0:8]
+  b17    11       4056   init..168  init.mem[0x403011:1], init.mem[0x403031:1], 0x40105b.rdx[8:16] (+8 slots)
+  b18    11       4056   init..168  init.mem[0x403012:1], init.mem[0x403032:1], 0x40105b.rdx[16:24] (+8 slots)
+  b19    11       4056   init..168  init.mem[0x403013:1], init.mem[0x403033:1], 0x40105b.rdx[24:32] (+8 slots)
+  b20    11       4056   init..168  init.mem[0x403014:1], init.mem[0x403034:1], 0x40105b.rdx[32:40] (+8 slots)
+  b21    11       4056   init..168  init.mem[0x403015:1], init.mem[0x403035:1], 0x40105b.rdx[40:48] (+8 slots)
+  b22    11       4056   init..168  init.mem[0x403016:1], init.mem[0x403036:1], 0x40105b.rdx[48:56] (+8 slots)
+  b23     5       1736   init..168  init.mem[0x403017:1], 0x40105b.rdx[56:64], 0x401067.rax[56:64] (+2 slots)
+  b24     2       1448   init..168  init.mem[0x403018:1], 0x40105b.rdx[0:8]
+  b25     5       1896   init..168  init.mem[0x403019:1], 0x40105b.rdx[8:16], 0x401067.rax[8:16] (+2 slots)
+  b26     5       1896   init..168  init.mem[0x40301a:1], 0x40105b.rdx[16:24], 0x401067.rax[16:24] (+2 slots)
+  b27     5       1896   init..168  init.mem[0x40301b:1], 0x40105b.rdx[24:32], 0x401067.rax[24:32] (+2 slots)
+  b28     5       1896   init..168  init.mem[0x40301c:1], 0x40105b.rdx[32:40], 0x401067.rax[32:40] (+2 slots)
+  b29     5       1896   init..168  init.mem[0x40301d:1], 0x40105b.rdx[40:48], 0x401067.rax[40:48] (+2 slots)
+  b30     5       1896   init..168  init.mem[0x40301e:1], 0x40105b.rdx[48:56], 0x401067.rax[48:56] (+2 slots)
+  b31     5       1896   init..168  init.mem[0x40301f:1], 0x40105b.rdx[56:64], 0x401067.rax[56:64] (+2 slots)
+  b32     2       1440   init..168  init.mem[0x403020:1], 0x401088.rdx[0:8]
+  b33     6       2848   init..168  init.mem[0x403021:1], 0x401088.rdx[8:16], 0x401094.rax[8:16] (+3 slots)
+  b34     6       2848   init..168  init.mem[0x403022:1], 0x401088.rdx[16:24], 0x401094.rax[16:24] (+3 slots)
+  b35     6       2848   init..168  init.mem[0x403023:1], 0x401088.rdx[24:32], 0x401094.rax[24:32] (+3 slots)
+  b36     6       2848   init..168  init.mem[0x403024:1], 0x401088.rdx[32:40], 0x401094.rax[32:40] (+3 slots)
+  b37     6       2848   init..168  init.mem[0x403025:1], 0x401088.rdx[40:48], 0x401094.rax[40:48] (+3 slots)
+  b38     6       2848   init..168  init.mem[0x403026:1], 0x401088.rdx[48:56], 0x401094.rax[48:56] (+3 slots)
+  b39     6       2848   init..168  init.mem[0x403027:1], 0x401088.rdx[56:64], 0x401094.rax[56:64] (+3 slots)
+  b40    16       3481   init..168  init.mem[0x403028:1], 0x40109f.flags.CF, 0x4010a3.rax[0:8] (+13 slots)
+  b41     9       2872   init..168  init.mem[0x403029:1], 0x401067.rax[8:16], 0x40106a.mem[rbp-0x18+1:1] (+6 slots)
+  b42     9       2872   init..168  init.mem[0x40302a:1], 0x401067.rax[16:24], 0x40106a.mem[rbp-0x18+2:1] (+6 slots)
+  b43     9       2872   init..168  init.mem[0x40302b:1], 0x401067.rax[24:32], 0x40106a.mem[rbp-0x18+3:1] (+6 slots)
+  b44     2       1440   init..168  init.mem[0x40302c:1], 0x401088.rdx[32:40]
+  b45     2       1440   init..168  init.mem[0x40302d:1], 0x401088.rdx[40:48]
+  b46     2       1440   init..168  init.mem[0x40302e:1], 0x401088.rdx[48:56]
+  b47     2       1440   init..168  init.mem[0x40302f:1], 0x401088.rdx[56:64]
+  b48     2       1440   init..168  init.mem[0x403030:1], 0x401088.rdx[0:8]
+  b49     2       1440   init..168  init.mem[0x403037:1], 0x401088.rdx[56:64]
+  b50     2       1440   init..168  init.mem[0x403038:1], 0x401088.rdx[0:8]
+  b51     2       1440   init..168  init.mem[0x403039:1], 0x401088.rdx[8:16]
+  b52     2       1440   init..168  init.mem[0x40303a:1], 0x401088.rdx[16:24]
+  b53     2       1440   init..168  init.mem[0x40303b:1], 0x401088.rdx[24:32]
+  b54     2       1440   init..168  init.mem[0x40303c:1], 0x401088.rdx[32:40]
+  b55     2       1440   init..168  init.mem[0x40303d:1], 0x401088.rdx[40:48]
+  b56     2       1440   init..168  init.mem[0x40303e:1], 0x401088.rdx[48:56]
+  b57     2       1440   init..168  init.mem[0x40303f:1], 0x401088.rdx[56:64]
+  b58     4       1408     27..168  0x401094.rax[0:8], 0x401097.mem[rbp-0x28:1], 0x4010b2.rdx[0:8] (+1 slots)
+  b59     3        288      48..82  0x401067.rax[0:8], 0x40106a.mem[rbp-0x18:1], 0x401090.rax[0:8]
+  b60    14       1777     63..168  0x40109f.flags.CF, 0x4010a3.rax[0:8], 0x4010a6.rax[0:8] (+11 slots)
+  b61     5        904     93..168  0x401094.rax[56:64], 0x401097.mem[rbp-0x28+7:1], 0x40109b.rax[56:64] (+2 slots)
+  b62    15       1410     96..168  0x40109f.flags.CF, 0x4010a3.rax[0:8], 0x4010a6.rax[0:8] (+6 slots)
+  b63     3        448    114..168  0x401067.rax[0:8], 0x40106a.mem[rbp-0x18:1], 0x401090.rax[0:8]
+  b64     4        768    126..168  0x401094.rax[0:8], 0x401097.mem[rbp-0x28:1], 0x4010b2.rdx[0:8] (+1 slots)
+  b65     4        768    126..168  0x401094.rax[8:16], 0x401097.mem[rbp-0x28+1:1], 0x4010b2.rdx[8:16] (+1 slots)
+  b66     4        768    126..168  0x401094.rax[16:24], 0x401097.mem[rbp-0x28+2:1], 0x4010b2.rdx[16:24] (+1 slots)
+  b67     4        768    126..168  0x401094.rax[24:32], 0x401097.mem[rbp-0x28+3:1], 0x4010b2.rdx[24:32] (+1 slots)
+  b68     4        768    126..168  0x401094.rax[32:40], 0x401097.mem[rbp-0x28+4:1], 0x4010b2.rdx[32:40] (+1 slots)
+  b69     4        768    126..168  0x401094.rax[40:48], 0x401097.mem[rbp-0x28+5:1], 0x4010b2.rdx[40:48] (+1 slots)
+  b70     4        768    126..168  0x401094.rax[48:56], 0x401097.mem[rbp-0x28+6:1], 0x4010b2.rdx[48:56] (+1 slots)
+  b71     5        792    126..168  0x401094.rax[56:64], 0x401097.mem[rbp-0x28+7:1], 0x40109b.rax[56:64] (+2 slots)
+unbound: 1067 dead cells (934 with no informative donor)

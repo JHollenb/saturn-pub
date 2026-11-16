@@ -1,0 +1,12 @@
+{
+ "method_commit": "3d0baffb33f7871308139328dca418838fbe8692",
+ "branch": "mdb-x86",
+ "jobs": {
+  "job-1ad6f5bb1bb1": "run-1 + grid: sum8-O0, bigadd-O0, bsort-O0",
+  "job-72d1f655cfa4": "run-1 + grid: bsort-O2, fsm-O0, fsm-O2; demo transcript demo.txt"
+ },
+ "host": "beast, NVIDIA GeForce RTX 4080, torch 2.13.0+cu130, mrun priority 70",
+ "reference_store": "/mnt/hdd8tb/uv-archive-stage/isa-bench/reference/gt-66b4b67cc82e42b3",
+ "containers": "/mnt/hdd8tb/uv-archive-stage/isa-bench/binctr/gt-run0-job-98886bb1e7d0/containers (meta.json inputs/steps/stdout/exit only)",
+ "contains_ground_truth": false
+}

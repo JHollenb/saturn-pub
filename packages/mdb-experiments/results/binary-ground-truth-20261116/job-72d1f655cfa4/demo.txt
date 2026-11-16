@@ -1,0 +1,110 @@
+(mdb) attach bin:bsort-O2 input=default
+T=271 stop=exit loops=['0x401028', '0x401030']
+(mdb) x/8gx gt_input
+0x5d 0x7 0xffffffffffffffff 0x29 0x0 0x12 0x8000000000000000 0x7
+(mdb) info domains
+run, call, loop, block, instruction, loop:0x401028, loop:0x401030, uop
+(mdb) step 1 unit=loop:0x401030
+Stop(reason='boundary', pos=7, pc=4198448, text='mov rdx, qword ptr [rax + 0x403000]   ; 0x401030@0x401007/L0x401028:0/L0x401030:0', uop=None)
+(mdb) print rax
+i6.rax[0:64] = 0x0 (0) [measured]
+(mdb) step 1 unit=loop:0x401030
+Stop(reason='boundary', pos=16, pc=4198448, text='mov rdx, qword ptr [rax + 0x403000]   ; 0x401030@0x401007/L0x401028:0/L0x401030:1', uop=None)
+(mdb) print rax
+i15.rax[0:64] = 0x8 (8) [measured]
+(mdb) step 1 unit=loop:0x401030
+Stop(reason='boundary', pos=23, pc=4198448, text='mov rdx, qword ptr [rax + 0x403000]   ; 0x401030@0x401007/L0x401028:0/L0x401030:2', uop=None)
+(mdb) print rax
+i22.rax[0:64] = 0x10 (16) [measured]
+(mdb) step 1 unit=loop:0x401028
+Stop(reason='boundary', pos=70, pc=4198440, text='xor eax, eax   ; 0x401028@0x401007/L0x401028:1', uop=None)
+(mdb) print rsi
+i69.rsi[0:64] = 0x30 (48) [measured]
+(mdb) reverse-step 1 unit=loop:0x401030
+Stop(reason='boundary', pos=59, pc=4198448, text='mov rdx, qword ptr [rax + 0x403000]   ; 0x401030@0x401007/L0x401028:0/L0x401030:6', uop=None)
+(mdb) seek 0
+Stop(reason='boundary', pos=0, pc=4198400, text='xor rbp, rbp   ; 0x401000', uop=None)
+(mdb) watch mem[0x403000:8]  (change)
+watch 1
+(mdb) continue
+Stop(reason='watch 1 (old 0x5d new 0x7, written at 0x401043)', pos=12, pc=4198474, text='mov qword ptr [rax + 0x403008], rdx   ; 0x40104a@0x401007/L0x401028:0/L0x401030:0', uop=None)
+(mdb) x/2gx gt_input
+0x7 0x7
+(mdb) continue
+Stop(reason='watch 1 (old 0x7 new 0x0, written at 0x401043)', pos=176, pc=4198474, text='mov qword ptr [rax + 0x403008], rdx   ; 0x40104a@0x401007/L0x401028:3/L0x401030:0', uop=None)
+(mdb) x/2gx gt_input
+0x0 0x0
+(mdb) seek 0
+Stop(reason='boundary', pos=0, pc=4198400, text='xor rbp, rbp   ; 0x401000', uop=None)
+(mdb) break 0x40103e#5   (6th execution of cmp rcx, rdx)
+breakpoint 1
+(mdb) continue
+Stop(reason='break 1', pos=52, pc=4198462, text='cmp rcx, rdx   ; 0x40103e@0x401007/L0x401028:0/L0x401030:5', uop=None)
+(mdb) print rcx
+i51.rcx[0:64] = 0x8000000000000000 (9223372036854775808) [measured]
+(mdb) print rdx
+i51.rdx[0:64] = 0xffffffffffffffff (18446744073709551615) [measured]
+(mdb) reads rcx
+  0x40103e#5 cmp rcx, rdx  [data, 8 bytes]
+  0x401043#4 mov qword ptr [rax + 0x403000], rcx  [data, 8 bytes]
+(mdb) whatif rcx = 0xffffffffffffffff
+{'verdict': 'path-diverged', 'total_effect': 'effect', 'frozen_effect': 'effect', 'path_diverged_at': '54', 'selection_moved_under_hold_at': '53', 'prediction': {'method': 'taint reach over typed reads (structural upper bound)', 'effect': 'possible', 'y_bytes': '-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63'}}
+(mdb) fork orig
+orig
+(mdb) set rcx = 0xffffffffffffffff
+{'edit': 'i51.rcx[0:64]', 'value': '0xffffffffffffffff', 'at_pos': 52, 'verdict': 'path-diverged', 'path_diverged_at': 54, 'address_diverged_at': None, 'stop': 'exit', 'y_changed': True, 'y': '000000000000000007000000000000000700000000000000120000000000000029000000000000005d00000000000000ffffffffffffffff0000000000000080', 'exit_code': 0}
+(mdb) compare orig
+{'a': 'orig', 'b': 'main', 'verdict': 'path-diverged', 'path_diverged_at': 54, 'address_diverged_at': None, 'stop': 'exit', 'y_changed': True, 'y': '000000000000000007000000000000000700000000000000120000000000000029000000000000005d00000000000000ffffffffffffffff0000000000000080', 'exit_code': 0}
+(mdb) hold orig  (branch outcomes + addresses frozen to the unedited run)
+{'hold': 'orig', 'what': ['ctrl', 'addr'], 'T': 271, 'stop': 'exit'}
+(mdb) compare orig
+{'verdict': 'effect', 'path_diverged_at': None, 'y': '000000000000000007000000000000000700000000000000120000000000000029000000000000005d00000000000000ffffffffffffffffffffffffffffffff'}
+(mdb) hold off
+{'hold': None, 'what': ['ctrl', 'addr'], 'T': 269, 'stop': 'exit'}
+(mdb) symbols  (run-1 method, 32 donors)
+symbol table  bin:bsort-O2  T=271  cells=1848  live=631  bindings=105  donors=32  lanes=17446
+  sym cells bits*ticks        life  slots (pc.operand) / first definitions
+   b0    11       1672   init..162  init.mem[0x403000:1], 0x401030.rdx[0:8], 0x40104a.mem[rax+0x403008:1] (+1 slots)
+   b1    32       8392   init..271  init.mem[0x403001:1], init.mem[0x403009:1], init.mem[0x403019:1] (+6 slots)
+   b2    32       8392   init..271  init.mem[0x403002:1], init.mem[0x40300a:1], init.mem[0x40301a:1] (+6 slots)
+   b3    32       8392   init..271  init.mem[0x403003:1], init.mem[0x40300b:1], init.mem[0x40301b:1] (+6 slots)
+   b4    32       8392   init..271  init.mem[0x403004:1], init.mem[0x40300c:1], init.mem[0x40301c:1] (+6 slots)
+   b5    32       8392   init..271  init.mem[0x403005:1], init.mem[0x40300d:1], init.mem[0x40301d:1] (+6 slots)
+   b6    32       8392   init..271  init.mem[0x403006:1], init.mem[0x40300e:1], init.mem[0x40301e:1] (+6 slots)
+   b7    22       5584   init..175  init.mem[0x403007:1], init.mem[0x40300f:1], init.mem[0x40301f:1] (+6 slots)
+   b8     4       1544   init..175  init.mem[0x403008:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1] (+1 slots)
+   b9    11       2528   init..271  init.mem[0x403010:1], 0x401030.rdx[0:8], 0x40104a.mem[rax+0x403008:1]
+  b10    11       2528   init..271  init.mem[0x403011:1], 0x401030.rdx[8:16], 0x40104a.mem[rax+0x403008+1:1]
+  b11    11       2528   init..271  init.mem[0x403012:1], 0x401030.rdx[16:24], 0x40104a.mem[rax+0x403008+2:1]
+  b12    11       2528   init..271  init.mem[0x403013:1], 0x401030.rdx[24:32], 0x40104a.mem[rax+0x403008+3:1]
+  b13    11       2528   init..271  init.mem[0x403014:1], 0x401030.rdx[32:40], 0x40104a.mem[rax+0x403008+4:1]
+  b14    11       2528   init..271  init.mem[0x403015:1], 0x401030.rdx[40:48], 0x40104a.mem[rax+0x403008+5:1]
+  b15    11       2528   init..271  init.mem[0x403016:1], 0x401030.rdx[48:56], 0x40104a.mem[rax+0x403008+6:1]
+  b16    11       2528   init..271  init.mem[0x403017:1], 0x401030.rdx[56:64], 0x40104a.mem[rax+0x403008+7:1]
+  b17    11       1992   init..198  init.mem[0x403018:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1] (+2 slots)
+  b18    10       2552   init..271  init.mem[0x403020:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1] (+1 slots)
+  b19     8       2104   init..225  init.mem[0x403028:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1]
+  b20     5       2352   init..271  init.mem[0x403030:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1] (+2 slots)
+  b21     5       2352   init..271  init.mem[0x403031:1], 0x401037.rcx[8:16], 0x401043.mem[rax+0x403000+1:1] (+2 slots)
+  b22     5       2352   init..271  init.mem[0x403032:1], 0x401037.rcx[16:24], 0x401043.mem[rax+0x403000+2:1] (+2 slots)
+  b23     5       2352   init..271  init.mem[0x403033:1], 0x401037.rcx[24:32], 0x401043.mem[rax+0x403000+3:1] (+2 slots)
+  b24     5       2352   init..271  init.mem[0x403034:1], 0x401037.rcx[32:40], 0x401043.mem[rax+0x403000+4:1] (+2 slots)
+  b25     5       2352   init..271  init.mem[0x403035:1], 0x401037.rcx[40:48], 0x401043.mem[rax+0x403000+5:1] (+2 slots)
+  b26     5       2352   init..271  init.mem[0x403036:1], 0x401037.rcx[48:56], 0x401043.mem[rax+0x403000+6:1] (+2 slots)
+  b27     6       2408   init..271  init.mem[0x403037:1], 0x401037.rcx[56:64], 0x401043.mem[rax+0x403000+7:1] (+2 slots)
+  b28    12       2824   init..271  init.mem[0x403038:1], 0x401037.rcx[0:8], 0x401043.mem[rax+0x403000:1]
+  b29     6       1640   init..172  init.mem[0x403039:1], 0x401037.rcx[8:16], 0x401043.mem[rax+0x403000+1:1]
+  b30     6       1640   init..172  init.mem[0x40303a:1], 0x401037.rcx[16:24], 0x401043.mem[rax+0x403000+2:1]
+  b31     6       1640   init..172  init.mem[0x40303b:1], 0x401037.rcx[24:32], 0x401043.mem[rax+0x403000+3:1]
+  b32     6       1640   init..172  init.mem[0x40303c:1], 0x401037.rcx[32:40], 0x401043.mem[rax+0x403000+4:1]
+  b33     6       1640   init..172  init.mem[0x40303d:1], 0x401037.rcx[40:48], 0x401043.mem[rax+0x403000+5:1]
+  b34     6       1640   init..172  init.mem[0x40303e:1], 0x401037.rcx[48:56], 0x401043.mem[rax+0x403000+6:1]
+  b35     6       1640   init..172  init.mem[0x40303f:1], 0x401037.rcx[56:64], 0x401043.mem[rax+0x403000+7:1]
+  b36     2          4     18..110  0x40103e.flags.CF
+  b37     4         16      25..56  0x40103e.flags.CF
+  b38     5         20     61..227  0x40103e.flags.CF
+  b39    11       2864     83..271  0x401043.mem[rax+0x403000+7:1], 0x401030.rdx[56:64], 0x40104a.mem[rax+0x403008+7:1]
+  ... 65 more bindings
+unbound: 1217 dead cells (912 with no informative donor)
+(mdb) records
+7 sealed mdb-symbol-table-v1 page(s); first id 2487c637d98cdfef85069cef91a49a0990679e03b38f0a8657c2a55c9057ad70

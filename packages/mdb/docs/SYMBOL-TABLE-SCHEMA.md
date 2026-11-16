@@ -72,6 +72,32 @@ Declaring candidate sets on the REPL: `candidates countries = countries.json`, `
 - `circuit-map` (schema `mdb-circuit-map-record-v1`): the map's exact JSON as a blob (so `Map.digest` recomputes from it), with its digest, slots, edges, candidate-set sizes and optionally a `MapTable` blob. `sealed.load_map` checks both the sha256 and the digest.
 - `prompt-set` (the `each` summary): sets of any size. Past 64 items the first 64 rows stay inline and every row is in `items_blob`. `each ... shard=K/N` runs one contiguous part.
 
+## Machine bindings (`mdb.machines`, 2026-11-16)
+
+`mdb.machines.x86` (a binary run on torchx86 lanes) emits `symbol-table` pages with schema `mdb-symbol-table-v1` and
+`where: bin:<program>`. The body adds `consumer` (y = the bytes of the last write syscall plus the exit code), `machine`
+(backend, program, image sha256, T) and `method` (the PREREG method string and its parameters), and an `unbound`
+block (`dead_cells`, `dead_weight`, `uninformative_cells`, `cells`). Each binding row is one merged web of cells:
+
+| Column | Type | Authority | Meaning |
+|---|---|---|---|
+| `symbol` | string | structural | `b<k>`, in order of first definition |
+| `kind`, `status` | string | | `web`, `live` |
+| `n_cells`, `weight` | int | measured | cells merged; bits summed over them (a register or memory byte is 8, a flag 1) |
+| `cells` | list | measured | `site:def..kill:bits` strings, first 8; `def` is a tick or `init` |
+| `slots` | list | structural | `pc.operand` slots of the defining writes, first 8 |
+| `definitions` | list | structural | the cells in the address grammar, e.g. `0x401033#0.mem[0x600010+3:1]`, first 8 |
+| `lifetime` | object | measured | `first`, `last` (ticks), `instructions`, `loop_iterations` (back edges crossed) |
+| `readers` | list | measured | `<pc>#<k>:<edge>`, edge data/addr/ctrl, first 8 |
+| `causal` | object | measured | `status: intervened`, `donors` (informative donor lanes) and `effect_donors` (lanes that changed y) |
+| `cells_full` | blob | | every cell (`[site, def, kill, bits]`), definition, reader and slot when a list is cut |
+
+`kinds.SYMBOL_TABLE` allows bare numbers at `bindings.*.cells.**`, `bindings.*.n_cells`, `bindings.*.weight`,
+`bindings.*.lifetime.**`, `bindings.*.cells_full.**`, `unbound.**`, `machine.**` and `method.**`; every other count
+is `num(value, authority)`. The circuit map (`mdb-circuit-map-v1`, `circuit-map` record) has one slot per binding
+and typed edges `{src, dst, type: data|addr|ctrl, donors}` measured by this backend's own patch transfers (`dst`
+is a binding or `y`); edges are total effects, not direct ones.
+
 ## Circuit maps
 
 - `bind` marks each binding with its slot's `role`, `slot` and the map's `map_digest`; `item_report` lists `unbound_slots` (slots that bound no row on that item).

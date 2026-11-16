@@ -106,7 +106,12 @@ SYMBOL_TABLE = declare_kind(
                    "components.*.components.*.content.*.best",
                    "components.*.components.*.content.*.size",
                    "components.*.components.*.content.*.truth_rank",
-                   "components.*.components.*.content.vocab_top.tokens"),
+                   "components.*.components.*.content.vocab_top.tokens",
+                   # machine backends (mdb.machines, 2026-11-16): a binding over site-bit x
+                   # tick-interval cells (docs/SYMBOL-TABLE-SCHEMA.md "Machine bindings")
+                   "bindings.*.cells.**", "bindings.*.n_cells", "bindings.*.weight",
+                   "bindings.*.lifetime.**", "bindings.*.cells_full.**", "unbound.**",
+                   "machine.**", "method.**"),
 )
 
 # ``symbol NAME = whatif|compare.a|EACH:ITEM`` (M23): a named symbol declared from a transplant

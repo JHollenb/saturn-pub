@@ -1,0 +1,44 @@
+{
+ "program": "sum8-O0",
+ "T": 258,
+ "cells": 2019,
+ "live": 154,
+ "bindings": 59,
+ "lanes": 7076,
+ "edges": 1406,
+ "lanes_equal_binctr": "33/33",
+ "duplicate_exec_keys": false,
+ "method_seconds": 4.9,
+ "device": "cuda",
+ "torch": "2.13.0+cu130",
+ "grid": {
+  "rows": 20020,
+  "seconds": 6.4,
+  "verdicts": {
+   "zero/step": {
+    "effect": 138,
+    "no effect": 16
+   },
+   "zero/exec": {
+    "effect": 138,
+    "no effect": 16
+   },
+   "unaligned/step": {
+    "effect": 4568,
+    "no effect": 360
+   },
+   "unaligned/exec": {
+    "effect": 4568,
+    "no effect": 360
+   },
+   "aligned/step": {
+    "effect": 4406,
+    "no effect": 522
+   },
+   "aligned/exec": {
+    "effect": 4406,
+    "no effect": 522
+   }
+  }
+ }
+}
