@@ -1203,6 +1203,12 @@ Mistral checkpoint was not run.
 The stepped run is bitwise equal to Hugging Face's incremental program (prefill plus one token).
 Against one full forward over the whole prompt the largest logit difference is 0.25.
 
+## Performance
+
+What a stepped row costs and how that changed in 0.2.1 (measured on a laptop CPU and on
+Qwen2.5-1.5B on an RTX 4080), the opt-in `lookahead="auto"`, the cost of foreign forward hooks,
+and the known remaining costs with the planned fixes: [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+
 ## Known limits
 
 The list of open issues for this release is in [CHANGELOG.md](CHANGELOG.md) under "Known issues".
@@ -1220,7 +1226,8 @@ The list of open issues for this release is in [CHANGELOG.md](CHANGELOG.md) unde
 - Port stepping re-runs the layer from its input for every port. On the tiny qwen2, one layer
   stepped from `h` to `h_out` made 145 calls against 13 for a plain call; `lookahead="layer"`
   makes 26, but native code then has computed ports past the cursor
-  (`run.status()["computed_past_cursor"]`).
+  (`run.status()["computed_past_cursor"]`); `lookahead="auto"` does that only while nothing is
+  staged for the layer (see [docs/PERFORMANCE.md](docs/PERFORMANCE.md)).
 - A stepped run equals Hugging Face's incremental program, not one full forward.
 - `circuit test` patches components at the consumer's row only: earlier rows (the cache) stay this
   run's, there is no `rows=all`, a source-row node counts as its head (`p` is not patched), and a
