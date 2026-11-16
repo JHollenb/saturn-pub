@@ -39,7 +39,8 @@ branch, pool, ...), because they act inside ``records.seal_record``:
 The environment can declare custody for a job payload with no code change: ``MDB_SCRIPT`` and
 ``MDB_PREREG`` (paths) and ``MDB_KERNEL_PATH`` (any one of them declares) are read on first use
 (an unreadable file raises on every seal, never once);  ``MDB_RECORDS`` opens a
-sink (same naming rules; ``MDB_RECORDS_APPEND=1`` is the ``append`` flag).
+sink (same naming rules; ``MDB_RECORDS_APPEND=1`` is the ``append`` flag), also when custody
+was declared in code before the first record was sealed.
 """
 
 from __future__ import annotations
@@ -58,7 +59,10 @@ CORE_LIBRARIES = ("mdb", "saturn_pub", "torch", "transformers")
 INTEROP_LIBRARIES = ("nnsight", "sae_lens", "transformer_lens", "pyvene", "circuit_tracer",
                      "safetensors", "numpy")
 _LOCK = threading.Lock()
-_STATE: dict[str, Any] = {"declared": None, "env_read": False, "env_error": None}
+# env_read: custody from the environment done (also set by declare/clear); sinks_read: the
+# environment sink opened. Separate, so declaring custody in code first does not skip the sink.
+_STATE: dict[str, Any] = {"declared": None, "env_read": False, "sinks_read": False,
+                          "env_error": None}
 _SINKS: list[Sink] = []
 _OWNED: set[str] = set()          # sink files this process opened (it may reopen and append)
 PAYLOAD_SCHEMA = "mdb-payload-v1"
@@ -133,26 +137,30 @@ def clear() -> None:
 
 def _from_env() -> None:
     """Declare custody from the environment once. A failure (a missing ``MDB_SCRIPT`` file) is
-    kept and raised on EVERY later call: custody never drops silently after the first error."""
-    if _STATE["env_read"]:
+    kept and raised on EVERY later call: custody never drops silently after the first error.
+    Custody (``env_read``) and the sink (``sinks_read``) are read independently: ``declare``
+    before the first seal sets ``env_read`` but the ``MDB_RECORDS`` sink still opens."""
+    if _STATE["env_read"] and _STATE["sinks_read"]:
         if _STATE["env_error"] is not None:
             raise _STATE["env_error"]
         return
+    again = not _STATE["env_read"]
     try:
-        script, prereg = os.environ.get("MDB_SCRIPT"), os.environ.get("MDB_PREREG")
-        kernel = os.environ.get("MDB_KERNEL_PATH")
-        if script or prereg or kernel:
-            declare(script=script, prereg=prereg, kernel_path=kernel)
-        sink = os.environ.get("MDB_RECORDS")
+        if again:
+            script, prereg = os.environ.get("MDB_SCRIPT"), os.environ.get("MDB_PREREG")
+            kernel = os.environ.get("MDB_KERNEL_PATH")
+            if script or prereg or kernel:
+                declare(script=script, prereg=prereg, kernel_path=kernel)
+        sink = os.environ.get("MDB_RECORDS") if again or not _STATE["sinks_read"] else None
         if sink:
             resolved = sink_path(sink)
             if not any(s.path == resolved for s in _SINKS):
                 records_to(resolved, append=os.environ.get("MDB_RECORDS_APPEND", "").lower()
                            in ("1", "true", "yes"))
     except BaseException as error:
-        _STATE["env_read"], _STATE["env_error"] = True, error
+        _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, error
         raise
-    _STATE["env_read"], _STATE["env_error"] = True, None
+    _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, None
 
 
 def block_with_libraries(block: dict[str, Any]) -> dict[str, Any]:
