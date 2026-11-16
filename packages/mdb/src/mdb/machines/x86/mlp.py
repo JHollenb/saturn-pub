@@ -32,6 +32,7 @@ from mdb.core.records import seal_record
 
 from .binary import Binary, torchx86
 from .lanes import Lanes
+from .session import verdict_of        # also declares the machine-whatif record kinds
 from .trace import default_input
 
 NB = 134                              # bits per class unit: value 64, value2 64, six flags
@@ -396,8 +397,6 @@ class MlpRun:
         ctrl = int(diff[0]) if len(diff) else (None if T_new == self.T else n)
         y_changed = (base.y[0], int(base.exit_code[0])) != (new.y[0], int(new.exit_code[0])) \
             or new.stop_kind(0) != "exit"
-        from .session import verdict_of  # noqa: PLC0415
-
         body = {"schema": "mdb-machine-whatif-result-v1", "whatif": sealed["id"],
                 "verdict": verdict_of(new.stop_kind(0), ctrl is not None, y_changed),
                 "down_native": hx(native), "down_predicted": hx(pred),
