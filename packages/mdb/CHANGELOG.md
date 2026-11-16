@@ -110,6 +110,11 @@ intended: the record says what ran. A project file is trusted less than the user
   is still read when neither the environment nor a config file sets a store. `mdb config check`
   reports it.
 
+## [0.2.3] — 2026-11-16 (release/mdb-0.2)
+
+Fixed: with `MDB_RECORDS` set, declaring custody before the first sealed record stopped the sink
+file from opening, so records were sealed but never written to it.
+
 ## [0.2.2] — 2026-11-16
 
 Record schema `mdb-record-v3`. Every record sealed from this version on has a new id, even with
