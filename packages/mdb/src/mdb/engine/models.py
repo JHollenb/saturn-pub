@@ -9,8 +9,12 @@ from typing import Any
 
 import torch
 
+from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED, TINY_FAMILIES
+from mdb.core.settings import DTYPES as DTYPE_NAMES
+
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
-TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
+assert tuple(DTYPES) == DTYPE_NAMES, "core.settings.DTYPES names the dtypes this module maps"
+__all__ = ["DTYPES", "TINY_FAMILIES", "cast_weights", "load_local", "tiny_model"]
 
 
 def _dtype(dtype: Any) -> torch.dtype:
@@ -36,10 +40,10 @@ def cast_weights(model: Any, dtype: torch.dtype) -> Any:
 
 def tiny_model(
     family: str,
-    dtype: Any = "bf16",
+    dtype: Any = DEFAULT_DTYPE,
     *,
     layers: int = 2,
-    seed: int = 113,
+    seed: int = DEFAULT_SEED,
     vocab_size: int = 32,
 ) -> Any:
     """A random tiny eager CPU model in eval mode.
@@ -120,7 +124,7 @@ def tiny_model(
     raise ValueError(f"tiny family must be one of {', '.join(TINY_FAMILIES)}")
 
 
-def load_local(path: str, *, dtype: Any = "bf16", device: Any = "cpu") -> Any:
+def load_local(path: str, *, dtype: Any = DEFAULT_DTYPE, device: Any = DEFAULT_DEVICE) -> Any:
     """Load a local Hugging Face causal LM checkpoint with eager attention, in eval mode.
 
     Offline only (``local_files_only=True``); never downloads.

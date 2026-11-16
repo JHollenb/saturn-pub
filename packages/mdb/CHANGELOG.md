@@ -2,6 +2,81 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
+## [Unreleased]
+
+Config files. With no config file, nothing changes: `examples/00-hello-tiny` prints the same
+record id (`d0c1d6c733c4bfa1` with torch 2.13 and transformers 5.13.1). When a config file is
+loaded, every record carries custody that names the file and its sha256, so records sealed with
+a config file present have different ids from records sealed without one. That is intended: the
+record says what ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
+
+### Added
+
+- TOML configuration: `~/.config/mdb/config.toml` (respects `XDG_CONFIG_HOME`), a project's
+  `mdb.toml` or `pyproject.toml` `[tool.mdb]`, and a file named by `MDB_CONFIG`. Precedence:
+  command line, environment, `MDB_CONFIG` file, project file, user file, defaults. Sections:
+  `[model]` (roots, aliases, dtype, device), `[project]` (dir, session), `[records]` (sink,
+  append, payloads), `[custody]` (kernel_path), `[serve]` (host, port, allow_hosts), `[repl]`
+  (init, history, defaults), `[storage]` (shared_tensor_store), `[sae]` (named sources).
+  Unknown keys and wrong types are errors that name `file:key`.
+- Settings that change a verdict (floors, `recheck`, branch `mode`/`batch`, `lookahead`,
+  `prefill`, `retain_rows`, `prereg`, `script`, `seed`) and `allow_remote` are refused by name
+  in a config file, with the reason and the per-call way to pass them.
+- `mdb config show | explain KEY | init [--project DIR] | check`. `explain` lists every source
+  that sets a key, highest first, and marks the one that wins.
+- Custody records a `config` block (`sources` with path and sha256, `resolved` dtype, device
+  and kernel path, and `origins`) whenever a config file was loaded.
+- `mdb engine --session NAME`, `--records PATH`, `--records-append`, `--no-payloads`,
+  `--kernel-path NAME`, `--prereg FILE`, `--init FILE`, `--no-init`; `mdb serve --session`.
+  `mdb serve --project` is optional when `[project] dir` is set.
+- `start` and `run` take `lookahead=none|layer|auto` and `retain_rows=N` (previously only
+  reachable from Python).
+- `[model] roots` / `MDB_MODEL_ROOTS`: model directories searched by name with the Hugging Face
+  cache. `[model] aliases`: short names for a directory, a model name or `tiny:FAMILY`.
+- `sae load NAME` with no path loads a `[sae] sources` entry.
+- REPL init file (`[repl] init`, run before the start line and `--script`), interactive history
+  file (`[repl] history`), and display or budget defaults (`[repl] defaults`, for example
+  `print.top`). `Arg(configurable=True)` marks the arguments that may be set this way.
+- Environment names follow `MDB_<SECTION>_<KEY>`: `MDB_MODEL_DTYPE`, `MDB_MODEL_DEVICE`,
+  `MDB_MODEL_ROOTS`, `MDB_PROJECT_DIR`, `MDB_PROJECT_SESSION`, `MDB_RECORDS_SINK`,
+  `MDB_RECORDS_PAYLOADS`, `MDB_CUSTODY_KERNEL_PATH`, `MDB_SERVE_HOST`, `MDB_SERVE_PORT`,
+  `MDB_SERVE_ALLOW_HOSTS`, `MDB_REPL_INIT`, `MDB_REPL_HISTORY`, `MDB_STORAGE_SHARED_TENSOR_STORE`.
+  The older `MDB_RECORDS`, `MDB_KERNEL_PATH`, `MDB_SHARED_TENSOR_STORE` and
+  `LLM_MODELS_EXTRA_ROOT` still work. Setting an old and a new name to different values is an
+  error.
+- Runtime dependency `tomli` on Python 3.10 (3.11 and later use `tomllib`).
+
+### Changed
+
+- `--device` applies to tiny models (`mdb engine tiny:qwen2 --device cuda`, `mdb serve --tiny`,
+  `open_tiny(device=)`, the selfcheck). It used to be accepted and ignored: tiny models always
+  ran on the CPU.
+- `mdb serve --model` takes the same forms as `mdb engine MODEL`: a directory, a cached model
+  name, a configured root or alias, or `tiny:FAMILY`. It used to accept a directory only.
+- `mdb engine --connect URL` refuses `--dtype`, `--device`, `--project`, `--session`,
+  `--records`, `--kernel-path` and `--prereg`: they belong to the server. `--dtype` and
+  `--device` used to be accepted and ignored.
+- Selfcheck: `--tokens N` is now `--generate N` and `--json PATH` is now `--out PATH`. The old
+  flags still work and print a notice on stderr.
+- `mdb lanes public --local` defaults to mdb's `[model] dtype` (bf16), the same as `mdb engine`
+  and `mdb serve`. It used to default to fp32, so the same checkpoint opened in a different
+  numeric scope and session. `--tiny` lanes decoders stay CPU fp32, which is the only dtype
+  they build.
+- `sae load`: `cache` and `verify` have no registry default (they still default to 4 and false
+  when loading), so that a configured source's values apply unless given on the command line.
+
+### Fixed
+
+- A record sink from the environment (`MDB_RECORDS`) was not opened when a script declared
+  custody in code (`custody.declare`, `dbg.custody`) before the first record was sealed: the
+  records were sealed but never written to the file. The sink now opens in both orders.
+
+### Deprecated
+
+- `.mdb-storage.json` for the shared tensor store: use `[storage] shared_tensor_store`. The file
+  is still read when neither the environment nor a config file sets a store. `mdb config check`
+  reports it.
+
 ## [0.2.2] — 2026-11-16
 
 Record schema `mdb-record-v3`. Every record sealed from this version on has a new id, even with

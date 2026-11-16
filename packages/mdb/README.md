@@ -115,6 +115,12 @@ here), `tiny:qwen2`, `tiny:qwen3`, `tiny:llama` or `tiny:mistral` (the same four
 name that matches no cached model, or several, is refused with the candidates. `--project DIR`
 attaches a project, which makes checkpoints durable.
 
+Defaults such as `--dtype`, `--device`, `--project`, model directories and aliases, the record
+sink and a REPL init file can live in `~/.config/mdb/config.toml` or a project's `mdb.toml`
+(`mdb config init`, `mdb config show`). Settings that change a verdict (floors, `lookahead`,
+`prefill`, `retain_rows`, branch options) are refused there and stay in the command. When a
+config file is loaded, every record names it and its sha256. See [docs/CONFIG.md](docs/CONFIG.md).
+
 ## Coming from TransformerLens or nnsight
 
 mdb uses its own words for things you already know. Left: the usual term. Right: mdb's. Port names
@@ -1048,7 +1054,7 @@ never send a whole tensor. Every response is at most 64 KiB. The recorded browse
 projects and engine-native ones (circuit and symbol-table records, no state cuts; the fixture
 is built by `tests/test_serve_recorded.py`).
 
-With `--tiny FAMILY` or `--model DIR` the server also holds one live debugger, attached with
+With `--tiny FAMILY` or `--model PATH|NAME` (the same forms as `mdb engine MODEL`) the server also holds one live debugger, attached with
 that project. The page gets a Live view with four tabs and an architecture strip:
 
 - Pipeline: the current layer's ports, motion controls, breakpoints, edits, checkpoints, console.

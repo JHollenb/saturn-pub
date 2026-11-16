@@ -47,6 +47,7 @@ from mdb.core.address import (
 )
 from mdb.core.errors import Refused
 from mdb.core.pointers import RecordError, Unresolved, occurrence_pointer
+from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED
 from mdb.engine.edits import CELL_AXES
 from mdb.engine.ports import PROGRAMS, config_refusal, program_for, tensor_digest
 from mdb.engine.run import ReplayMismatch, Run
@@ -745,6 +746,9 @@ def attach(
         )
     from saturn_pub.adapters.decoder import DecoderAdapter
 
+    from mdb.core import settings
+
+    settings.current()   # config errors surface here; a configured tensor store is exported
     try:
         adapter = DecoderAdapter(model, granularity="operation")
     except ValueError as error:
@@ -783,13 +787,20 @@ def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: st
     return Debugger(model, tokenizer, adapter, project=opened, session_id=session)
 
 
-def open_tiny(family: str = "qwen2", dtype: str = "bf16", *, seed: int = 113,
-              project: Any = None) -> Debugger:
-    """A random tiny eager CPU model (no tokenizer) for demos and tests."""
-    return attach(_tiny(family, dtype, seed), project=project)
+def open_tiny(family: str = "qwen2", dtype: str = DEFAULT_DTYPE, *, seed: int = DEFAULT_SEED,
+              project: Any = None, session: str | None = None,
+              device: str = DEFAULT_DEVICE) -> Debugger:
+    """A random tiny eager model (no tokenizer) for demos and tests, built on the CPU and moved
+    to ``device`` (the device is recorded in every record's execution)."""
+    return attach(_tiny(family, dtype, seed, device), project=project, session=session)
 
 
-def _tiny(family: str, dtype: str, seed: int) -> Any:
+def _tiny(family: str, dtype: str, seed: int, device: str = DEFAULT_DEVICE) -> Any:
     from mdb.engine.models import tiny_model
 
-    return tiny_model(family, dtype, seed=seed)
+    model = tiny_model(family, dtype, seed=seed)
+    if str(device) != "cpu":
+        import torch
+
+        model = model.to(torch.device(device))
+    return model

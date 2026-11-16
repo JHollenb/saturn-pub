@@ -31,6 +31,8 @@ from concurrent.futures import Future
 from dataclasses import dataclass
 from typing import Any
 
+from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED
+
 QUEUE_LIMIT = 32
 SUBSCRIBER_LIMIT = 256
 _UNSET = object()
@@ -379,24 +381,21 @@ def _offer(events: asyncio.Queue, event: dict[str, Any]) -> None:
 
 
 def open_debugger(project, *, tiny: str | None = None, model: str | None = None,
-                  dtype: str = "bf16", device: str = "cpu", seed: int = 113):
-    """The debugger of ``mdb serve --tiny FAMILY | --model PATH``, attached with ``project`` so
-    its checkpoints are durable. ``--model`` reads a local checkpoint only (never downloads);
-    its tokenizer is loaded when the directory has one."""
-    from pathlib import Path
-
-    from mdb.ops.debugger import attach
+                  dtype: str = DEFAULT_DTYPE, device: str = DEFAULT_DEVICE,
+                  seed: int = DEFAULT_SEED, session: str | None = None):
+    """The debugger of ``mdb serve --tiny FAMILY | --model PATH|NAME``, attached with
+    ``project`` so its checkpoints are durable. ``model`` is resolved by ``locate_model`` (a
+    directory, a cached name or a configured alias; never downloads); its tokenizer is loaded
+    when the directory has one. ``device`` applies to tiny models too."""
+    from mdb.core.locate import locate_model
+    from mdb.ops.debugger import attach, open_tiny
 
     if (tiny is None) == (model is None):
         raise ValueError("give one of tiny= or model=")
     if tiny is not None:
-        from mdb.engine.models import tiny_model
-
-        return attach(tiny_model(tiny, dtype, seed=seed), None, project=project)
-    root = Path(model).expanduser().resolve()
-    if not (root / "config.json").is_file():
-        raise ValueError(f"--model needs a Hugging Face checkpoint directory ({root} has no "
-                         "config.json)")
+        return open_tiny(tiny, dtype, seed=seed, project=project, session=session,
+                         device=device)
+    root = locate_model(model)
     from mdb.engine.models import load_local
 
     loaded = load_local(root, dtype=dtype, device=device)
@@ -405,4 +404,4 @@ def open_debugger(project, *, tiny: str | None = None, model: str | None = None,
         from transformers import AutoTokenizer
 
         tokenizer = AutoTokenizer.from_pretrained(str(root), local_files_only=True)
-    return attach(loaded, tokenizer, project=project)
+    return attach(loaded, tokenizer, project=project, session=session)

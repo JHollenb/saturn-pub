@@ -80,7 +80,7 @@ def _page(items: list, offset: int, limit: int) -> tuple[list, dict[str, int]]:
 
 _OFFSET = Arg("offset", "int", default=0, minimum=0, positional=False, help="first item of the page")
 _LIMIT = Arg("limit", "int", default=PAGE, minimum=1, maximum=64, positional=False,
-             help="items per page (default 32, at most 64)")
+             help="items per page (default 32, at most 64)", configurable=True)
 
 
 def _labelled(key: str, value: Any) -> Any:
@@ -641,7 +641,8 @@ def _switch(ctx, run) -> None:
     debugger.live = run
 
 
-def _start(ctx, prompt, name: str | None = None, prefill: int | None = None) -> None:
+def _start(ctx, prompt, name: str | None = None, prefill: int | None = None,
+           lookahead: str | None = None, retain_rows: int | None = None) -> None:
     if ctx.debugger is None:
         raise Refused("no model attached; use mdb.attach(model) or --tiny")
     if prompt is None:
@@ -656,7 +657,9 @@ def _start(ctx, prompt, name: str | None = None, prefill: int | None = None) -> 
                           "first stepped row)")
     # the one start: cursor at t<first stepped row>.L0.h; the prompt rows from `prefill` on are
     # stepped one row at a time, tokens forced (one session, built under that split)
-    run = ctx.debugger.run(prompt, name=name, **({} if prefill is None else {"prefill": prefill}))
+    options = {key: value for key, value in (("prefill", prefill), ("lookahead", lookahead),
+                                             ("retain_rows", retain_rows)) if value is not None}
+    run = ctx.debugger.run(prompt, name=name, **options)
     getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)  # a new run of that name
     _switch(ctx, run)
 
@@ -669,6 +672,16 @@ _PREFILL = Arg("prefill", "int", minimum=0, positional=False,
                help="prompt rows computed in one batched call (default all but the last); the "
                     "rest are stepped one row at a time with their tokens forced, so their "
                     "ports are stops (0 steps every row)")
+
+
+# engine.run.LOOKAHEADS, spelled out: this module imports no torch (a test compares the two)
+LOOKAHEADS = ("none", "layer", "auto")
+_LOOKAHEAD = Arg("lookahead", "choice", choices=LOOKAHEADS, positional=False,
+                 help="what a move inside a layer computes: none (default; stops at the port), "
+                      "layer (one full-layer call), auto")
+_RETAIN = Arg("retain_rows", "int", minimum=0, positional=False,
+              help="keep boundary cuts of only the last N rows (memory bound; older rows cannot "
+                   "be rewound to)")
 
 
 def procedure_json(run) -> dict[str, Any]:
@@ -686,20 +699,23 @@ def _started(ctx) -> dict[str, Any]:
 
 
 @op("start", "Prefill a prompt and stop at the first stepped row's first port (L0.h)",
-    _PROMPT, _NAME, _PREFILL, effect="native", needs_live=False,
-    usage="start [name=NAME] [prefill=K] [TEXT | ID ID ...]")
-def _op_start(ctx, prompt, name, prefill):
-    _start(ctx, prompt, name, prefill)
+    _PROMPT, _NAME, _PREFILL, _LOOKAHEAD, _RETAIN, effect="native", needs_live=False,
+    usage="start [name=NAME] [prefill=K] [lookahead=none|layer|auto] [retain_rows=N] "
+          "[TEXT | ID ID ...]")
+def _op_start(ctx, prompt, name, prefill, lookahead, retain_rows):
+    _start(ctx, prompt, name, prefill, lookahead, retain_rows)
     return moved(ctx, _started(ctx))
 
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
     Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME, _PREFILL,
+        help="token rows continue may enter (minimum 1, at most 4096)", configurable=True),
+    _NAME, _PREFILL, _LOOKAHEAD, _RETAIN,
     effect="native", needs_live=False,
-    usage="run [name=NAME] [prefill=K] [TEXT | ID ID ...] [budget=N]")
-def _op_run(ctx, prompt, budget, name, prefill):
-    _start(ctx, prompt, name, prefill)
+    usage="run [name=NAME] [prefill=K] [lookahead=MODE] [retain_rows=N] [TEXT | ID ID ...] "
+          "[budget=N]")
+def _op_run(ctx, prompt, budget, name, prefill, lookahead, retain_rows):
+    _start(ctx, prompt, name, prefill, lookahead, retain_rows)
     if not ctx.table.armed():
         return moved(ctx, {**_started(ctx), "reason": "no-breakpoints"})
     return _continue(ctx, budget=budget, extra=None, more=_started(ctx))
@@ -756,7 +772,8 @@ def _op_frame(ctx, address):
 
 _N = Arg("n", "int", default=1, minimum=1, maximum=STEP_CAP, help="repeat count (at most 4096)")
 _BUDGET = Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-              help="token rows that may be entered before stopping (minimum 1, at most 4096)")
+              help="token rows that may be entered before stopping (minimum 1, at most 4096)",
+              configurable=True)
 _ENGINE_UNITS = {
     "port": lambda label: True,
     "sublayer": lambda label: label in addresses.DEFAULT_GLOBALS or label == "start"
@@ -1135,9 +1152,9 @@ def _op_undisplay(ctx, ids):
 
 @op("print", "Reduce a value: shape, dtype, stats, top-k by |value|, pointer",
     Arg("address", "address"),
-    Arg("top", "int", default=5, minimum=1, maximum=16, positional=False),
+    Arg("top", "int", default=5, minimum=1, maximum=16, positional=False, configurable=True),
     Arg("slice", "int", default=0, minimum=0, maximum=32, positional=False,
-        help="also show the first N selected values"),
+        help="also show the first N selected values", configurable=True),
     effect="read", usage="print [ADDR] [top=K] [slice=N]")
 def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wire name
     margin = _margin_reading(ctx, address)
@@ -1147,7 +1164,8 @@ def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wir
 
 
 @op("x", "Examine raw values: a bounded slice of the selected, flattened value",
-    Arg("address", "address"), Arg("count", "int", default=16, minimum=1, maximum=64),
+    Arg("address", "address"),
+    Arg("count", "int", default=16, minimum=1, maximum=64, configurable=True),
     Arg("offset", "int", default=0, minimum=0), effect="read",
     usage="x [ADDR] [COUNT] [OFFSET]")
 def _op_x(ctx, address, count, offset):

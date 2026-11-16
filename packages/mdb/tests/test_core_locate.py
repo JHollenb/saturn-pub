@@ -60,7 +60,7 @@ def test_names_resolve_in_order_full_id_then_name_then_unique_substring(cache):
 def test_ambiguous_and_unknown_names_are_refused_with_candidates(cache):
     with pytest.raises(BadArgs) as caught:
         locate_model("qwen2.5")
-    assert "matches 2 cached models" in caught.value.message
+    assert "matches 2 local models" in caught.value.message
     assert "Qwen/Qwen2.5-0.5B-Instruct" in caught.value.message
     with pytest.raises(BadArgs) as caught:
         locate_model("llama")

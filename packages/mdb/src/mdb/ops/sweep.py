@@ -392,6 +392,7 @@ register(Op("sweep", "Patch PORT from another run at every (row, layer) of a ran
              Arg("top", "int", default=8, minimum=1, maximum=64, positional=False,
                  help="cells listed by |delta|"),
              Arg("max_calls", "int", default=MAX_LAYER_CALLS, minimum=1, positional=False,
+                 configurable=True,
                  help=f"refuse a sweep whose planned decoder-layer calls exceed this (default "
                       f"{MAX_LAYER_CALLS}; pass the planned count to run a larger one)")),
             "navigate", True, lambda ctx, port, origin, consumer, rows, layers, top, max_calls:

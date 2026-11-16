@@ -37,10 +37,17 @@ branch, pool, ...), because they act inside ``records.seal_record``:
   a sink never alters a record's id.
 
 The environment can declare custody for a job payload with no code change: ``MDB_SCRIPT`` and
-``MDB_PREREG`` (paths) and ``MDB_KERNEL_PATH`` (any one of them declares) are read on first use
-(an unreadable file raises on every seal, never once);  ``MDB_RECORDS`` opens a
-sink (same naming rules; ``MDB_RECORDS_APPEND=1`` is the ``append`` flag), also when custody
-was declared in code before the first record was sealed.
+``MDB_PREREG`` (paths) and the kernel path (``custody.kernel_path`` of ``mdb.core.settings``:
+``MDB_CUSTODY_KERNEL_PATH``, the older ``MDB_KERNEL_PATH``, or a config file; any one of them
+declares) are read on first use (an unreadable file raises on every seal, never once). The
+record sink is ``records.sink`` (``MDB_RECORDS_SINK``, the older ``MDB_RECORDS``, or a config
+file; same naming rules) with ``records.append`` and ``records.payloads``. The sink is opened on
+first use even when custody was declared in code first.
+
+Config files: when any was loaded (``settings.current().provenance()``), every record carries
+custody, and the block has ``config`` = ``{schema, sources: [{path, sha256, layer}], resolved,
+origins}``: the files' bytes and the resolved values of the settings that reach a record. With
+no config file, nothing changes (record ids are as before).
 """
 
 from __future__ import annotations
@@ -59,8 +66,9 @@ CORE_LIBRARIES = ("mdb", "saturn_pub", "torch", "transformers")
 INTEROP_LIBRARIES = ("nnsight", "sae_lens", "transformer_lens", "pyvene", "circuit_tracer",
                      "safetensors", "numpy")
 _LOCK = threading.Lock()
-# env_read: custody from the environment done (also set by declare/clear); sinks_read: the
-# environment sink opened. Separate, so declaring custody in code first does not skip the sink.
+# env_read: custody from the environment/settings done (also set by declare/clear);
+# sinks_read: the configured sink opened (independent: declaring custody in code first must not
+# skip the sink).
 _STATE: dict[str, Any] = {"declared": None, "env_read": False, "sinks_read": False,
                           "env_error": None}
 _SINKS: list[Sink] = []
@@ -135,42 +143,70 @@ def clear() -> None:
         _STATE["env_error"] = None
 
 
+def _settings() -> Any:
+    from . import settings
+
+    return settings
+
+
 def _from_env() -> None:
-    """Declare custody from the environment once. A failure (a missing ``MDB_SCRIPT`` file) is
-    kept and raised on EVERY later call: custody never drops silently after the first error.
-    Custody (``env_read``) and the sink (``sinks_read``) are read independently: ``declare``
-    before the first seal sets ``env_read`` but the ``MDB_RECORDS`` sink still opens."""
+    """Declare custody and open the sink from the environment and settings once. A failure (a
+    missing ``MDB_SCRIPT`` file, a bad config file) is kept and raised on EVERY later call:
+    custody never drops silently after the first error. Setting ``_STATE["env_read"] = False``
+    re-reads both (the environment changed)."""
     if _STATE["env_read"] and _STATE["sinks_read"]:
         if _STATE["env_error"] is not None:
             raise _STATE["env_error"]
         return
     again = not _STATE["env_read"]
     try:
+        settings = _settings()
+        resolved = settings.refresh() if again else settings.current()
         if again:
             script, prereg = os.environ.get("MDB_SCRIPT"), os.environ.get("MDB_PREREG")
-            kernel = os.environ.get("MDB_KERNEL_PATH")
+            kernel = resolved.get("custody.kernel_path")
             if script or prereg or kernel:
                 declare(script=script, prereg=prereg, kernel_path=kernel)
-        sink = os.environ.get("MDB_RECORDS") if again or not _STATE["sinks_read"] else None
-        if sink:
-            resolved = sink_path(sink)
-            if not any(s.path == resolved for s in _SINKS):
-                records_to(resolved, append=os.environ.get("MDB_RECORDS_APPEND", "").lower()
-                           in ("1", "true", "yes"))
+        if again or not _STATE["sinks_read"]:
+            sink = resolved.get("records.sink")
+            if sink:
+                target = sink_path(sink)
+                if not any(s.path == target.absolute() or s.path == target for s in _SINKS):
+                    records_to(target, append=resolved.get("records.append"),
+                               payloads=resolved.get("records.payloads"))
     except BaseException as error:
         _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, error
         raise
     _STATE["env_read"], _STATE["sinks_read"], _STATE["env_error"] = True, True, None
 
 
+def config_block() -> dict[str, Any] | None:
+    """The loaded config files and resolved recorded settings, or None with no config file."""
+    _from_env()
+    return _settings().current().provenance()
+
+
 def block_with_libraries(block: dict[str, Any]) -> dict[str, Any]:
     return {**block, "libraries": libraries()}
 
 
+def _undeclared() -> dict[str, Any]:
+    script = _main_script()
+    return {"schema": SCHEMA, "script": script,
+            "script_sha256": file_sha256(script) if script else None,
+            "prereg": None, "prereg_sha256": None, "kernel_path": "undeclared",
+            "declared_at": None}
+
+
 def current() -> dict[str, Any] | None:
-    """The declared custody block with library versions now, or None when undeclared."""
+    """The declared custody block with library versions now, or None when undeclared and no
+    config file was loaded. With a config file, a block is always returned (the ``__main__``
+    script when undeclared) and carries ``config``."""
     _from_env()
     block = _STATE["declared"]
+    config = config_block()
+    if config is not None:
+        block = {**(block if block is not None else _undeclared()), "config": config}
     return None if block is None else block_with_libraries(block)
 
 
@@ -180,12 +216,7 @@ def custody(kernel_path: str | None = None) -> dict[str, Any]:
     ``kernel_path`` overrides the declared one."""
     block = current()
     if block is None:
-        script = _main_script()
-        block = block_with_libraries({
-            "schema": SCHEMA, "script": script,
-            "script_sha256": file_sha256(script) if script else None,
-            "prereg": None, "prereg_sha256": None, "kernel_path": "undeclared",
-            "declared_at": None})
+        block = block_with_libraries(_undeclared())
     if kernel_path is not None:
         block["kernel_path"] = kernel_path
     return block
@@ -410,5 +441,5 @@ def emit(record: dict[str, Any]) -> None:
 
 
 __all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "PAYLOAD_SCHEMA", "SCHEMA", "Sink",
-           "attach_custody", "clear", "current", "custody", "declare", "emit", "emit_payload",
-           "file_sha256", "libraries", "records_to", "run_tag", "sink_path", "sinks"]
+           "attach_custody", "clear", "config_block", "current", "custody", "declare", "emit",
+           "emit_payload", "file_sha256", "libraries", "records_to", "run_tag", "sink_path", "sinks"]

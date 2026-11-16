@@ -66,8 +66,14 @@ class Shell:
         json_mode: bool = False,
         out: TextIO | None = None,
         prompt: str = "(mdb) ",
+        defaults: dict[str, Any] | None = None,
+        history: str | Path | None = None,
     ):
         self.ctx = ctx
+        self.defaults: dict[str, dict[str, Any]] = {}
+        self.history = Path(history).expanduser() if history else None
+        if defaults:
+            self.set_defaults(defaults)
         self.json_mode = json_mode
         self.out = out if out is not None else sys.stdout
         self.prompt = prompt
@@ -79,6 +85,19 @@ class Shell:
         self._failed = False       # the last command (or a nested non -k source) failed
         if not json_mode and hasattr(ctx, "notice"):
             ctx.notice = self._notice   # an op's line before its result (sweep's plan)
+
+    def set_defaults(self, defaults: dict[str, Any], source: str = "repl.defaults") -> None:
+        """``{"OP.ARG": value}``: display and budget defaults (``Arg.configurable``) used when a
+        command line does not give the argument. A non-configurable argument, an unknown op or
+        a bad value raises ``BadArgs`` naming ``source``."""
+        from mdb.ops.registry import check_default
+
+        for name, value in defaults.items():
+            try:
+                op_name, arg_name, checked = check_default(name, value)
+            except OpError as error:
+                raise BadArgs(f"{source}.{name}: {error.message}") from None
+            self.defaults.setdefault(op_name, {})[arg_name] = checked
 
     def _notice(self, text: str) -> None:
         self.write(text)
@@ -132,6 +151,9 @@ class Shell:
                 return True
             name, rest = route(name, rest)
             args = parse(name, rest)
+            for arg_name, value in self.defaults.get(name, {}).items():
+                if args.get(arg_name) is None:
+                    args[arg_name] = value
             result = dispatch(self.ctx, name, args)
         except OpError as error:
             self._error(error)
@@ -304,11 +326,29 @@ class Shell:
     def loop(self, stream: TextIO | None = None) -> int:
         stream = stream if stream is not None else sys.stdin
         interactive = stream is sys.stdin and stream.isatty()
+        readline = None
         if interactive:
             try:
-                import readline  # noqa: F401 - enables line editing and history for input()
+                import readline  # enables line editing and history for input()
             except ImportError:
-                pass
+                readline = None
+        if readline is not None and self.history is not None:
+            try:
+                readline.read_history_file(str(self.history))
+            except OSError:
+                pass   # no history yet
+        try:
+            return self._loop(stream, interactive)
+        finally:
+            if readline is not None and self.history is not None:
+                try:
+                    self.history.parent.mkdir(parents=True, exist_ok=True)
+                    readline.write_history_file(str(self.history))
+                except OSError as error:
+                    self.write(f"warning: cannot write history {self.history}: "
+                               f"{error.strerror or error}")
+
+    def _loop(self, stream: TextIO, interactive: bool) -> int:
         while True:
             try:
                 if interactive:

@@ -5,9 +5,12 @@ Engine verbs (implemented in this distribution):
     mdb engine MODEL [PROMPT]     port-level REPL (``python -m mdb.repl``); MODEL is a checkpoint
                                   directory, a locally cached model name, tiny:qwen2, or the
                                   http:// address of a running ``mdb serve`` (remote session)
-    mdb serve --project DIR [--tiny qwen2|qwen3|llama|mistral | --model DIR] [--port N]
+    mdb serve --project DIR [--tiny qwen2|qwen3|llama|mistral | --model PATH|NAME] [--port N]
               [--allow-host H ...] [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
                                   or --model it also holds a live debugger the web app steps
+    mdb config show|explain KEY|init|check
+                                  the resolved settings and where each came from (mdb.toml,
+                                  ~/.config/mdb/config.toml, MDB_* variables; docs/CONFIG.md)
     mdb records migrate PATH      write the schema-v3 twin of a JSONL record file (new file +
                                   id map; never in place); ``mdb records verify PATH`` checks one
     mdb lanes [VERB ...]          list, or run, a verb of the lanes plug-in
@@ -22,17 +25,17 @@ Importing this module loads no model framework, no numpy, no web framework and n
 """
 import sys
 
-ENGINE_VERBS = ("engine", "serve", "records", "lanes", "version")
-# Literal copy of ``mdb.engine.models.TINY_FAMILIES``: this module imports no torch (a test
-# compares the two).
-TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
-USAGE = ("usage: mdb {engine,serve,records,lanes,version} ...  |  mdb lanes VERB ...\n"
+from .core.settings import TINY_FAMILIES  # the one list; stdlib only
+
+ENGINE_VERBS = ("engine", "serve", "config", "records", "lanes", "version")
+USAGE = ("usage: mdb {engine,serve,config,records,lanes,version} ...  |  mdb lanes VERB ...\n"
          "  engine   port-level model REPL: mdb engine MODEL [PROMPT] [--project DIR]\n"
          f"           MODEL = checkpoint directory | cached model name |\n"
          f"           tiny:{'|'.join(TINY_FAMILIES)} |\n"
          "           http://HOST:PORT of a running mdb serve (mdb engine --help)\n"
          "  serve    web viewer: mdb serve --project DIR [--port N]; live debugger with\n"
-         f"           --tiny {'|'.join(TINY_FAMILIES)} | --model DIR (mdb serve --help)\n"
+         f"           --tiny {'|'.join(TINY_FAMILIES)} | --model PATH|NAME (mdb serve --help)\n"
+         "  config   settings: mdb config show | explain KEY | init [--project DIR] | check\n"
          "  records  record files: mdb records migrate PATH (v2 -> v3, new files) |\n"
          "           mdb records verify PATH\n"
          "  lanes    commands of the mdb-lanes plug-in (mdb lanes lists them)\n"
@@ -75,6 +78,9 @@ def main(argv=None):
     if verb == "serve":
         from .serve.__main__ import main as serve_main  # fastapi loads only when it runs
         return serve_main(argv[1:])
+    if verb == "config":
+        from .repl.config import main as config_main
+        return config_main(argv[1:])
     if verb == "records":
         from .core.migrate import main as records_main
         return records_main(argv[1:])

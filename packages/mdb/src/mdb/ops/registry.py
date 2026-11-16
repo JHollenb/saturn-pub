@@ -45,7 +45,9 @@ INTEGER_KEYS = frozenset({
 
 @dataclass(frozen=True)
 class Arg:
-    """One argument. ``positional`` args fill in order from a command line."""
+    """One argument. ``positional`` args fill in order from a command line. ``configurable``:
+    a display or budget default a config file may change (``[repl] defaults``); never an
+    argument that changes what is measured or a verdict."""
 
     name: str
     type: str
@@ -56,6 +58,7 @@ class Arg:
     positional: bool = True
     minimum: int | None = None
     maximum: int | None = None
+    configurable: bool = False
 
     def __post_init__(self) -> None:
         if self.type not in ARG_TYPES:
@@ -155,6 +158,24 @@ def slot(name: str, summary: str, milestone: str, usage: str = "") -> Op:
 
 def registry() -> dict[str, Op]:
     return dict(_REGISTRY)
+
+
+def check_default(name: str, value: Any) -> tuple[str, str, Any]:
+    """``OP.ARG = value`` of ``[repl] defaults``: the op's own name (aliases and prefixes are not
+    accepted), a ``configurable`` argument, and a value the argument accepts. Raises BadArgs."""
+    op_name, _, arg_name = name.partition(".")
+    found = _REGISTRY.get(op_name)
+    if found is None:
+        raise BadArgs(f"no command {op_name!r}")
+    arg = next((a for a in found.args if a.name == arg_name), None)
+    if arg is None:
+        raise BadArgs(f"{op_name} has no argument {arg_name!r}")
+    if not arg.configurable:
+        allowed = sorted(f"{o.name}.{a.name}" for o in _REGISTRY.values() for a in o.args
+                         if a.configurable)
+        raise BadArgs(f"{name} is not a display or budget default a config file may set "
+                      f"(those are: {', '.join(allowed)})")
+    return op_name, arg_name, _check(arg, value)
 
 
 # (before, after): ``before(ctx, name, values) -> (values, notes)`` rewrites validated arguments

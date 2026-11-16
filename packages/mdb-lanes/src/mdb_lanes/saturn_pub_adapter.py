@@ -504,8 +504,10 @@ def main(argv=None):
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--token-ids", type=token_ids)
     parser.add_argument("--seed", type=int, default=113)
-    parser.add_argument("--device", default="cpu")
-    parser.add_argument("--dtype", choices=("fp32", "bf16", "fp16"), default="fp32")
+    parser.add_argument("--device", help="default: mdb's [model] device (cpu)")
+    parser.add_argument("--dtype", choices=("fp32", "bf16", "fp16"),
+                        help="default: fp32 for --tiny (the only one it builds); for --local "
+                             "mdb's [model] dtype (bf16), as mdb engine and mdb serve")
     parser.add_argument("--max-steps", type=int, default=1000)
     commands = parser.add_mutually_exclusive_group()
     commands.add_argument("--command")
@@ -515,7 +517,7 @@ def main(argv=None):
     if args.resume and args.token_ids is not None:
         parser.error("resume uses retained input; omit --token-ids")
     if args.tiny:
-        if args.device != "cpu" or args.dtype != "fp32":
+        if args.device not in (None, "cpu") or args.dtype not in (None, "fp32"):
             parser.error("tiny decoders use CPU FP32")
         from saturn_pub.adapters.decoder import DecoderAdapter
 
@@ -526,6 +528,13 @@ def main(argv=None):
 
         if not args.local.is_dir() or not (args.local / "config.json").is_file():
             parser.error("--local requires a checkpoint directory containing config.json")
+        from mdb.core import settings
+
+        config = settings.activate(settings.resolve(
+            {"model.dtype": args.dtype if args.dtype in settings.DTYPES else None,
+             "model.device": args.device}))
+        args.dtype = args.dtype or config.get("model.dtype")
+        args.device = config.get("model.device")
         native = load(
             args.local,
             device=args.device,

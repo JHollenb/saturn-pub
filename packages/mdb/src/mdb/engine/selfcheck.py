@@ -1,9 +1,12 @@
 """Exactness, probe-consistency and rewind checks for port stepping, with per-operation timings.
 
     python -m mdb.engine.selfcheck --tiny qwen2|qwen3|llama|mistral [--dtype bf16|fp32] \
-        --tokens N --json OUT
-    python -m mdb.engine.selfcheck --model PATH [--dtype bf16|fp32] [--device cpu|cuda] \
-        [--prompt TEXT | --token-ids 1,2,3] --tokens N --json OUT
+        --generate N --out OUT
+    python -m mdb.engine.selfcheck --model PATH|NAME [--dtype bf16|fp32] [--device cpu|cuda] \
+        [--prompt TEXT | --token-ids 1,2,3] --generate N --out OUT
+
+``--generate`` and ``--out`` were ``--tokens`` and ``--json``; the old names still work (with a
+notice), so existing job scripts keep running.
 
 Works on any checkpoint of a family in ``ports.FAMILIES``; nothing assumes tiny sizes. Numbers are
 measured in this process unless the report's ``labels`` map says otherwise (the expected layer
@@ -220,30 +223,58 @@ def environment(adapter: Any) -> dict[str, Any]:
     }
 
 
+# older flag -> current flag; the older ones still work, with a notice on stderr
+RENAMED = {"--tokens": "--generate", "--json": "--out"}
+
+
+def _renamed(argv: list[str]) -> list[str]:
+    """``--tokens N`` / ``--json PATH`` (older names: ``mdb engine`` uses ``--tokens`` for prompt
+    ids and ``--json`` as a switch) rewritten to ``--generate`` / ``--out``."""
+    out = []
+    for word in argv:
+        flag, eq, value = word.partition("=")
+        if flag in RENAMED:
+            print(f"selfcheck: {flag} is now {RENAMED[flag]} (the old name still works)",
+                  file=sys.stderr)
+            word = RENAMED[flag] + eq + value
+        out.append(word)
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
+    from mdb.core import settings
+    from mdb.core.locate import locate_model
+
     parser = argparse.ArgumentParser(prog="python -m mdb.engine.selfcheck")
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--tiny", choices=TINY_FAMILIES)
-    source.add_argument("--model", help="local Hugging Face checkpoint directory")
-    parser.add_argument("--dtype", choices=tuple(DTYPES), default="bf16")
-    parser.add_argument("--device", default="cpu")
-    parser.add_argument("--tokens", type=int, default=2, help="tokens to generate")
+    source.add_argument("--model", help="checkpoint directory, cached model name or alias")
+    parser.add_argument("--dtype", choices=tuple(DTYPES),
+                        help=f"default {settings.DEFAULT_DTYPE} ([model] dtype)")
+    parser.add_argument("--device", help=f"default {settings.DEFAULT_DEVICE} ([model] device)")
+    parser.add_argument("--generate", type=int, default=2, metavar="N",
+                        help="tokens to generate (older name: --tokens)")
     parser.add_argument("--prompt", help="prompt text (needs the checkpoint tokenizer)")
     parser.add_argument("--token-ids", help="comma-separated prompt token ids")
-    parser.add_argument("--json", required=True, help="output path")
-    args = parser.parse_args(argv)
-    if args.tokens < 1:
-        parser.error("--tokens must be positive")
+    parser.add_argument("--out", required=True, metavar="PATH",
+                        help="report path (older name: --json)")
+    args = parser.parse_args(_renamed(list(sys.argv[1:] if argv is None else argv)))
+    if args.generate < 1:
+        parser.error("--generate must be positive")
+    config = settings.activate(settings.resolve(
+        {"model.dtype": args.dtype, "model.device": args.device},
+        flags={"model.dtype": "--dtype", "model.device": "--device"}))
+    dtype, device = config.get("model.dtype"), config.get("model.device")
     from saturn_pub.adapters.decoder import DecoderAdapter
 
     started = time.perf_counter()
     if args.tiny:
-        model = tiny_model(args.tiny, dtype=args.dtype)
-        adapter = DecoderAdapter(model, granularity="operation", device=torch.device(args.device))
+        model = tiny_model(args.tiny, dtype=dtype).to(torch.device(device))
+        adapter = DecoderAdapter(model, granularity="operation", device=torch.device(device))
     else:
-        path = str(Path(args.model).expanduser())
-        model = load_local(path, dtype=args.dtype, device=args.device)
-        adapter = DecoderAdapter(model, granularity="operation", device=torch.device(args.device))
+        args.model = str(locate_model(args.model))
+        model = load_local(args.model, dtype=dtype, device=device)
+        adapter = DecoderAdapter(model, granularity="operation", device=torch.device(device))
     load_seconds = time.perf_counter() - started
     prompt_encoding = "token ids"
     if args.token_ids:
@@ -267,7 +298,7 @@ def main(argv: list[str] | None = None) -> int:
         "source": args.tiny and f"tiny:{args.tiny}" or "checkpoint",
         "prompt_tokens": len(tokens),
         "prompt_encoding": prompt_encoding,
-        "generated": args.tokens,
+        "generated": args.generate,
         "environment": environment(adapter),
         "load_seconds": load_seconds,
         "labels": {
@@ -277,14 +308,14 @@ def main(argv: list[str] | None = None) -> int:
             "prompt_tokens": "supplied",
         },
     }
-    report["exactness"] = check_exactness(adapter, tokens, args.tokens, samples)
+    report["exactness"] = check_exactness(adapter, tokens, args.generate, samples)
     report["probe_consistency"] = check_probes(adapter, tokens, samples)
     report["rewind"] = check_rewind(adapter, tokens, samples)
     time_token(adapter, tokens, samples)
     report["timings"] = _summary(samples)
     report["passed"] = passed(report)
-    Path(args.json).write_text(json.dumps(report, indent=2, sort_keys=True))
-    print(json.dumps({"passed": report["passed"], "json": args.json}))
+    Path(args.out).write_text(json.dumps(report, indent=2, sort_keys=True))
+    print(json.dumps({"passed": report["passed"], "json": args.out}))
     return 0 if report["passed"] else 1
 
 

@@ -167,8 +167,24 @@ def _sae(ctx, action, name, path, layers, k, port, cache, verify, layer):
     if action != "load":
         raise BadArgs("write sae load NAME PATH [layers=A:B|i,j|all] [k=K] [port=h_out|h] "
                       "[cache=N] [verify=true] | sae list | sae drop NAME")
+    if name and not path:   # a named source from the config ([sae] sources)
+        from mdb.core import settings
+
+        named = settings.current().get("sae.sources").get(name)
+        if named is None:
+            known = ", ".join(sorted(settings.current().get("sae.sources"))) or "none"
+            raise BadArgs(f"write sae load NAME PATH, or name a configured SAE source "
+                          f"([sae] sources: {known})")
+        path = named["path"]
+        layers = layers if layers is not None else named.get("layers")
+        k = k if k is not None else named.get("k")
+        port = port if port is not None else named.get("port")
+        layer = layer if layer is not None else named.get("layer")
+        verify = verify if verify is not None else named.get("verify")
+        cache = cache if cache is not None else named.get("cache")
     if not name or not path:
         raise BadArgs("write sae load NAME PATH")
+    cache = 4 if cache is None else cache
     try:
         found = open_set(name, path, layers=_layers(layers), k=k, port=port, cache=cache,
                          verify=bool(verify), layer=layer)
@@ -408,14 +424,14 @@ register(Op("sae", "Load, list or drop SAE feature bases (per-layer residual SAE
              Arg("k", "int", positional=False, minimum=1, help="top-k when config.json lacks it"),
              Arg("port", "choice", positional=False, choices=("h_out", "h"),
                  help="site when config.json has no hook_point"),
-             Arg("cache", "int", default=4, minimum=1, maximum=64, positional=False,
-                 help="layers kept loaded (least recently used dropped)"),
-             Arg("verify", "bool", default=False, positional=False,
-                 help="hash each file on load (sha256)"),
+             Arg("cache", "int", minimum=1, maximum=64, positional=False,
+                 help="layers kept loaded, least recently used dropped (default 4)"),
+             Arg("verify", "bool", positional=False,
+                 help="hash each file on load (sha256; default false)"),
              Arg("layer", "int", positional=False, minimum=0, help="layer of a single file")),
             "mutate", False, _sae,
-            usage="sae load NAME PATH [layers=A:B] [k=K] [cache=N] [verify=true] | sae list | "
-                  "sae drop NAME"))
+            usage="sae load NAME [PATH] [layers=A:B] [k=K] [cache=N] [verify=true] | sae list | "
+                  "sae drop NAME (no PATH: the [sae] sources entry NAME of the config)"))
 register(Op("features", "SAE features at a residual port with the error row; with a consumer, "
             "each feature's, the bias's and the error's exact direct effect and the closure "
             "(L*.h_out: per-layer profile of what the SAE drops)",

@@ -46,6 +46,17 @@ cache, `tiny:qwen2|qwen3|llama|mistral`, or the address of a running `mdb serve`
 downloaded. A real model needs eager attention (`attn_implementation="eager"`, which `mdb engine`
 sets when it loads a checkpoint) and runs on CPU or CUDA. On Apple MPS `whatif` fails (no float64).
 
+## Configuration (optional)
+
+mdb runs with no config file. To keep defaults (dtype, device, model locations, project, record sink, REPL init file) out of every command line, write a commented template and edit it:
+
+```sh
+mdb config init      # ~/.config/mdb/config.toml (or $XDG_CONFIG_HOME/mdb/config.toml)
+mdb config show      # the resolved settings and where each came from
+```
+
+A project can carry its own `mdb.toml`. On Python 3.10 the TOML reader is `tomli`, which is installed as a dependency. See [CONFIG.md](CONFIG.md).
+
 ## The web viewer
 
 `mdb serve` needs the `serve` extra. The browser app is built from `web/` and is not checked in:
