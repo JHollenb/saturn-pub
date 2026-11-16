@@ -4,7 +4,7 @@ version = "0.2.2"
 description = "A gdb-style debugger for language models: step native decoder layers port by port, edit, checkpoint, rewind, and capture ports passively."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["saturn-pub>=0.4.1,<0.5", "tomli>=2; python_version < '3.11'"]
+dependencies = ["saturn-pub>=0.4.2,<0.5", "tomli>=2; python_version < '3.11'"]
 
 [project.optional-dependencies]
 discovery = ["torch==2.13.0", "numpy>=2.0", "safetensors>=0.5"]
