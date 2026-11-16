@@ -187,7 +187,7 @@ Trace one feature through every layer of the cursor's row:
 (mdb) feature 25654 layer=20 top=4
 ```
 
-It prints the encoder probe at `h`, `r` and `h_out` of every layer, the layer where the probe first crosses the top-k cutoff, and the exact attention and MLP write shares with the top heads and neurons. For f25654 at L20: attention writes +141.86, head 13 +108.08, head 12 +32.343; the L22 MLP writes +212.29, neuron 5773 +189.19. There is no breakpoint or watch on a feature activation yet (issue S4).
+It prints the encoder probe at `h`, `r` and `h_out` of every layer, the layer where the probe first crosses the top-k cutoff, and the exact attention and MLP write shares with the top heads and neurons. For f25654 at L20: attention writes +141.86, head 13 +108.08, head 12 +32.343; the L22 MLP writes +212.29, neuron 5773 +189.19. To stop on a feature activation, watch it with a `FeatureCondition` (see [example 04](../examples/04-watch-edit-continue-country-feature/)).
 
 ## 7. The census recipe in Python
 

@@ -14,5 +14,6 @@ on one subject each.
 | [PROOF-IDS.md](PROOF-IDS.md) | What the `P01` to `P33` tags in mdb's output mean. |
 | [PERFORMANCE.md](PERFORMANCE.md) | What is fast since 0.2.1 (measured), `lookahead="auto"`, the cost of foreign hooks, and the known remaining costs with planned fixes. |
 | [RECORDS.md](RECORDS.md) | The record format (schema v3): stored form, ids, column claims, bounds, reading v2 records and `mdb records migrate`. |
+| [RELEASING.md](RELEASING.md) | Release tags (`mdb-vX.Y.Z`) and branches (`release/mdb-X.Y`), installing a release with pip from Git, how fixes reach a release. |
 
 Runnable examples are in [../examples](../examples/README.md); start with `00-hello-tiny`.

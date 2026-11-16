@@ -16,11 +16,11 @@ Start with [installation](../packages/mdb/docs/INSTALL.md), then the
 [experiment walkthroughs](../packages/mdb-experiments/docs/EXPERIMENTS.md).
 The [documentation index](README.md) covers both packages.
 
-For the GDB-style first experience, install the base package and run `mdb debug`.
-It opens a pure-Python Counter with step, break, watch, checkpoint, fork and
-preview/commit/abort. With the autoregressive extra, `mdb debug --tiny qwen2`
-uses random CPU BF16 weights and `mdb open --local CHECKPOINT_DIR` opens a
-supported local model. See the [local console guide](../packages/mdb-experiments/docs/LOCAL-DEBUGGER.md).
+For the GDB-style first experience use the engine: `mdb engine tiny:qwen2 --tokens "1 5 9 3"`
+(see the [engine README](../packages/mdb/README.md)). With the `mdb-lanes` plug-in installed,
+`mdb lanes debug` opens the lane-era pure-Python Counter with step, break, watch, checkpoint, fork
+and preview/commit/abort; with the autoregressive extra, `mdb lanes debug --tiny qwen2` uses random
+CPU BF16 weights and `mdb lanes debug --local CHECKPOINT_DIR` opens a supported local model. See the [local console guide](../packages/mdb-experiments/docs/LOCAL-DEBUGGER.md).
 
 ## When to choose MDB
 
@@ -65,13 +65,14 @@ Use [MDB's installation guide](../packages/mdb/docs/INSTALL.md) for exact pins
 and the qualified worker environment. Separate environments preserve each
 package's model qualification lane.
 
-With the autoregressive extra installed, run this from the repository root:
+With the autoregressive extra and the plug-in (`pip install ./packages/mdb-lanes`) installed, run
+this from the repository root:
 
 ```sh
 mdb version
-mdb capabilities
+mdb lanes capabilities
 python -I "$PWD/packages/mdb-experiments/examples/resident_lab.py" --tiny qwen2 --out ./results/mdb-first-lab
-mdb verify --root ./results/mdb-first-lab/export
+mdb lanes verify --root ./results/mdb-first-lab/export
 ```
 
 Choose a new output directory for each run. This random CPU model needs no

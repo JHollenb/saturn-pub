@@ -38,7 +38,7 @@ MEASURED (tests, tiny Qwen2 fp32/bf16 and Qwen3 bf16 on CPU): every mapped value
 
 ## Two tools rewrite the module tree they are handed
 
-- `TransformerBridge.boot_transformers(hf_model=m)` replaces `m`'s modules in place (tiny Qwen2: 33 modules become 155). The plain forward stays bitwise equal, but `mdb.trace` then refuses `p` because native eager attention no longer runs (issue I1).
+- `TransformerBridge.boot_transformers(hf_model=m)` replaces `m`'s modules in place (tiny Qwen2: 33 modules become 155). The plain forward stays bitwise equal, but `mdb.trace` then refuses `p` because native eager attention no longer runs.
 - nnsight's `.source` replaces an attention module's forward body for good. mdb's eager interceptor never fires there again; before the fix `Run.read("t17.L0.qr")` raised `KeyError` on Qwen2.5-1.5B.
 
 So `mdb.interop.tl.bridge(model, tok)` boots the bridge on `shared_clone(model)` (a new module tree over the same parameter tensors, no weight copy), `mdb.interop.nn.read` sources a shared clone, and `mdb.attach` refuses a tree rewritten by either tool. Never call `enable_compatibility_mode()` on a bridge that shares weights with a model in use: weight processing writes the parameters.
@@ -84,9 +84,9 @@ out["grads"]["L14.h"]        # (batch, pos, d): dM_i/dh for every row of every p
 
 `nn.grads` is the nnsight 0.8 idiom (read from the installed source, `nnsight/tracing/tracer.py` and `nnsight/intervention/backward.py`):
 
-- The outermost trace hands back only names bound to `.save()`d objects. A name bound inside `with nm.trace(...)` to an unsaved object (a list built in the body, a value read inside `with M.backward():`) is dropped on exit, by design. Bind result containers inside the trace with `nnsight.save({})` or `nnsight.save([])`, or `.save()` each value you bind. Mutating a container created before the trace also works, because the body runs over a copy of the frame's locals that holds the same objects. That is a side effect, not the documented route (issue T7).
+- The outermost trace hands back only names bound to `.save()`d objects. A name bound inside `with nm.trace(...)` to an unsaved object (a list built in the body, a value read inside `with M.backward():`) is dropped on exit, by design. Bind result containers inside the trace with `nnsight.save({})` or `nnsight.save([])`, or `.save()` each value you bind. Mutating a container created before the trace also works, because the body runs over a copy of the frame's locals that holds the same objects. That is a side effect, not the documented route.
 - `.grad` is served only inside `with M.backward():` and must be requested in reverse forward order. `L<l>.h_out` and `L<l+1>.h` are one tensor, so ask for it once.
-- An input-only backward must not build weight gradients. `nn.grads` freezes the parameters for the call (and restores the flags) and makes the embedding output the grad leaf. On Qwen3-1.7B, leaving weights trainable cost about +3.4 GB (job-b3bc03382981).
+- An input-only backward must not build weight gradients. `nn.grads` freezes the parameters for the call (and restores the flags) and makes the embedding output the grad leaf. On Qwen3-1.7B, leaving weights trainable cost about +3.4 GB (measured on the developers' GPU).
 - The prompts are independent rows of one batch, so a single backward of `sum_i M_i` gives each prompt its own gradient. Do not loop one trace per prompt.
 
 ## TransformerLens weight processing on RMSNorm models

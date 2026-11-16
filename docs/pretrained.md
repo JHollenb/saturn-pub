@@ -77,7 +77,9 @@ adapter.generate(session, tokens=16)  # peaks at ~1.2 GB VRAM for the 8B weights
 Wherever the model also fits resident, the streamed decode is bitwise identical to the resident one
 (same dtype and eager kernels, same device). Streaming trades speed for footprint -- the per-layer
 Python stepping plus the host->device copy is a debugging/inspection path, not a serving path. Pass
-`pin_host=True` to pin the host weights for asynchronous copies (CUDA only).
+`pin_host=True` to pin the host weights for asynchronous copies (CUDA only), `prefetch=True` (with
+`pin_host`) to copy the next block on a side stream while the current one computes, and
+`host_embedding=True` to gather embedding rows on the host instead of copying the whole table.
 
 ## Your Stable Diffusion checkpoint
 

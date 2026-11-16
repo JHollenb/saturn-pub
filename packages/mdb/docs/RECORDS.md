@@ -111,7 +111,8 @@ directory layout) and `NAME.v3.map.json`:
 ```json
 {"schema": "mdb-record-migration-v1", "source": "...", "source_sha256": "...",
  "target": "...", "target_sha256": "...", "records": 380, "migrated": 380,
- "already_v3": 0, "payloads": 2, "verified": 380, "map": {"<v2 id>": "<v3 id>", ...}}
+ "already_v3": 0, "payloads": 2, "verified": 380, "check": "every record read back ...",
+ "map": {"<v2 id>": "<v3 id>", ...}}
 ```
 
 Each v2 record is verified, re-sealed as v3 with the same content and no custody added, and the

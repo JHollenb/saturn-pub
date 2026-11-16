@@ -52,8 +52,7 @@ reference instead of a copy (about 43 ms); a state sealed once is not sealed aga
 step, and string-keyed mappings sort without JSON-encoding each key (about 42 ms); the frozen
 check compares a flat snapshot of the module tree instead of walking every parameter (about
 86 ms: 184.7 ms per row without it against 98.3 ms with it, and 10.14 s against 5.17 s on the
-`prefill=0` run, in the committed `cpu/ablate.jsonl`; the results README's smaller "+36 ms"
-comes from a separate rerun that was not committed); grown K/V chunks are version-checked once when they join, not by every cut (18 ms per
+`prefill=0` run; a separate rerun measured +36 ms); grown K/V chunks are version-checked once when they join, not by every cut (18 ms per
 row; 3.2 s on a 64-row `prefill=0` run).
 
 ## Records (mdb 0.2.2)
@@ -80,10 +79,9 @@ Times over those 34 records (milliseconds for all of them, median of 20 runs; on
 
 Seal is faster in v3 (the execution profile is not encoded for every record), verify, sink
 write and read are 6-24% slower (the v3 read walks the body once more to find columns), and
-`stored_bytes` costs 0.5 ms more over the 34 records. The script and its output are
-`packages/mdb-experiments/results/records-v3-20261116/` (`scripts/bench_records.py`,
-`scripts/bench_grid.py`; `v2/` is main at 3d251bd, `v3/` this branch); run each with the tree's
-`src` on `PYTHONPATH`.
+`stored_bytes` costs 0.5 ms more over the 34 records. The benchmark scripts and their output are
+in the repository, not in the package (`packages/mdb-experiments/results/records-v3-20261116/`:
+`scripts/bench_records.py`, `scripts/bench_grid.py`; `v2/` ran mdb 0.2.1, `v3/` 0.2.2).
 
 ## Choices you make
 
@@ -152,8 +150,8 @@ writes its inputs in place, checked per type.
 
 **`lookahead` defaults to `"none"`.** See above. Proposed: keep the default; consider making
 `each` templates and read-only analysis verbs use `"auto"` when they stage nothing, with
-`computed_past_cursor` recorded as it is now. This needs an owner decision because it changes
-what forecasts sealed inside such templates promise.
+`computed_past_cursor` recorded as it is now. Not decided: it changes what forecasts sealed
+inside such templates promise.
 
 **`"auto"` was slower than `"layer"` on one GPU measurement.** 0.30 s against 0.17 s for the same
 28 probes (measured once, RTX 4080). Not investigated.
