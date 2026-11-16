@@ -137,3 +137,9 @@ def test_engine_and_serve_help_name_the_verb(capsys):
         out = capsys.readouterr().out
         assert f"usage: mdb {verb}" in out
         assert "python -m" not in out.split("options:")[0] and "``" not in out
+
+
+def test_top_help_shows_serve_project_optional(capsys):
+    assert cli.main(["--help"]) == 0
+    out = capsys.readouterr().out
+    assert "mdb serve [--project DIR]" in out and "mdb serve --project DIR" not in out

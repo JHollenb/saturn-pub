@@ -163,8 +163,8 @@ def main(argv: list[str] | None = None) -> int:
                  if value is not None and name != "repl.init"]
         given += ["--prereg"] if args.prereg else []
         if given:
-            parser.error(f"{', '.join(given)} belong to the server with --connect "
-                         "(mdb serve ...)")
+            parser.error(f"{', '.join(given)} belong{'s' if len(given) == 1 else ''} to the "
+                         "server with --connect (mdb serve ...)")
         if args.json:
             parser.error("--json is not available with --connect; for op JSON use "
                          "mdb.repl.remote.Remote(URL).op(NAME, ...)")

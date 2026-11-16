@@ -195,7 +195,10 @@ def test_engine_records_and_custody_flags(here, capsys):
 def test_engine_connect_refuses_local_settings(here, capsys):
     with pytest.raises(SystemExit):
         _engine("http://127.0.0.1:9", "--dtype", "fp32")
-    assert "--dtype belong to the server" in capsys.readouterr().err
+    assert "--dtype belongs to the server" in capsys.readouterr().err
+    with pytest.raises(SystemExit):
+        _engine("http://127.0.0.1:9", "--dtype", "fp32", "--device", "cpu")
+    assert "--dtype, --device belong to the server" in capsys.readouterr().err
 
 
 def test_engine_bad_config_exits_2_naming_the_key(here, capsys):

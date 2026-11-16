@@ -5,7 +5,7 @@ Engine verbs (implemented in this distribution):
     mdb engine MODEL [PROMPT]     port-level REPL (``python -m mdb.repl``); MODEL is a checkpoint
                                   directory, a locally cached model name, tiny:qwen2, or the
                                   http:// address of a running ``mdb serve`` (remote session)
-    mdb serve --project DIR [--tiny qwen2|qwen3|llama|mistral | --model PATH|NAME] [--port N]
+    mdb serve [--project DIR] [--tiny qwen2|qwen3|llama|mistral | --model PATH|NAME] [--port N]
               [--allow-host H ...] [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
                                   or --model it also holds a live debugger the web app steps
     mdb config show|explain KEY|init|check
@@ -33,7 +33,7 @@ USAGE = ("usage: mdb {engine,serve,config,records,lanes,version} ...  |  mdb lan
          f"           MODEL = checkpoint directory | cached model name |\n"
          f"           tiny:{'|'.join(TINY_FAMILIES)} |\n"
          "           http://HOST:PORT of a running mdb serve (mdb engine --help)\n"
-         "  serve    web viewer: mdb serve --project DIR [--port N]; live debugger with\n"
+         "  serve    web viewer: mdb serve [--project DIR] [--port N]; live debugger with\n"
          f"           --tiny {'|'.join(TINY_FAMILIES)} | --model PATH|NAME (mdb serve --help)\n"
          "  config   settings: mdb config show | explain KEY | init [--project DIR] | check\n"
          "  records  record files: mdb records migrate PATH (v2 -> v3, new files) |\n"
