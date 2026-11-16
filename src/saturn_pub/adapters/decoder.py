@@ -598,6 +598,8 @@ class DecoderAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
     ):
         model_type = getattr(model.config, "model_type", None)
         spec = families().get(model_type)
@@ -623,7 +625,13 @@ class DecoderAdapter(Adapter):
             target = (
                 device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
             )
-            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+            self._residency = BlockResidency(
+                target,
+                mode="streamed",
+                pin_host=pin_host,
+                prefetch=prefetch,
+                host_embedding=host_embedding,
+            )
         else:
             target = device if device is not None else next(model.parameters()).device
             self._residency = BlockResidency(target, mode="resident")
@@ -755,6 +763,8 @@ class DecoderAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
     ) -> DecoderAdapter:
         spec = families().get(family)
         if spec is None:
@@ -770,6 +780,8 @@ class DecoderAdapter(Adapter):
                 residency=residency,
                 device=device,
                 pin_host=pin_host,
+                prefetch=prefetch,
+                host_embedding=host_embedding,
             )
 
     @classmethod
@@ -781,6 +793,8 @@ class DecoderAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
         **kwargs: Any,
     ) -> DecoderAdapter:
         from transformers import AutoConfig
@@ -799,6 +813,8 @@ class DecoderAdapter(Adapter):
             residency=residency,
             device=device,
             pin_host=pin_host,
+            prefetch=prefetch,
+            host_embedding=host_embedding,
         )
 
     # --- frozen-model guards (identical policy to QwenAdapter) --------------------------

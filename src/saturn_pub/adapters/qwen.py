@@ -49,6 +49,8 @@ class QwenAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
     ):
         if model.config.model_type != "qwen2":
             raise ValueError("v1 supports Qwen2/Qwen2.5 full-attention models")
@@ -67,7 +69,13 @@ class QwenAdapter(Adapter):
             target = (
                 device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
             )
-            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+            self._residency = BlockResidency(
+                target,
+                mode="streamed",
+                pin_host=pin_host,
+                prefetch=prefetch,
+                host_embedding=host_embedding,
+            )
         else:
             target = device if device is not None else next(model.parameters()).device
             self._residency = BlockResidency(target, mode="resident")
@@ -119,6 +127,8 @@ class QwenAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
     ) -> QwenAdapter:
         with torch.random.fork_rng():
             torch.manual_seed(seed)
@@ -139,6 +149,8 @@ class QwenAdapter(Adapter):
                 residency=residency,
                 device=device,
                 pin_host=pin_host,
+                prefetch=prefetch,
+                host_embedding=host_embedding,
             )
 
     @classmethod
@@ -150,6 +162,8 @@ class QwenAdapter(Adapter):
         residency: str = "resident",
         device: Any = None,
         pin_host: bool = False,
+        prefetch: bool = False,
+        host_embedding: bool = False,
         **kwargs: Any,
     ) -> QwenAdapter:
         return cls(
@@ -158,6 +172,8 @@ class QwenAdapter(Adapter):
             residency=residency,
             device=device,
             pin_host=pin_host,
+            prefetch=prefetch,
+            host_embedding=host_embedding,
         )
 
     def _verify_frozen_model(self) -> None:

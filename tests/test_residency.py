@@ -246,3 +246,61 @@ def test_causal_mask_kwargs_is_transformers_version_robust():
     assert "inputs_embeds" not in k4
     assert k4["cache_position"] == "cp"
     assert tf4(**k4) == "tf4"  # the 4.x breakage the real-weight run hit
+
+
+# --- transport refinements: prefetch and host embedding (#23) -------------------------
+
+
+def test_prefetch_and_host_embedding_guards():
+    with pytest.raises(ValueError, match="only apply to streamed"):
+        BlockResidency("cpu", mode="resident", host_embedding=True)
+    with pytest.raises(ValueError, match="needs pin_host"):
+        BlockResidency("cpu", mode="streamed", prefetch=True)
+
+
+def test_transport_options_off_keep_residency_receipt_unchanged():
+    receipt = DecoderAdapter.tiny("qwen3", residency="streamed").execution["residency"]
+    assert set(receipt) == {"mode", "device", "host_pinned"}
+
+
+@pytest.mark.parametrize("tag", ["qwen2", "qwen3", "llama", "gpt2", "qwen-adapter"])
+def test_host_embedding_streamed_equals_resident_bitwise(tag):
+    # Explicit CPU execution: on a CUDA host a streamed adapter would otherwise default to CUDA.
+    if tag == "qwen-adapter":
+        resident = QwenAdapter.tiny(residency="resident", device="cpu")
+        streamed = QwenAdapter.tiny(residency="streamed", device="cpu", host_embedding=True)
+    else:
+        resident = DecoderAdapter.tiny(tag, residency="resident", device="cpu")
+        streamed = DecoderAdapter.tiny(tag, residency="streamed", device="cpu", host_embedding=True)
+    assert streamed.execution["residency"]["host_embedding"] is True
+    res_session = resident.session(PROMPT)
+    resident.generate(res_session, tokens=6)
+    str_session = streamed.session(PROMPT)
+    streamed.generate(str_session, tokens=6)
+    assert res_session.read("tokens")[0].tolist() == str_session.read("tokens")[0].tolist()
+    assert torch.equal(res_session.read("logits"), str_session.read("logits"))
+    assert torch.equal(resident.native_logits(PROMPT), streamed.native_logits(PROMPT))
+    assert streamed._residency.stats["host_embedding_calls"] > 0  # noqa: SLF001
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="requires CUDA")
+@pytest.mark.parametrize("tag", ["qwen3", "llama", "qwen-adapter"])
+def test_pinned_prefetch_host_embedding_equals_resident_on_cuda(tag):
+    def build(**kw):
+        if tag == "qwen-adapter":
+            return QwenAdapter.tiny(device="cuda", **kw)
+        return DecoderAdapter.tiny(tag, device="cuda", **kw)
+
+    resident = build(residency="resident")
+    plain = build(residency="streamed")
+    fast = build(residency="streamed", pin_host=True, prefetch=True, host_embedding=True)
+    outputs = []
+    for adapter in (resident, plain, fast):
+        session = adapter.session(PROMPT)
+        adapter.generate(session, tokens=8)
+        outputs.append((session.read("tokens")[0].tolist(), session.read("logits").cpu()))
+    for tokens, logits in outputs[1:]:
+        assert tokens == outputs[0][0]
+        assert torch.equal(logits, outputs[0][1])
+    stats = fast._residency.stats  # noqa: SLF001
+    assert stats["prefetch_hits"] > stats["prefetch_misses"] > 0
