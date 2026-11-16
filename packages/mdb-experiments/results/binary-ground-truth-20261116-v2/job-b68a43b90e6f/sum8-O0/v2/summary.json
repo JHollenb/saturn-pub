@@ -1,0 +1,18 @@
+{
+ "program": "sum8-O0",
+ "cells": 2019,
+ "live": 154,
+ "bindings_frozen": 59,
+ "bindings_v2": 99,
+ "v2_live": 59,
+ "v2_dead": 40,
+ "bindings_words": 59,
+ "bindings_dead_only": 225,
+ "bound_cells_frozen": 154,
+ "bound_cells_v2": 599,
+ "lanes_equal_binctr": "33/33",
+ "seconds": 4.1,
+ "device": "cuda",
+ "spec": "method_v2 (post hoc): frozen run-1 method; + merge bindings of adjacent bytes written by the same op instance with identical liveness; + dead copy-web members (webs of >= 2 cells) as bindings with status dead",
+ "cuda_peak_mb": 665
+}

@@ -1,0 +1,18 @@
+{
+ "program": "fnv-O0",
+ "cells": 2130,
+ "live": 763,
+ "bindings_frozen": 155,
+ "bindings_v2": 66,
+ "v2_live": 35,
+ "v2_dead": 31,
+ "bindings_words": 35,
+ "bindings_dead_only": 294,
+ "bound_cells_frozen": 763,
+ "bound_cells_v2": 1176,
+ "lanes_equal_binctr": "33/33",
+ "seconds": 7.1,
+ "device": "cuda",
+ "spec": "method_v2 (post hoc): frozen run-1 method; + merge bindings of adjacent bytes written by the same op instance with identical liveness; + dead copy-web members (webs of >= 2 cells) as bindings with status dead",
+ "cuda_peak_mb": 2864
+}

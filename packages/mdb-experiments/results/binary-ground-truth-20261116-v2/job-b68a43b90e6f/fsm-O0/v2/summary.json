@@ -1,0 +1,18 @@
+{
+ "program": "fsm-O0",
+ "cells": 1915,
+ "live": 207,
+ "bindings_frozen": 76,
+ "bindings_v2": 86,
+ "v2_live": 42,
+ "v2_dead": 44,
+ "bindings_words": 42,
+ "bindings_dead_only": 268,
+ "bound_cells_frozen": 207,
+ "bound_cells_v2": 731,
+ "lanes_equal_binctr": "33/33",
+ "seconds": 5.3,
+ "device": "cuda",
+ "spec": "method_v2 (post hoc): frozen run-1 method; + merge bindings of adjacent bytes written by the same op instance with identical liveness; + dead copy-web members (webs of >= 2 cells) as bindings with status dead",
+ "cuda_peak_mb": 2864
+}
