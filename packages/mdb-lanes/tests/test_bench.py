@@ -298,3 +298,31 @@ def test_restore_rejects_incomplete_provisional_closure(model, tmp_path):
     with pytest.raises(BenchError, match="execution position"):
         b.restore(bad_ref)
     assert b.branch.cut == parent and b.cursor()["next_layer"] == 1
+
+
+def test_command_publication_matches_per_token_and_publishes_once(model, tmp_path):
+    """Opt-in per-command publication (#23): same tokens/logits/cuts, one durable commit per
+    generate call instead of one per token, and the session resumes from disk identically."""
+    rows, commits, sessions = {}, {}, {}
+    for mode in (False, True):
+        b = bench(model, tmp_path / f"s{int(mode)}", command_publication=mode)
+        b.prefill([1, 2, 3])
+        before = b.publication.stats["commits"]
+        out = b.generate(4)
+        rows[mode] = [(r["token_id"], r["logits_sha256"]) for r in out]
+        commits[mode] = b.publication.stats["commits"] - before
+        sessions[mode] = b.root
+        b.close()
+    assert rows[True] == rows[False]
+    assert commits[False] == 4 and commits[True] == 1
+    continued = {}
+    for mode, root in sessions.items():
+        b = BenchSession.resume(model, root=root)
+        continued[mode] = [(r["token_id"], r["logits_sha256"]) for r in b.generate(2)]
+        b.close()
+    assert continued[True] == continued[False]
+
+
+def test_command_publication_requires_journal(model, tmp_path):
+    with pytest.raises(BenchError, match="journal"):
+        bench(model, tmp_path / "s", command_publication=True, publication_mode="legacy")

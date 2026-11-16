@@ -49,7 +49,8 @@ def _serialized(method):
             self._check()
             outer = self._serialization_depth == 0
             batch = (outer and method.__name__ in {"step", "generate"}
-                     and self._optimized_capture())
+                     and (getattr(self, "command_publication", False)
+                          or self._optimized_capture()))
             self._serialization_depth += 1
             try:
                 with self.publication.transaction():
@@ -152,13 +153,23 @@ class QwenBenchSession:
     def from_resident(cls, model, tokenizer=None, *, root, model_id="local-qwen2",
                       revision="local", model_sha256=None, session_id="bench",
                       lane="virtual", attention_backend=None, resident_kv_bytes=64 << 20,
-                      continuation_capacity=128, publication_mode="journal"):
+                      continuation_capacity=128, publication_mode="journal",
+                      command_publication=False):
+        """``command_publication=True`` publishes once per step/generate call instead of
+        once per token cut: the cuts inside one call are staged and the durable selected
+        pointer advances when the call returns (all-or-nothing, the existing
+        ``_command_publication`` path that managed frozen-reader sessions already use).
+        Default False keeps per-token durability."""
         if (Path(root)/"selected.json").exists():
             raise BenchError("session already exists; use BenchSession.resume")
-        return cls(model, tokenizer, root=root, model_id=model_id, revision=revision,
+        if command_publication and publication_mode != "journal":
+            raise BenchError("command publication requires journal publication mode")
+        session = cls(model, tokenizer, root=root, model_id=model_id, revision=revision,
                    model_sha256=model_sha256, session_id=session_id, lane=lane,
                    attention_backend=attention_backend, resident_kv_bytes=resident_kv_bytes,
                    continuation_capacity=continuation_capacity, publication_mode=publication_mode)
+        session.command_publication = bool(command_publication)
+        return session
 
     def __init__(self, model, tokenizer, *, root, model_id, revision, model_sha256,
                  session_id, lane, attention_backend, resident_kv_bytes, continuation_capacity,

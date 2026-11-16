@@ -1,13 +1,14 @@
 """#23a: what share of an mdb Qwen bench decode is durable publication, on ext4 NVMe today?
 
 usage: python bench23a.py <out.json> [tokens]
-Ships saturn_pub (./pub) and mdb (./mdbsrc) in the payload; model Qwen2.5-0.5B-Instruct BF16 CUDA,
+Ships saturn_pub (./pub) and mdb + mdb_lanes (./mdbsrc) in the payload (mdb_lanes since the 9ec645b split); model Qwen2.5-0.5B-Instruct BF16 CUDA,
 virtual lane, root under /mnt/big/agent-work/miss-path/bench23/<job>/ (NVMe; never the HDD).
 Arms, same process, same prompt, each on a fresh root:
   warmup   4 tokens (Triton/JIT warm, discarded)
   durable  N tokens, default journal publication, os.fsync wrapped to count and time it
   nofsync  N tokens with os.fsync a no-op: an upper bound on what async publication could save
   profile  N tokens durable under cProfile (top functions by own time)
+  command  N tokens with command_publication=True (only with --command)
   stock    N-token HF greedy decode with the same model (consumer floor; different lane)
 """
 from __future__ import annotations
@@ -36,10 +37,10 @@ R: dict = {"job": JOB, "tokens": N, "torch": torch.__version__}
 import transformers  # noqa: E402
 
 R["transformers"] = transformers.__version__
-from mdb.bench import BenchSession  # noqa: E402
-from mdb.bench_loading import load_bench_model  # noqa: E402
+from mdb_lanes.bench import BenchSession  # noqa: E402
+from mdb_lanes.bench_loading import load_bench_model  # noqa: E402
 
-R["mdb_file"] = sys.modules["mdb.bench"].__file__
+R["mdb_file"] = sys.modules["mdb_lanes.bench"].__file__
 torch.backends.cuda.matmul.allow_tf32 = False
 t = time.perf_counter()
 spec, model, tok = load_bench_model("qwen2.5-0.5b-instruct")
@@ -61,13 +62,14 @@ def dump():
         json.dump(R, fh, indent=1, sort_keys=True, default=str)
 
 
-def run_arm(name, tokens, *, fsync=None, profile=False):
+def run_arm(name, tokens, *, fsync=None, profile=False, command=False):
     os.fsync = fsync or counting_fsync
     FS.update(count=0, seconds=0.0)
     root = f"{BASE}/{name}"
     try:
+        extra = {"command_publication": True} if command else {}
         b = BenchSession.from_resident(model, tok, root=root, session_id=f"{JOB}-{name}",
-                                       continuation_capacity=64)
+                                       continuation_capacity=64, **extra)
         torch.cuda.synchronize()
         t0 = time.perf_counter()
         b.prefill(PROMPT)
@@ -127,7 +129,8 @@ def stock(tokens):
 
 for name, kw in (("warmup", {"tokens": 4}), ("durable", {"tokens": N}),
                  ("nofsync", {"tokens": N, "fsync": lambda fd: None}),
-                 ("profile", {"tokens": N, "profile": True})):
+                 ("profile", {"tokens": N, "profile": True}),
+                 *((("command", {"tokens": N, "command": True}),) if "--command" in sys.argv else ())):
     try:
         R[name] = run_arm(name, **kw)
     except Exception as exc:  # keep partial results
@@ -139,7 +142,7 @@ R["stock"] = stock(N)
 R["stock_repeat"] = stock(N)
 R["peak_vram_mb"] = torch.cuda.max_memory_allocated() / 2**20
 dump()
-for k in ("durable", "nofsync", "profile"):
+for k in ("durable", "nofsync", "profile", "command"):
     if k in R:
         r = R[k]
         print(k, round(r["generate_s"], 3), "s", round(r["per_token_ms"], 1), "ms/tok fsync",
