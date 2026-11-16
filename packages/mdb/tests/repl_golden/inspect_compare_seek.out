@@ -19,7 +19,7 @@ t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 
 compare A: here  B: L1.m=0.5 add  -> t3.M[4,9]
   base -0.11401 [measured]  A -0.11401 [measured]  B 0.050476 [measured]
   effects A 0 [measured]  B 0.16449 [measured]
-  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A no effect  B effect
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A no effect (1 donor)  B effect
   interaction refused (A+B needs both sides to be edits (a checkpoint is a whole session state, not a change that composes))
   session unchanged at t3.L0.p
 (mdb) seek t3.logits

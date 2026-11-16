@@ -1,0 +1,18 @@
+{
+ "program": "bigadd-O2",
+ "cells": 629,
+ "live": 177,
+ "bindings_frozen": 72,
+ "bindings_v2": 31,
+ "v2_live": 28,
+ "v2_dead": 3,
+ "bindings_words": 28,
+ "bindings_dead_only": 91,
+ "bound_cells_frozen": 177,
+ "bound_cells_v2": 215,
+ "lanes_equal_binctr": "33/33",
+ "seconds": 1.0,
+ "device": "cuda",
+ "spec": "method_v2 (post hoc): frozen run-1 method; + merge bindings of adjacent bytes written by the same op instance with identical liveness; + dead copy-web members (webs of >= 2 cells) as bindings with status dead",
+ "cuda_peak_mb": 665
+}

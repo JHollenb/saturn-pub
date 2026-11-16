@@ -41,6 +41,18 @@ def test_blind_attribution_names_the_class(tiny, hard):
     assert int((hard.gate[hard.live] != 0).sum(-1).max()) == 1
 
 
+def test_gate_side_names_the_zero_valued_selected_unit(tiny, hard):
+    """Run 6: every step whose output is all zero names nothing from f; the gate names it."""
+    cls = mlp.decoded_class(tiny, hard.pc)[hard.live]
+    r = mlp.attribute_capture(hard)
+    anybit = hard.down[hard.live].bool().any(-1)
+    sel = r["named_selected"]
+    assert bool((~anybit).any())                               # the fixture has a zero output
+    assert torch.equal(sel[~anybit], cls[~anybit])             # named by the gate
+    nonzero_f = (hard.gate[hard.live][:, :, None] * hard.up[hard.live].float()).abs().sum((1, 2)) > 0
+    assert bool((sel[nonzero_f] == -1).all())                  # a valued selection is not "zero"
+
+
 def test_soft_gate(tiny, inputs, hard):
     taus = torch.tensor([1.0, 0.001]).repeat_interleave(len(inputs))[:, None]
     soft = mlp.capture(tiny, inputs * 2, mode="soft", tau=taus)

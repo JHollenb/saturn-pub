@@ -428,7 +428,8 @@ def _rope_refusal(config: Any) -> str | None:
     return None
 
 
-def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) -> dict[str, Any]:
+def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False,
+                   units: int = 0) -> dict[str, Any]:
     """Per-layer signed contributions to ``M_ab = logit_a - logit_b`` at the pending token (P19).
 
     The final residual is ``h_L = h_0 + sum_l (o_l + m_l) + edits + e``, where ``e`` collects the
@@ -468,6 +469,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
       output rounding (``bound``, ``k = 1``; ``gamma_d = d u / (1 - d u)``); see ``_head_bound``;
     * final_norm: ``scale = ||W_a - W_b||_1 u(max|fn|)``, ``k = 2``, ``heuristic: True`` (an
       a-priori multiple, not a derived bound).
+
+    ``units=K`` adds ``mlp_units`` (``analysis.units.swiglu_units``): the K units of largest
+    direct contribution over all layers and the K *selected but zero-valued* units (gate
+    ``sg`` active, contribution through ``u`` ~0), which contribution ranking cannot list.
 
     ``first_order=True`` adds a ``derived-local`` column ``lambda_r^T o_l``,
     ``lambda_{h_{l+1}}^T m_l``, ``lambda_{h_0}^T h_0`` from ``circuit_native.consumer_gradient``
@@ -715,6 +720,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         }
     if first_order:
         out["first_order"] = _first_order(caps, a, b, result, components)
+    if units:
+        from .units import swiglu_units
+
+        out["mlp_units"] = swiglu_units(caps, rho, c, top=units)
     return out
 
 

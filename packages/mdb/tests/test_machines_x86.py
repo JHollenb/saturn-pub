@@ -250,3 +250,34 @@ def test_symbols_records_and_grid(tiny):
     assert set(col["rule"]) == {"zero", "unaligned", "aligned"}
     ex = (col["rule"] == "aligned") & (col["align"] == "exec") & (col["status"] == "run")
     assert ex.any() and (col["base_web"][ex] == col["donor_web"][ex]).all()
+
+
+def test_method_v2_words_and_dead_copies(tiny):
+    from mdb.machines.x86.binary import FLAG0
+    from mdb.machines.x86.method_v2 import lessons
+
+    rec = recover(tiny, inp(5, 3), donors(16), log=lambda *_: None)
+    frozen = rec.binding.copy()
+    v2 = lessons(rec)
+    assert (rec.binding == frozen).all()                       # the frozen method is untouched
+    cells, b = rec.base.cells, v2.binding
+    for i, c in enumerate(cells):                              # status follows liveness
+        if b[i] >= 0:
+            assert v2.status[b[i]] == ("live" if rec.live[i] else "dead")
+    # same op instance, adjacent bytes of one register, same liveness -> one wide binding
+    pairs = [(i, j) for i, c in enumerate(cells) for j, d in enumerate(cells)
+             if c.def_ >= 0 and c.def_ == d.def_ and d.site == c.site + 1 and c.site < FLAG0
+             and c.site // 8 == d.site // 8 and rec.live[i] == rec.live[j] and b[i] >= 0 and b[j] >= 0]
+    assert pairs and all(b[i] == b[j] for i, j in pairs)
+    names = {rec.base.describe(c): k for c, k in zip(cells, b)}
+    # here byte 0 of the loaded a is live and bytes 1..7 are not: two bindings, not eight
+    assert names["0x401000#0.rax[0:8]"] != names["0x401000#0.rax[8:16]"]
+    assert len({names[f"0x401000#0.rax[{8 * k}:{8 * k + 8}]"] for k in range(1, 8)}) == 1
+    # every not-live member of a copy web of >= 2 cells is bound, as dead
+    size = {r: list(v2.web).count(r) for r in set(v2.web)}
+    dead_web = [i for i in range(len(cells)) if not rec.live[i] and size[v2.web[i]] >= 2]
+    assert dead_web and all(b[i] >= 0 and v2.status[b[i]] == "dead" for i in dead_web)
+    # each lesson alone
+    only_words, only_dead = lessons(rec, dead_copies=False), lessons(rec, words=False)
+    assert all(s == "live" for s in only_words.status)
+    assert only_dead.n_bindings - sum(s == "dead" for s in only_dead.status) == rec.n_bindings

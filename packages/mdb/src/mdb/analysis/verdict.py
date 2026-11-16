@@ -107,8 +107,20 @@ def _num(value: float, authority: str) -> dict[str, Any]:
 
 
 def decide(native: Any, emulated: Any, size: float, dtype: Any, *, exact: Any = None,
-           why_native_only: str | None = None, parting: dict[str, Any] | None = None
-           ) -> dict[str, Any]:
+           why_native_only: str | None = None, parting: dict[str, Any] | None = None,
+           donors: tuple[int, int | None] = (1, None)) -> dict[str, Any]:
+    """``_decide`` stamped with its donor count (``donors.stamp``: ``(n, informative)``; one
+    donor whose informativeness was not compared by default), so no ``no effect`` leaves without
+    saying how many donors it rests on."""
+    from .donors import stamp
+
+    return stamp(_decide(native, emulated, size, dtype, exact=exact,
+                         why_native_only=why_native_only, parting=parting), *donors)
+
+
+def _decide(native: Any, emulated: Any, size: float, dtype: Any, *, exact: Any = None,
+            why_native_only: str | None = None, parting: dict[str, Any] | None = None
+            ) -> dict[str, Any]:
     """The verdict on one change. ``native`` (measured), ``emulated`` (the emulated chains'
     delta, None when there is none, ``why_native_only`` saying why) and ``exact`` (the float64
     chain's delta, optional, reported): float64 tensors, scalar or vector; ``size`` the

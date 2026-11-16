@@ -116,10 +116,12 @@ def _stage_key(run: Any, edit: Edit, p: Any) -> tuple[int, int]:
     return run.parse(f"t{row}.L{layer}.h")
 
 
-def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
+def measure(run: Any, edits: list[Edit], consumer: Any, *, probe: tuple[str, ...] = ()
+            ) -> dict[str, Any]:
     """The consumer measured natively with every edit in ``edits`` applied (none: the base);
     the session is restored and checked unchanged. Returns ``value`` (float64), ``authority``,
-    ``moves``."""
+    ``moves``, and ``probed``: the native value at each ``probe`` address read at the consumer
+    (None where it cannot be read)."""
     plans = [plan(run, edit, consumer) for edit in edits]
     consumer_stop(run, consumer)
     keys = [_stage_key(run, edit, p) for edit, p in zip(edits, plans)]
@@ -161,6 +163,7 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
                                                   else ""))
         value, authority, scale = _read(run, consumer)
         moves.append(f"read {consumer_stop(run, consumer)}")
+        probed = {address: _probe(run, address) for address in probe}
     finally:
         restore_exactly(run, checkpoint)
     moves.append(f"restore {checkpoint['where']}")
@@ -169,7 +172,31 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
         raise RuntimeError(f"measure did not leave the session where it was ({before[:12]} -> "
                            f"{after[:12]})")
     return {"value": value, "authority": authority, "moves": moves,
-            "scale": scale}
+            "scale": scale, "probed": probed}
+
+
+def _probe(run: Any, address: str) -> Any:
+    try:
+        return run.read(address).clone()
+    except (ValueError, KeyError, IndexError, RuntimeError):
+        return None
+
+
+def _ports(side: Side) -> tuple[str, ...]:
+    """The port addresses a side's edits write (cell edits are not probed)."""
+    return tuple(e.address for e in side.edits or () if e.cell is None)
+
+
+def _informative(found: dict[str, Any], base: dict[str, Any], addresses: tuple[str, ...]
+                 ) -> int | None:
+    """1 when a written port differs from the base's value there, 0 when none does, None when
+    nothing could be compared (``donors.informative``)."""
+    from .donors import informative
+
+    known = [informative(base["probed"].get(a), found.get("probed", {}).get(a))
+             for a in addresses]
+    known = [k for k in known if k is not None]
+    return int(any(known)) if known else None
 
 
 def measure_at(run: Any, checkpoint: dict[str, Any], consumer: Any) -> dict[str, Any]:
@@ -211,7 +238,7 @@ class Side:
 
 def _side(run: Any, side: Side, consumer: Any) -> dict[str, Any]:
     if side.edits is not None:
-        return measure(run, side.edits, consumer)
+        return measure(run, side.edits, consumer, probe=_ports(side))
     if side.checkpoint is not None:
         return measure_at(run, side.checkpoint, consumer)
     return measure_other(side.run, consumer)
@@ -265,13 +292,15 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
     interaction ``(A+B) - A - B + base``. Returns ``report`` (bounded JSON) and ``values``
     (float64 tensors)."""
     before = state_digest(run)
-    base = measure(run, [], consumer)
+    written = {"A": _ports(a), "B": _ports(b)}
+    written["A+B"] = written["A"] + written["B"]
+    base = measure(run, [], consumer, probe=written["A+B"])
     found = {"base": base, "A": _side(run, a, consumer), "B": _side(run, b, consumer)}
     joint: str | None = None
     if a.edits is not None and b.edits is not None:
         joint = _order_conflict(a.edits, b.edits)
         if joint is None:
-            found["A+B"] = measure(run, [*a.edits, *b.edits], consumer)
+            found["A+B"] = measure(run, [*a.edits, *b.edits], consumer, probe=written["A+B"])
     else:
         joint = ("A+B needs both sides to be edits (a checkpoint is a whole session state, not "
                  "a change that composes)")
@@ -308,7 +337,8 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
         size = max(found[name]["scale"][0], found["base"]["scale"][0])
         report["verdicts"][name] = decide(
             values[name] - values["base"], None, size, found["base"]["scale"][1],
-            why_native_only="compare measures natively, with no exact or emulated chain")
+            why_native_only="compare measures natively, with no exact or emulated chain",
+            donors=(1, _informative(found[name], base, written[name])))
     report["kind"] = "vector" if vector else "scalar"
     return {"report": report, "values": values}
 

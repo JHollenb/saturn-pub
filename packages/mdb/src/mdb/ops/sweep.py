@@ -165,7 +165,58 @@ def _heat(grid: list[list[float]], rows: list[int], layers: list[int],
 
 def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str,
           consumer: str, top: int, max_calls: int = MAX_LAYER_CALLS) -> dict[str, Any]:
+    """One origin: the sweep (module docstring). Several (``= A,B,C``, multi-donor mode,
+    ``analysis.donors``): one sweep per origin, then per cell the donors that changed the
+    consumer (``n_effect``) and those whose value differed from the base (``n_informative``),
+    and how many single-origin nulls a cell's other origins overturn."""
+    origins = [o.strip() for o in origin.split(",") if o.strip()]
+    if len(origins) < 2:
+        out = _sweep_one(ctx, port, rows, layers, origin, consumer, top, max_calls)
+        out.pop("_table")
+        return out
+    from mdb.analysis.donors import pooled
+
+    each = [_sweep_one(ctx, port, rows, layers, o, consumer, top, max_calls) for o in origins]
+    tables = [r.pop("_table") for r in each]
+    layer_list, row_list = tables[0]["layers"], tables[0]["rows"]
+    cells, flips, nulls = [], 0, 0
+    grid_effect = [[0] * len(row_list) for _ in layer_list]
+    grid_inf = [[0] * len(row_list) for _ in layer_list]
+    for i, _l in enumerate(layer_list):
+        for jj, _r in enumerate(row_list):
+            per = [{"verdict": "effect" if t["delta"]["value"][i][jj] != 0 else "no effect",
+                    "informative": t["informative"][i][jj]} for t in tables]
+            found = pooled(per)
+            grid_effect[i][jj], grid_inf[i][jj] = found["n_effect"], found["n_informative"] or 0
+            single = sum(p["verdict"] == "no effect" for p in per)
+            nulls += single
+            flips += single if found["verdict"] == "effect" else 0
+            cells.append(found)
+    return {
+        "port": each[0]["port"], "origin": ",".join(origins), "origins": origins,
+        "consumer": consumer, "stop": each[0]["stop"], "cells": each[0]["cells"],
+        "base": each[0]["base"], "where": each[0]["where"],
+        "donors": {"layers": layer_list, "rows": row_list,
+                   "n_effect": {"value": grid_effect, "authority": "measured"},
+                   "n_informative": {"value": grid_inf, "authority": "measured"},
+                   "n_donors": {"value": len(origins), "authority": "supplied"},
+                   "cells_effect": {"value": sum(c["verdict"] == "effect" for c in cells),
+                                    "authority": "measured"},
+                   "single_origin_nulls": {"value": nulls, "authority": "measured"},
+                   "single_origin_nulls_overturned": {"value": flips, "authority": "measured"},
+                   "rule": "effect = delta != 0 (native only, as sweep); a cell is an effect when "
+                           ">= 1 origin changed the consumer; informative = the origin's value "
+                           "differs from the base value at the cell"},
+        "records": [r["record"] for r in each],
+        "per_origin": [{"origin": o, "record": r["record"], "top": r["top"]}
+                       for o, r in zip(origins, each)],
+    }
+
+
+def _sweep_one(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str,
+               consumer: str, top: int, max_calls: int = MAX_LAYER_CALLS) -> dict[str, Any]:
     from mdb.analysis.compare import _guard, consumer_stop, consumer_value, restore_exactly
+    from mdb.analysis.donors import informative
     from mdb.analysis.forecast import Logit, Margin, Refusal
 
     from .predict import build_edit, parse_consumer, session_digest
@@ -243,6 +294,8 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
     # latest boundary first: each cell rewinds to a trail mark the earlier cells never touched
     order = sorted(cells, key=lambda cell: run.parse(_boundary(run, *cell)), reverse=True)
     deltas: dict[tuple[int, int], float] = {}
+    differs: dict[tuple[int, int], bool | None] = {}
+    base_ports: dict[tuple[int, int], Any] = {}
     base_value: float | None = None
     dtype = None
     held = run.excursion()      # the unedited trail, to come back to without a replay
@@ -252,6 +305,11 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
         native = run.read(stop)
         dtype = str(native.dtype).removeprefix("torch.")
         base_value = float(consumer_value(chosen, native))
+        for r, l in order:          # the unedited values at the cells (informative donors)
+            try:
+                base_ports[r, l] = run.read(f"t{r}.L{l}.{spec.name}").clone()
+            except (ValueError, KeyError, IndexError, RuntimeError):
+                base_ports[r, l] = None
         for r, l in order:
             boundary = _boundary(run, r, l)
             if run.parse(run.where) > run.parse(boundary):
@@ -264,6 +322,8 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
                     selection=edit.selection, origin=edit.origin)
             run.until(stop)
             deltas[r, l] = float(consumer_value(chosen, run.read(stop))) - base_value
+            differs[r, l] = informative(base_ports[r, l],
+                                        run.read(f"t{r}.L{l}.{spec.name}"))
     finally:
         try:
             run.come_back(held)
@@ -282,8 +342,11 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
     tokens = _token_texts(ctx, row_list)
     table = {"layers": layer_list, "rows": row_list,
              "delta": {"value": grid, "authority": "measured"},
+             "informative": [[differs[r, l] for r in row_list] for l in layer_list],
              "tokens": tokens,
-             "note": "delta[i][j] = consumer patched at t<rows[j]>.L<layers[i]> minus base"}
+             "note": "delta[i][j] = consumer patched at t<rows[j]>.L<layers[i]> minus base; "
+                     "informative[i][j]: the origin's value there differs from the base's"}
+    zero = [cell for cell in cells if deltas[cell] == 0]
     ranked = sorted(cells, key=lambda cell: (-abs(deltas[cell]), cell))[:top]
     model = ("per cell (r, l), consumer in row c: (L - l) + L x (c - r) layer calls from the "
              "boundary before layer l (a restore of a held trail mark), plus the post-layer "
@@ -292,6 +355,12 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
     out: dict[str, Any] = {
         "port": f"{spec.name}{selector}", "origin": branch, "consumer": consumer, "stop": stop,
         "cells": {"count": len(cells)},
+        "nulls": {"count": len(zero),
+                  "informative": {"value": sum(bool(differs[c]) for c in zero),
+                                  "authority": "measured"},
+                  "label": f"{len(zero)} cells no effect (1 donor; "
+                           f"{sum(bool(differs[c]) for c in zero)} informative)",
+                  "rule": "no effect = delta exactly 0 (native only); one origin = one donor"},
         "base": {"value": base_value, "authority": "measured", "dtype": dtype},
         "top": [{"row": r, "layer": l, "delta": {"value": deltas[r, l], "authority": "measured"}}
                 for r, l in ranked],
@@ -329,6 +398,7 @@ def sweep(ctx: Any, port: str, rows: str | None, layers: str | None, origin: str
         from mdb.core import index
 
         out["stored"] = index.put_record(project, record)
+    out["_table"] = table
     return out
 
 

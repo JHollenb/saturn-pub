@@ -554,7 +554,12 @@ class BinRun:
         frozen = (r.y[1], int(r.exit_code[1])) != base or r.stop_kind(1) != "exit"
         diverged = int(r.ctrl_at[0]) >= 0 or int(r.addr_at[0]) >= 0
         verdict = verdict_of(r.stop_kind(0), diverged, total)
+        try:     # one donor: informative when the written value differs from the base's there
+            k = int(int(value) != int(self.read(a.text())["value"]))
+        except (xa.AddressError, ValueError, KeyError):
+            k = None
         body = {"schema": "mdb-machine-whatif-result-v1", "whatif": sealed["id"], "verdict": verdict,
+                "label": donor_label(verdict, 1, k), "donors": {"n": "1", "informative": f"{k}"},
                 "total_effect": "effect" if total else "no effect",
                 "frozen_effect": "effect" if frozen else "no effect",
                 "path_diverged_at": f"{int(r.ctrl_at[0])}", "address_diverged_at": f"{int(r.addr_at[0])}",
@@ -586,6 +591,12 @@ class BinRun:
 class _Frozen:
     """A run's recorded result kept as a hold reference after the run itself changes."""
     result: Any
+
+
+def donor_label(verdict: str, n: int = 1, k: int | None = None) -> str:
+    from mdb.analysis.donors import label  # noqa: PLC0415
+
+    return label(verdict, n, k)
 
 
 def verdict_of(stop: str, diverged: bool, y_changed: bool) -> str:

@@ -767,6 +767,15 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")
+    if "path" in result:
+        path = result["path"]
+        moved = path["path"]
+        where = (f"first {moved['first']}, {moved['moved']} selections in {moved.get('heads', 0)} "
+                 f"heads moved" if moved["diverged"] else f"no downstream argmax moved "
+                 f"({moved['selections']} selections, {moved['ties']} ties)")
+        lines.append(f"  path: {path['verdict']} ({where}); total {delta} "
+                     f"{_claimed(path['total']['dM'])}, frozen-selection {delta} "
+                     f"{_claimed(path['frozen']['dM'])} ({path['frozen']['holds']})")
     return lines
 
 
@@ -787,7 +796,7 @@ def effect_line(effect: dict[str, Any], delta: str = "\u0394", exact_note: str =
     count = effect["floor_spacings"]["value"]
     floor = (f"floor {_claimed(effect['floor'])} = {count:g} {effect['dtype']} "
              f"spacing{'' if count == 1 else 's'} ({effect['floor_spacings']['authority']})")
-    text = f"verdict (P20): {effect['verdict']}  {numbers}; {floor}"
+    text = f"verdict (P20): {effect.get('label', effect['verdict'])}  {numbers}; {floor}"
     for key in ("note", "reason"):
         if effect.get(key):
             text += f"  [{effect[key]}]"
@@ -813,6 +822,9 @@ def _verdict(causal: dict[str, Any]) -> str:
     if "delta" not in causal:
         return f"unresolved ({causal['reason']})"
     head = causal["verdict"] + (f" ({causal['reason']})" if causal.get("reason") else "")
+    donors = (causal.get("effect") or {}).get("label")
+    if causal["verdict"] == "not causal at this dose" and donors:
+        head += f" [{donors.replace('no effect', 'null', 1)}]"
     text = f"{head}: Δ {_short(causal['delta'])}"
     effect = causal.get("effect") or {}
     emulated = causal.get("emulated")
@@ -1098,7 +1110,7 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
     verdicts = result.get("verdicts") or {}
     if verdicts:
         lines.append("  verdicts (native only, no exact or emulated chain: effect when edited and "
-                     "base differ): " + "  ".join(f"{name} {v['verdict']}"
+                     "base differ): " + "  ".join(f"{name} {v.get('label', v['verdict'])}"
                                                   for name, v in verdicts.items()))
     interaction = result["interaction"]
     if interaction.get("state"):
@@ -1572,6 +1584,18 @@ def heat_table(result: dict[str, Any], width: int = _HEAT_WIDTH) -> list[str]:
 
 def _sweep_lines(result: dict[str, Any]) -> list[str]:
     base = result["base"]
+    if "donors" in result:      # several origins (multi-donor mode)
+        d = {k: v["value"] if isinstance(v, dict) and "value" in v else v
+             for k, v in result["donors"].items()}
+        return [f"sweep {result['port']} = {{{result['origin']}}}:{result['port']} -> "
+                f"{result['consumer']}  ({result['cells']['count']} cells x {d['n_donors']} "
+                f"donors; base {num(base)})",
+                f"  cells with an effect from >= 1 donor: {d['cells_effect']} of "
+                f"{result['cells']['count']} [measured]",
+                f"  single-donor nulls: {d['single_origin_nulls']}, overturned by another donor: "
+                f"{d['single_origin_nulls_overturned']} [measured]",
+                f"  records: {', '.join(r[:16] for r in result['records'])}",
+                f"  session unchanged at {result['where']}"]
     lines = [f"sweep {result['port']} = {result['origin']}:{result['port']} -> "
              f"{result['consumer']}  ({result['cells']['count']} cells; base "
              f"{num(base)})"]
@@ -1587,6 +1611,8 @@ def _sweep_lines(result: dict[str, Any]) -> list[str]:
     top = ", ".join(f"t{item['row']}.L{item['layer']} {num(item['delta'])}"
                     for item in result["top"])
     lines.append(f"  top |Δ|: {top}")
+    if "nulls" in result:
+        lines.append(f"  nulls: {result['nulls']['label']}")
     cost = result["cost"]
     native = cost["native"]
     planned = cost.get("planned", {}).get("layer")

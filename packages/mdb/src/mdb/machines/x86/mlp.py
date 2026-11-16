@@ -15,7 +15,10 @@ instruction index, from 0) during which the dispatch ran.
 ``attribute`` names the class unit responsible for ``down`` from ``f`` and ``down`` alone (it never
 reads the decoded class): the exact contribution ``c_k = sum_{j: down_j} f[k, j]`` and the ablation
 ``a_k`` = number of output bits that flip when ``f[k]`` is zeroed. A unit is named when its score
-is the unique maximum and > 0; otherwise nothing is named (-1).
+is the unique maximum and > 0; otherwise nothing is named (-1). Given the gate too, it also marks
+the *selected but zero-valued* units (gate on, every bit of ``f[k]`` zero: ``analysis.units``),
+and ``named_selected`` names the unique one: run 6's "nothing named" steps were all of this kind
+(a ``mov`` of 0), where the selection lives only in the gate.
 
 The SAE here is a minimal top-k SAE in the layout mdb's ``FeatureBasis`` stores (``W_enc (w, d)``,
 ``b_enc``, ``W_dec (d, w)``, ``b_dec``, active set = top-k of ``relu(W_enc x + b_enc)``). mdb has no
@@ -139,18 +142,28 @@ def decoded_class(binary: Binary, pc: torch.Tensor) -> torch.Tensor:
 # --------------------------------------------------------------------------- attribution
 
 
-def attribute(f: torch.Tensor, down: torch.Tensor) -> dict:
+def attribute(f: torch.Tensor, down: torch.Tensor, gate: torch.Tensor | None = None,
+              gate_floor: float = 0.5) -> dict:
     """Blind attribution of ``down`` [N, 134] to the class units of ``f`` [N, K, 134].
 
     ``contribution[n, k] = sum_{j: down_j} f[n, k, j]`` (exact share of the firing bits' pre-threshold
     mass); ``ablation[n, k]`` = number of bits of ``(sum f - f[k]) > 0.5`` that differ from ``down``.
-    ``named_*`` is the unique argmax with a positive score, else -1."""
+    ``named_*`` is the unique argmax with a positive score, else -1. With ``gate`` [N, K]:
+    ``selected_zero[n, k]`` (gate >= ``gate_floor`` and ``f[n, k]`` all zero) and ``named_selected``,
+    the unique such unit, else -1."""
+    from mdb.analysis.units import selected_zero  # noqa: PLC0415
+
     on = down.bool()
     contrib = (f * on[:, None, :]).sum(-1)
     pre = f.sum(1)
     abl = (((pre[:, None, :] - f) > 0.5) != on[:, None, :]).sum(-1).float()
-    return {"contribution": contrib, "ablation": abl,
-            "named_contribution": _unique_argmax(contrib), "named_ablation": _unique_argmax(abl)}
+    out = {"contribution": contrib, "ablation": abl,
+           "named_contribution": _unique_argmax(contrib), "named_ablation": _unique_argmax(abl)}
+    if gate is not None:
+        sel = selected_zero(gate, f.abs().sum(-1), gate_floor=gate_floor, zero_tol=0.0)
+        out["selected_zero"] = sel
+        out["named_selected"] = torch.where(sel.sum(-1) == 1, sel.float().argmax(-1), -1)
+    return out
 
 
 def _unique_argmax(s: torch.Tensor) -> torch.Tensor:
@@ -163,9 +176,10 @@ def attribute_capture(cap: Capture, chunk: int = 1 << 14) -> dict:
     """``attribute`` over every live lane-step of a capture (flattened, lane-major)."""
     live = cap.live
     up, gate, down = cap.up[live], cap.gate[live], cap.down[live]
-    out = {"named_contribution": [], "named_ablation": []}
+    out = {"named_contribution": [], "named_ablation": [], "named_selected": []}
     for s in range(0, len(up), chunk):
-        r = attribute(gate[s:s + chunk, :, None] * up[s:s + chunk].float(), down[s:s + chunk])
+        r = attribute(gate[s:s + chunk, :, None] * up[s:s + chunk].float(), down[s:s + chunk],
+                      gate[s:s + chunk])
         for key in out:
             out[key].append(r[key])
     return {k: torch.cat(v) if v else torch.zeros(0, dtype=torch.long) for k, v in out.items()}
@@ -355,10 +369,12 @@ class MlpRun:
 
     def attribute(self, t: int) -> dict:
         c = self.cap_
-        r = attribute(c.f()[0, t:t + 1], c.down[0, t:t + 1])
+        r = attribute(c.f()[0, t:t + 1], c.down[0, t:t + 1], c.gate[0, t:t + 1])
         name = lambda i: self.names[i] if i >= 0 else None
         return {"tick": t, "named_contribution": name(int(r["named_contribution"][0])),
                 "named_ablation": name(int(r["named_ablation"][0])),
+                "selected_zero": [self.names[k] for k in
+                                  torch.nonzero(r["selected_zero"][0]).flatten().tolist()],
                 "contribution": r["contribution"][0].tolist(), "ablation": r["ablation"][0].tolist()}
 
     def whatif(self, text: str, value: int) -> dict:

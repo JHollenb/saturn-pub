@@ -32,6 +32,7 @@ def main(argv=None) -> int:
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--run6", nargs="+", default=[], help="programs for run 6 (run6.py)")
     ap.add_argument("--run6-args", nargs="*", default=[])
+    ap.add_argument("--v2", nargs="+", default=[], help="programs for method_v2 (v2_worker.py, post hoc)")
     ap.add_argument("--vram-mb", type=int, default=6000)
     ap.add_argument("--est-wall-s", type=int, default=420)
     ap.add_argument("--note", default="mdb x86 backend: binary-ground-truth method")
@@ -49,7 +50,7 @@ def main(argv=None) -> int:
     (payload / "src/isa_bench").mkdir(parents=True)
     for f in ("__init__.py", "state.py"):
         shutil.copy2(ISA / "src/isa_bench" / f, payload / "src/isa_bench" / f)
-    for f in ("worker.py", "demo.py", "run6.py"):
+    for f in ("worker.py", "demo.py", "run6.py", "v2_worker.py"):
         shutil.copy2(HERE / f, payload / f)
     launch.stage_pydeps(payload, list(PINS))
     steps = []
@@ -62,7 +63,11 @@ def main(argv=None) -> int:
     if a.run6:
         steps.append(["python", "run6.py", "--ref", REF, "--containers", CONT, "--programs", *a.run6,
                       "--device", "cuda", "--out", "result", *a.run6_args])
-    job = {"programs": a.programs, "grid": a.grid, "demo": a.demo, "run6": a.run6, "ref": REF, "containers": CONT}
+    if a.v2:
+        steps.append(["python", "v2_worker.py", "--ref", REF, "--containers", CONT, "--programs", *a.v2,
+                      "--device", "cuda", "--out", "result"])
+    job = {"programs": a.programs, "grid": a.grid, "demo": a.demo, "run6": a.run6, "v2": a.v2, "ref": REF,
+           "containers": CONT}
     launch.write(payload / "job.json", job)
     # the launcher runs `uv run ... python <entry>`: a tiny shim runs run.sh's steps with that python
     (payload / "steps.py").write_text(

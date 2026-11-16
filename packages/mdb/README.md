@@ -723,6 +723,29 @@ finite (`bound` label) and never decide a verdict. `verify` holds native against
 prediction the same way: `confirmed` within one spacing, else `not confirmed` or `unresolved` by
 where emulation and native part.
 
+### Donor counts, path-diverged, gate-side units
+
+Three lessons from the binary ground-truth experiment (2026-11-16), where an exact answer key
+exists:
+
+- **Every null names its donors** (`mdb.analysis.donors`). On the binaries one resample donor
+  said "no effect" wrongly on 41-71% of live cells, almost always because the donor carried the
+  base's own value. Every verdict carries `donors = {n, informative}` (informative: the patched
+  value differs bitwise from the base's) and a `label`: `no effect (1 donor)`, `no effect (1
+  donor, not informative: the donor value equals the base)`, `no effect (16 donors, 12
+  informative)`. Multi-donor mode: `donors.whatif(run, ADDR, values, consumer)` (values from
+  `Pool.donors(item, n, seed=)` or `Run.ref`), `donors.compare`, `liveness(..., donors=[runs])`
+  (resample instead of zero), `reads(..., donors=[runs])` (the donor's `p` weight instead of
+  0), and `sweep PORT = A,B,C` (one sweep per origin; per cell `n_effect` / `n_informative` and
+  the single-origin nulls another origin overturns). Pooled: `effect` when >= 1 donor has one.
+- **`path-diverged`** (`mdb.analysis.paths`, `whatif ... path=true`): after an edit at row r,
+  layer l, the argmax over sources of every downstream `p` row (heads x rows >= r x layers the
+  edit reaches) is compared with the base's; ties are not counted. The paired effect is reported
+  beside it: total (free) and frozen-selection (`hold t*.L>=k.p` at the unedited reference).
+- **Selected but zero-valued units** (`mdb.analysis.units`, `explain M[a,b] units=K`): MLP units
+  whose gate `sg` is active but whose contribution through `u` is ~0, which contribution ranking
+  never lists (`machines.x86.mlp.attribute` names them on the binary's dispatch).
+
 ### Two floors
 
 mdb uses two floors, for two different questions. Both are `supplied` constants in

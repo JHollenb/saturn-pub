@@ -1,0 +1,18 @@
+{
+ "program": "isort-O0",
+ "cells": 3236,
+ "live": 606,
+ "bindings_frozen": 56,
+ "bindings_v2": 95,
+ "v2_live": 22,
+ "v2_dead": 73,
+ "bindings_words": 22,
+ "bindings_dead_only": 393,
+ "bound_cells_frozen": 606,
+ "bound_cells_v2": 1708,
+ "lanes_equal_binctr": "33/33",
+ "seconds": 9.6,
+ "device": "cuda",
+ "spec": "method_v2 (post hoc): frozen run-1 method; + merge bindings of adjacent bytes written by the same op instance with identical liveness; + dead copy-web members (webs of >= 2 cells) as bindings with status dead",
+ "cuda_peak_mb": 2864
+}

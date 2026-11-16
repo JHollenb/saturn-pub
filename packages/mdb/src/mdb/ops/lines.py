@@ -235,13 +235,15 @@ _WHATIF_USAGE = ("write whatif ADDR = VALUE [replace|add|scale|mix DOSE] --consu
 def _whatif_args(text: str) -> dict[str, Any]:
     """``whatif ADDR = VALUE [OP] --consumer C``; ``consumer=C`` is accepted too."""
     words = split(text)
-    consumer, kept, i = None, [], 0
+    consumer, kept, i, path = None, [], 0, False
     while i < len(words):
         word = words[i][0]
         if word == "--consumer" and i + 1 < len(words):
             consumer, i = words[i + 1][0], i + 2
         elif word.startswith(("consumer=", "--consumer=")):
             consumer, i = word.split("=", 1)[1], i + 1
+        elif word.startswith("path="):
+            path, i = word.split("=", 1)[1].lower() in ("true", "1", "yes"), i + 1
         else:
             kept.append(words[i])
             i += 1
@@ -251,7 +253,7 @@ def _whatif_args(text: str) -> dict[str, Any]:
         args = _set_args(" ".join(text[start:end] for _, start, end in kept))
     except BadArgs:
         raise BadArgs(_WHATIF_USAGE) from None
-    return {**args, "consumer": consumer}
+    return {**args, "consumer": consumer, **({"path": True} if path else {})}
 
 
 def _up_args(text: str) -> dict[str, Any]:

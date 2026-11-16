@@ -16,12 +16,12 @@ t3.L0.h  h = layer input (residual stream)  {P01}
 compare A: cache.L0.v[kv0,row=1]=boiling:cache.L0.v[kv0,row=1]  B: cache.L1.k[kv0,row=1]=boiling:cache.L1.k[kv0,row=1]  -> t3.M[4,9]
   base -0.11401 [measured]  A -0.10986 [measured]  B -0.11401 [measured]  A+B -0.10864 [measured]
   effects A 0.0041504 [measured]  B 0 [measured]  A+B 0.0053711 [measured]
-  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B no effect  A+B effect
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B no effect (1 donor)  A+B effect
   interaction (A+B) - A - B + base = 0.0012207 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.L0.h
 (mdb) whatif cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] --consumer M[4,9]
-whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record 5e6b4a0fc14655db)
+whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record 0695f7ba72102f0f)
   sealed  linear ΔM = 0.003647 [derived-local P14]   exact ΔM = 0.0046222 [derived-exact]  (worst-case rounding interval not informative from t3.L0.m (interval 0.00117 >= |x| 0.000459); at the consumer t3.logits the bound is 38.1 >= |value| 0.00462) (worst case, >= |exact|: no sign)  (operands forecast from t3.L0.h)   emulated ΔM = 0.0041504 [derived-exact]
   native  ΔM = 0.0041504 [measured]   (base -0.11401 [measured] -> edited -0.10986 [measured])
   error split (P20): linear 0.003647 [derived-local P14] + nonlinear 0.00097522 [derived-exact P20] + operands -2.9045e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.0004715 [derived-exact P20] (worst-case rounding interval not informative from t3.L1.sg (interval 0.0849 >= |x| 0.0818); at the consumer t3.logits the bound is 0.677 >= |value| 0.00462) + residual 0 [measured P20]
