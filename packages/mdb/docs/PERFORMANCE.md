@@ -56,7 +56,7 @@ check compares a flat snapshot of the module tree instead of walking every param
 comes from a separate rerun that was not committed); grown K/V chunks are version-checked once when they join, not by every cut (18 ms per
 row; 3.2 s on a 64-row `prefill=0` run).
 
-## Records (mdb 0.3.0)
+## Records (mdb 0.2.2)
 
 Record schema v3 ([RECORDS.md](RECORDS.md)) stores each session's execution profile once instead
 of in every record, and adds column claims (`nums`) for tables of numbers. Measured, laptop CPU:
@@ -109,7 +109,7 @@ Why `"none"` stays the default: a forecast sealed at a port promises that no nat
 computed the value it predicts. Under `"layer"` or `"auto"` that is not true for ports later in
 the same layer, and `lookahead` and `computed_past_cursor` are fields of forecast records and of
 replay recipes, so a different default would also change what existing scripts record. Record
-ids alone are no longer a reason (0.3.0 changes every id anyway); the forecast guarantee is.
+ids alone are no longer a reason (0.2.2 changes every id anyway); the forecast guarantee is.
 
 ### Foreign hooks switch the native cache to a copy
 

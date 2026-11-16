@@ -5,7 +5,7 @@ A record, as every caller sees it (the *logical* record; the same fields in v2 a
     {schema: "mdb-record-v3", id, session_id, kind, model_identity, execution, authority,
      pointers: [...], body, digest}
 
-Schema v3 (written by ``seal_record`` from mdb 0.3.0). Its *stored form* (``stored_form``: the
+Schema v3 (written by ``seal_record`` from mdb 0.2.2). Its *stored form* (``stored_form``: the
 canonical UTF-8 JSON that the digest covers, that ``put_record`` writes and a sink appends) is
 the logical record with two changes:
 

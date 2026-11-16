@@ -3,7 +3,7 @@
 A record is a sealed JSON result: a forecast, a `whatif`, a symbol table, a branches or pool
 record, the summary of an `each`, a trace. Its id is the sha256 of its stored form, so a record
 cannot change after it is sealed without changing its id. This page describes schema
-`mdb-record-v3`, written from mdb 0.3.0, and how records written by earlier versions
+`mdb-record-v3`, written from mdb 0.2.2, and how records written by earlier versions
 (`mdb-record-v2`) are read and migrated.
 
 ## The record you work with
@@ -136,9 +136,9 @@ What migration does not do:
 
 ## What changed for ids
 
-Every record sealed by mdb 0.3.0 has a new id, even with identical content, because the stored
+Every record sealed by mdb 0.2.2 has a new id, even with identical content, because the stored
 form changed. Example: with torch 2.13 and transformers 5.13.1, `examples/00-hello-tiny` seals
-its forecast as `f30d4d21ce1341f0` under mdb 0.2.1 and as `d0c1d6c733c4bfa1` under 0.3.0;
+its forecast as `f30d4d21ce1341f0` under mdb 0.2.1 and as `d0c1d6c733c4bfa1` under 0.2.2;
 everything it prints besides that id is unchanged, and `mdb records migrate` maps the first to
 the second. (The forecast record names the model identity, so other library versions give other
 ids; `expected_output.txt` was made with other versions.)

@@ -2,11 +2,10 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
-## [Unreleased] — proposed 0.3.0
+## [0.2.2] — 2026-11-16
 
 Record schema `mdb-record-v3`. Every record sealed from this version on has a new id, even with
-the same content, so this is a breaking change for anything that compares or cites ids;
-proposed version 0.3.0. Record content is unchanged: `examples/00-hello-tiny` prints the same
+the same content, so anything that compares or cites ids must migrate them (`mdb records migrate`). Record content is unchanged: `examples/00-hello-tiny` prints the same
 output except the forecast's record id (`f30d4d21ce1341f0` -> `d0c1d6c733c4bfa1` with torch 2.13
 and transformers 5.13.1), and the v2 records of that run migrate to exactly the ids the v3 run
 seals. Format, bounds and migration: [docs/RECORDS.md](docs/RECORDS.md).
