@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# mrun wrapper for qwen_backtest.py (payload: packages/mdb/src + this dir + r1_items.json)
+# mrun wrapper for qwen_backtest.py (payload: src + packages/mdb/src + this dir + r1_items.json)
 set -uo pipefail
 S=/mnt/ssd1tb/cache/beast/mdb-interop
-export PYTHONPATH="$PWD/packages/mdb/src:$PWD:$S/site-libs2"
+export PYTHONPATH="$PWD/src:$PWD/packages/mdb/src:$PWD:$S/site-libs2"
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 TOKENIZERS_PARALLELISM=false
 export HF_HOME=/mnt/ssd1tb/cache/beast/huggingface TMPDIR=$S/tmp
 OUT=/mnt/ssd1tb/cache/beast/binlessons/$(cat REVISION)
