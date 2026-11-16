@@ -2,6 +2,12 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
+## [0.2.3] — 2026-11-16
+
+Fixed: with `MDB_RECORDS` set, declaring custody (`custody.declare()` / `dbg.custody(...)`) before
+the first sealed record stopped the sink file from opening, so records were sealed but never
+written to it.
+
 ## [0.2.2] — 2026-11-16
 
 Record schema `mdb-record-v3`. Every record sealed from this version on has a new id, even with
