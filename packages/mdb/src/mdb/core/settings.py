@@ -17,9 +17,10 @@ A config file holds locations and machine defaults. Settings that change a verdi
 preregistration, seeds) are refused by name: they stay in the call, where the script custody
 hashes shows them. Unknown keys and wrong types are errors that name ``file:key``.
 
-When any config file is loaded, ``provenance()`` is the block custody adds to every record:
-each file's path and sha256 and the resolved values of the keys that reach a record. With no
-file, nothing is added and record ids are unchanged.
+When a loaded file sets a key that reaches a record (``Key.recorded``), ``provenance()`` is the
+block custody adds to every record: those files' paths, sha256 and recorded keys, and the
+resolved values. With no such file nothing is added and record ids are unchanged. Python entry
+points read ``value(name, given)``: an explicit argument wins, None takes the setting.
 """
 
 from __future__ import annotations
@@ -59,14 +60,15 @@ class Key:
     default: Any = None
     env: tuple[str, ...] = ()          # current name first, then older names still read
     choices: tuple[str, ...] = ()
-    recorded: bool = False             # its resolved value reaches a record
+    recorded: bool = False             # it reaches a record: which model, dtype, device, session,
+                                       # SAE basis or custody label a record is about
     help: str = ""
 
 
 KEYS: dict[str, Key] = {key.name: key for key in (
-    Key("model.roots", "paths", (), ("MDB_MODEL_ROOTS", "LLM_MODELS_EXTRA_ROOT"),
+    Key("model.roots", "paths", (), ("MDB_MODEL_ROOTS", "LLM_MODELS_EXTRA_ROOT"), recorded=True,
         help="directories searched for checkpoints by name after the Hugging Face cache"),
-    Key("model.aliases", "aliases", {},
+    Key("model.aliases", "aliases", {}, recorded=True,
         help="short name -> checkpoint directory or cached model name"),
     Key("model.dtype", "str", DEFAULT_DTYPE, ("MDB_MODEL_DTYPE",), DTYPES, recorded=True,
         help="weights dtype of a model mdb loads (recorded in every record's execution)"),
@@ -74,7 +76,7 @@ KEYS: dict[str, Key] = {key.name: key for key in (
         help="torch device of a model mdb loads (recorded in every record's execution)"),
     Key("project.dir", "path", None, ("MDB_PROJECT_DIR",),
         help="project attached when no --project is given"),
-    Key("project.session", "str", "auto", ("MDB_PROJECT_SESSION",),
+    Key("project.session", "str", "auto", ("MDB_PROJECT_SESSION",), recorded=True,
         help="session id in the project; auto = family + digest of model and execution"),
     Key("records.sink", "str", None, ("MDB_RECORDS_SINK", "MDB_RECORDS"),
         help="record sink: a file, a directory, or a name with {run}"),
@@ -97,7 +99,7 @@ KEYS: dict[str, Key] = {key.name: key for key in (
     Key("storage.shared_tensor_store", "path", None,
         ("MDB_STORAGE_SHARED_TENSOR_STORE", "MDB_SHARED_TENSOR_STORE"),
         help="shared tensor pool (same filesystem as the projects using it)"),
-    Key("sae.sources", "sae", {}, help="NAME = {path, layers, k, port, cache, verify, layer}"),
+    Key("sae.sources", "sae", {}, recorded=True, help="NAME = {path, layers, k, port, cache, verify, layer}"),
 )}
 SECTIONS = tuple(dict.fromkeys(name.split(".")[0] for name in KEYS))
 SAE_FIELDS = {"path": "path", "layers": "str", "k": "int", "port": "str", "cache": "int",
@@ -429,18 +431,30 @@ class Settings:
         return {name: self.get(name) for name in KEYS}
 
     def provenance(self) -> dict[str, Any] | None:
-        """The block custody records when a config file was loaded, else None."""
-        if not self.files:
+        """The block custody records, or None. Only files that set a key reaching a record
+        (``Key.recorded``: model roots, aliases, dtype, device, session, kernel path, SAE
+        sources) count: each such file's path, sha256 and the recorded keys it sets, then the
+        winning value and source of each of those keys. A file of locations only (serve, repl,
+        records, storage, project dir) adds nothing, so record ids stay as without it."""
+        sources, keys = [], []
+        for layer in self.files:
+            mine = {name: _jsonable(value) for name, value in layer.values.items()
+                    if KEYS[name].recorded}
+            if mine:
+                sources.append({"path": str(layer.path), "sha256": layer.sha256,
+                                "layer": layer.label, "settings": mine})
+                keys += [name for name in mine if name not in keys]
+        if not sources:
             return None
-        recorded = [name for name, key in KEYS.items() if key.recorded]
-        return {"schema": PROVENANCE_SCHEMA,
-                "sources": [{"path": str(layer.path), "sha256": layer.sha256,
-                             "layer": layer.label} for layer in self.files],
-                "resolved": {name: _jsonable(self.get(name)) for name in recorded},
-                "origins": {name: self.origin(name) for name in recorded}}
+        keys = [name for name in KEYS if name in keys]
+        return {"schema": PROVENANCE_SCHEMA, "sources": sources,
+                "resolved": {name: _jsonable(self.get(name)) for name in keys},
+                "origins": {name: self.origin(name) for name in keys}}
 
 
 def _jsonable(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: _jsonable(item) for key, item in value.items()}
     return list(value) if isinstance(value, tuple) else value
 
 
@@ -497,19 +511,37 @@ def resolve(cli: dict[str, Any] | None = None, *, flags: dict[str, str] | None =
 # --------------------------------------------------------------------------- the process's
 
 _ACTIVE: list[Settings] = []
-_EXPORTED: list[str] = []
-STORE_ENV = "MDB_SHARED_TENSOR_STORE"   # what saturn_pub.shared_store reads
+_STORE_SET: list[bool] = []   # this module named the saturn_pub shared store
+
+
+def _apply_store(root: str | None) -> None:
+    """Hand ``storage.shared_tensor_store`` to saturn_pub (``set_shared_store``); with no
+    store, clear one this module set before (the environment and ``.mdb-storage.json`` then
+    apply as saturn_pub reads them)."""
+    if root is None and not _STORE_SET:
+        return
+    from saturn_pub import shared_store
+
+    setter = getattr(shared_store, "set_shared_store", None)
+    if setter is None:
+        if root is None:
+            return
+        raise ConfigError("storage.shared_tensor_store needs a saturn-pub with "
+                          "shared_store.set_shared_store (install saturn-pub from the same "
+                          "checkout as mdb)")
+    try:
+        setter(root)
+    except ValueError as error:
+        raise ConfigError(f"storage.shared_tensor_store = {root!r}: {error}") from None
+    _STORE_SET[:] = [True] if root is not None else []
 
 
 def activate(settings: Settings) -> Settings:
-    """Make ``settings`` this process's (custody, sinks, model lookup and SAE sources read it).
-    A shared tensor store from a config file is exported as ``MDB_SHARED_TENSOR_STORE`` (what
-    ``saturn_pub`` reads) unless that is already set."""
-    _ACTIVE[:] = [settings]
+    """Make ``settings`` this process's (custody, sinks, model lookup, the Python entry points'
+    defaults, SAE sources and the shared tensor store read it)."""
     store = settings.get("storage.shared_tensor_store")
-    if store and not os.environ.get(STORE_ENV):
-        os.environ[STORE_ENV] = str(store)
-        _EXPORTED.append(STORE_ENV)
+    _apply_store(None if store is None else str(Path(store).expanduser().absolute()))
+    _ACTIVE[:] = [settings]
     return settings
 
 
@@ -518,6 +550,11 @@ def current() -> Settings:
     if not _ACTIVE:
         activate(resolve())
     return _ACTIVE[0]
+
+
+def value(name: str, given: Any = None) -> Any:
+    """``given`` when not None (an explicit argument wins), else the resolved setting."""
+    return given if given is not None else current().get(name)
 
 
 def refresh() -> Settings:
@@ -530,10 +567,9 @@ def refresh() -> Settings:
 
 
 def reset() -> None:
-    """Forget the process's settings and undo the store export (tests)."""
+    """Forget the process's settings and clear a store this module set (tests)."""
     _ACTIVE.clear()
-    while _EXPORTED:
-        os.environ.pop(_EXPORTED.pop(), None)
+    _apply_store(None)
 
 
 def legacy_storage_file(start: str | Path) -> Path | None:
@@ -550,4 +586,4 @@ def legacy_storage_file(start: str | Path) -> Path | None:
 __all__ = ["ConfigError", "DEFAULT_DEVICE", "DEFAULT_DTYPE", "DEFAULT_HOST", "DEFAULT_PORT",
            "DEFAULT_SEED", "DTYPES", "KEYS", "Key", "REFUSED", "SCHEMA", "Settings",
            "TINY_FAMILIES", "activate", "current", "find_project_file", "refresh", "reset",
-           "resolve", "user_file"]
+           "resolve", "user_file", "value"]

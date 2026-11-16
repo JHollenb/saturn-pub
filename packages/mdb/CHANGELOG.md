@@ -5,10 +5,13 @@ All notable changes to `mdb-runtime` (packages/mdb). The version number is set b
 ## [Unreleased]
 
 Config files. With no config file, nothing changes: `examples/00-hello-tiny` prints the same
-record id (`d0c1d6c733c4bfa1` with torch 2.13 and transformers 5.13.1). When a config file is
-loaded, every record carries custody that names the file and its sha256, so records sealed with
-a config file present have different ids from records sealed without one. That is intended: the
-record says what ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
+record id (`d0c1d6c733c4bfa1` with torch 2.13 and transformers 5.13.1), and so does a config
+file that holds only locations (serve, repl, sink, project directory, storage). When a loaded
+file sets a key that reaches a record (model roots, aliases, dtype, device, session, kernel path,
+SAE sources), every record carries custody that names the file, its sha256 and those keys, so
+its id differs from the same record sealed without the file (hello-tiny with only
+`[model] dtype = "bf16"` in a file: `6bad22acbe76b92b`). That is intended: the record says what
+ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
 
 ### Added
 
@@ -24,8 +27,15 @@ record says what ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
   in a config file, with the reason and the per-call way to pass them.
 - `mdb config show | explain KEY | init [--project DIR] | check`. `explain` lists every source
   that sets a key, highest first, and marks the one that wins.
-- Custody records a `config` block (`sources` with path and sha256, `resolved` dtype, device
-  and kernel path, and `origins`) whenever a config file was loaded.
+- Custody records a `config` block when a loaded file sets a recorded key: each such file's path,
+  sha256 and recorded keys, and the resolved value and origin of each.
+- Python entry points read the config for arguments left as None, with the same precedence:
+  `load_local` (dtype, device; a name or alias as `path`), `tiny_model` (dtype), `open_tiny`,
+  `attach` (project dir and session; `project=False` for none), `custody.declare`
+  (kernel_path), `custody.records_to` and `Debugger.records_to` (sink, append, payloads).
+- saturn-pub: `shared_store.set_shared_store(root)` names the shared tensor pool explicitly
+  (before `MDB_SHARED_TENSOR_STORE` and `.mdb-storage.json`); `shared_store_root()` reads it.
+  mdb passes `[storage] shared_tensor_store` through it and does not change the environment.
 - `mdb engine --session NAME`, `--records PATH`, `--records-append`, `--no-payloads`,
   `--kernel-path NAME`, `--prereg FILE`, `--init FILE`, `--no-init`; `mdb serve --session`.
   `mdb serve --project` is optional when `[project] dir` is set.
@@ -62,6 +72,9 @@ record says what ran. Details: [docs/CONFIG.md](docs/CONFIG.md).
   and `mdb serve`. It used to default to fp32, so the same checkpoint opened in a different
   numeric scope and session. `--tiny` lanes decoders stay CPU fp32, which is the only dtype
   they build.
+- The Python defaults of `load_local`, `tiny_model`, `open_tiny`, `attach`, `records_to` and
+  `custody.declare` are now None, meaning the configured value; with no config the result is the
+  same as before (bf16, cpu, no project, `./records-<run>.jsonl`, `undeclared`).
 - `sae load`: `cache` and `verify` have no registry default (they still default to 4 and false
   when loading), so that a configured source's values apply unless given on the command line.
 

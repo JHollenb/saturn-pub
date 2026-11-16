@@ -31,7 +31,7 @@ from concurrent.futures import Future
 from dataclasses import dataclass
 from typing import Any
 
-from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED
+from mdb.core.settings import DEFAULT_SEED
 
 QUEUE_LIMIT = 32
 SUBSCRIBER_LIMIT = 256
@@ -381,12 +381,13 @@ def _offer(events: asyncio.Queue, event: dict[str, Any]) -> None:
 
 
 def open_debugger(project, *, tiny: str | None = None, model: str | None = None,
-                  dtype: str = DEFAULT_DTYPE, device: str = DEFAULT_DEVICE,
+                  dtype: str | None = None, device: str | None = None,
                   seed: int = DEFAULT_SEED, session: str | None = None):
     """The debugger of ``mdb serve --tiny FAMILY | --model PATH|NAME``, attached with
     ``project`` so its checkpoints are durable. ``model`` is resolved by ``locate_model`` (a
     directory, a cached name or a configured alias; never downloads); its tokenizer is loaded
-    when the directory has one. ``device`` applies to tiny models too."""
+    when the directory has one. ``device`` applies to tiny models too; ``dtype``/``device``
+    None take the configured values."""
     from mdb.core.locate import locate_model
     from mdb.ops.debugger import attach, open_tiny
 

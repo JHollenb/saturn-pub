@@ -9,7 +9,8 @@ from typing import Any
 
 import torch
 
-from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED, TINY_FAMILIES
+from mdb.core import settings
+from mdb.core.settings import DEFAULT_SEED, TINY_FAMILIES
 from mdb.core.settings import DTYPES as DTYPE_NAMES
 
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
@@ -40,7 +41,7 @@ def cast_weights(model: Any, dtype: torch.dtype) -> Any:
 
 def tiny_model(
     family: str,
-    dtype: Any = DEFAULT_DTYPE,
+    dtype: Any = None,
     *,
     layers: int = 2,
     seed: int = DEFAULT_SEED,
@@ -53,8 +54,10 @@ def tiny_model(
     produced for the same seed. ``llama``: hidden 32, 4 heads, 2 KV heads, head_dim 8, ff 64, no
     attention or MLP bias. ``mistral``: hidden 32, 4 heads, 1 KV head (MQA), head_dim 8, ff 64,
     a 128-position sliding window (the windowed mask path, as in Mistral-7B-v0.1).
+
+    ``dtype`` None: the configured ``[model] dtype`` (default bf16; ``mdb.core.settings``).
     """
-    target = _dtype(dtype)
+    target = _dtype(settings.value("model.dtype", dtype))
     if family == "qwen2":
         from transformers import Qwen2Config, Qwen2ForCausalLM
 
@@ -124,12 +127,21 @@ def tiny_model(
     raise ValueError(f"tiny family must be one of {', '.join(TINY_FAMILIES)}")
 
 
-def load_local(path: str, *, dtype: Any = DEFAULT_DTYPE, device: Any = DEFAULT_DEVICE) -> Any:
+def load_local(path: str, *, dtype: Any = None, device: Any = None) -> Any:
     """Load a local Hugging Face causal LM checkpoint with eager attention, in eval mode.
 
-    Offline only (``local_files_only=True``); never downloads.
+    ``path`` is a checkpoint directory, or a name ``mdb.core.locate.locate_model`` resolves
+    (cached model, configured root or alias). ``dtype``/``device`` None: the configured
+    ``[model] dtype``/``device`` (defaults bf16, cpu). Offline only (``local_files_only=True``);
+    never downloads.
     """
     from transformers import AutoModelForCausalLM
+
+    from mdb.core.locate import locate_model
+
+    path = locate_model(str(path))
+    dtype = settings.value("model.dtype", dtype)
+    device = settings.value("model.device", device)
 
     # The dtype is given to the loader and the module is then moved by device only:
     # ``module.to(dtype=...)`` also casts buffers, and a bf16 copy of RoPE's float32

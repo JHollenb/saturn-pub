@@ -47,7 +47,7 @@ from mdb.core.address import (
 )
 from mdb.core.errors import Refused
 from mdb.core.pointers import RecordError, Unresolved, occurrence_pointer
-from mdb.core.settings import DEFAULT_DEVICE, DEFAULT_DTYPE, DEFAULT_SEED
+from mdb.core.settings import DEFAULT_SEED
 from mdb.engine.edits import CELL_AXES
 from mdb.engine.ports import PROGRAMS, config_refusal, program_for, tensor_digest
 from mdb.engine.run import ReplayMismatch, Run
@@ -513,12 +513,14 @@ class Debugger:
         return custody.declare(script=script, prereg=prereg, kernel_path=kernel_path, note=note)
 
     @staticmethod
-    def records_to(path: Any = None, *, append: bool = False, payloads: bool = True) -> Any:
+    def records_to(path: Any = None, *, append: bool | None = None,
+                   payloads: bool | None = None) -> Any:
         """Append every record sealed from now on to ``path`` (JSONL; ``core.custody.Sink``):
         records persist with no project attached. No path, a directory (existing, a trailing
         ``/``, or a suffix-less name) or ``{run}`` in the name gives a unique per-process/job file; an existing file another run wrote needs
         ``append=True``. Pointer payloads with no store (compact ``Branches`` arms) are written
-        to the sink too (``Sink.load_json``)."""
+        to the sink too (``Sink.load_json``). Arguments left as None take ``[records]`` of the
+        config (``core.custody.records_to``)."""
         from mdb.core import custody
 
         return custody.records_to(path, append=append, payloads=payloads)
@@ -708,6 +710,10 @@ def attach(
     project is created or reopened and the session ``session`` is opened, bound to the model
     identity and execution. The default session id is the family plus a digest of both, so a
     later process attaching the same model under the same numeric scope reopens it.
+
+    ``project`` None: the configured ``[project] dir`` (``mdb.core.settings``), if any;
+    ``project=False``: no project whatever the config says. ``session`` None: the configured
+    ``[project] session`` when a project is attached (``auto`` = the default id).
     """
     config = getattr(model, "config", None)
     if config is None or not hasattr(model, "parameters"):
@@ -748,7 +754,13 @@ def attach(
 
     from mdb.core import settings
 
-    settings.current()   # config errors surface here; a configured tensor store is exported
+    if project is False:
+        project = None
+    elif project is None:
+        project = settings.value("project.dir")
+    if project is not None and session is None:
+        configured = settings.value("project.session")
+        session = None if configured == "auto" else configured
     try:
         adapter = DecoderAdapter(model, granularity="operation")
     except ValueError as error:
@@ -787,18 +799,21 @@ def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: st
     return Debugger(model, tokenizer, adapter, project=opened, session_id=session)
 
 
-def open_tiny(family: str = "qwen2", dtype: str = DEFAULT_DTYPE, *, seed: int = DEFAULT_SEED,
+def open_tiny(family: str = "qwen2", dtype: str | None = None, *, seed: int = DEFAULT_SEED,
               project: Any = None, session: str | None = None,
-              device: str = DEFAULT_DEVICE) -> Debugger:
+              device: str | None = None) -> Debugger:
     """A random tiny eager model (no tokenizer) for demos and tests, built on the CPU and moved
-    to ``device`` (the device is recorded in every record's execution)."""
+    to ``device`` (the device is recorded in every record's execution). ``dtype``, ``device``,
+    ``project`` and ``session`` left as None take the configured values (``attach``)."""
     return attach(_tiny(family, dtype, seed, device), project=project, session=session)
 
 
-def _tiny(family: str, dtype: str, seed: int, device: str = DEFAULT_DEVICE) -> Any:
+def _tiny(family: str, dtype: str | None, seed: int, device: str | None = None) -> Any:
+    from mdb.core import settings
     from mdb.engine.models import tiny_model
 
-    model = tiny_model(family, dtype, seed=seed)
+    device = settings.value("model.device", device)
+    model = tiny_model(family, settings.value("model.dtype", dtype), seed=seed)
     if str(device) != "cpu":
         import torch
 

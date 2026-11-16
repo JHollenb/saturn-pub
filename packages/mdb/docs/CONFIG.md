@@ -25,7 +25,19 @@ Highest precedence first:
 
 Each setting is resolved on its own: a project file that sets only `[model] dtype` leaves every other setting to the user file and the defaults. In a config file, relative paths are relative to the file's directory, and `~` is expanded. On the command line and in the environment, relative paths are relative to the working directory.
 
-`mdb engine`, `mdb serve`, `python -m mdb.engine.selfcheck` and `mdb config` resolve settings when they start. In Python, the settings are resolved the first time mdb needs one: when a record is sealed (custody and sink), when a model name is looked up (`mdb.core.locate.locate_model`), when `sae load NAME` names a configured source, and in `attach`. The model-loading functions (`load_local`, `tiny_model`, `open_tiny`, `attach`) keep their keyword defaults (`dtype="bf16"`, `device="cpu"`): a config file never changes what a Python call loads.
+`mdb engine`, `mdb serve`, `python -m mdb.engine.selfcheck` and `mdb config` resolve settings when they start. Python code uses the same settings, with the same precedence, the first time mdb needs one. An argument you pass always wins. An argument you leave out (`None`) takes the configured value:
+
+| Python call | Settings it reads when the argument is left out |
+|---|---|
+| `mdb.engine.models.load_local(path, dtype=, device=)` | `model.dtype`, `model.device`; `path` may be a name, root model or alias (`model.roots`, `model.aliases`) |
+| `mdb.engine.models.tiny_model(family, dtype=)` | `model.dtype` |
+| `mdb.open_tiny(family, dtype=, device=, project=, session=)` | `model.dtype`, `model.device`, and `attach`'s settings |
+| `mdb.attach(model, tokenizer, project=, session=)` | `project.dir`; `project.session` when a project is attached. `project=False` attaches no project whatever the config says. |
+| `custody.declare(kernel_path=)`, `dbg.custody(kernel_path=)` | `custody.kernel_path` |
+| `custody.records_to(path, append=, payloads=)`, `dbg.records_to(...)` | `records.sink`, `records.append`, `records.payloads` |
+| `sae load NAME` (REPL and op) | `sae.sources` |
+
+Other functions are unchanged. The `kernel_path` of `Branches` and `forecast.verify` names the kernel that measured the arms, which is different from the custody label, so it is never read from a config file.
 
 ## Example
 
@@ -85,7 +97,7 @@ The same tables can live in `pyproject.toml` as `[tool.mdb.model]`, `[tool.mdb.r
 | `repl.init` | path | none | `MDB_REPL_INIT` | Command file run before the start line, `--script` and the prompt (like `.gdbinit`). `--init FILE` overrides it and `--no-init` skips it. No file is read unless one is configured. |
 | `repl.history` | path | none | `MDB_REPL_HISTORY` | File that keeps interactive command history. |
 | `repl.defaults` | table `OP.ARG = value` | `{}` | none | Display and budget defaults for REPL commands, used when a command line does not give the argument. Only these arguments may be set: `print.top`, `print.slice`, `x.count`, the `budget` of `step`, `continue`, `until`, `advance`, `reverse-step` and `run`, `info.limit`, `checkpoints.limit`, `symbols.limit` and `sweep.max_calls`. `mdb config check` validates names and values. |
-| `storage.shared_tensor_store` | path | none | `MDB_STORAGE_SHARED_TENSOR_STORE`; older `MDB_SHARED_TENSOR_STORE` | Shared tensor pool. It must be on the same filesystem as the projects that use it. mdb passes it on as `MDB_SHARED_TENSOR_STORE` (what `saturn_pub` reads) unless that is already set. |
+| `storage.shared_tensor_store` | path | none | `MDB_STORAGE_SHARED_TENSOR_STORE`; older `MDB_SHARED_TENSOR_STORE` | Shared tensor pool. It must be on the same filesystem as the projects that use it. mdb hands the resolved value to `saturn_pub.shared_store.set_shared_store`, so the environment is not changed. |
 | `sae.sources` | table | `{}` | none | Named SAE suites: `NAME = { path, layers, k, port, cache, verify, layer }`. Only `path` is required. In the REPL, `sae load NAME` with no path loads one, and arguments on the command line override the entry. |
 
 `mdb config explain KEY` also lists the environment variables of a key. Boolean variables accept `1`, `true`, `yes`, `on` and `0`, `false`, `no`, `off`. An older variable name works exactly like the current one. If both are set to different values, mdb stops with an error.
@@ -94,7 +106,7 @@ The same tables can live in `pyproject.toml` as `[tool.mdb.model]`, `[tool.mdb.r
 
 ### `.mdb-storage.json`
 
-Before `[storage]`, a shared tensor store was configured by a `.mdb-storage.json` file in a parent directory of the project. saturn-pub still reads that file. It is deprecated: `mdb config check` and `mdb config explain storage.shared_tensor_store` report when one is in use. Order: `MDB_SHARED_TENSOR_STORE`, then `[storage] shared_tensor_store`, then the nearest `.mdb-storage.json`.
+Before `[storage]`, a shared tensor store was configured by a `.mdb-storage.json` file in a parent directory of the project. saturn-pub still reads that file. It is deprecated: `mdb config check` and `mdb config explain storage.shared_tensor_store` report when one is in use. Order: `MDB_STORAGE_SHARED_TENSOR_STORE` or `MDB_SHARED_TENSOR_STORE`, then `[storage] shared_tensor_store`, then the nearest `.mdb-storage.json`. Outside mdb, saturn-pub uses an explicit `set_shared_store(root)` first, then `MDB_SHARED_TENSOR_STORE`, then the file.
 
 ## What a config file may not set
 
@@ -117,20 +129,21 @@ Whoever opens a record sees the arguments of the script that custody hashed, but
 
 ## Provenance: what a record says about config
 
-With no config file, records are sealed exactly as before, and their ids do not change.
+Some settings reach a record: they decide which model, numeric scope, session, SAE basis or custody label a record is about. These are `model.roots`, `model.aliases`, `model.dtype`, `model.device`, `project.session`, `custody.kernel_path` and `sae.sources`. The others are locations and display defaults: serve, repl, the records sink, the project directory and storage.
 
-When any config file was loaded, every sealed record carries custody, and the custody block has a `config` entry:
+With no config file, or with config files that set none of the recorded keys, records are sealed exactly as before and their ids do not change. When a loaded file sets a recorded key, every sealed record carries custody, and the custody block has a `config` entry:
 
 ```json
 "config": {
   "schema": "mdb-config-provenance-v1",
-  "sources": [{"path": "/home/me/.config/mdb/config.toml", "sha256": "7900e0...", "layer": "user"}],
-  "resolved": {"model.dtype": "bf16", "model.device": "cpu", "custody.kernel_path": null},
-  "origins": {"model.dtype": "user file /home/me/.config/mdb/config.toml", "model.device": "default", "custody.kernel_path": "default"}
+  "sources": [{"path": "/home/me/.config/mdb/config.toml", "sha256": "7900e0...", "layer": "user",
+               "settings": {"model.dtype": "bf16"}}],
+  "resolved": {"model.dtype": "bf16"},
+  "origins": {"model.dtype": "user file /home/me/.config/mdb/config.toml"}
 }
 ```
 
-`sources` names every file and hashes its bytes. `resolved` holds the settings that reach a record (dtype, device, kernel path) and `origins` says which layer supplied each one. Locations (sink, project, host, port, roots) are not listed: they do not change what was computed. Because custody is part of the record body, a record sealed with a config file present has a different id from the same record sealed without one. When custody was not declared, the block names the `__main__` script, as for branches and pools.
+`sources` lists each file that sets a recorded key, with its path, the sha256 of its bytes and the recorded keys it sets. `resolved` and `origins` give the value that won for each of those keys and where it came from. A flag or variable may override a file's value. Because custody is part of the record body, such a record has a different id from the same record sealed without the file. Measured with torch 2.13 and transformers 5.13.1: `examples/00-hello-tiny` prints `record d0c1d6c733c4bfa1` with no config file and with a file holding only `[serve] port`, and `record 6bad22acbe76b92b` with a file holding only `[model] dtype = "bf16"` (same model, custody added). When custody was not declared, the block names the `__main__` script, as for branches and pools.
 
 ## Command-line flags
 

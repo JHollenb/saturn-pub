@@ -119,7 +119,9 @@ Defaults such as `--dtype`, `--device`, `--project`, model directories and alias
 sink and a REPL init file can live in `~/.config/mdb/config.toml` or a project's `mdb.toml`
 (`mdb config init`, `mdb config show`). Settings that change a verdict (floors, `lookahead`,
 `prefill`, `retain_rows`, branch options) are refused there and stay in the command. When a
-config file is loaded, every record names it and its sha256. See [docs/CONFIG.md](docs/CONFIG.md).
+config file sets a setting that reaches a record (model, dtype, device, session, kernel path,
+SAE sources), every record names the file and its sha256. Python calls (`open_tiny`, `attach`,
+`load_local`, `records_to`) read the same settings for arguments you leave out. See [docs/CONFIG.md](docs/CONFIG.md).
 
 ## Coming from TransformerLens or nnsight
 

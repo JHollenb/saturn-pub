@@ -274,3 +274,77 @@ def test_one_copy_of_each_list():
     assert settings.DTYPES == tuple(models.DTYPES)
     assert settings.TINY_FAMILIES == models.TINY_FAMILIES
     assert builtin.LOOKAHEADS == run.LOOKAHEADS
+
+
+# ------------------------------------------------------------------ Python entry points
+
+
+def test_python_entry_points_honour_the_config_and_explicit_arguments_win(here):
+    from mdb.engine.models import load_local, tiny_model
+    from mdb.ops.debugger import attach, open_tiny
+
+    checkpoint = here / "ckpt"
+    tiny_model("qwen2", "bf16").save_pretrained(checkpoint)
+    _write(here / "mdb.toml", f'''[model]
+dtype = "fp32"
+aliases = {{ mine = "{checkpoint}" }}
+[project]
+dir = "proj"
+session = "py-session"
+[custody]
+kernel_path = "stepped"
+[records]
+sink = "sinks/py.jsonl"
+payloads = false
+''')
+    settings.reset()
+    dtype = lambda model: next(model.parameters()).dtype  # noqa: E731
+    assert dtype(tiny_model("qwen2")) == torch.float32
+    assert dtype(tiny_model("qwen2", "bf16")) == torch.bfloat16
+    assert dtype(load_local("mine")) == torch.float32                   # alias + config dtype
+    assert dtype(load_local(checkpoint, dtype="bf16")) == torch.bfloat16
+    debugger = open_tiny("qwen2")
+    assert dtype(debugger.model) == torch.float32
+    assert debugger.project is not None and debugger.session_id == "py-session"
+    assert (here / "proj").resolve() == Path(debugger.project.root).resolve()
+    other = open_tiny("qwen2", "bf16", project=False)                   # explicit: no project
+    assert dtype(other.model) == torch.bfloat16 and other.project is None
+    named = attach(tiny_model("qwen3"), project=here / "elsewhere", session="mine")
+    assert named.session_id == "mine"
+    assert custody.declare()["kernel_path"] == "stepped"
+    assert custody.declare(kernel_path="batched")["kernel_path"] == "batched"
+    sink = debugger.records_to()
+    assert sink.path == (here / "sinks" / "py.jsonl").resolve() and not sink.payloads_on
+    explicit = debugger.records_to(here / "own.jsonl", payloads=True)
+    assert explicit.path == (here / "own.jsonl").absolute() and explicit.payloads_on
+
+
+def _hello(env_extra, tmp):
+    import os
+    import re
+    import subprocess
+    import sys
+
+    example = Path(__file__).resolve().parents[1] / "examples" / "00-hello-tiny" / "hello_tiny.py"
+    src = Path(__file__).resolve().parents[1] / "src"
+    env = {k: v for k, v in os.environ.items() if not k.startswith("MDB_")}
+    tmp.mkdir(parents=True, exist_ok=True)
+    env.update(PYTHONPATH=os.pathsep.join([str(src), str(src.parents[2] / "src")]),
+               XDG_CONFIG_HOME=str(tmp), PYTHONDONTWRITEBYTECODE="1", **env_extra)
+    done = subprocess.run([sys.executable, str(example)], capture_output=True, text=True,
+                          env=env, cwd=tmp, timeout=300)
+    assert done.returncode == 0, done.stderr[-2000:]
+    return re.findall(r"record ([0-9a-f]{16})", done.stdout)
+
+
+def test_hello_tiny_id_unchanged_by_a_locations_file_and_changed_by_a_recorded_key(tmp_path):
+    """Measured in the development venv: d0c1d6c733c4bfa1 (torch 2.13, transformers 5.13.1)
+    with no config and with a serve-only file; the id depends on library versions, so the test
+    compares runs rather than the literal."""
+    plain = _hello({}, tmp_path / "none")
+    serve_only = _write(tmp_path / "serve.toml", "[serve]\nport = 9000\n[repl]\nhistory = 'h'\n")
+    located = _hello({"MDB_CONFIG": str(serve_only)}, tmp_path / "serve")
+    dtype_file = _write(tmp_path / "dtype.toml", '[model]\ndtype = "bf16"\n')
+    recorded = _hello({"MDB_CONFIG": str(dtype_file)}, tmp_path / "dtype")
+    assert plain and located == plain
+    assert recorded and recorded != plain               # same model, custody block added

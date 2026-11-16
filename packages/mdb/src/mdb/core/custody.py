@@ -44,10 +44,12 @@ record sink is ``records.sink`` (``MDB_RECORDS_SINK``, the older ``MDB_RECORDS``
 file; same naming rules) with ``records.append`` and ``records.payloads``. The sink is opened on
 first use even when custody was declared in code first.
 
-Config files: when any was loaded (``settings.current().provenance()``), every record carries
-custody, and the block has ``config`` = ``{schema, sources: [{path, sha256, layer}], resolved,
-origins}``: the files' bytes and the resolved values of the settings that reach a record. With
-no config file, nothing changes (record ids are as before).
+Config files: when a loaded file sets a key that reaches a record
+(``settings.current().provenance()``), every record carries custody, and the block has
+``config`` = ``{schema, sources: [{path, sha256, layer, settings}], resolved, origins}``. With
+no such file (none, or locations only), nothing changes (record ids are as before).
+``declare(kernel_path=None)`` and ``records_to(path=None, append=None, payloads=None)`` take the
+configured values for arguments left as None.
 """
 
 from __future__ import annotations
@@ -116,8 +118,11 @@ def _main_script() -> str | None:
 def declare(*, script: str | Path | None = None, prereg: str | Path | None = None,
             kernel_path: str | None = None, note: str | None = None) -> dict[str, Any]:
     """Declare custody for every record sealed from now on (returns the custody block).
-    ``script`` defaults to the ``__main__`` file when there is one."""
+    ``script`` defaults to the ``__main__`` file when there is one; ``kernel_path`` to the
+    configured ``[custody] kernel_path`` (``mdb.core.settings``), else ``undeclared``."""
     script = script if script is not None else _main_script()
+    if kernel_path is None:
+        kernel_path = _settings().current().get("custody.kernel_path")
     block: dict[str, Any] = {"schema": SCHEMA, "script": None, "script_sha256": None,
                              "prereg": None, "prereg_sha256": None,
                              "kernel_path": kernel_path or "undeclared",
@@ -384,15 +389,22 @@ def sink_path(path: str | Path | None = None) -> Path:
     return as_path
 
 
-def records_to(path: str | Path | None = None, *, append: bool = False,
-               payloads: bool = True) -> Sink:
+def records_to(path: str | Path | None = None, *, append: bool | None = None,
+               payloads: bool | None = None) -> Sink:
     """Open a sink: every record sealed from now on is appended to ``sink_path(path)``.
 
     A file that already holds data and that this process did not open is refused unless
     ``append=True`` (two shards writing one name lose records when collected); use a directory,
     ``{run}`` or no path for a unique per-process name. ``payloads=False`` keeps the file to
     records only (no ``mdb_payload`` lines). Calling it again for a path that already has an open
-    sink returns that sink (so re-running a notebook cell does not write every record twice)."""
+    sink returns that sink (so re-running a notebook cell does not write every record twice).
+
+    Arguments left as None take the configured ``[records]`` ``sink``, ``append`` and
+    ``payloads`` (``mdb.core.settings``; with no sink configured, ``./records-<run>.jsonl``)."""
+    resolved = _settings().current()
+    path = path if path is not None else resolved.get("records.sink")
+    append = bool(append if append is not None else resolved.get("records.append"))
+    payloads = bool(payloads if payloads is not None else resolved.get("records.payloads"))
     target = sink_path(path).absolute()
     key = str(target)
     if (not append and key not in _OWNED and target.is_file()

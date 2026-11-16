@@ -251,9 +251,9 @@ def test_environment_values_are_typed(place):
 # ------------------------------------------------------------------ storage
 
 
-def test_storage_setting_is_exported_for_saturn_pub_and_the_old_file_still_reads(place,
-                                                                                 monkeypatch):
-    from saturn_pub.shared_store import configure, configured_store
+def test_storage_setting_is_passed_to_saturn_pub_without_touching_the_environment(place,
+                                                                                    monkeypatch):
+    from saturn_pub.shared_store import configure, configured_store, shared_store_root
 
     pool = place["tmp"] / "pool"
     pool.mkdir()
@@ -261,18 +261,20 @@ def test_storage_setting_is_exported_for_saturn_pub_and_the_old_file_still_reads
     configure(scope, place["tmp"] / "legacy-pool")                 # the old .mdb-storage.json
     assert settings.legacy_storage_file(scope / "a" / "b") == scope / ".mdb-storage.json"
     assert configured_store(scope / "x.npy").root == (place["tmp"] / "legacy-pool").resolve()
-    monkeypatch.delenv(settings.STORE_ENV, raising=False)
     named = _write(place["tmp"] / "c.toml", f'[storage]\nshared_tensor_store = "{pool}"\n')
     monkeypatch.setenv("MDB_CONFIG", str(named))
+    before = dict(os.environ)
     settings.reset()
     settings.current()
-    assert os.environ[settings.STORE_ENV] == str(pool)
+    assert dict(os.environ) == before                              # no environment mutation
+    assert shared_store_root() == pool
     assert configured_store(scope / "x.npy").root == pool.resolve()   # config over the old file
-    settings.reset()                                                   # the export is undone
-    assert settings.STORE_ENV not in os.environ
-    monkeypatch.setenv(settings.STORE_ENV, "/elsewhere")              # the environment wins
+    settings.reset()                                                   # cleared again
+    assert shared_store_root() is None
+    monkeypatch.setenv("MDB_SHARED_TENSOR_STORE", "/elsewhere")       # the environment wins
     settings.current()
-    assert os.environ[settings.STORE_ENV] == "/elsewhere"
+    assert shared_store_root() == Path("/elsewhere")
+    assert "older name" in settings.current().origin("storage.shared_tensor_store")
 
 
 # ------------------------------------------------------------------ custody provenance
@@ -314,18 +316,52 @@ def test_no_config_file_leaves_records_unchanged_and_a_file_is_recorded(place, m
     assert held["id"] != plain["id"]
     assert block["kernel_path"] == "stepped"
     config = block["config"]
-    assert config["sources"] == [{"path": str(path.resolve()), "layer": "MDB_CONFIG",
-                                  "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}]
-    assert config["resolved"] == {"model.dtype": "fp32", "model.device": "cpu",
-                                  "custody.kernel_path": "stepped"}
+    assert config["sources"] == [{
+        "path": str(path.resolve()), "layer": "MDB_CONFIG",
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "settings": {"model.dtype": "fp32", "custody.kernel_path": "stepped"}}]
+    assert config["resolved"] == {"model.dtype": "fp32", "custody.kernel_path": "stepped"}
     assert config["origins"]["model.dtype"].startswith("MDB_CONFIG file")
-    assert "serve.port" not in config["resolved"]           # locations never reach a record
     monkeypatch.delenv("MDB_CONFIG")
     custody._STATE["env_read"] = False
     custody.clear()
     custody._STATE["env_read"] = False
     again = _seal()
     assert again["id"] == plain["id"] and "custody" not in again["body"]
+
+
+@pytest.mark.parametrize("text", [
+    '[serve]\nport = 9000\nallow_hosts = ["mdb.lan"]\n',
+    '[repl]\nhistory = "h"\ndefaults = { print = { top = 8 } }\n',
+    '[records]\npayloads = false\nappend = true\n',
+    '[project]\ndir = "runs/x"\n',
+])
+def test_a_file_of_locations_only_leaves_ids_unchanged(place, monkeypatch, fresh_custody, text):
+    plain = _seal()
+    path = _write(place["tmp"] / "c.toml", text)
+    monkeypatch.setenv("MDB_CONFIG", str(path))
+    custody._STATE["env_read"] = False
+    held = _seal()
+    assert settings.current().files and settings.current().provenance() is None
+    assert "custody" not in held["body"] and held["id"] == plain["id"]
+
+
+def test_every_recorded_key_is_listed_by_the_file_that_sets_it(place, monkeypatch):
+    (place["tmp"] / "m").mkdir()
+    _write(place["user"], '[model]\ndevice = "cpu"\n[serve]\nport = 9000\n')
+    named = _write(place["tmp"] / "c.toml", '[model]\nroots = ["m"]\naliases = { a = "b" }\n'
+                   '[project]\nsession = "s1"\n[sae]\nsources = { l = { path = "p" } }\n')
+    _write(place["work"] / "mdb.toml", '[repl]\nhistory = "h"\n')     # no recorded key
+    got = resolve({"model.device": "meta"}, env=_env(place, MDB_CONFIG=str(named)),
+                  cwd=place["work"]).provenance()
+    assert [(s["layer"], sorted(s["settings"])) for s in got["sources"]] == [
+        ("MDB_CONFIG", ["model.aliases", "model.roots", "project.session", "sae.sources"]),
+        ("user", ["model.device"])]
+    assert got["resolved"]["model.device"] == "meta"                    # the flag won
+    assert got["origins"]["model.device"] == "command line model.device"
+    assert got["resolved"]["model.roots"] == [str((place["tmp"] / "m").resolve())]
+    assert set(got["resolved"]) == {"model.roots", "model.aliases", "model.device",
+                                    "project.session", "sae.sources"}
 
 
 def test_configured_sink_opens_even_when_custody_is_declared_in_code_first(place, monkeypatch,
