@@ -382,3 +382,155 @@ def test_a_sink_with_a_tampered_execution_line_is_refused(tmp_path):
     sink.path.write_text(lines[1] + "\n")                      # the profile line is missing
     with pytest.raises(RecordError, match="no execution profile"):
         sink.records()
+
+
+# --------------------------------------------------------------------------- audit fixes
+
+def _sink_dir(tmp_path):
+    """good.jsonl, tampered.jsonl (last record's schema and body changed), truncated.jsonl."""
+    for name in ("good", "tampered", "truncated"):
+        with custody.records_to(tmp_path / f"{name}.jsonl"):
+            _seal(session="a")
+            _seal(session="b")
+    lines = (tmp_path / "tampered.jsonl").read_text().splitlines()
+    bad = json.loads(lines[-1])
+    bad["schema"] = "mdb-record-v9"
+    bad["body"]["grid"] = "x"
+    (tmp_path / "tampered.jsonl").write_text("\n".join(lines[:-1] + [json.dumps(bad)]) + "\n")
+    text = (tmp_path / "truncated.jsonl").read_text()
+    (tmp_path / "truncated.jsonl").write_text(text[:-40] + "\n")
+
+
+def test_verify_fails_closed_on_tampered_and_truncated_files(tmp_path, capsys):
+    from mdb.cli import main
+
+    _sink_dir(tmp_path)
+    for name in ("tampered", "truncated"):
+        assert main(["records", "verify", str(tmp_path / f"{name}.jsonl")]) == 1
+    capsys.readouterr()
+    assert main(["records", "verify", str(tmp_path / "good.jsonl")]) == 0
+    assert main(["records", "verify", str(tmp_path)]) == 1                 # mixed directory
+    out = capsys.readouterr()
+    assert "tampered.jsonl: refused" in out.err and "truncated.jsonl: refused" in out.err
+    assert "good.jsonl: 2 records verified" in out.out
+    with pytest.raises(RecordError):
+        M.verify_file(tmp_path / "tampered.jsonl")
+    with pytest.raises(RecordError):
+        custody.Sink(tmp_path / "tampered.jsonl").records()
+
+
+def test_a_directory_verify_includes_v3_twins_and_skips_unrelated_files(tmp_path, capsys):
+    from mdb.cli import main
+
+    with custody.records_to(tmp_path / "r.jsonl"):
+        _seal()
+    (tmp_path / "items.jsonl").write_text('{"name": "a"}\n')
+    assert main(["records", "migrate", str(tmp_path)]) == 0
+    (tmp_path / "r.v3.jsonl").write_text((tmp_path / "r.v3.jsonl").read_text()[:-30] + "\n")
+    capsys.readouterr()
+    assert main(["records", "verify", str(tmp_path)]) == 1
+    assert "r.v3.jsonl: refused" in capsys.readouterr().err
+
+
+def test_duplicate_keys_and_oversize_lines_are_refused_before_they_verify(tmp_path):
+    record = _seal()
+    stored = R.stored_form(record)
+    execution = EXECUTION
+    assert R.load_record(stored, execution=execution) == record
+    duplicated = stored[:-1] + ',"session_id":"s1"}'
+    with pytest.raises(RecordError, match="duplicate key"):
+        R.load_record(duplicated, execution=execution)
+    with pytest.raises(RecordError, match="duplicate key"):
+        R.load_record(duplicated.encode(), execution=execution)
+    huge = '{"schema":"mdb-record-v3","pad":"' + "x" * (R.MAX_LINE_BYTES + 1) + '"}'
+    with pytest.raises(RecordError, match="refused before parsing"):
+        R.load_record(huge)
+    with pytest.raises(RecordError, match="refused before parsing"):
+        R.load_record(huge.encode())
+    path = tmp_path / "s.jsonl"
+    path.write_text(huge + "\n")
+    with pytest.raises(RecordError, match="refused before parsing"):
+        custody.Sink(path).records()
+    with pytest.raises(RecordError, match="refused before parsing"):
+        M.read_file(path)
+    path.write_text(stored[:-1] + ',"id":"0"}\n')
+    with pytest.raises(RecordError, match="duplicate key"):
+        custody.Sink(path).records()
+    project = Project(tmp_path / "p")
+    project.open_session("s1", model_identity=IDENTITY, execution=EXECUTION)
+    I.put_record(project, record)
+    for body, match in ((duplicated, "duplicate key"), (huge, "refused before parsing")):
+        with project.db() as db:
+            db.execute("UPDATE records SET body=?", (body,))
+        with pytest.raises(RecordError, match=match):
+            I.get_record(project, "s1", record["id"])
+
+
+def test_a_profile_that_differs_only_by_1_against_1_0_is_not_the_sessions(tmp_path):
+    project = Project(tmp_path / "p")
+    project.open_session("s1", model_identity=IDENTITY, execution={"dtype": "bf16", "guidance": 1})
+    same = _seal(execution={"dtype": "bf16", "guidance": 1})
+    assert I.put_record(project, same) == same["id"]
+    other = _seal(execution={"dtype": "bf16", "guidance": 1.0})
+    assert other["execution"] == same["execution"] and other["id"] != same["id"]
+    with pytest.raises(RecordError, match="another model or execution"):
+        I.put_record(project, other)
+    with project.db() as db:           # a row bound elsewhere, written behind the API
+        db.execute("INSERT INTO records VALUES (?,?,?,?,?)",
+                   (other["id"], "s1", "test-v3", R.SCHEMA, R.stored_form(other)))
+    with pytest.raises(RecordError, match="execution"):
+        I.get_record(project, "s1", other["id"])
+
+
+def test_sink_and_file_readers_raise_record_error_and_nums_names_store_errors(tmp_path):
+    with custody.records_to(tmp_path / "s.jsonl") as sink:
+        _seal()
+    lines = sink.path.read_text().splitlines()
+    execution = json.loads(lines[0])
+    for edit in (lambda e: e.update(execution={"dtype": "x"}),
+                 lambda e: e.pop("execution"),
+                 lambda e: e.update(execution={"v": float("nan")}),
+                 lambda e: e.pop("sha256")):
+        changed = json.loads(lines[0])
+        edit(changed)
+        sink.path.write_text(json.dumps(changed) + "\n" + lines[1] + "\n")
+        with pytest.raises(RecordError):
+            sink.records()
+        with pytest.raises(RecordError):
+            M.read_file(sink.path)
+    assert execution["mdb_execution"]
+    sink.path.write_text(lines[0] + "\n" + lines[1][:-5] + "\n")          # truncated last line
+    with pytest.raises(RecordError, match="truncated or corrupt"):
+        sink.records()
+    sink.path.write_text("[1, 2]\n")
+    with pytest.raises(RecordError):
+        sink.records()
+
+    class Refusing:
+        def put_tensor(self, data):
+            raise ValueError("shared storage refuses symbolic links")
+
+    with pytest.raises(RecordError) as error:
+        R.nums([0.5] * (R.MAX_NUMS_INLINE + 1), "measured", store=Refusing())
+    assert "symbolic links" in str(error.value) and "cannot be sealed" not in str(error.value)
+
+
+def test_migrate_never_writes_its_source_and_writes_the_map_before_the_target(tmp_path):
+    source = _v2_file(tmp_path / "r.jsonl", [_v2(V2_BODY)])
+    before = source.read_bytes()
+    for target in (source, tmp_path / "r.jsonl.v3.jsonl.x", tmp_path / "other.jsonl"):
+        with pytest.raises(RecordError):
+            M.migrate_file(source, target, force=True)
+    assert source.read_bytes() == before
+    link = tmp_path / "link.v3.jsonl"
+    link.symlink_to(source)
+    with pytest.raises(RecordError, match="source"):
+        M.migrate_file(source, link, force=True)
+    assert source.read_bytes() == before
+    report = M.migrate_file(source)
+    target = Path(report["target"])
+    assert json.loads(Path(report["map_path"]).read_text())["target_sha256"] == M._sha(target)
+    assert not list(tmp_path.glob("*.partial"))
+    target.unlink()                                  # a crash after the map: the rerun recovers
+    assert M.migrate_file(source)["records"] == 1
+

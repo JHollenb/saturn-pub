@@ -226,8 +226,20 @@ class Sink:
     def _lines(self) -> list[dict[str, Any]]:
         if not self.path.exists():
             return []
-        return [json.loads(line) for line in self.path.read_text(encoding="utf-8").splitlines()
-                if line.strip()]
+        from .pointers import RecordError
+        from .records import parse_line
+
+        out = []
+        for number, line in enumerate(self.path.read_text(encoding="utf-8").splitlines(), 1):
+            if not line.strip():
+                continue
+            # a payload line may exceed the record bound (it carries a bounded object's bytes)
+            big = line.startswith('{"bytes":') and '"mdb_payload"' in line[:200]
+            value = parse_line(line, f"{self.path}:{number}", limit=None if big else _LIMIT())
+            if not isinstance(value, dict):
+                raise RecordError(f"{self.path}:{number}: not a record, payload or execution line")
+            out.append(value)
+        return out
 
     def records(self, *, verify: bool = True) -> list[dict[str, Any]]:
         """The records written to this file (by any process), as logical records (v3 and v2),
@@ -275,16 +287,31 @@ class Sink:
         self.close()
 
 
+def _LIMIT() -> int:
+    from .records import MAX_LINE_BYTES
+
+    return MAX_LINE_BYTES
+
+
 def _executions(lines: list[dict[str, Any]]) -> dict[str, Any]:
+    """sha256 -> profile of every ``mdb_execution`` line; a malformed or edited one is a
+    ``RecordError``."""
+    from .pointers import RecordError
     from .records import seal_digest
 
     out = {}
     for line in lines:
         if "mdb_execution" not in line:
             continue
-        if seal_digest(line["execution"]) != line["sha256"]:
-            raise ValueError(f"execution profile {line['sha256'][:12]} differs from its sha256")
-        out[line["sha256"]] = line["execution"]
+        try:
+            sha, profile = line["sha256"], line["execution"]
+            same = seal_digest(profile) == sha
+        except (KeyError, TypeError, ValueError) as error:
+            raise RecordError(f"execution line is malformed: {type(error).__name__}: "
+                              f"{error}") from error
+        if not same:
+            raise RecordError(f"execution profile {sha[:12]} differs from its sha256")
+        out[sha] = profile
     return out
 
 

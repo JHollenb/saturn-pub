@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -44,10 +45,8 @@ def _lines(path: Path) -> list[tuple[str, dict[str, Any]]]:
     for number, text in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         if not text.strip():
             continue
-        try:
-            value = json.loads(text)
-        except ValueError as error:
-            raise RecordError(f"{path}:{number}: not JSON (truncated or corrupt): {error}") from None
+        big = text.startswith('{"bytes":') and '"mdb_payload"' in text[:200]
+        value = R.parse_line(text, f"{path}:{number}", limit=None if big else R.MAX_LINE_BYTES)
         if not isinstance(value, dict):
             raise RecordError(f"{path}:{number}: not a record, payload or execution line")
         out.append((text, value))
@@ -74,19 +73,18 @@ def is_record_file(path: str | Path) -> bool:
 
 
 def _executions(lines: list[tuple[str, dict[str, Any]]]) -> dict[str, Any]:
-    out = {}
-    for _, line in lines:
-        if "mdb_execution" in line:
-            if R.seal_digest(line["execution"]) != line["sha256"]:
-                raise RecordError(f"execution line {line['sha256'][:12]} differs from its sha256")
-            out[line["sha256"]] = line["execution"]
-    return out
+    from .custody import _executions as checked
+
+    return checked([line for _, line in lines])
 
 
 def read_file(path: str | Path, *, verify: bool = True) -> list[dict[str, Any]]:
     """The logical records of a record file (v3 and v2 lines), verified unless asked not to."""
     _declare_kinds()
     lines = _lines(Path(path))
+    if any(_kind_of(v) == "other" for _, v in lines):
+        raise RecordError(f"{path} holds lines that are not records, payloads or executions "
+                          "(an unknown or altered schema)")
     executions = _executions(lines)
     return [R.load_record(v, executions=executions, verify=verify)
             for _, v in lines if _kind_of(v) == "record"]
@@ -125,9 +123,16 @@ def migrate_file(path: str | Path, target: str | Path | None = None, *,
     _declare_kinds()
     path = Path(path)
     target = Path(target) if target is not None else target_of(path)
+    if not target.name.endswith(SUFFIX):
+        raise RecordError(f"the target {target} must end in {SUFFIX}")
+    if target.resolve() == path.resolve() or (target.exists() and path.exists()
+                                              and target.samefile(path)):
+        raise RecordError(f"the target {target} is the source; a migration never writes in place")
     map_path = target.with_name(target.name[:-len(SUFFIX)] + ".v3.map.json")
-    if not force and (target.exists() or map_path.exists()):
-        raise FileExistsError(f"{target} or its map exists; pass force=True to replace them")
+    if map_path.resolve() == path.resolve():
+        raise RecordError(f"the map {map_path} is the source")
+    if not force and target.exists():
+        raise FileExistsError(f"{target} exists; pass force=True to replace it")
     lines = _lines(path)
     if any(_kind_of(v) == "other" for _, v in lines):
         raise RecordError(f"{path} holds lines that are not records, payloads or executions")
@@ -178,26 +183,43 @@ def migrate_file(path: str | Path, target: str | Path | None = None, *,
     except BaseException:
         partial.unlink(missing_ok=True)
         raise
-    partial.replace(target)
     report = {"schema": MAP_SCHEMA, "source": str(path), "source_sha256": _sha(path),
-              "target": str(target), "target_sha256": _sha(target), **counts,
+              "target": str(target), "target_sha256": _sha(partial), **counts,
               "verified": len(back),
               "check": "every record read back from the target equals its source in every "
                        "field but schema, id and digest (canonical JSON)",
               "map": mapping}
-    map_path.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    # the map first (atomically), then the target: a crash between leaves a map and no target,
+    # which a rerun replaces; never a target without its map
+    map_partial = map_path.with_name(map_path.name + ".partial")
+    map_partial.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    map_partial.replace(map_path)
+    partial.replace(target)
     report["map_path"] = str(map_path)
     return report
 
 
-def record_files(path: str | Path) -> list[Path]:
-    """Record files at ``path``: the file itself, or every ``*.jsonl`` under a directory that is
-    a record file and not already a ``.v3.jsonl`` target."""
+_LOOKS = re.compile(r'"schema"\s*:\s*"mdb-record-|"mdb_execution"\s*:')
+
+
+def looks_like_record_file(path: str | Path) -> bool:
+    """True when the file's text mentions a record schema or an execution line, even if it
+    is truncated, altered or unreadable (so a scan reports it instead of skipping it)."""
+    try:
+        return bool(_LOOKS.search(Path(path).read_text(encoding="utf-8", errors="replace")))
+    except OSError:
+        return True
+
+
+def record_files(path: str | Path, *, include_targets: bool = False) -> list[Path]:
+    """Record files at ``path``: the file itself, or every ``*.jsonl`` under a directory that
+    looks like a record file (``looks_like_record_file``, so a damaged one is listed and then
+    refused by the reader), not a ``.v3.jsonl`` target unless ``include_targets``."""
     path = Path(path)
     if path.is_file():
         return [path]
     return sorted(p for p in path.rglob("*.jsonl")
-                  if not p.name.endswith(SUFFIX) and is_record_file(p))
+                  if (include_targets or not p.name.endswith(SUFFIX)) and looks_like_record_file(p))
 
 
 USAGE = ("usage: mdb records migrate PATH [PATH ...] [--out DIR] [--force]\n"
@@ -230,7 +252,7 @@ def main(argv: list[str]) -> int:
         return 2
     status = 0
     for root in paths:
-        files = record_files(root)
+        files = record_files(root, include_targets=verb == "verify")
         if not files:
             print(f"{root}: no record files", file=sys.stderr)
             status = 1
@@ -251,5 +273,5 @@ def main(argv: list[str]) -> int:
     return status
 
 
-__all__ = ["MAP_SCHEMA", "SUFFIX", "is_record_file", "main", "migrate_file", "read_file",
+__all__ = ["MAP_SCHEMA", "SUFFIX", "is_record_file", "looks_like_record_file", "main", "migrate_file", "read_file",
            "record_files", "target_of", "verify_file"]

@@ -38,6 +38,8 @@ from .records import (
     SCHEMAS,
     kind_spec,
     load_record,
+    parse_line,
+    seal_digest,
     stored_form,
     verify_legacy,
     verify_record,
@@ -119,13 +121,22 @@ def _binding(project, sid):
 
 # --------------------------------------------------------------------------- records
 
+def _same_binding(record, identity, execution):
+    """Seal digests, not ``==`` (``1 == 1.0``, but they seal differently)."""
+    try:
+        return (seal_digest(record.get("model_identity")) == seal_digest(identity)
+                and seal_digest(record.get("execution")) == seal_digest(execution))
+    except (RecordError, ValueError, TypeError):
+        return False
+
+
 def put_record(project, record):
     """Index a sealed record (v3, or a verified v2) under its session; returns its id.
     Idempotent."""
     _writable(project)
     record = verify_record(record)
     identity, execution = _binding(project, record["session_id"])
-    if record["model_identity"] != identity or record["execution"] != execution:
+    if not _same_binding(record, identity, execution):
         raise RecordError("record belongs to another model or execution than its session")
     body = stored_form(record)   # the bytes the size bound, the digest and the row all share
     ensure_tables(project)
@@ -155,11 +166,8 @@ def _row(db, sid, identifier):
 
 def _verified(project, sid, identifier, kind, schema, body):
     identity, execution = _binding(project, sid)
-    try:
-        value = json.loads(body)
-    except (ValueError, RecursionError) as error:   # not JSON, an integer past the digit limit,
-        # or nesting deeper than the interpreter's recursion limit
-        raise RecordError(f"record index row is not readable JSON: {error}") from error
+    value = parse_line(body, "record index row")   # size first; not JSON, a huge integer, deep
+    # nesting or a duplicate key are RecordErrors
     if schema in SCHEMAS:
         if value.get("schema") != schema:
             raise RecordError("record index row differs from its schema column")
@@ -172,7 +180,7 @@ def _verified(project, sid, identifier, kind, schema, body):
             raise RecordError("legacy record index row differs from its seal")
     else:
         raise RecordError(f"unknown record schema {schema!r}")
-    if value.get("model_identity") != identity or value.get("execution") != execution:
+    if not _same_binding(value, identity, execution):
         raise RecordError("record seal or session binding changed")
     return value
 

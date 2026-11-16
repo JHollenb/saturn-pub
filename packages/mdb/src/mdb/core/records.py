@@ -476,7 +476,10 @@ def nums(values, authority, *, proof=None, unit=None, pointer=None, shape=None, 
 
         store = getattr(store, "store", store)
         data = np.asarray(flat, dtype=dtype).reshape(shape)
-        stored = store.put_tensor(data)
+        try:
+            stored = store.put_tensor(data)
+        except (ValueError, OverflowError) as error:
+            raise RecordError(f"the column store refused the values: {error}") from error
         out["values"] = tensor_pointer(stored["ref"], sha256=stored["sha256"],
                                        shape=stored["shape"], dtype=stored["dtype"])
     return check_nums(out)
@@ -904,18 +907,42 @@ def verify_record(record, *, require_kind=True):
     return record
 
 
+MAX_LINE_BYTES = MAX_RECORD_BYTES_V3 + 4096     # a stored record line (v3 bound + framing slack)
+
+
+def _no_duplicates(pairs):
+    out = {}
+    for key, value in pairs:
+        if key in out:
+            raise RecordError(f"duplicate key {key!r} in a stored record")
+        out[key] = value
+    return out
+
+
+def parse_line(text, label="stored record", *, limit=MAX_LINE_BYTES):
+    """Parse one stored JSON line: refused before parsing when longer than ``limit`` and on a
+    duplicate key (the id covers the parsed value, so a first-wins reader must not see another
+    one). Every error is a ``RecordError``."""
+    if limit is not None and len(text) > limit:
+        raise RecordError(f"{label} is {len(text)} bytes (> {limit}); refused before parsing")
+    try:
+        return json.loads(text, object_pairs_hook=_no_duplicates)
+    except (ValueError, RecursionError) as error:
+        raise RecordError(f"{label} is not readable JSON (truncated or corrupt): "
+                          f"{error}") from error
+
+
 def _parse(stored):
     if isinstance(stored, (bytes, bytearray)):
+        if len(stored) > MAX_LINE_BYTES:
+            raise RecordError(f"stored record is {len(stored)} bytes (> {MAX_LINE_BYTES}); "
+                              "refused before parsing")
         try:
             stored = bytes(stored).decode("utf-8")
         except UnicodeDecodeError as error:
             raise RecordError(f"stored record is not UTF-8: {error}") from error
     if isinstance(stored, str):
-        try:
-            stored = json.loads(stored)
-        except (ValueError, RecursionError) as error:
-            raise RecordError(f"stored record is not readable JSON (truncated or corrupt): "
-                              f"{error}") from error
+        stored = parse_line(stored)
     if not isinstance(stored, Mapping):
         raise RecordError("a stored record is a JSON object")
     return stored

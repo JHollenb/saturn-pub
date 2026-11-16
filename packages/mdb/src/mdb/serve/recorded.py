@@ -307,21 +307,24 @@ class SessionModel:
             with _legacy.db(self.project) as db:
                 tables = {r[0] for r in db.execute(
                     "SELECT name FROM sqlite_master WHERE type='table'")}
-                for table, schema in (("circuit_records", "legacy"), ("records", "v2")):
-                    if table in tables:
-                        rows += [(r[0], r[1], schema) for r in db.execute(
-                            f"SELECT id, kind FROM {table} WHERE session_id=?", (self.sid,))]
+                if "circuit_records" in tables:
+                    rows += [(r[0], r[1], "legacy", "legacy") for r in db.execute(
+                        "SELECT id, kind FROM circuit_records WHERE session_id=?", (self.sid,))]
+                if "records" in tables:
+                    rows += [(r[0], r[1], "v2", "v3" if r[2] == "mdb-record-v3" else "v2")
+                             for r in db.execute(
+                        "SELECT id, kind, schema FROM records WHERE session_id=?", (self.sid,))]
         except sqlite3.Error:
             return []
         out = []
-        for rid, kind, schema in rows:
+        for rid, kind, schema, label in rows:
             try:
                 record = get_record(self.project, self.sid, rid)
                 if isinstance(record, dict) and record.get("verified") is False:
                     # core returns a placeholder row for an undeclared kind or a bad seal
                     state = record.get("state") if record.get("state") in (
                         "unresolved", "refused") else "unresolved"
-                    record = {"record_id": rid, "kind": kind, "schema": f"index-{schema}",
+                    record = {"record_id": rid, "kind": kind, "schema": f"index-{label}",
                               "unreadable": (f"{state}: "
                                              + str(record.get("reason") or "unverified"))[:300],
                               "unreadable_state": state}
@@ -332,7 +335,7 @@ class SessionModel:
                 else:
                     state, reason = "refused", ("refused: record failed verification "
                                                 f"({str(error)[:160] or type(error).__name__})")
-                out.append({"record_id": rid, "kind": kind, "schema": f"index-{schema}",
+                out.append({"record_id": rid, "kind": kind, "schema": f"index-{label}",
                             "unreadable": reason[:300], "unreadable_state": state})
         out.sort(key=lambda r: (str(r.get("kind")), str(r.get("id") or r.get("record_id"))))
         return out

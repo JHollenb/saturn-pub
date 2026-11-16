@@ -39,7 +39,7 @@ back and checks its sha256.
 
 ## The stored form
 
-What a sink line, a project index row and the id cover is the stored form,
+The id covers the stored form's parsed value, not the line's bytes: the form is
 `records.stored_form(record)`: canonical JSON (sorted keys, no spaces, UTF-8) of the record
 with two changes.
 
@@ -51,8 +51,11 @@ with two changes.
 2. The `values` of an inline column are the base64 of their little-endian bytes: 8 bytes per
    float64 value, 10.7 characters of base64, against about 70 bytes for one `num` per value.
 
-`id` and `digest` are the sha256 of that stored form without `id` and `digest`. The id still
-covers every field, the execution profile included, through its sha256: change any byte of the
+`id` and `digest` are the sha256 of that stored form without `id` and `digest`. Key order,
+whitespace and `\u` escapes of a stored line are not covered (mdb writes canonical text but does
+not require it when reading); a line with a duplicate key is refused on every read path, and a
+line longer than the 1 MiB bound plus 4 KiB is refused before it is parsed. The id still
+covers every field, the execution profile included, through its sha256: change any value of the
 content or the profile and the id changes.
 
 Reading a stored record back needs its execution profile:
@@ -98,7 +101,10 @@ mdb records verify PATH [PATH ...]
 ```
 
 `PATH` is a record file (a sink, or any JSONL file whose every line is a record, payload or
-execution line) or a directory searched for record files; other JSONL files are skipped.
+execution line) or a directory searched for record files (a `*.jsonl` that mentions a record schema or an
+execution line; other JSONL files are skipped). A record file that is damaged, altered (an
+unknown `schema`, a changed body) or truncated is never skipped: it is named on stderr as
+refused and the command exits 1. `verify` also reads `.v3.jsonl` files.
 For `NAME.jsonl`, `migrate` writes `NAME.v3.jsonl` beside it (or under `--out`, keeping the
 directory layout) and `NAME.v3.map.json`:
 
@@ -111,8 +117,9 @@ directory layout) and `NAME.v3.map.json`:
 Each v2 record is verified, re-sealed as v3 with the same content and no custody added, and the
 new file is then read back: every record must equal its source in every field except `schema`,
 `id` and `digest` (canonical JSON, so every number is bit-identical), or nothing is written.
-Payload lines are copied byte for byte. The source file is never changed, and an existing
-target is refused unless `--force`.
+Payload lines are copied byte for byte. The source file is never changed (a target that is the
+source, or does not end in `.v3.jsonl`, is refused even with `--force`), and an existing target is refused unless `--force`. The map is
+written (atomically) before the target.
 
 The same in Python: `mdb.core.records.migrate_record(record)` and
 `mdb.core.migrate.migrate_file(path)`.
@@ -123,7 +130,9 @@ What migration does not do:
   value's `origin.record`). They are content and keep the v2 id; the map file resolves them,
   and the v2 file stays readable.
 - It does not rewrite project indexes or core files. Their v2 records are read as they are.
-- It does not turn lists of `num`s into columns. That would change the content.
+- It does not turn lists of `num`s into columns. That would change the content. A v2 body that
+  already holds a column-shaped dict (`{kind: "nums", shape, dtype, values}`) is read as a v3
+  column after migration; one with `dtype: "float64"` and integer values is refused.
 
 ## What changed for ids
 

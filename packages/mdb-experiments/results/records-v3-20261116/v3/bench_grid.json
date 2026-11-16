@@ -1,0 +1,19 @@
+{
+ "schema": "mdb-record-v3",
+ "num_dicts_14x32": {
+  "bytes": 32794,
+  "ms_seal": 3.56,
+  "ms_verify": 3.525
+ },
+ "num_dicts_28x32": {
+  "bytes": 65218,
+  "ms_seal": 7.077,
+  "ms_verify": 7.046
+ },
+ "column_28x32": {
+  "bytes": 10040,
+  "ms_seal": 0.384,
+  "ms_verify": 0.391,
+  "ms_load_line": 0.447
+ }
+}

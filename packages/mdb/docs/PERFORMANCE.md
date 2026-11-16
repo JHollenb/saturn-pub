@@ -51,7 +51,9 @@ for non-finite values again (about 270 ms); the native cache holds the state's K
 reference instead of a copy (about 43 ms); a state sealed once is not sealed again by the next
 step, and string-keyed mappings sort without JSON-encoding each key (about 42 ms); the frozen
 check compares a flat snapshot of the module tree instead of walking every parameter (about
-36 ms); grown K/V chunks are version-checked once when they join, not by every cut (18 ms per
+86 ms: 184.7 ms per row without it against 98.3 ms with it, and 10.14 s against 5.17 s on the
+`prefill=0` run, in the committed `cpu/ablate.jsonl`; the results README's smaller "+36 ms"
+comes from a separate rerun that was not committed); grown K/V chunks are version-checked once when they join, not by every cut (18 ms per
 row; 3.2 s on a 64-row `prefill=0` run).
 
 ## Records (mdb 0.3.0)
@@ -61,13 +63,27 @@ of in every record, and adds column claims (`nums`) for tables of numbers. Measu
 
 | | v2 | v3 |
 |---|---|---|
-| 32 `whatif` records, an `each` summary and a trace record: stored bytes | 205,458 | 180,299 |
-| a 28 x 32 grid as labelled numbers (`num` each) | 65,180 B; seal 8.9 ms | 65,218 B; seal 7.0 ms |
-| the same grid as one column (`nums`) | not available | 10,040 B; seal 0.39 ms |
+| 32 `whatif` records, an `each` summary and a trace record (34 records): stored bytes | 205,458 | 180,299 |
+| a 28 x 32 grid as labelled numbers (`num` each) | 65,180 B; seal 8.96 ms | 65,218 B; seal 7.08 ms |
+| the same grid as one column (`nums`) | not available | 10,040 B; seal 0.38 ms |
 | largest record | 64 KiB | 1 MiB |
 
-Seal, verify and sink read/write times of ordinary records are within about 10-30% of v2 either
-way (measured; the v3 read walks the body once more to find columns).
+Times over those 34 records (milliseconds for all of them, median of 20 runs; one rerun on 2026-11-16):
+
+| | v2 | v3 |
+|---|---|---|
+| seal | 16.4 | 12.7 |
+| verify | 12.0 | 12.8 |
+| sink write | 2.7 | 3.4 |
+| sink read and verify | 12.8 | 14.7 |
+| `stored_bytes` | 0.9 | 1.4 |
+
+Seal is faster in v3 (the execution profile is not encoded for every record), verify, sink
+write and read are 6-24% slower (the v3 read walks the body once more to find columns), and
+`stored_bytes` costs 0.5 ms more over the 34 records. The script and its output are
+`packages/mdb-experiments/results/records-v3-20261116/` (`scripts/bench_records.py`,
+`scripts/bench_grid.py`; `v2/` is main at 3d251bd, `v3/` this branch); run each with the tree's
+`src` on `PYTHONPATH`.
 
 ## Choices you make
 

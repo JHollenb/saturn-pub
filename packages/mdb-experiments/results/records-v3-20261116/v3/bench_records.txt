@@ -1,0 +1,34 @@
+{
+ "schema": "mdb-record-v3",
+ "n_records": 34,
+ "each_wall_s": 1.687,
+ "each_stored": "57f2a484dcd9b61ff55df520936819783f53412fe43d26cdb343f05bff6440ce",
+ "bytes_by_kind": {
+  "prompt-set": {
+   "n": 1,
+   "total": 36094,
+   "max": 36094
+  },
+  "trace": {
+   "n": 1,
+   "total": 1552,
+   "max": 1552
+  },
+  "whatif": {
+   "n": 32,
+   "total": 142653,
+   "max": 4470
+  }
+ },
+ "bytes_total": 180299,
+ "sink_file_bytes": 182210,
+ "trace_record_bytes": 1552,
+ "trace_payload_bytes": 17724,
+ "ms_seal_all": 12.65,
+ "ms_verify_all": 12.75,
+ "ms_stored_bytes_all": 1.4,
+ "ms_sink_write_all": 3.35,
+ "ms_sink_read_verify_all": 14.7,
+ "ms_index_list_records_session": 3.81,
+ "n_index_records_session": 1
+}
