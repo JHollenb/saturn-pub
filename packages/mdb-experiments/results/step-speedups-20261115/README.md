@@ -98,3 +98,7 @@ Peak VRAM (`torch.cuda.max_memory_allocated`, per case): equal for T=1024 rows (
 - Item 7 "pre-serialize constant parts": not done; the seal reuse removes the repeated seals of one state, which was the larger part.
 - Item 10: not implemented; design note `item10-columnar-records-design.md` (record ids cannot stay stable; needs mdb-record-v3 and an owner decision).
 - Long-tail items 11-24 were out of scope.
+
+## Running the root tests
+
+`saturn-pub/.venv` has `saturn_pub` installed editable from the main checkout (`/Users/jakeholl/domains/saturn-pub/src`), not from a worktree. Root tests of this branch need `PYTHONPATH=<worktree>/src`, or they import the main tree.

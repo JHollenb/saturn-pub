@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import inspect
 import operator
+from itertools import chain
 import platform
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -62,12 +63,12 @@ class _FrozenSnapshot:
     """A flat record of a module tree's structure and tensors, to re-check the frozen-model
     guard (``_tensor_guards`` unchanged) without the named walk, in C-level passes: every
     module's parameter, buffer and submodule dicts must be the same dict objects holding the
-    same ``(name, object)`` items (the snapshot keeps the objects alive, so identity is
-    meaningful), and every tensor must keep its version counter and pointers. Any difference
+    same ``(name, object)`` items (names equal, objects identical: the snapshot keeps the
+    objects alive, so identity is meaningful), and every tensor must keep its version counter and pointers. Any difference
     (or a comparison that cannot be made) is reported as a change; the caller then falls back
     to the exact ``_tensor_guards`` comparison, which decides."""
 
-    __slots__ = ("root", "modules", "tables", "items", "tensors", "marks")
+    __slots__ = ("root", "modules", "tables", "items", "values", "tensors", "marks")
 
     _GETTERS = tuple(
         operator.attrgetter(name)
@@ -87,7 +88,8 @@ class _FrozenSnapshot:
             stack.extend(child for child in current._modules.values() if child is not None)
         self.modules = tuple(modules)
         self.tables = self._tables()
-        self.items = self._items(self.tables)
+        self.items = list(map(tuple, self.tables))  # names
+        self.values = tuple(chain.from_iterable(map(dict.values, self.tables)))
         self.tensors = tuple(
             value
             for module in modules
@@ -103,10 +105,6 @@ class _FrozenSnapshot:
             tables += map(getter, self.modules)
         return tables
 
-    @staticmethod
-    def _items(tables: list[Any]) -> list[tuple[Any, ...]]:
-        return list(map(tuple, map(dict.items, tables)))
-
     def _marks(self) -> tuple[list[int], list[int], list[int]]:
         tensors = self.tensors
         return (
@@ -119,12 +117,11 @@ class _FrozenSnapshot:
         tables = self._tables()
         if not all(map(operator.is_, tables, self.tables)):
             return False
-        try:
-            # tuple equality tries identity first; a replaced tensor makes Tensor.__eq__ run,
-            # which is a difference either way (False, or an exception for a multi-element one)
-            if self._items(tables) != self.items:
-                return False
-        except Exception:
+        # names are compared by equality, values by identity: a replaced tensor of equal value
+        # (a one-element clone, another dtype) must not pass through Tensor.__eq__
+        if list(map(tuple, tables)) != self.items:
+            return False
+        if not all(map(operator.is_, chain.from_iterable(map(dict.values, tables)), self.values)):
             return False
         return self._marks() == self.marks
 
@@ -831,16 +828,42 @@ class DecoderAdapter(Adapter):
 
     # --- external key/value cache -------------------------------------------------------
 
-    def _cache(self, keys: Sequence[torch.Tensor], values: Sequence[torch.Tensor]) -> DynamicCache:
-        """A native cache over ``keys``/``values``, held by reference: a plain ``DynamicLayer``
-        never writes its tensors (its ``update`` concatenates into a new tensor), cell edits
-        replace a layer tensor by an edited copy, and ``Session._advance_guarded`` refuses
+    def _foreign_hooks(self, index: int) -> bool:
+        """True when a forward or forward-pre hook other than this library's own controllers
+        (``core.own_hook``) can run in decoder layer ``index`` (any module of its subtree) or
+        is global (``torch.nn.modules.module._global_forward*``). Such a hook could write a K/V
+        layer through ``.data``, numpy or dlpack, which bumps no version counter."""
+        from torch.nn.modules import module as torch_module
+
+        for table in (
+            torch_module._global_forward_hooks,
+            torch_module._global_forward_pre_hooks,
+        ):
+            if any(not getattr(hook, "_saturn_own_hook", False) for hook in table.values()):
+                return True
+        for sub in self._layer_modules[index].modules():
+            for table in (sub._forward_hooks, sub._forward_pre_hooks):
+                if table and any(
+                    not getattr(hook, "_saturn_own_hook", False) for hook in table.values()
+                ):
+                    return True
+        return False
+
+    def _cache(
+        self, keys: Sequence[torch.Tensor], values: Sequence[torch.Tensor], layer_index: int
+    ) -> DynamicCache:
+        """A native cache over ``keys``/``values``, held by reference when no foreign hook can
+        run in layer ``layer_index`` (checked once per call): a plain ``DynamicLayer`` never
+        writes its tensors (its ``update`` concatenates into a new tensor), cell edits replace
+        a layer tensor by an edited copy, and ``Session._advance_guarded`` refuses
         (``InPlaceWrite``) a transition that wrote a state tensor in place anyway, so the
         native layer gets the state's own K/V without a copy of every layer per transition.
-        Any other layer kind (sliding window, offloaded, lazily appended) is filled through
-        ``DynamicCache.update`` as before, which copies."""
+        With a foreign hook registered (it could write through ``.data``/numpy/dlpack, which
+        the version counter does not see), and for any other layer kind (sliding window,
+        offloaded, lazily appended), the layers are filled through ``DynamicCache.update``,
+        which copies."""
         cache = DynamicCache(config=self.model.config)
-        offloading = getattr(cache, "offloading", False)
+        offloading = getattr(cache, "offloading", False) or self._foreign_hooks(layer_index)
         for index, (key, value) in enumerate(zip(keys, values)):
             if key.shape[-2]:
                 key, value = key.to(self.device), value.to(self.device)
@@ -1525,7 +1548,7 @@ class DecoderAdapter(Adapter):
         hidden = out["hidden"].to(self.device, copy=True)
         layer = out["layer"]
         if layer < self.layers:
-            cache = self._cache(out["keys"], out["values"])
+            cache = self._cache(out["keys"], out["values"], layer)
             populated = self._populated(cache)
             out["hidden"] = self._run_layer(layer, hidden, cache, tokens.shape[1] - 1, ports)
             out["keys"], out["values"] = self._cache_values_shared(

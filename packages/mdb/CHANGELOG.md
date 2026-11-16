@@ -10,7 +10,7 @@ Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `
 
 - A layer transition no longer re-hashes the K/V layers it did not write: `saturn_pub.values.describe_remembered` reuses a tensor's descriptor while the tensor object, version counter, data pointer, shape, stride, dtype and device are unchanged (the same guard the `shares_state` contract uses). `describe` and `StateCut.verify` never use it and always re-hash.
 - The finite check of the decoder state skips tensors it already found finite and that are unwritten since (same key).
-- The native `DynamicCache` holds the state's K/V tensors by reference (a plain `DynamicLayer` concatenates, never writes); sliding-window, offloaded or lazily appended cache layers are still filled by copy.
+- The native `DynamicCache` holds the state's K/V tensors by reference (a plain `DynamicLayer` concatenates, never writes) only while no foreign forward or forward-pre hook is registered on the decoder layer's modules or globally (`torch.nn.modules.module`), checked once per transition; mdb's own port and trace hooks (`saturn_pub.core.own_hook`) do not count. With a foreign hook, and for sliding-window, offloaded or lazily appended cache layers, the cache is filled by copy as on main. Writes that bypass the version counter (`.data`, numpy, dlpack, raw kernels) stay undetected, as on main.
 - A grown K/V layer's chunks are version-guarded once, when they join (`_Appended.guard`), not re-walked by every cut; `held_bytes` visits each shared tensor and block form once; `each` records its per-item `bytes` with one walk (`Run.held_total()`, same value).
 - A session reuses its last seal when it seals the very same state object again with the same parent, slot descriptors, model identity and execution contract (`_record`, then `capture`, then the next `_head`); mappings with plain string keys are sorted without JSON-encoding each key (the same order: tested against the canonical sort).
 - The frozen-model guard compares a flat snapshot of the module tree (dict identities, item identities, tensor versions and pointers) in C-level passes, and falls back to the exact `_tensor_guards` comparison when anything differs.
@@ -22,7 +22,7 @@ Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `
 
 ### Behaviour change
 
-- A hook or port controller that writes a non-pending K/V layer of the native cache in place now gets `InPlaceWrite` (and the session is poisoned until a restore), as for any other shared state tensor. Before, the write went to a private copy that the transition then took over as the new layer. Cell edits (`set_cell`) are copy-on-write and unaffected.
+- On the by-reference path (no foreign hooks), a forward hook or port controller that writes any K/V tensor of the state in place before the native layer replaces it (including a pre-hook writing the pending layer's existing rows) now gets `InPlaceWrite` (and the session is poisoned until a restore), as for any other shared state tensor. Before, the write went to a private copy. A post-hook writing the freshly concatenated pending layer is still adopted, as on main. With a foreign hook registered the copying path is used and nothing is refused, as on main. Cell edits (`set_cell`) are copy-on-write and unaffected.
 
 ## [0.2.0] — 2026-11-14 (owner-approved version; on mdb-pre-release, not yet tagged or merged to main)
 

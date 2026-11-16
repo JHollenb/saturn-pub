@@ -481,6 +481,14 @@ def _share(value: Any) -> Any:
     return copy.deepcopy(value)
 
 
+def own_hook(hook: Any) -> Any:
+    """Mark a forward hook as one of this library's own controllers (mdb's port and trace
+    hooks). They never write the native cache's K/V tensors, so they do not force
+    ``DecoderAdapter._cache`` onto its copying path; any unmarked hook does."""
+    hook._saturn_own_hook = True
+    return hook
+
+
 class InPlaceWrite(ValueError):
     """A tensor that a sealed cut or a transition's input state shares was written in place."""
 

@@ -116,6 +116,7 @@ def test_native_cache_holds_the_state_tensors_and_a_write_to_them_is_refused(ada
     state_keys = list(session._state["keys"])
     seen = {}
 
+    @core.own_hook  # a foreign hook would force the copying path
     def look(module, args, kwargs):
         cache = kwargs[adapter.spec.cache_kwarg]
         seen["same"] = [cache.layers[i].keys is state_keys[i] for i in range(adapter.layers)]
@@ -132,6 +133,7 @@ def test_native_cache_holds_the_state_tensors_and_a_write_to_them_is_refused(ada
     session.continue_(2)
     before = session.capture(retain=False)
 
+    @core.own_hook  # a foreign hook would be given a private copy instead
     def write(module, args, kwargs):
         kwargs[adapter.spec.cache_kwarg].layers[0].keys.add_(1)  # a frozen (shared) layer
 
@@ -259,6 +261,26 @@ def test_a_replaced_parameter_or_buffer_is_refused():
             adapter.validate_execution()
 
 
+@pytest.mark.parametrize(
+    "make",
+    [
+        lambda: torch.tensor(2.0),  # a fresh one-element tensor of the same value
+        lambda: torch.tensor(2.0, dtype=torch.bfloat16),
+        lambda: torch.tensor(2),  # int64
+    ],
+    ids=["clone", "bf16", "int64"],
+)
+def test_a_swapped_one_element_buffer_of_equal_value_is_refused(make):
+    base = DecoderAdapter.tiny("qwen2", granularity="operation")
+    base._layer_modules[0].mlp.register_buffer("probe_scale", torch.tensor(2.0))
+    adapter = DecoderAdapter(base.model, granularity="operation")
+    adapter.validate_execution()
+    adapter._layer_modules[0].mlp._buffers["probe_scale"] = make()  # equal value, new object
+    assert not adapter._frozen_snapshot.holds()
+    with pytest.raises(ValueError, match="model parameters or buffers changed"):
+        adapter.validate_execution()
+
+
 def test_a_parameter_free_submodule_is_accepted_as_before():
     adapter = DecoderAdapter.tiny("qwen2", granularity="operation")
     adapter._layer_modules[0].extra = torch.nn.Identity()  # the exact guard does not see it
@@ -266,3 +288,70 @@ def test_a_parameter_free_submodule_is_accepted_as_before():
     assert adapter._frozen_snapshot.holds()  # rebuilt on the new structure
     session = adapter.session(TOKENS)
     session.continue_(3)
+
+
+# ------------------------------------------- item 3: foreign hooks force the copying path
+
+
+def _bypass_run(adapter, hooked):
+    """A pre-hook of layer 1 writes layer 0's cached keys through ``.data`` (no version bump)."""
+    session = adapter.session([3, 1, 4, 1, 5, 9])
+    session.continue_(2)  # embed, layer 0; layer 1 pending
+    fired = []
+
+    def pre(module, args, kwargs):
+        if not fired:
+            kwargs[adapter.spec.cache_kwarg].layers[0].keys.data.mul_(1.5)
+            fired.append(1)
+
+    handle = (
+        adapter._layer_modules[1].register_forward_pre_hook(pre, with_kwargs=True)
+        if hooked
+        else None
+    )
+    try:
+        session.continue_()
+    finally:
+        if handle:
+            handle.remove()
+    cut = session.capture(retain=False)
+    cut.verify()
+    session.continue_(2 * (adapter.layers + 5))
+    final = session.capture(retain=False)
+    return cut.fingerprint, final.fingerprint, session.read("hidden")
+
+
+def test_a_foreign_hook_writing_through_data_cannot_reach_the_state(adapter):
+    clean = _bypass_run(adapter, False)
+    hooked = _bypass_run(adapter, True)
+    assert hooked[0] == clean[0] and hooked[1] == clean[1]  # as on main: the write is dropped
+    assert torch.equal(hooked[2], clean[2])
+
+
+def test_the_cache_is_by_reference_only_without_foreign_hooks(adapter):
+    session = adapter.session([3, 1, 4, 1, 5, 9])
+    session.continue_(2)
+    keys, values = session._state["keys"], session._state["values"]
+
+    def held(layer):
+        return adapter._cache(keys, values, layer).layers[0].keys is keys[0]
+
+    assert held(1)
+    module = adapter._layer_modules[1]
+    handle = module.self_attn.register_forward_hook(lambda *a: None)
+    try:
+        assert not adapter._foreign_hooks(0) and adapter._foreign_hooks(1)
+        assert not held(1)
+    finally:
+        handle.remove()
+    own = module.register_forward_pre_hook(core.own_hook(lambda *a: None))
+    try:
+        assert held(1)  # a library controller hook does not force the copy
+    finally:
+        own.remove()
+    handle = torch.nn.modules.module.register_module_forward_hook(lambda *a: None)
+    try:
+        assert not held(1)
+    finally:
+        handle.remove()
+    assert held(1)

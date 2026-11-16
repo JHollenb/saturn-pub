@@ -54,6 +54,8 @@ from typing import Any
 
 import torch
 
+from saturn_pub.core import own_hook
+
 from mdb.core.errors import BadArgs, Refused
 from mdb.core.pointers import RecordError, check_bounded, seal_digest
 
@@ -274,6 +276,7 @@ class Trace:
         thread that entered the trace."""
         return self._mine() and self._depth == 1 and self._layer_depth.get(layer) == 1
 
+    @own_hook
     def _begin(self, module: Any, args: tuple[Any, ...]) -> None:
         if not self._mine():
             return
@@ -282,11 +285,13 @@ class Trace:
             attention = getattr(self.model.config, "_attn_implementation", None)
             self._calls.append(_Call(len(self._calls), attention))
 
+    @own_hook
     def _end(self, module: Any, args: tuple[Any, ...], output: Any) -> None:
         if self._mine():
             self._depth = max(self._depth - 1, 0)
 
     def _enter(self, layer: int):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
             if not self._mine():
                 return
@@ -299,6 +304,7 @@ class Trace:
         return hook
 
     def _exit(self, layer: int):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...], output: Any) -> None:
             if not self._mine():
                 return
@@ -309,6 +315,7 @@ class Trace:
         return hook
 
     def _pre(self, layer: int, port: str):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
             if self._engaged(layer):
                 self._capture(layer, port, _first(args, kwargs))
@@ -316,6 +323,7 @@ class Trace:
         return hook
 
     def _out(self, layer: int, port: str):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...], output: Any) -> None:
             if self._engaged(layer):
                 self._capture(layer, port, output[0] if isinstance(output, tuple) else output)

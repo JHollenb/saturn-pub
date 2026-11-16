@@ -62,6 +62,11 @@ class TensorFacts:
     write that bypasses the counter (through ``.data``, ``numpy()`` or a raw storage) is not
     seen here, as it is not seen by the in-place guard; ``describe`` and ``StateCut.verify``
     never use this memo and always re-hash.
+
+    Writes that bypass the version counter (``.data``, ``numpy()``, dlpack, raw kernels) are
+    not detected, the same as in main's in-place guard. For the native K/V cache this means
+    the decoder holds the state's tensors by reference only while no foreign forward hook is
+    registered; foreign hooks force the copying path.
     """
 
     def __init__(self) -> None:

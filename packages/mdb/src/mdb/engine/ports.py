@@ -24,7 +24,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import torch
-from saturn_pub.core import PortStop
+from saturn_pub.core import PortStop, own_hook
 
 ATTN = "attn"
 MLP = "mlp"
@@ -1161,9 +1161,11 @@ class PortController:
             raise
         return handles
 
+    @own_hook
     def _enter(self, module: Any, args: tuple[Any, ...]) -> None:
         self._local.depth = getattr(self._local, "depth", 0) + 1
 
+    @own_hook
     def _exit(self, module: Any, args: tuple[Any, ...], output: Any) -> None:
         self._local.depth = max(getattr(self._local, "depth", 0) - 1, 0)
 
@@ -1190,9 +1192,11 @@ class PortController:
             self.cell_records[index] = {**record, "realised_timing": timing,
                                         "realised_in_layer": self._layer_index}
 
+    @own_hook
     def _cells_before(self, module: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
         self._write_cells(kwargs, "before")
 
+    @own_hook
     def _cells_after(
         self, module: Any, args: tuple[Any, ...], kwargs: dict[str, Any], output: Any
     ) -> None:
@@ -1274,6 +1278,7 @@ class PortController:
         }
         return new_o
 
+    @own_hook
     def _r_hook(self, module: Any, args: tuple[Any, ...]) -> None:
         if not self._engaged():
             return None
@@ -1307,6 +1312,7 @@ class PortController:
         self._keep("r", r)
 
     def _pre(self, name: str):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...]):
             if not self._engaged():
                 return None
@@ -1316,6 +1322,7 @@ class PortController:
         return hook
 
     def _out(self, name: str):
+        @own_hook
         def hook(module: Any, args: tuple[Any, ...], output: Any):
             if not self._engaged():
                 return None
