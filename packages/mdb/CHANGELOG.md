@@ -158,7 +158,19 @@ seals. Format, bounds and migration: [docs/RECORDS.md](docs/RECORDS.md).
   source before the file is kept. Ids cited inside bodies keep their v2 value (the map resolves
   them). Measured on the repository's 607 stored v2 records (11 files: branches, pool,
   core-file): all migrated and read back equal in 3.4 s; stored size 8.39 MB -> 7.59 MB.
-- `docs/RECORDS.md`.
+- `docs/RECORDS.md`; `docs/PERFORMANCE.md` (what is fast since 0.2.1, `lookahead`, foreign hooks,
+  known remaining costs).
+- `probe.span_mask(run, spans, suffix, letters=, X=)`: answer-step span masking over a stored
+  sequence (`mask`, `zero`, `mask_last` at every layer and head, all arms batched against one
+  prefix cache), with a null arm and a cache-free check; `probe.suffix_sweep` no longer binds a
+  hint.
+- saturn-pub (same version, 0.4.1): `residency="streamed"` takes two transport options, off by
+  default: `prefetch=True` (needs `pin_host=True`; copies the predicted next block on a side
+  CUDA stream; modules under 4 MiB are copied inline) and `host_embedding=True` (embedding rows
+  gathered in host memory). The residency contract records them only when on, so existing
+  receipts are unchanged.
+- mdb-lanes: Qwen bench sessions take `publication="per_call"` (default: one durable publish per
+  `step`/`generate` call) or `"per_token"`, also as `mdb lanes bench open|resume --publication`.
 
 ### Kept
 
@@ -191,7 +203,7 @@ seals. Format, bounds and migration: [docs/RECORDS.md](docs/RECORDS.md).
 
 ## [0.2.1] — 2026-11-15
 
-Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on tiny Qwen2/Qwen3 CPU in bf16 and fp32 and in `00-hello-tiny`; trail fingerprints, tokens and logits are identical on Qwen2.5-1.5B on the GPU host, and example 04's records match field for field except the fields that differ between any two runs (custody time, payload path, per-arm seconds); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`. Measured: a stepped row at T=1024 went from 802 to 98 ms on the laptop CPU (the review's probe config) and from 644 to 109 ms on Qwen2.5-1.5B on an RTX 4080; example 04's smoke items ran 2.7x faster.
+Stepping speedups from the 2026-11-14 architecture review. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on tiny Qwen2/Qwen3 CPU in bf16 and fp32 and in `00-hello-tiny`; trail fingerprints, tokens and logits are identical on Qwen2.5-1.5B on the GPU host, and example 04's records match field for field except the fields that differ between any two runs (custody time, payload path, per-arm seconds); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`. Measured: a stepped row at T=1024 went from 802 to 98 ms on the laptop CPU (the review's probe config) and from 644 to 109 ms on Qwen2.5-1.5B on an RTX 4080; example 04's smoke items ran 2.7x faster.
 
 ### Changed (faster, same output)
 

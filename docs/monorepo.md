@@ -34,8 +34,8 @@ MDB commands documented relative to its checkout should run from `packages/mdb`:
 ```sh
 cd packages/mdb
 python -m pip install '.[autoregressive,dev]'
-python -m pytest -q
-python -I "$PWD/examples/resident_lab.py" --tiny qwen2 --out ./results/first-lab
+python -m pytest -q tests/test_engine_run.py      # the test files of the module you touch
+python examples/00-hello-tiny/hello_tiny.py
 ```
 
 Saturn's existing root installation, examples, notebooks and `uv.lock` keep their

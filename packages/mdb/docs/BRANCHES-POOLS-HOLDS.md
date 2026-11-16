@@ -80,7 +80,7 @@ run.core, run.core_check               # provenance, null check (argmax equal, m
 ## Transcoders in the decomposition family (`analysis/sae.py`, `components.py`)
 
 ```python
-tset = sae.open_transcoders("lowl0", "/mnt/big/llm-models/qwen3-1.7b-transcoders-lowl0")
+tset = sae.open_transcoders("lowl0", "/path/to/qwen3-1.7b-transcoders-lowl0")
 tc = tset.get(20)                                          # reads L20.n, writes L20.m
 cb = components.transcoder_binding(run, "mlp20", f"t{last}.L20.m", tc)
 components.component_table(run, cb, Margin(last, a, b))    # features + other + b_dec + error

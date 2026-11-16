@@ -23,6 +23,17 @@ cd saturn-pub
 pip install . "./packages/mdb[autoregressive]"
 ```
 
+A clone is on `main`, the development branch; `git checkout mdb-v0.2.3` (the latest release tag)
+before installing gives the released version. To install a release without cloning, name both
+packages from the tag:
+
+```
+pip install "saturn-pub @ git+https://github.com/JHollenb/saturn-pub@mdb-v0.2.3" \
+  "mdb-runtime[autoregressive] @ git+https://github.com/JHollenb/saturn-pub@mdb-v0.2.3#subdirectory=packages/mdb"
+```
+
+Release tags and branches: [docs/RELEASING.md](docs/RELEASING.md).
+
 To edit the code instead: `pip install -e . -e "./packages/mdb[autoregressive]"`. The
 `autoregressive` extra brings torch 2.13.0, transformers 5.14.1 and accelerate; without it only
 the framework-free commands work. `serve` adds the web viewer, `interop` adds TransformerLens and
@@ -480,6 +491,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `advance` | `advance ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
 | `backtrace` | `backtrace [ADDR]` | read | Producer chain from the focus port back to the layer input |
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
+| `candidates` | `candidates NAME = FILE\|W1,W2,...\|#ID,... [rule=first\|single] [paired=SET] \| candidates show\|delete NAME \| candidates list` | mutate | Declare a candidate set for content readouts (`symbols sets=`): token pieces, first-subword and collision flags, sha256 provenance |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
 | `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID ref=NAME\|set:NAME \| circuit show ID [node=NODEID]` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native patching from a reference run (knock-out and keep-only margins, two measured ratios; a `circuit-test` record), show as a walk (`node=` opens one stored page of a circuit that did not fit one record) |
@@ -491,12 +503,13 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `disable` | `disable [ID ...]` | mutate | Disable breakpoints and watches without deleting them (all when no ids) |
 | `display` | `display [ADDR]` | mutate | Show an address after every stop (no address: list displays) |
 | `down` | `down [N]` | navigate | Move the focus back toward its consumer, N times |
-| `each` | `each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]` | native | Run one op line on every prompt of a set (one run per prompt): one result per prompt and a summary (n, mean, min, max, sign agreement, verdict counts) |
+| `each` | `each SET [at=ADDR] [prefill=K\|@ROLE] [shard=K/N] [keep]: OP LINE [; OP LINE ...]` | native | Run one op line on every prompt of a set (one run per prompt): one result per prompt and a summary (n, mean, min, max, sign agreement, verdict counts) |
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
 | `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
 | `export` | `export` | not built yet | Export a walkthrough bundle of records and pointers |
 | `feature` | `feature ID layer=L [sae=NAME] [top=K]` | read | Life of one SAE feature along the cursor's row: its encoder probe at every residual port (h, r, h_out), where it first crosses the site's top-k threshold, and which attention/MLP (heads, neurons) write it |
 | `features` | `features ADDR [top=K] [sae=NAME] [consumer=M[a,b]] [lens=N] [circuit=true] [match=UNIT] \| features L*.h_out consumer=M[a,b]` | navigate | SAE features at a residual port with the error row; with a consumer, each feature's, the bias's and the error's exact direct effect and the closure (L*.h_out: per-layer profile of what the SAE drops) |
+| `feed` | `feed ID [ID ...]` | navigate | Forced tokens: run each row to sample with the given id in place of the greedy argmax, commit it, and stop at the next row's start |
 | `finish` | `finish` | navigate | From a port inside a layer: run to that layer's h_out. From h_out or a token-level stop: run to this row's sample |
 | `forecast` | `forecast [ADDR\|M[a,b]]` | mutate | Seal a prediction of the next stop (or a later stop of this row, or a margin M[a,b]) from values at the cursor, before native code runs |
 | `frame` | `frame [ADDR \| cursor \| NAME:]` | navigate | Show or set the focus address (print/list/backtrace default to it); NAME: switches to the named run |
@@ -518,9 +531,9 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `set` | `set ADDR = VALUE\|ADDR\|ORIGIN:ADDR [replace\|add\|scale\|mix DOSE]` | mutate | Stage an edit at a port of the pending layer, or of a state cell (cache.L<i>.k\|v[kv,row,d]): set ADDR = VALUE [op] |
 | `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
-| `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
+| `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K] [max_calls=N]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
 | `symbol` | `symbol NAME = ADDR[,ADDR...] \| symbol NAME = whatif\|compare.a\|compare.b\|EACH:ITEM [role=R] [readers=K] [causal=false] \| symbol show\|delete NAME` | mutate | Declare a user symbol over cache rows, or a named symbol from a transplant result (role, source row, readers, measured effect), usable as an address |
-| `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N]` | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
+| `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N] [...]` (further options: [docs/SYMBOL-TABLE-SCHEMA.md](docs/SYMBOL-TABLE-SCHEMA.md)) | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
 | `tbreak` | `tbreak PATTERN [if CONDITION]` | mutate | Set a breakpoint that deletes itself after its first hit |
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
 | `until` | `until ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
@@ -1080,14 +1093,14 @@ an environment with the `serve` extra):
 
 ```
 $ python -m mdb serve --project runs/t --tiny qwen2 --port 8799
-mdb serve: http://127.0.0.1:8799/  (project runs/t; live session qwen2-872f0e348e89)
+mdb serve: http://127.0.0.1:8799/  (project runs/t; live session qwen2-6173365f545b)
 $ python -m mdb engine http://127.0.0.1:8799 --tokens "1 5 9 3" --script walk.mdb
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) until L1.p
 t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
 (mdb) checkpoint pre
-checkpoint pre at t3.L1.p (736 bytes)
+checkpoint pre at t3.L1.p (750 bytes)
 $ echo "info checkpoints" | python -m mdb engine http://127.0.0.1:8799      # a second client
 (mdb) info checkpoints
 pre       t3.L1.p  staged 0, committed 0
@@ -1116,7 +1129,7 @@ Its documents are not part of this package (they live with our internal experime
 repository's `packages/mdb-experiments`).
 Without the plug-in `python -m mdb lanes` exits 2 with "mdb lanes has no commands: the mdb-lanes
 plug-in is not installed". With `PYTHONPATH=$W/src:$W/packages/mdb/src:$W/packages/mdb-lanes/src` (`W` is the repository
-root), `python -m mdb lanes` prints 46 verbs and `mdb.BenchSession.__module__` is `mdb_lanes.bench`.
+root), `python -m mdb lanes` prints 48 verbs and `mdb.BenchSession.__module__` is `mdb_lanes.bench`.
 
 ## Tests
 
@@ -1139,7 +1152,7 @@ transcripts in `tests/repl_golden/`; after an intended change regenerate one wit
 `MDB_UPDATE_GOLDEN=1 ... pytest tests/test_repl_golden.py -k NAME` and read the diff).
 `tests/test_deep_models.py` runs every analysis op on a 40-layer and a 70-layer tiny model (no op
 result may exceed the record bound). The serve tests (`tests/test_serve_*.py`) need the
-environment of the common harness (`fastapi`, `httpx`) and skip with `importorskip` elsewhere,
+`serve` extra and `httpx` and skip with `importorskip` elsewhere,
 so a pass in the plain venv says nothing about the server. The tests of `saturn_pub` live in
 `$W/tests` (run them from `$W` with `PYTHONPATH=$W/src`).
 

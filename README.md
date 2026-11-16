@@ -15,7 +15,7 @@ This repository contains two independently installable packages:
 | Package | Location | Use it for |
 | --- | --- | --- |
 | `saturn-pub` (`saturn_pub`) | Repository root | Local model experiments, causal interventions, interpretability integrations and reversible training |
-| [`mdb-runtime` (`mdb`)](docs/mdb.md) | `packages/mdb` | Durable model debugging, retained branches, memory residency and resumable execution |
+| [`mdb-runtime` (`mdb`)](packages/mdb/README.md) | `packages/mdb` | A gdb-style debugger for Hugging Face decoders: step native layers port by port, edit, checkpoint, rewind, sealed predictions ([releases](packages/mdb/docs/RELEASING.md)) |
 
 The Saturn toolkit uses public dependencies and needs no fleet services or credentials.
 MDB's optional scheduler and diffusion integrations use the public
@@ -130,6 +130,16 @@ Python stepping over an external cache is already slower than a fused forward, a
 copy adds more (0.5 tok/s for the streamed 8 B here), so it is a debugging/inspection path, not a
 serving path. Streamed-vs-resident bitwise equality is proven on tiny fixtures for all families
 (`tests/test_residency.py`) and on the resident-fitting real model above.
+
+Three transport options, all off by default, change only when and which bytes cross the bus:
+`pin_host=True` pins the host weights for asynchronous copies (CUDA only); `prefetch=True` (needs
+`pin_host`) copies the predicted next block on a side CUDA stream while the current one computes
+(modules under 4 MiB are copied inline); `host_embedding=True` gathers embedding rows in host
+memory instead of streaming the whole table. The decoder and Qwen adapters take all three, Mamba
+takes `pin_host`. The `residency` contract field records `prefetch` and `host_embedding` only
+when on. Measured by the maintainers on a Qwen3-8B bf16 streamed decode: 0.685 tok/s without
+`prefetch`, 1.058 with it, 1.072 with `host_embedding` as well; logits identical to pageable
+streaming.
 
 Diffusion adapters step the native FLUX transformer one projection / joint block / single block /
 readout at a time with the native flow Euler update and VAE. A transformer that does not fit the

@@ -14,6 +14,18 @@ pip install . "./packages/mdb[autoregressive]"
 pip install -e . -e "./packages/mdb[autoregressive]"
 ```
 
+A clone is on `main`, the development branch. For a released version, `git checkout mdb-v0.2.3`
+(the latest release tag) before installing, or install it from Git without cloning; name both
+packages, because pip cannot find `saturn-pub` on PyPI:
+
+```sh
+pip install "saturn-pub @ git+https://github.com/JHollenb/saturn-pub@mdb-v0.2.3" \
+  "mdb-runtime[autoregressive] @ git+https://github.com/JHollenb/saturn-pub@mdb-v0.2.3#subdirectory=packages/mdb"
+```
+
+`@release/mdb-0.2` instead of the tag follows the 0.2 series' fixes. Tags, branches and how
+fixes reach a release: [RELEASING.md](RELEASING.md).
+
 Python 3.10 or newer. mdb never searches for a source checkout at run time: it imports only
 installed packages.
 
@@ -36,7 +48,7 @@ The examples need further libraries (SAELens, pyvene, matplotlib); the table in
 ## Check the install
 
 ```sh
-mdb version                                   # 0.2.0
+mdb version                                   # 0.2.3 from the tag; X.Y.Z.devN on main
 mdb engine tiny:qwen2 --tokens "1 5 9 3"      # a REPL on a random tiny model, CPU, no download
 python examples/00-hello-tiny/hello_tiny.py   # from packages/mdb: the debugger loop in ~60 lines
 ```

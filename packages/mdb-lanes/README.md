@@ -41,11 +41,11 @@ mdb lanes flux-read-panels --qualification $W/packages/mdb-lanes/qualification s
 ## Publication mode
 
 Qwen bench sessions (`BenchSession.from_resident` / `BenchSession.resume` on a Qwen2 model, and
-`mdb bench open|resume --publication ...`) take one setting, `publication`:
+`mdb lanes bench open|resume --publication ...`) take one setting, `publication`:
 
 | value | behaviour |
 | --- | --- |
-| `"per_call"` (default, journal mode) | one durable publish (fsync) per `step`/`generate` call. Faster: on Beast a 32-token Qwen2.5-0.5B decode took 2.60 s in total with per-token publication, 0.79 s of it in 128 fsyncs. Each token cut is still its own immutable artifact in the call's sealed pack and restorable by ref; the call is all-or-nothing. A crash mid-call loses the whole call's tokens. |
+| `"per_call"` (default, journal mode) | one durable publish (fsync) per `step`/`generate` call. Faster: on the developers' GPU host a 32-token Qwen2.5-0.5B decode took 2.60 s in total with per-token publication, 0.79 s of it in 128 fsyncs. Each token cut is still its own immutable artifact in the call's sealed pack and restorable by ref; the call is all-or-nothing. A crash mid-call loses the whole call's tokens. |
 | `"per_token"` | durable after every token, so a crash loses at most the token in flight. Slower. |
 
 ```python
@@ -73,7 +73,9 @@ This recipe was run here on `tests/test_analysis_metrics.py` (8 passed). Tests t
 
 ## Documentation
 
-The lane write-ups are still in `../mdb/docs/` (attention ports, circuit discovery, compiled
-state, FLUX experiments, weight-space programming, qualification records and more), with
-examples in `../mdb/examples/` and experiments in `../mdb/experiments/`. The pre-split README,
-an index of those write-ups, is in git history: `git show 9ec645b:packages/mdb/README.md`.
+The lane write-ups are in `../mdb-experiments/docs/` (attention ports, circuit discovery,
+compiled state, FLUX experiments, weight-space programming, qualification records and more), with
+examples in `../mdb-experiments/examples/` and experiments in `../mdb-experiments/experiments/`;
+the engine integration notes are in [`docs/ENGINE-INTEGRATION.md`](docs/ENGINE-INTEGRATION.md).
+The pre-split README, an index of those write-ups, is in git history:
+`git show 9ec645b:packages/mdb/README.md`.

@@ -17,6 +17,7 @@ test suites and migration details. Installing one package does not install the o
 - [Overview, use cases and quickstart](mdb.md)
 - [Native circuit inspection and comparison](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-INSPECTION.md), [capability roadmap](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-CAPABILITIES.md), [workflow design](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical basis](../packages/mdb-experiments/docs/NATIVE-CIRCUIT-MATH.md)
 - [Installation and optional dependencies](../packages/mdb/docs/INSTALL.md)
+- [Releases: tags, release branches and installing a release](../packages/mdb/docs/RELEASING.md)
 - [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb-experiments/docs/LOCAL-DEBUGGER.md)
 - [Custom backends: forward, capture, intervention and local debugger](../packages/mdb-experiments/docs/BACKENDS.md)
 - [Stateful TransformerLens layer debugger](../packages/mdb-experiments/docs/TRANSFORMERLENS-DEBUGGER.md)
