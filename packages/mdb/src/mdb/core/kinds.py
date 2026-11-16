@@ -199,5 +199,22 @@ CORE_FILE = declare_kind(
                    "procedure.**", "path_edits.**", "post_split_edits", "tensors.count"),
 )
 
-__all__ = ["BRANCHES", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+# ``each`` over a prompt set: the summary record (``mdb.ops.sets``). Declared here so a reader
+# (and ``mdb records migrate``) verifies it without running ``each`` first.
+PROMPT_SET = declare_kind(
+    "prompt-set",
+    required=("set", "line", "items", "statistics"),
+    plain_numeric=("items.*.bytes", "items.*.prefill", "items.*.blob.bytes",
+                   "items.*.blob.tensor.shape.*", "total", "statistics.n",
+                   "items_blob.bytes", "items_blob.tensor.shape.*",
+                   "items_omitted", "shard.k", "shard.n", "shard.items", "shard.set_total",
+                   "statistics.numeric.*.n", "statistics.numeric.*.agree.count",
+                   "statistics.numeric.*.by_authority.*.n",
+                   "statistics.numeric.*.by_authority.*.agree.count",
+                   "statistics.verdicts.*.counts.*.count",
+                   "statistics.omitted.count", "statistics.partial.count"),
+)
+
+
+__all__ = ["BRANCHES", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "PROMPT_SET", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

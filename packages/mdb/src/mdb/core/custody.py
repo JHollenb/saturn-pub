@@ -16,7 +16,10 @@ branch, pool, ...), because they act inside ``records.seal_record``:
 * ``records_to(path)``: a sink. Every record sealed after it (in any module) is appended to
   ``path`` as one canonical JSON line (``records.stored_form``, the digest's form), so a record
   persists with no project attached; ``Sink.records()`` reads them back verified. Several sinks
-  may be open; ``Sink.close()`` stops one.
+  may be open; ``Sink.close()`` stops one. A v3 record's stored form keeps its execution profile
+  by sha256, so before the first record of each profile the sink writes the profile once as an
+  ``{"mdb_execution": "mdb-execution-v1", "sha256", "execution"}`` line; ``Sink.records()``
+  reads v3 and v2 lines (one file may hold both).
 
   Sink names (pre-release custody fix, 2026-11-14): shard jobs that all opened
   ``records-<tag>.jsonl`` were collected into one directory and only the last shard's records
@@ -189,15 +192,26 @@ class Sink:
         self.count = 0
         self.payload_count = 0
         self.payloads_on = bool(payloads)
+        self._executions: set[str] = set()   # execution profiles this sink has written
 
     def _append(self, line: str) -> None:
         with _LOCK, self.path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
 
     def write(self, record: dict[str, Any]) -> None:
-        from .records import stored_form
+        """Append one record's stored form. A v3 record keeps its execution profile by sha256,
+        so the profile is written first, once per sink, as an ``mdb_execution`` line."""
+        from .records import EXECUTION_SCHEMA, SCHEMA, stored_record
+        from .records import _canonical as canonical
 
-        self._append(stored_form(record))
+        stored = stored_record(record)
+        if record.get("schema") == SCHEMA and "execution" in record:
+            digest = stored["execution_sha256"]
+            if digest not in self._executions:
+                self._append(canonical({"mdb_execution": EXECUTION_SCHEMA, "sha256": digest,
+                                        "execution": record["execution"]}))
+                self._executions.add(digest)
+        self._append(canonical(stored))
         self.count += 1
 
     def write_payload(self, digest: str, raw: bytes) -> None:
@@ -216,12 +230,19 @@ class Sink:
                 if line.strip()]
 
     def records(self, *, verify: bool = True) -> list[dict[str, Any]]:
-        """The records written to this file (by any process), verified unless ``verify=False``.
-        Payload lines are not records and are skipped (``payloads()``)."""
-        from .records import verify_record
+        """The records written to this file (by any process), as logical records (v3 and v2),
+        verified unless ``verify=False``. Payload and execution lines are not records and are
+        skipped (``payloads()``, ``executions()``)."""
+        from .records import load_record
 
-        return [verify_record(r) if verify else r for r in self._lines()
-                if "mdb_payload" not in r]
+        lines = self._lines()
+        executions = _executions(lines)
+        return [load_record(r, executions=executions, verify=verify) for r in lines
+                if "mdb_payload" not in r and "mdb_execution" not in r]
+
+    def executions(self) -> dict[str, Any]:
+        """sha256 -> execution profile for every ``mdb_execution`` line, each checked."""
+        return _executions(self._lines())
 
     def payloads(self) -> dict[str, bytes]:
         """sha256 -> payload bytes for every payload line, each checked against its sha256."""
@@ -252,6 +273,19 @@ class Sink:
 
     def __exit__(self, *exc: Any) -> None:
         self.close()
+
+
+def _executions(lines: list[dict[str, Any]]) -> dict[str, Any]:
+    from .records import seal_digest
+
+    out = {}
+    for line in lines:
+        if "mdb_execution" not in line:
+            continue
+        if seal_digest(line["execution"]) != line["sha256"]:
+            raise ValueError(f"execution profile {line['sha256'][:12]} differs from its sha256")
+        out[line["sha256"]] = line["execution"]
+    return out
 
 
 def run_tag() -> str:

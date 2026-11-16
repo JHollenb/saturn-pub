@@ -816,18 +816,9 @@ def _store(debugger: Any, summary: dict[str, Any]) -> None:
     if project is None:
         return
     from mdb.core import index
-    from mdb.core.records import declare_kind, seal_record
+    from mdb.core.kinds import PROMPT_SET  # noqa: F401 (declares the kind)
+    from mdb.core.records import seal_record
 
-    declare_kind("prompt-set", required=("set", "line", "items", "statistics"),
-                 plain_numeric=("items.*.bytes", "items.*.prefill", "items.*.blob.bytes", "items.*.blob.tensor.shape.*", "total", "statistics.n",
-                                "items_blob.bytes", "items_blob.tensor.shape.*",
-                                "items_omitted", "shard.k", "shard.n", "shard.items",
-                                "shard.set_total",
-                                "statistics.numeric.*.n", "statistics.numeric.*.agree.count",
-                                "statistics.numeric.*.by_authority.*.n",
-                                "statistics.numeric.*.by_authority.*.agree.count",
-                                "statistics.verdicts.*.counts.*.count",
-                                "statistics.omitted.count", "statistics.partial.count"))
     try:
         record = seal_record(session_id=debugger.session_id, kind="prompt-set",
                              model_identity=debugger.adapter.model_identity,

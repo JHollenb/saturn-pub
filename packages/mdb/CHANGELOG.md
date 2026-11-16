@@ -2,6 +2,81 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
+## [Unreleased] — proposed 0.3.0
+
+Record schema `mdb-record-v3`. Every record sealed from this version on has a new id, even with
+the same content, so this is a breaking change for anything that compares or cites ids;
+proposed version 0.3.0. Record content is unchanged: `examples/00-hello-tiny` prints the same
+output except the forecast's record id (`f30d4d21ce1341f0` -> `d0c1d6c733c4bfa1` with torch 2.13
+and transformers 5.13.1), and the v2 records of that run migrate to exactly the ids the v3 run
+seals. Format, bounds and migration: [docs/RECORDS.md](docs/RECORDS.md).
+
+### Changed (breaking)
+
+- `seal_record` writes `mdb-record-v3`. The record you get (`seal_record`, `sink.records()`,
+  `index.get_record`) has the same fields as before. Its stored form, which the id is the sha256
+  of, keeps the execution profile as `execution_sha256` (the profile is stored once per project
+  session and once per sink file) and a column's values as base64 bytes. A plain `json.loads` of
+  a sink line or index row is the stored form; use `records.load_record(line, execution=...)` or
+  `sink.records()` for the record.
+- A record sink writes one `{"mdb_execution": "mdb-execution-v1", ...}` line per execution
+  profile, before the first record that uses it. Code that counts sink lines should count
+  records (`sink.records()`), not lines.
+- Bounds: a v3 record's stored form may be 1 MiB (was 64 KiB) and hold 65,536 JSON values
+  outside columns (was 4,096). The 64-item list bound and 4 KiB text bound are unchanged.
+  Consequence: results that were compacted at 64 KiB now fit inline. A `Branches.seal` record
+  of 25 arms x 6 probes x 40 values is no longer compact (its arm rows are in the record, not
+  behind `arms_payload`). An `each` summary of 64 `whatif` items is 61,428 bytes (v2: 62,168,
+  95% of the old cap; measured).
+
+### Added
+
+- Column claims: `records.nums(values, authority, proof=, unit=, shape=, dtype=, store=)`, many
+  numbers under one label with a shape and a dtype (`float64`, `float32`, `int64`), and
+  `records.nums_values(claim, store=)` to read one back as an array. Up to 65,536 values inline
+  (about 8 bytes per float64 value stored, against about 70 for a `num`); more go to a tensor
+  blob in the project store by sha256-checked pointer. No producer emits columns yet: existing
+  record bodies are unchanged.
+- `records.load_record`, `records.migrate_record`, `records.same_content`,
+  `records.stored_record`, `Sink.executions()`.
+- `mdb records migrate PATH [--out DIR] [--force]` and `mdb records verify PATH`
+  (`mdb.core.migrate`): writes `NAME.v3.jsonl` and `NAME.v3.map.json` (v2 id -> v3 id, source
+  and target sha256) for a record file or every record file under a directory; never in place.
+  Every migrated record is read back from the new file and compared field by field with its
+  source before the file is kept. Ids cited inside bodies keep their v2 value (the map resolves
+  them). Measured on the repository's 607 stored v2 records (11 files: branches, pool,
+  core-file): all migrated and read back equal in 3.4 s; stored size 8.39 MB -> 7.59 MB.
+- `docs/RECORDS.md`.
+
+### Kept
+
+- v2 records (`mdb-record-v2`) are read and verified as before everywhere: sinks (v2 and v3 lines
+  may share a file), project indexes, core files, `mdb serve`. Their 64 KiB bound and their ids
+  are unchanged. Legacy `mdb-circuit-investigation-v1` records are read as before.
+- Custody, seals and fingerprints: custody blocks, payload lines, trail fingerprints and receipts
+  are unchanged; only record ids and the stored encoding changed.
+
+### Measured (laptop CPU, tiny random Qwen2, one run each)
+
+| | v2 (0.2.1) | v3 |
+|---|---|---|
+| `each` over 32 prompts (`whatif`), 32 item records + summary, plus a 28-row `row_table` trace record: stored bytes | 205,458 | 180,299 (-12%) |
+| same, sink file bytes | 205,492 | 182,210 |
+| one `whatif` record (mean of 32) | 5,198 | 4,458 |
+| `trace` record (row table, 28 rows; payload 17,724 bytes, unchanged) | 2,291 | 1,552 |
+| `prompt-set` summary (32 items) | 36,834 | 36,094 |
+| seal all 34 / verify all 34 (ms, median of 20) | 16.5 / 11.9 | 12.9 / 12.7 |
+| sink write 34 / read and verify 34 (ms) | 2.7 / 12.8 | 3.3 / 13.9 |
+| a 28 x 32 grid as `num`s: bytes, seal, verify | 65,180 B, 8.9 ms, 6.7 ms | 65,218 B, 7.0 ms, 7.0 ms |
+| the same grid as one column (`nums`) | not available | 10,040 B, 0.39 ms, 0.38 ms |
+| read and verify the repository's 607 stored records (11 files; v2 originals vs their v3 migrations), median of 5 | 0.617 s | 0.668 s |
+
+### Fixed
+
+- `explain`'s first-order column and `mdb-lanes` `circuit_native.consumer_gradient` called
+  `DecoderAdapter._cache` without the `layer_index` argument 0.2.1 added, and raised `TypeError`
+  (22 test failures in `test_analysis_explain.py` / `test_analysis_casts.py` on 0.2.1).
+
 ## [0.2.1] — 2026-11-15
 
 Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on tiny Qwen2/Qwen3 CPU in bf16 and fp32 and in `00-hello-tiny`; trail fingerprints, tokens and logits are identical on Qwen2.5-1.5B on the GPU host, and example 04's records match field for field except the fields that differ between any two runs (custody time, payload path, per-arm seconds); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`. Measured: a stepped row at T=1024 went from 802 to 98 ms on the laptop CPU (the review's probe config) and from 644 to 109 ms on Qwen2.5-1.5B on an RTX 4080; example 04's smoke items ran 2.7x faster.

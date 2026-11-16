@@ -8,6 +8,7 @@ from collections import Counter
 
 from ...core.address import format_address, from_json
 from ...core.circuit_pages import PAGE_SCHEMA, PageError, locate
+from ...core.records import SCHEMAS as RECORD_SCHEMAS
 from .. import blobs
 from ..caps import NONFINITE, bound_json, canonical, nonfinite
 from ..schema import (
@@ -238,7 +239,7 @@ def _project_summary(entry, order) -> RecordSummary:
     if kind == "record":
         rid = record_id(raw)
         nums = []
-        if raw.get("schema") == "mdb-record-v2":
+        if raw.get("schema") in RECORD_SCHEMAS:
             nums = _claims(raw.get("body"))
             title = as_str(raw.get("kind")) + " " + as_str(as_dict(raw.get("body")).get(
                 "consumer"))
@@ -504,7 +505,7 @@ def stored_body(model, identifier, node=None) -> StoredBody:
         if raw.get("unreadable"):
             raise ViewError("unreadable", f"record {short(identifier)}: "
                             f"{as_str(raw.get('unreadable'))}", 409)
-        if kind not in DRAWN_KINDS or raw.get("schema") != "mdb-record-v2":
+        if kind not in DRAWN_KINDS or raw.get("schema") not in RECORD_SCHEMAS:
             raise ViewError("not_drawn", f"record {short(identifier)} is a {kind or '?'} record; "
                             "only engine circuit and symbol-table records are drawn (the "
                             "Records drawer shows the rest)", 409)

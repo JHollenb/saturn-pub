@@ -8,6 +8,8 @@ Engine verbs (implemented in this distribution):
     mdb serve --project DIR [--tiny qwen2|qwen3|llama|mistral | --model DIR] [--port N]
               [--allow-host H ...] [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
                                   or --model it also holds a live debugger the web app steps
+    mdb records migrate PATH      write the schema-v3 twin of a JSONL record file (new file +
+                                  id map; never in place); ``mdb records verify PATH`` checks one
     mdb lanes [VERB ...]          list, or run, a verb of the lanes plug-in
     mdb version
 
@@ -20,17 +22,19 @@ Importing this module loads no model framework, no numpy, no web framework and n
 """
 import sys
 
-ENGINE_VERBS = ("engine", "serve", "lanes", "version")
+ENGINE_VERBS = ("engine", "serve", "records", "lanes", "version")
 # Literal copy of ``mdb.engine.models.TINY_FAMILIES``: this module imports no torch (a test
 # compares the two).
 TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
-USAGE = ("usage: mdb {engine,serve,lanes,version} ...  |  mdb lanes VERB ...\n"
+USAGE = ("usage: mdb {engine,serve,records,lanes,version} ...  |  mdb lanes VERB ...\n"
          "  engine   port-level model REPL: mdb engine MODEL [PROMPT] [--project DIR]\n"
          f"           MODEL = checkpoint directory | cached model name |\n"
          f"           tiny:{'|'.join(TINY_FAMILIES)} |\n"
          "           http://HOST:PORT of a running mdb serve (mdb engine --help)\n"
          "  serve    web viewer: mdb serve --project DIR [--port N]; live debugger with\n"
          f"           --tiny {'|'.join(TINY_FAMILIES)} | --model DIR (mdb serve --help)\n"
+         "  records  record files: mdb records migrate PATH (v2 -> v3, new files) |\n"
+         "           mdb records verify PATH\n"
          "  lanes    commands of the mdb-lanes plug-in (mdb lanes lists them)\n"
          "  version  print the engine version")
 
@@ -71,6 +75,9 @@ def main(argv=None):
     if verb == "serve":
         from .serve.__main__ import main as serve_main  # fastapi loads only when it runs
         return serve_main(argv[1:])
+    if verb == "records":
+        from .core.migrate import main as records_main
+        return records_main(argv[1:])
     if verb == "version":
         from . import __version__
         print(__version__)

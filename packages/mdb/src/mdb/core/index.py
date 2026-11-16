@@ -9,7 +9,7 @@ module imports neither class nor a framework). Row text is ``saturn_pub.values.c
 The index is purely additive to a schema-3 project (``user_version`` stays 3, so every other
 checkout opens the same directory)::
 
-    records(id PRIMARY KEY, session_id, kind, schema, body)   # mdb-record-v2, stored_form
+    records(id PRIMARY KEY, session_id, kind, schema, body)   # mdb-record-v3 or -v2, stored_form
     cursor(session_id PRIMARY KEY, record_id)
     recipes(id PRIMARY KEY, session_id, body)
     occurrences(session_id, address, recipe_id, event_id, cut_id, blob_id,
@@ -20,8 +20,11 @@ the first write through this module (``ensure_tables``); never on a read and nev
 read-only connection. A reader treats a missing table as empty. ``circuit_records`` and
 ``circuit_focus`` are the tables ``circuit_investigation`` creates and writes, untouched:
 ``list_records``/``get_record`` pass legacy ``mdb-circuit-investigation-v1`` rows through
-(read-only, marked by their own schema string) and return v2 rows from ``records``. Writes of
-v2 records go only to ``records``; legacy writes stay with ``circuit_investigation``.
+(read-only, marked by their own schema string) and return v3 and v2 rows from ``records``.
+A v3 row stores ``execution_sha256`` in place of the execution profile; the reader takes the
+profile from the session row (the record's binding), so a row bound to another profile is
+refused. Writes of v3 (and verified v2) records go only to ``records``; legacy writes stay with
+``circuit_investigation``.
 """
 from __future__ import annotations
 
@@ -30,7 +33,15 @@ import json
 from saturn_pub.values import canonical
 
 from .pointers import RecordError, _sha
-from .records import LEGACY_SCHEMAS, SCHEMA, kind_spec, stored_form, verify_legacy, verify_record
+from .records import (
+    LEGACY_SCHEMAS,
+    SCHEMAS,
+    kind_spec,
+    load_record,
+    stored_form,
+    verify_legacy,
+    verify_record,
+)
 
 LEGACY_CIRCUIT = LEGACY_SCHEMAS[0]
 MAX_RECIPE_BYTES = 256 * 1024
@@ -109,7 +120,8 @@ def _binding(project, sid):
 # --------------------------------------------------------------------------- records
 
 def put_record(project, record):
-    """Index a sealed v2 record under its session; returns its id. Idempotent."""
+    """Index a sealed record (v3, or a verified v2) under its session; returns its id.
+    Idempotent."""
     _writable(project)
     record = verify_record(record)
     identity, execution = _binding(project, record["session_id"])
@@ -119,7 +131,7 @@ def put_record(project, record):
     ensure_tables(project)
     with _connect(project) as db:
         db.execute("INSERT OR IGNORE INTO records VALUES (?,?,?,?,?)",
-                   (record["id"], record["session_id"], record["kind"], SCHEMA, body))
+                   (record["id"], record["session_id"], record["kind"], record["schema"], body))
         existing = db.execute("SELECT body FROM records WHERE id=?", (record["id"],)).fetchone()
         if existing[0] != body:
             raise RecordError("record identity collision")
@@ -127,7 +139,7 @@ def put_record(project, record):
 
 
 def _row(db, sid, identifier):
-    """(kind, schema, body) of one indexed record: a v2 row first, then a legacy circuit row."""
+    """(kind, schema, body) of one indexed record: a v3/v2 row first, then a legacy circuit row."""
     if _exists(db, "records"):
         row = db.execute("SELECT kind, schema, body FROM records WHERE session_id=? AND id=?",
                          (sid, identifier)).fetchone()
@@ -148,8 +160,10 @@ def _verified(project, sid, identifier, kind, schema, body):
     except (ValueError, RecursionError) as error:   # not JSON, an integer past the digit limit,
         # or nesting deeper than the interpreter's recursion limit
         raise RecordError(f"record index row is not readable JSON: {error}") from error
-    if schema == SCHEMA:
-        value = verify_record(value)
+    if schema in SCHEMAS:
+        if value.get("schema") != schema:
+            raise RecordError("record index row differs from its schema column")
+        value = load_record(value, execution=execution)
         if value["id"] != identifier or value["kind"] != kind or value["session_id"] != sid:
             raise RecordError("record index row differs from its seal")
     elif schema in LEGACY_SCHEMAS:
@@ -164,7 +178,8 @@ def _verified(project, sid, identifier, kind, schema, body):
 
 
 def get_record(project, sid, identifier):
-    """A verified record: a v2 envelope, or a legacy circuit record ``{record_id, **body}``."""
+    """A verified record: a logical v3 or v2 envelope, or a legacy circuit record
+    ``{record_id, **body}``."""
     with _connect(project) as db:
         row = _row(db, sid, identifier)
     if row is None:
@@ -173,7 +188,7 @@ def get_record(project, sid, identifier):
 
 
 def list_records(project, sid, *, kind=None, schema=None, strict=False):
-    """Verified records of a session: legacy circuit records (their rowid order), then v2.
+    """Verified records of a session: legacy circuit records (their rowid order), then v3/v2.
 
     The two kinds live in different tables, so their relative insertion order is not kept:
     legacy rows come first, each group in insertion order. Missing tables read as empty.
@@ -200,7 +215,7 @@ def list_records(project, sid, *, kind=None, schema=None, strict=False):
     for i, k, s, b in rows:
         if (kind is not None and k != kind) or (schema is not None and s != schema):
             continue
-        if not strict and s == SCHEMA and kind_spec(k) is None:
+        if not strict and s in SCHEMAS and kind_spec(k) is None:
             out.append({"id": i, "kind": k, "schema": s, "verified": False, "state": "unresolved",
                         "reason": f"record kind {k!r} is not declared in this process"})
             continue

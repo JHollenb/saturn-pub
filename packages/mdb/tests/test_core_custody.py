@@ -15,6 +15,12 @@ from mdb.core.records import seal_record, verify_record
 IDENTITY = {"family": "qwen2", "parameters_sha256": "0" * 64}
 
 
+def _record_lines(path):
+    """The record lines of a sink file (v3 sinks also hold one ``mdb_execution`` line per
+    execution profile)."""
+    return [line for line in path.read_text().splitlines() if '"mdb_execution"' not in line]
+
+
 def _seal(body=None):
     return seal_record(session_id="s", kind="supplied-forecast", model_identity=IDENTITY,
                        execution={"device": "cpu"}, authority="supplied",
@@ -65,13 +71,14 @@ def test_sink_persists_every_record(tmp_path):
         custody.declare(note="second")
         b = _seal()
     _seal()                                                   # closed: not written
-    lines = path.read_text().splitlines()
+    lines = _record_lines(path)
     assert len(lines) == 2 and sink.count == 2
+    assert len(path.read_text().splitlines()) == 3          # one execution line, written once
     back = sink.records()
     assert [r["id"] for r in back] == [a["id"], b["id"]]
     tampered = json.loads(lines[0])
     tampered["body"]["schema"] = "y"
-    path.write_text(json.dumps(tampered) + "\n")
+    path.write_text(path.read_text().splitlines()[0] + "\n" + json.dumps(tampered) + "\n")
     with pytest.raises(Exception):
         sink.records()
 
@@ -85,7 +92,7 @@ def test_environment_declares(tmp_path, monkeypatch):
     custody._STATE["env_read"] = False
     record = _seal()
     assert record["body"]["custody"]["script_sha256"] == custody.file_sha256(script)
-    assert len(sink_path.read_text().splitlines()) == 1
+    assert len(_record_lines(sink_path)) == 1
 
 
 def test_sink_names_are_unique_per_run(tmp_path, monkeypatch):
@@ -130,7 +137,7 @@ def test_sink_refuses_a_file_another_run_wrote(tmp_path, monkeypatch):
     custody._STATE["env_read"] = False
     monkeypatch.setenv("MDB_RECORDS_APPEND", "1")
     _seal()
-    assert len((tmp_path / "env-foreign.jsonl").read_text().splitlines()) == 3
+    assert len(_record_lines(tmp_path / "env-foreign.jsonl")) == 3
 
 
 def test_absent_payload_is_sealed_in_the_sink(tmp_path):
@@ -162,7 +169,7 @@ def test_records_to_same_path_twice_is_one_sink(tmp_path):
         second = custody.records_to(path)
         assert second is first
         _seal()
-    assert len(path.read_text().splitlines()) == 1 and len(first.records()) == 1
+    assert len(_record_lines(path)) == 1 and len(first.records()) == 1
 
 
 def test_suffixless_missing_path_is_a_directory(tmp_path):

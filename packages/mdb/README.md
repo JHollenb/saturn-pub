@@ -409,8 +409,9 @@ In roughly the order you meet them.
   native against emulated within the floor; see [Verdicts](#verdicts).
 - **Authority label**: how a number was obtained: `measured`, `derived-exact`, `derived-local`,
   `bound`, `supplied`; see [Authority labels](#authority-labels).
-- **Record**: a JSON result with a content-addressed id (the sha256 of its canonical form), at
-  most 64 KiB, every number labelled. **Sealed**: written as a record before the native value it
+- **Record**: a JSON result with a content-addressed id (the sha256 of its stored form), at
+  most 1 MiB, every number labelled; a table of numbers with one label is a column (`nums`).
+  Format, bounds and migrating records of mdb 0.2.1 and earlier: [docs/RECORDS.md](docs/RECORDS.md). **Sealed**: written as a record before the native value it
   predicts exists (`forecast`, `whatif`), so the prediction cannot be adjusted afterwards.
 - **Branch** (`dbg.branches`): named arms (edits) run from one checkpoint against one shared floor,
   with built-in null arms. **Pool** (`dbg.pool`): a sealed set of donor values over prompts, with a
@@ -961,7 +962,7 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   a     0.0041504   0.0046219   effect
 ```
 
-The result of `each` is one summary record (at most 64 KiB): a row per item (its key numbers,
+The result of `each` is one summary record (at most 1 MiB): a row per item (its key numbers,
 verdict, the sha256 of its result, the op's own record id when it seals one, the bytes its run
 held) and statistics for every labelled number found at the same result path in all items that
 ran: n, mean, min, max and how many share the most common sign, plus a count per value of every
@@ -1008,7 +1009,7 @@ Debugger objects for the loops an experiment script otherwise writes by hand (se
 - `dbg.pool(items, "cache.L20.v[kv6,row=@carrier]")` gives sealed value sets with a leave-one-out mean (the item excluded by construction), donor rules and matched-norm random.
 - `run.dump(path)` and `dbg.run_from(path)` write a core file and reload it as a steppable run on any device/dtype, with a null check on load.
 - `sae.open_transcoders` and `components.transcoder_binding` handle transcoders as MLP-write component bindings.
-- `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink. With no path, a directory or `{run}` in the name the sink file is unique per process and mrun job; an existing file another run wrote is refused unless `append=True`; pointer payloads with no store (a compact branches record's `arms_payload`) are written into the sink too.
+- `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink. With no path, a directory or `{run}` in the name the sink file is unique per process and mrun job; an existing file another run wrote is refused unless `append=True`; pointer payloads with no store (a compact branches record's `arms_payload`) are written into the sink too. Records are schema `mdb-record-v3` from 0.3.0; `mdb records migrate PATH` writes the v3 twin of an older sink file with an id map ([docs/RECORDS.md](docs/RECORDS.md)).
 - `br.run(mode="batched")` batches whole-cell and native-port arms; the default `recheck="band"` re-measures stepped only arms within `1/k..k` floors. `Branches(..., probes={...})` reads named values on every stepped arm before restore; a branches record too large for one line is sealed compact with the full rows by pointer.
 - `analysis.subspace.SubspaceBinding` names a `k`-dimensional subspace of one value cell `cache.L<l>.v[kv<g>,row=r]` by an orthonormal basis with provenance and a basis authority (`derived-exact` from `readout_subspace`, `fitted` from `from_pyvene` DAS or `class_mean_subspace`, `supplied`); `decompose()` returns a `ComponentBinding`, and `subspace.interchange` (measured) rides on `Branches`.
 - `FeatureCondition(text, contexts)` watches several feature sites at once (`features.feature_sites({layer: basis}, row=r)`), one memory per layer, hits carrying site and layer.
