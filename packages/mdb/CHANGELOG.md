@@ -2,7 +2,7 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
-## Unreleased (proposed 0.2.1; 0.3.0 if the owner counts the in-place-write refusal below as breaking)
+## [0.2.1] — 2026-11-15
 
 Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on tiny Qwen2/Qwen3 CPU in bf16 and fp32 and in `00-hello-tiny`; trail fingerprints, tokens and logits are identical on Qwen2.5-1.5B on the GPU host, and example 04's records match field for field except the fields that differ between any two runs (custody time, payload path, per-arm seconds); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`. Measured: a stepped row at T=1024 went from 802 to 98 ms on the laptop CPU (the review's probe config) and from 644 to 109 ms on Qwen2.5-1.5B on an RTX 4080; example 04's smoke items ran 2.7x faster.
 
@@ -24,7 +24,7 @@ Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `
 
 - On the by-reference path (no foreign hooks), a forward hook or port controller that writes any K/V tensor of the state in place before the native layer replaces it (including a pre-hook writing the pending layer's existing rows) now gets `InPlaceWrite` (and the session is poisoned until a restore), as for any other shared state tensor. Before, the write went to a private copy. A post-hook writing the freshly concatenated pending layer is still adopted, as on main. With a foreign hook registered the copying path is used and nothing is refused, as on main. Cell edits (`set_cell`) are copy-on-write and unaffected.
 
-## [0.2.0] — 2026-11-14 (owner-approved version; on mdb-pre-release, not yet tagged or merged to main)
+## [0.2.0] — 2026-11-14
 
 Covers `main` (8c019ee, 2026-11-13) to `mdb-pre-release` (2026-11-14): the `mdb-engine-refactor` work of 2026-11-14 plus `claude/mdb-lanes-integration-20261114`. `pyproject.toml` and `mdb.__version__` are 0.2.0.
 
