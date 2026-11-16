@@ -5,7 +5,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from saturn_pub.shared_store import SharedStore, configure, configured_store
+from saturn_pub.shared_store import (
+    SharedStore,
+    configure,
+    configured_store,
+    set_shared_store,
+    shared_store_root,
+)
 
 
 def test_whole_file_dedup_preserves_paths_bytes_and_seals(tmp_path):
@@ -117,3 +123,24 @@ def test_native_statecut_identity_and_legacy_loading_across_shared_stores(tmp_pa
         assert torch.equal(loaded.payload["value"], cut.payload["value"])
     blobs = [next((s.root / "blobs").glob("*.safetensors")) for s in stores]
     assert os.path.samefile(*blobs)
+
+
+def test_explicit_store_wins_over_environment_and_scope_file(tmp_path, monkeypatch):
+    scope, legacy, env_root, explicit = (tmp_path / "artifacts", tmp_path / "legacy",
+                                         tmp_path / "env", tmp_path / "explicit")
+    configure(scope, legacy)
+    monkeypatch.setenv("MDB_SHARED_TENSOR_STORE", str(env_root))
+    try:
+        assert configured_store(scope / "a.npy").root == env_root
+        assert set_shared_store(explicit) == explicit and shared_store_root() == explicit
+        assert configured_store(scope / "a.npy").root == explicit
+        assert configured_store(tmp_path / "elsewhere/b.npy").root == explicit
+        with pytest.raises(ValueError, match="absolute"):
+            set_shared_store("relative/pool")
+        assert shared_store_root() == explicit                 # a refused call changes nothing
+    finally:
+        set_shared_store(None)
+    assert shared_store_root() is None
+    assert configured_store(scope / "a.npy").root == env_root   # the environment fallback
+    monkeypatch.delenv("MDB_SHARED_TENSOR_STORE")
+    assert configured_store(scope / "a.npy").root == legacy.resolve()

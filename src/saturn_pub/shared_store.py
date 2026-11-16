@@ -199,7 +199,37 @@ def configure(scope, root):
     return config
 
 
+_EXPLICIT_ROOT = []
+
+
+def set_shared_store(root):
+    """Name this process's shared tensor pool explicitly (``None`` clears it).
+
+    ``configured_store`` then uses ``root`` for every path, before the
+    ``MDB_SHARED_TENSOR_STORE`` environment fallback and any ``.mdb-storage.json``.
+    The root must be absolute (the pool and its clients share one filesystem).
+    """
+    if root is None:
+        _EXPLICIT_ROOT.clear()
+        return None
+    root = Path(root).expanduser()
+    if not root.is_absolute():
+        raise ValueError("a shared tensor store root must be an absolute path")
+    _EXPLICIT_ROOT[:] = [root]
+    return root
+
+
+def shared_store_root():
+    """The explicitly set pool root, or None (environment and files are not consulted)."""
+    return _EXPLICIT_ROOT[0] if _EXPLICIT_ROOT else None
+
+
 def configured_store(path):
+    """The pool for ``path``: the explicit root (``set_shared_store``), else the
+    ``MDB_SHARED_TENSOR_STORE`` environment variable, else the nearest ancestor
+    ``.mdb-storage.json``; None when none is configured."""
+    if _EXPLICIT_ROOT:
+        return SharedStore(_EXPLICIT_ROOT[0])
     override = os.environ.get("MDB_SHARED_TENSOR_STORE")
     if override:
         return SharedStore(override)
