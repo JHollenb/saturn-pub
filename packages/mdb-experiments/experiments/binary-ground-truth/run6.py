@@ -29,6 +29,7 @@ for p in (HERE / "src", HERE.parents[2] / "mdb/src"):
 import torch  # noqa: E402
 
 TAUS = (1.0, 0.3, 0.1, 0.03, 0.01, 0.001)
+EXTRA_TAUS = (0.5, 0.4, 0.35, 0.32)          # exploratory, not in the PREREG grid
 SAE_K = 4
 
 
@@ -51,6 +52,32 @@ def by_class(named, cls, names) -> dict:
     for c in cls.unique().tolist():
         m = cls == c
         out[names[c]] = {"n": int(m.sum()), "correct": int((named[m] == c).sum())}
+    return out
+
+
+def forced_sweep(mlp, hard, cl, K, taus) -> list:
+    """Soft gate applied to the hard run's own states at every lane-step (teacher-forced): the gate is
+    softmax(onehot(class) / tau), exactly as torchx86's soft Dispatch builds it; f = gate * up,
+    down = sum f > 0.5. Exact output = down equals the hard output; attribution is blind (f, down)."""
+    live = hard.live
+    up = hard.up[live]
+    out = []
+    for tau in taus:
+        gate = torch.softmax(torch.nn.functional.one_hot(cl, K).float() / tau, -1)
+        ex, nc, na = [], [], []
+        for s in range(0, len(up), 8192):
+            f = gate[s:s + 8192, :, None] * up[s:s + 8192].float()
+            down = (f.sum(1) > 0.5).to(torch.uint8)
+            ex.append((down == hard.down[live][s:s + 8192]).all(-1))
+            r = mlp.attribute(f, down)
+            nc.append(r["named_contribution"])
+            na.append(r["named_ablation"])
+        ex, nc, na = torch.cat(ex), torch.cat(nc), torch.cat(na)
+        out.append({"tau": tau, "prereg_grid": tau in TAUS, "lane_steps": len(ex),
+                    "exact_output_rate": float(ex.float().mean()),
+                    "contribution": rates(nc, cl), "ablation": rates(na, cl),
+                    "ablation_on_inexact": rates(na[~ex], cl[~ex]) if (~ex).any() else None,
+                    "contribution_on_inexact": rates(nc[~ex], cl[~ex]) if (~ex).any() else None})
     return out
 
 
@@ -108,6 +135,7 @@ def main(argv=None) -> int:
     ap.add_argument("--programs", nargs="+", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--no-sae", action="store_true")
+    ap.add_argument("--forced-only", action="store_true", help="harness + hard attribution + forced sweep")
     ap.add_argument("--out", type=Path, default=Path("result"))
     a = ap.parse_args(argv)
     torch.set_num_threads(2)
@@ -150,6 +178,21 @@ def main(argv=None) -> int:
         rec["a_hard"]["by_class_ablation"] = by_class(att["named_ablation"], cl, names)
         rec["a_hard"]["gate_units_on_max"] = int((hard.gate[hard.live] != 0).sum(-1).max())
         log(f"  hard attribution {json.dumps({k: rec['a_hard'][k] for k in ('contribution', 'ablation')})}")
+        rec["a_soft_forced"] = forced_sweep(mlp, hard, cl, K, sorted(TAUS + EXTRA_TAUS, reverse=True))
+        for r in rec["a_soft_forced"]:
+            log(f"  forced tau {r['tau']}: exact {r['exact_output_rate']:.4f} contrib wrong "
+                f"{r['contribution']['wrong_class']:.4f} abl wrong {r['ablation']['wrong_class']:.4f}")
+        fin = [r for r in rec["a_soft_forced"] if r["prereg_grid"]]
+        rec["a_soft_forced_summary"] = {
+            "largest_tau_exact_lt_1": max([r["tau"] for r in fin if r["exact_output_rate"] < 1] or [None], key=lambda x: x or 0),
+            "largest_tau_attribution_wrong": max([r["tau"] for r in fin if r["ablation"]["wrong_class"] > 0
+                                                  or r["contribution"]["wrong_class"] > 0] or [None], key=lambda x: x or 0)}
+        if a.forced_only:
+            out = a.out / prog
+            out.mkdir(parents=True, exist_ok=True)
+            (out / "run6_forced.json").write_text(json.dumps(rec, indent=1, default=str))
+            log(f"{prog}: forced done {time.time() - t0:.1f}s")
+            continue
 
         # (a) soft gate sweep: one batch, 33 lanes per tau
         taus = torch.tensor(TAUS).repeat_interleave(B)[:, None]
