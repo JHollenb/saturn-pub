@@ -1,0 +1,3150 @@
+{
+ "qwen2-bf16/A/logits": {
+  "8": "d36baa18af62b881"
+ },
+ "qwen2-bf16/A/receipts": [
+  "9bfa42df89102321fca9fffde0a3965da32c3d76bbfbe02347d3e5da14baf3e9",
+  "473b4812718b4a349434da39fbe83ede69b1251381af940cc51e72618c842cb1",
+  "f0951e884e9093f40718826ffa072df0b42e71b91a62eba6b011caf8a09ad68a",
+  "2d669961d5eff81086e3257b4b1cd26519722766ecaf1d9950dadb1c7c6714a5",
+  "fecd6e75d24049a867b9b73a37b049baee1e9b053f4c27256783d59f36b29d19",
+  "13ffbbe63d0decbb1acc7c08b5aa4375b5fe8ece69027126c237d40d27aff0c7",
+  "b625dd709e81d47854c25041a8dc4f35c1469fd16efbc6efb39b611d1e959318",
+  "0f6b65f24c352827b6e16ab96a220e61f078e2ea89cc238a24d92291a0867bdb",
+  "fb9ca5ec800a9b1632d2aef3ef1a2fd9d957e95d9718647dd6e905e030bdbb81",
+  "31f03847735108ddac4e62ad11df8fd087af619ab8da196e4451f9b96b885f41",
+  "86699f70ade96c051df13fb4793b3115cc235e48fb311081108042556c4309ea",
+  "b1fae0b417b603a871fc2460903dfac5fa52d53a4fba17031529a04fe43c75a8",
+  "973025ca8d644dd4c2d84d6a3dcab8ed0245c37b4364c607ea4f05ed35dcd7ca",
+  "2a677cb7ebecf105ce02f77c0c52f1db3f650babb85eb1ea20936e3ad78de6a7",
+  "609de702dc1018aa82d46e568d918017ee54155dc36ef9de12d42d497a5d07a1",
+  "ce2bc358f5d1c1aad49bdb00901e8b903921bb2fdc1b6e48b7ad170efaf4df92",
+  "2bfb216637a0ba67741ae65b329b4f3e9416d09e3f3a380e9b47b8022d710063",
+  "f18e6e8b66b82ac21f45f322b93770fa5a95d9644913d16b2383d6172577a455",
+  "1fb5f3e56a35c57fbde866ebe4f4293510b212e0be888f095e0a4a35ad94b73b",
+  "ebe4e80e5099c9dcf525e8985c7a833d9a27ec664ae2efcb7bd301b01b5c96f2",
+  "b85d2ee8c451be57c48d5c80374c878be4f753ff8b5b3c1408404405852dcc84",
+  "59f58ac38846598fd7bd14bce374be06d3177a14c6792cac989836b1e826ca32",
+  "87b9362b5705fa841291940c6807c23baf26c0fba58282c44546569a8509ac79",
+  "dfaea0c28b220cba2b5d91dcb7012f607e0fdc9b73d2d7fdc4b85de28dc7aade",
+  "bd9d0ab8bdf99efdbf18d84cecec6f4e995cb0dcc2706f9b64bc9fbf5a5e1597",
+  "593a215db8e36a7e4e43323b4e13b5bc03ed6be5e670dfa7f5976acd44af0bf9"
+ ],
+ "qwen2-bf16/A/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3,
+  20,
+  12
+ ],
+ "qwen2-bf16/A/trail": [
+  "40d026468461adfbdbfa6325d60cff92e54afaf1446a62f5f94e9dd8441b0016",
+  "e4a5d91697ae463d14641c6bc1d690feccf16007a0e501760ebf808576ef6c12",
+  "dd067d446a50c75bbf533549d841e6a00da42e5d4cca149daee647bb582a2aa4",
+  "25666f04238aa1818fa5d10ccd07254f43a1fcfacc1559c7c3298dccee26c4fc",
+  "dc21ed4497fcb5e976c5370198feb9134e34cc8870744cb2623c9cddd7a74ca7",
+  "ec1e82bb0ced210d6e6138a427f573cf64bbd6cf32cfabceb3e564b2feed6385",
+  "7dea9b6f0cbceb8f6605ac0c4e11b35179cc85c7c7e804fe874eaa16b4376d2e",
+  "9387890e45313ea68211ad42e615f964a5c7e96627a46878b40bb7f3e8db0f9d",
+  "8c9aa87018d03e36dfb35549173f88f4e4f1e28f7a5d6ebd5202a838db40696c",
+  "50af1cc3a87c60b9266782d795f9de615347be128b7813905d884a2115c97265",
+  "584f18933d8bc6b3b66c076dbfbf1a24e029f5ec8fca8e4c249e9d59c24dc683",
+  "4da3efbf665607737a2fbf0b830bee03a65f7d591a0fe62e4f79bee18a2072c1",
+  "d10c7c92ad9a47cd1108187b8935b0330964df4d9cc75af7d1f5a2fad4886d6a",
+  "a23e707e10e8e890485c5e49e3b0d5c07a98f7eeab803f1b258aee8beda2076d",
+  "7d29344d4a54aacdb484e1f02f15a3e0d5d3b5d9a224cafca853c3ec997f75f3",
+  "2489ff00f989e314d4e5c6ddc3803bbe267c2ed930ae9c481b0e70dd06d872ea",
+  "71bb580c3b872daa0eb92081947bd65f6a337ceee26f2ae82c05c21c8eef5758",
+  "49e6f2e7412b8624d337450c9334cf2e4d4e76c3c6c7896ee432d5c7e60fe90c",
+  "a8f595e3d6dc5f6bfdf7d52bc96f6c5c3686e101404f206983ce6f379030bf6f",
+  "76a28f5f07cb0b0103d66703283440a22f447055e749067ee1a5e9e5ea802dc9",
+  "71baf0002f9cbb81fcf77bf19f50b3d94ac970ea03ffa19ec42c74818dd5fae6",
+  "5c2e8f973de23590b111b0bcb345ca5fe4c43c501e289f68dfc47440c67d81cd",
+  "be1eba8327a978791d73131f88126edc39760d5bd07408a16ff8ce2998dc4e2c",
+  "51b7ff32c201febcddc975f513e766e01b1e996e3eb60fef3b23181bd7e1ef57",
+  "168c1b8549d676cbe2481c6562a014541ec150c3f68e6f21ebefdc569f5d8dbd",
+  "dcaaceacd68e500cfb7e6e191715f7584ae128975da188d2d265bf194819f94c",
+  "23694fef9e732470ca93e951c9d9e8238958f2d48287caa35782d1fcfeef4eb1"
+ ],
+ "qwen2-bf16/B/logits": {
+  "0": "a8e6af3abbd24822",
+  "1": "4b7bdcfce5cb3663",
+  "2": "216f896129c08b0a",
+  "3": "6c16a594ce88a5f3",
+  "4": "def5328df57ab3b2",
+  "5": "11035ec6c26ea469",
+  "6": "56f133ae9474ce48",
+  "7": "636932733d5d581e"
+ },
+ "qwen2-bf16/B/reads": {
+  "t0.L0.A": "8d5ab4ef3a034246",
+  "t0.L0.a": "f0d1dcd89273ce1e",
+  "t0.L0.k": "d0ad932f397b42b5",
+  "t0.L0.kr": "d0ad932f397b42b5",
+  "t0.L0.n": "cbfd7d468bcf12d7",
+  "t0.L0.o": "1fb675b279ee21ca",
+  "t0.L0.p": "db0405050689e5d3",
+  "t0.L0.q": "3e356467d2b6115e",
+  "t0.L0.qr": "3e356467d2b6115e",
+  "t0.L0.r": "15ceac420d33ce9c",
+  "t0.L0.s": "933b3f02a739b951",
+  "t0.L0.v": "4d6d385db1bdcf68"
+ },
+ "qwen2-bf16/B/receipts": [
+  "7d3dc1568c9b5782f62eb4731191ef9a50368f97df3d71f458e26168c5894b88",
+  "e31aed03564b8241d34d83b6e3875113acd00c987f34570fee1e86e9a0396804",
+  "676d43e8108535dacd672d4c7523c0a35e4deea4471581d770e4144999630159",
+  "9709ced4d724cb363efc88de54d1c64c679c1e28d76156138f0aebd94fb2d517",
+  "bc7bc0d54f2f2aa37f45fb668357bc8d8bd3f785687f689bc3b274e55726dad5",
+  "11a0b29fbf08a099bece16b8bf4c2addfa921173baa8428ab93c4f7aec69042a",
+  "dcf2657d7fcd211a1dc938dc460637f67ca6c22ab814712f4249fb5f3d339e67",
+  "1c95e76a93f6d95905f4a96bbe9c265249e05923287d5473bb0fcae3f9847da8",
+  "c6e30a2783adcd36f9a638368bf889fd89e1992a75b8fb1803c03b3ee7581ad6",
+  "4275045f3b441bd7cefe63f32f620d7c0ba214899075e37d8a894cff4b37bfe8",
+  "bf0dc2c2ac64e695c98e82d0f3ddb7baccaeca05d382f61b9ba2d7b62414bd02",
+  "41ae2ecaa4e330dbfe2d58cbf52f10ce7d7a73d3e0982533752c4ccb9bec4e7a",
+  "a6ef98fcf68a11c65f73e5a40b7afdb0821c4389fa8d3dec2378b245df56fbc8",
+  "acb7a55c22d83d01407a609d267afe09a98454687924b5feb5e45a5bec00aba8",
+  "64a3aceac859139646f828a93e5f49334fdd6295204b24f89e130a1e724a5014",
+  "e522efa568c3fd25a01d4a29fb18b6fbd1c8ee7af2d4dd42477e118c011f3450",
+  "af25cd1ffc1f76166caf9498c27bfa6411309786e4af9b76fd13e13468a212c6",
+  "41e5dc05c7040c94be72884ad2dac79fca039fa3d3c387232b1f15cb8ac93abe",
+  "bc447193770b1cf67bc8c72b5c9fa192d20b90ef000deee6f41ffaae561b1c06",
+  "77051ca8941162ab833b6f752a266b32de500c3601f6852b956cc0a09231505a",
+  "9d397efbb50281cfd363c49091df3144be975bd213bd3e319506e0809c9ed61d",
+  "3b08ada2b61eb9ffdce286df0ba56c3be3b4494d2dd66f6fcfa20686536f4e2e",
+  "42394d6b9d9a8b9c1a474772667b4409888abfc724d43eca6912c356fe657c1f",
+  "7fab9c2d2be155b69aacabb6c2dc426157ed1fe01e70bdaed025542e339f78b4",
+  "5566a2b90d8c8349674c7be7da79e0d5ebea80f8a6b7ef1c6ad453bde131cce0",
+  "c060a88d553627430d6402751f0d77e153c11d22a8b8961e65baba21b3c075c6",
+  "b78ab2a23c59b05fbeaa81f9ee7224b6d491831d260d6a5a6c73c8042aa3d5ea",
+  "d0fb45bb00d5cdaacbc213383f9b9961cc1336729796ecc8b26ab1eba25f5501",
+  "6645b1b08c050f9952af8344db7b9e060dedf12e16a5594039e54632a5c5168c",
+  "c68790b72669e101b203cd43dc27af3080b7802cff12b7d101317f9c1087e705",
+  "ca0f6cc3fdca9a41a851b806cd676c00286f6919f1b5b257a42270c4869461a8",
+  "10fb7c89a8adf9fea3149ca4e46f895ac730c358cd6c3929434b6dc224c0dc3b",
+  "164b392265f0bc68f0651c93a17b09b2ec5af6a53b44b7e587652d0de3f57008",
+  "9fcfd2ab42ba08ad51a7d6198cf93b8515139539028b08dd2f0c863c801ab158",
+  "f65f7e4eefda5b95c88cfef9244d2af07e3e47901599ad2171169936199141dd",
+  "630d8402d7c2517cb21313b04709d7861d601c9406afd1c56e5621f35ea758df",
+  "1188d91906004e5b5b01f89d3481be07c42f615a56901e27a5dc2a6246f00dd9",
+  "75693526602bda33fb29d1e4b29c331809e1abdca45fb3c80feedeb7845a72f9",
+  "6f53a309c38d6d5de5bda188c8b0739cb7354cce7a017a1fee598104978e3062",
+  "57a73e63ecd87e748415b1c45213c6efd2b6d4fc93884fa2171ccc93bea1d46b",
+  "6b2fb5e4073aec376dc59efcbd4055905bf54b1f67a66bde0f4cac01a9c064ba",
+  "12d843be0c2e928eb435fc180e89b09ef64f0c554c0dd1cfe0090bdd88fb0e62",
+  "4ded3993501cfeed4d3618992c7dced005e4a5ad4a753309dc2a78cd86c1f95e",
+  "c37440d2d6e365c7f7f726c82fe1989e685d51e40e25ae32c8d3c7b6ecc9f57c",
+  "cd370a23284d222ebc9a01e37ac8b47f494ab8a001f70da159d5ed3301865a9c",
+  "46e51d0368987090996e46754199ba385f4c1c855c6e65330804a218a6f916a6",
+  "7b25984eca9acb99fe0359cd342e3afe86e5e6b115478ea8a8b753530c4698de",
+  "8e9e81c56c17fa87253b2ab0d6a34f9d91cc7fb78883986f1c2a1d30b72fb22a",
+  "056c1ba557e349ff2789225ab4c3bac5284eebfc9275b616e997b907860339b4",
+  "34cba1902f5c8e3406aea22fead3a3ede9ca3ecadcddaec7b1bbb49812838b91",
+  "e6858e4ea62a7d1633d4794c51e883e5dd5ef1642a4484c2804b890a107a7aa7",
+  "6a15d8052e3873a72193bcee3aecd49f94dde838f11e945c776bf3c508b14139",
+  "1e2ff9566ca682faea80fc4a944a36987fba327bb606ce8b3c8aa565059c9e76",
+  "c0c486dbdb84c94687df4bdaacc5f22b70352965939e7570096e019685590249"
+ ],
+ "qwen2-bf16/B/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3,
+  20
+ ],
+ "qwen2-bf16/B/trail": [
+  "b89a72399f9145da2f0fee1dc2f5447fe4e23e0b7c81f775445aabec2c003837",
+  "92827bca4b98a46e6c6b139a96ed2f790e7ef31ecdb653cf42209a610090abde",
+  "85a83869fa3dcf9c3685e4587c90f65a99efe931c36dfd7e917ec2c62f53815d",
+  "e7960d08469d8bfdf589fe1964e6e4568bc0c33221fe685564216ee44b728321",
+  "7f6f48648ca26df541379c25ca6fb58135cda0b9c5c038ec8cc5ebc9bea6d136",
+  "5235af6738c38b8002b6fbf7c09372e8613d58f98d0dcc9a924264eb84fdc10b",
+  "be5d2f491b27790c8e50ef1b9291df8a1edf7bc9118819ec18910332934cdc06",
+  "20de67cd583612385a29eecb2538e0bfb4f94d18c1a2c4661b3dc738d4e5d2d4",
+  "1738337f87c3e064ed40f210a4014dc519e87d37cda8011ff0859f58957beaee",
+  "787d009b1f5583e36b2b29dbb71de28e6b4aa80fd5af0669f87027d725f2dd86",
+  "00495036c273ad271b9d7fbabdc5ac73414356ed4b4830c91896ef1cfb73f067",
+  "769694329c1635d7931d2be21719d77f19b59ad67e85d320d973e25b2be306b8",
+  "4659faedffa40759cf3c483b39c309e1a7d3d590efb6b419de44159047d58c0f",
+  "dcd0c0364c95ec6af1f1a51a9bfee750481488059f2fc79318bf1ec7fbdbd4cd",
+  "ff3941baf485b67f44533290012fedae00f5bdbe47a24d539a182e28816def2f",
+  "25f3993819af042871c0853c19354642f4807dce098ae41a7d936d26ab2f6c75",
+  "68acbc2f049645b19dc54726ce9edf8f8d7eb003f8640696892927a41c0124eb",
+  "e791efc27c4940e8947d1a405a5528b7e8a4062dd1913be9100d4b7726133491",
+  "b73a177f321ae1da4d28c2d7e129fc8c7bd9f4dad02ca9fb16fe0ee1f6592502",
+  "db867066e1aba3ee7731700f13d62ddd8a0647aeed6ed986c2e48de85000817c",
+  "cd93ae58adad8c922acc204cb357823666615f86eb3ee3dfb231cc7596d8be78",
+  "bac009681a8f544dd73973c1e2148bfb7e7501b6884ecf2f9236c75d8906f8bd",
+  "3ee318df17cd7c5929b30ddb435401f46e9bffd6b06adf86856bb853409da68c",
+  "b16c63561203e0bb6b988cfa1553e6fd2238c9d5650739c43a1c8f12627d67f2",
+  "ef91c43fd06cf7f8e3dcb62b1bc2d1d7f61d0fadc169a6d594d375bee08e0bb7",
+  "3af30b66aefdf6cca60ffee1eca1bbd2ffd7349c287b10a4955ec4c7f8652586",
+  "59f8f29db52ec2190b3cd7c25fc2db345cd5c76b2b386ed863adaad789da3781",
+  "0a8c4acc285263ea9c93ac6b6e8b2b269ef2a66b7c59754b533fac21de1d5860",
+  "458a39a1c3b97f027a82d8e01ebfceb63435f79c87727685220efe45c68058ba",
+  "ce626091ca2ebf808526f8cea799ae79be283ccdca83e7f45a071656a49f6aa5",
+  "d058557a47715f967d12a06e76f8da08272d489a0d1d0335b5c5c49d821581fa",
+  "4bc9b7d84741457923aa4866864bdc026e36484d81d21f68227a493f9e75b96b",
+  "6a2d33101029e2c6e34d2da836f3e8cf74d58715192a196e635465fd0e528293",
+  "eefc874ffeb81d3cab387a4af215695805f7faec143f41f186e7b16c6e201d14",
+  "19c04ebb36a9f99f14a1735cf708445ff49a685ff73ee38207d12d4ecd731253",
+  "63fa96c9c85a3c52985349e22afd3ae0d7db04e59eac161da0de0340b47dc861",
+  "8025efca2cd7824b8b8cf0173b9e0c07d184c9ff7bc257b1319f4625bff8d183",
+  "03e0e170d6bb8e5865da2b29e7d77a5d7381f6614ce4ad4f963a9a49f0a9130a",
+  "f2dba24d6783a3953a51f34c2adb39a89a66f9f3b959d940997a0a9049df12f6",
+  "063e66eed5bc4455cf0d9f43d27bc211c8f94d0b741830f19a7b94590075ea93",
+  "c19f5eb76f5d1cee529a2c1fc97a96c843cae67a92f6b6fb8b7949ec70a97918",
+  "81eb58ee8f236ea5c750bb88d86d1b1e7da6c7c843b7768f0cc3b900eb1fb7f2",
+  "ea67f7ae10b5ad05f5d22766a02ea363fcbdbfda924e7bed0bf50270bafa4a40",
+  "ec811efbe13ae300491c1b2ee145be84e981607789acadc032eb5516aa7a0942",
+  "2964fc55bd250cd750ff2e2c91988de1f31fc2e6102fddd68274632eaf74106c",
+  "671c75f4361f3aae47e31dccf5887fbf96f0f67ce1c4269801b4c703cd96c630",
+  "d2fe0b3505c25c9de9d70c49230fec37620d48314c8d091ab58b0bd0f6a9ea04",
+  "b25aea3d03dcb786cefe2e9a2ffbe8dc97cf65ee9b58c0e187b11f9de05dffa5",
+  "df1a5c3ea35fe182437c56c1ab0bd47991e73c17f1cca803a8335845403f70cf",
+  "bda73be4957db595963ebcf62c12a614f4352d1db6500597f41f839cddcfcef1",
+  "7272c9fb483db558a1b9933b39eda22479b571d82c96afba42cc61c2946343c4",
+  "3edb882811a7d7691d31427a4caf7ad8573e09066349bc704fc9ce9d7f68c8be",
+  "d1d1f73c1d1e047fea7002cac16463277784c8fa19d86ec1703873e90a3233db",
+  "d909f9b15365e41eeeb68daedbe974b52efc0c74bda6d0723f7b8cc82f9ba55b",
+  "a80543833172a29a97f4ebed1785a3c58b83d45ad16603e4b719e9d182f832dd"
+ ],
+ "qwen2-bf16/C/logits": {
+  "5": "8f752fb33bfbdae3",
+  "6": "6a09f36caa8ec4e3"
+ },
+ "qwen2-bf16/C/receipts": [
+  "9bfa42df89102321fca9fffde0a3965da32c3d76bbfbe02347d3e5da14baf3e9",
+  "473b4812718b4a349434da39fbe83ede69b1251381af940cc51e72618c842cb1",
+  "d7dc6400ceb718f3085bdfdc400370dc878ad96b6254d45d3bf3af81abc5ca96",
+  "b8fbda2c0ac90281cb0c04921bcf90f1d79e0a56039c65ece5538900cff713bd",
+  "1bf7c572d9962d9d9fe8aa9d11c2620a43e1c821a0bcc60903f275e28dc47f9a",
+  "b47abd8af91f5cde5f55857f7a02ff3875b578f5836f91a0351d4cebd4dc2eb5",
+  "e41b3bf231a41861248d4a99a9bb192e3b72a4e7c2aba2dcc1bf09e9cecdc52d",
+  "0bf69f731bd2ca1d1427a85605df10537621f873345b923f89ab987a7636a902",
+  "c1f0dea4eb6e65e02b31a1ee4a2fba65ee4f471b911d9d33beb430f4e4288b44",
+  "8274ef794d5909bc48706612319cfde736ae9454b3818cbb97d3e3c9c1337bbd",
+  "a7932c9ef8e21e7e40d3cc9a76558ea2a57f4f0847309c786aad8f3d0f88d9d9",
+  "e82fad14584bf26ccc416e4be4569f0fdcd641561d244984291a49b280e2a053"
+ ],
+ "qwen2-bf16/C/staged": [
+  {
+   "cast_exact": true,
+   "cast_max_abs_error": 0.0,
+   "changed_fraction": 1.0,
+   "fired": true,
+   "labels": {
+    "cast_max_abs_error": "measured",
+    "changed_fraction": "measured",
+    "realised_max_abs_error": "measured"
+   },
+   "layer": 1,
+   "op": "scale",
+   "port": "m",
+   "realised_dtype": "torch.bfloat16",
+   "realised_exact": true,
+   "realised_max_abs_error": 0.0,
+   "realised_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+   "selection": null,
+   "value": {
+    "kind": "scalar",
+    "value": 0.0
+   }
+  }
+ ],
+ "qwen2-bf16/C/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3
+ ],
+ "qwen2-bf16/C/trail": [
+  "40d026468461adfbdbfa6325d60cff92e54afaf1446a62f5f94e9dd8441b0016",
+  "e4a5d91697ae463d14641c6bc1d690feccf16007a0e501760ebf808576ef6c12",
+  "dd067d446a50c75bbf533549d841e6a00da42e5d4cca149daee647bb582a2aa4",
+  "d111054c28dbff76b185f7d1fac0d618d938a633161b3c592e5d04773ab682f9",
+  "8c5cd9f41028cf22c3cb221f16c3823b8a3127fe0599bf875dfe712a831dfb9f",
+  "398cdcce4982c73283036e5ab812e83e9dd4d4e6aa0924301a2dce0d314837a7",
+  "8374f24ccfd13ece1b80875fd29838b6492a90659f2e07ad2003a39c62be1e1f",
+  "7db2840961e40d2b94b1f3fe7e80020bf0ce9cddb43276a6f7abde639845dcfc",
+  "d1a4f8c2d5f09ed1394ff46bd4a8e4dcfaa21fd18a4e7684f258797f86eb52b0",
+  "422ea83479f12dfd98e2276322201652e9826b9a67449605c5d27b6f0eea781d",
+  "3aead7434aa719e38b6c57996f25a3f3fcd61d25dfed591cd874ec8590ef1f66",
+  "f5b57f95592cd15b18bcc24e4f2785cc786d18843553f2d67f9ddaf854312fee",
+  "851b420ebaf5402df7379ebe6a75471c9c2bcb73801695df27666a9fa05bf8c9"
+ ],
+ "qwen2-bf16/D/bytes": {
+  "edits": 48,
+  "marks": 13,
+  "reads": 0,
+  "state": 600,
+  "total": 1448,
+  "trail": 896
+ },
+ "qwen2-bf16/D/logits": {
+  "5": "11035ec6c26ea469",
+  "6": "56f133ae9474ce48"
+ },
+ "qwen2-bf16/D/trail": [
+  "40d026468461adfbdbfa6325d60cff92e54afaf1446a62f5f94e9dd8441b0016",
+  "e4a5d91697ae463d14641c6bc1d690feccf16007a0e501760ebf808576ef6c12",
+  "dd067d446a50c75bbf533549d841e6a00da42e5d4cca149daee647bb582a2aa4",
+  "25666f04238aa1818fa5d10ccd07254f43a1fcfacc1559c7c3298dccee26c4fc",
+  "dc21ed4497fcb5e976c5370198feb9134e34cc8870744cb2623c9cddd7a74ca7",
+  "ec1e82bb0ced210d6e6138a427f573cf64bbd6cf32cfabceb3e564b2feed6385",
+  "7dea9b6f0cbceb8f6605ac0c4e11b35179cc85c7c7e804fe874eaa16b4376d2e",
+  "9387890e45313ea68211ad42e615f964a5c7e96627a46878b40bb7f3e8db0f9d",
+  "8c9aa87018d03e36dfb35549173f88f4e4f1e28f7a5d6ebd5202a838db40696c",
+  "50af1cc3a87c60b9266782d795f9de615347be128b7813905d884a2115c97265",
+  "584f18933d8bc6b3b66c076dbfbf1a24e029f5ec8fca8e4c249e9d59c24dc683",
+  "4da3efbf665607737a2fbf0b830bee03a65f7d591a0fe62e4f79bee18a2072c1",
+  "d10c7c92ad9a47cd1108187b8935b0330964df4d9cc75af7d1f5a2fad4886d6a"
+ ],
+ "qwen2-bf16/E/trail": [
+  "40d026468461adfbdbfa6325d60cff92e54afaf1446a62f5f94e9dd8441b0016",
+  "e4a5d91697ae463d14641c6bc1d690feccf16007a0e501760ebf808576ef6c12",
+  "dd067d446a50c75bbf533549d841e6a00da42e5d4cca149daee647bb582a2aa4",
+  "d111054c28dbff76b185f7d1fac0d618d938a633161b3c592e5d04773ab682f9",
+  "8c5cd9f41028cf22c3cb221f16c3823b8a3127fe0599bf875dfe712a831dfb9f",
+  "398cdcce4982c73283036e5ab812e83e9dd4d4e6aa0924301a2dce0d314837a7",
+  "8374f24ccfd13ece1b80875fd29838b6492a90659f2e07ad2003a39c62be1e1f",
+  "7db2840961e40d2b94b1f3fe7e80020bf0ce9cddb43276a6f7abde639845dcfc",
+  "d1a4f8c2d5f09ed1394ff46bd4a8e4dcfaa21fd18a4e7684f258797f86eb52b0",
+  "422ea83479f12dfd98e2276322201652e9826b9a67449605c5d27b6f0eea781d",
+  "3aead7434aa719e38b6c57996f25a3f3fcd61d25dfed591cd874ec8590ef1f66",
+  "f5b57f95592cd15b18bcc24e4f2785cc786d18843553f2d67f9ddaf854312fee"
+ ],
+ "qwen2-bf16/E/where": "t6.fn",
+ "qwen2-bf16/each/print/items": [
+  {
+   "blob": {
+    "bytes": 919,
+    "ref": "e8d15e7374913bda0ce4dd6089077d6345b5a8a5c38e37300a5afea57079779e",
+    "sha256": "99fb09727cf70ed62261811f30f1a2cb322beeb1ff3f123d61a4fd5794c34df4",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "e8d15e7374913bda0ce4dd6089077d6345b5a8a5c38e37300a5afea57079779e",
+     "sha256": "99fb09727cf70ed62261811f30f1a2cb322beeb1ff3f123d61a4fd5794c34df4",
+     "shape": [
+      919
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 736,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.0791015625
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.0791015625
+     }
+    }
+   },
+   "name": "a",
+   "result": "99fb09727cf70ed62261811f30f1a2cb322beeb1ff3f123d61a4fd5794c34df4",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 925,
+    "ref": "1f60bf0b8d4a669077d21b3c8be2b0c25c260bf61fcf8db485c239885e7b3856",
+    "sha256": "9db4d5570c70e89a17003368d18e3df782ea15c0bb955d9af0523673c765c4b4",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "1f60bf0b8d4a669077d21b3c8be2b0c25c260bf61fcf8db485c239885e7b3856",
+     "sha256": "9db4d5570c70e89a17003368d18e3df782ea15c0bb955d9af0523673c765c4b4",
+     "shape": [
+      925
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 736,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.09716796875
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.09716796875
+     }
+    }
+   },
+   "name": "b",
+   "result": "9db4d5570c70e89a17003368d18e3df782ea15c0bb955d9af0523673c765c4b4",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 925,
+    "ref": "73902af02b9dbdb58ae0a4a7d51fb7b0625d207fbb35ab21deb0613a31d5fb51",
+    "sha256": "bbaf7611b456d3ef787147812117f88ea352f1c19733b1a0c69595e9ac2e5475",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "73902af02b9dbdb58ae0a4a7d51fb7b0625d207fbb35ab21deb0613a31d5fb51",
+     "sha256": "bbaf7611b456d3ef787147812117f88ea352f1c19733b1a0c69595e9ac2e5475",
+     "shape": [
+      925
+     ]
+    }
+   },
+   "bound": {
+    "address": "t4.logits[i=6]"
+   },
+   "bytes": 872,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.05615234375
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.05615234375
+     }
+    }
+   },
+   "name": "c",
+   "result": "bbaf7611b456d3ef787147812117f88ea352f1c19733b1a0c69595e9ac2e5475",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 921,
+    "ref": "2bf29a77ae70221c3f1a70e1924afbcf12cef3c4c255b0578f3b176e907ae6fd",
+    "sha256": "3c5199eceb8ed7607f61998943bfb995141c6fe23e90aa769a9ac53fc65bd39a",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "2bf29a77ae70221c3f1a70e1924afbcf12cef3c4c255b0578f3b176e907ae6fd",
+     "sha256": "3c5199eceb8ed7607f61998943bfb995141c6fe23e90aa769a9ac53fc65bd39a",
+     "shape": [
+      921
+     ]
+    }
+   },
+   "bound": {
+    "address": "t2.logits[i=4]"
+   },
+   "bytes": 600,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.02587890625
+     },
+     "mean": {
+      "authority": "measured",
+      "value": 0.02587890625
+     }
+    }
+   },
+   "name": "d",
+   "result": "3c5199eceb8ed7607f61998943bfb995141c6fe23e90aa769a9ac53fc65bd39a",
+   "state": "resolved"
+  }
+ ],
+ "qwen2-bf16/each/print/stored": "9b15fc3775d1e3edb305529ca18b71b064d30c6cfc75a847e0d561e6a94659e7",
+ "qwen2-bf16/each/reads/items": [
+  {
+   "blob": {
+    "bytes": 5939,
+    "ref": "6592ee27e198a7ec00dbfe25a9f0313026dbe26119e292c07dc872efb2f1fd8c",
+    "sha256": "fec5c4d0722048a6e48539b80155531c4858da23c44cac344dc00e847a1f3b8d",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "6592ee27e198a7ec00dbfe25a9f0313026dbe26119e292c07dc872efb2f1fd8c",
+     "sha256": "fec5c4d0722048a6e48539b80155531c4858da23c44cac344dc00e847a1f3b8d",
+     "shape": [
+      5939
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 2144,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.01513671875
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.011455305224229778
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.2490234375
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h0",
+    "verdict": "causal"
+   },
+   "name": "a",
+   "result": "cc20433f3e53d153f7627a06526c5be2939ffb2487824981ed67d991bb7f6966",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5913,
+    "ref": "39eafd9789da4465f54a75fbf7731bbe8cf8a72af392c8f28a599a653f254ea2",
+    "sha256": "2ebede622695cf77f255f2a1735225afb05d53b8def448d26474f8d19de5150d",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "39eafd9789da4465f54a75fbf7731bbe8cf8a72af392c8f28a599a653f254ea2",
+     "sha256": "2ebede622695cf77f255f2a1735225afb05d53b8def448d26474f8d19de5150d",
+     "shape": [
+      5913
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 2144,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.01220703125
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.008240649524618138
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.251953125
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "b",
+   "result": "eb281bdb3d7a1b153968d596b93fa3bd56d657690b96bb1f0bb44ab48efd638c",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5923,
+    "ref": "0ea24dc5431fb50f6b01caf2b592a6835f9c5f04d5a3c1497ba4a6df31ad7400",
+    "sha256": "7899bcdb89df2f1a06c8e6537b05514497399863455ca8411a7cefb3e62505f8",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "0ea24dc5431fb50f6b01caf2b592a6835f9c5f04d5a3c1497ba4a6df31ad7400",
+     "sha256": "7899bcdb89df2f1a06c8e6537b05514497399863455ca8411a7cefb3e62505f8",
+     "shape": [
+      5923
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]",
+    "source": "t2"
+   },
+   "bytes": 1760,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.0064697265625
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.007307672703919353
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.19921875
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t4.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "c",
+   "result": "4cda164f1be3efff9f15b05d0a2cfbd6a537472423313a60cd7dd59b9129f247",
+   "state": "resolved"
+  },
+  {
+   "name": "d",
+   "reason": "no role 'subject' (roles: last)",
+   "state": "refused"
+  }
+ ],
+ "qwen2-bf16/each/reads/stored": "e53e97ac727ad7204c4e84957ef8c32c15e5082cca72d75e70a36d9b26b6adf8",
+ "qwen2-bf16/each/whatif/items": [
+  {
+   "blob": {
+    "bytes": 13694,
+    "ref": "36dc8544b512d0e8d5f7b2b00da683e5b3bddf85adee485b872e4958958ecb05",
+    "sha256": "2e29c100bfc8160ec75af5083eefa93ddc526ebafbbf00b7bb4dec84c19e2583",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "36dc8544b512d0e8d5f7b2b00da683e5b3bddf85adee485b872e4958958ecb05",
+     "sha256": "2e29c100bfc8160ec75af5083eefa93ddc526ebafbbf00b7bb4dec84c19e2583",
+     "shape": [
+      13694
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 1568,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.007434732022541621
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.00830078125
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "a",
+   "record": "ad459c9012cb57025e55efcad93c883aca409907494f1d78ad9dc8b2a6d385f5",
+   "result": "76f3b685fe2f277fcbde1415b6c17ea33a86a9c8dd73860927257b0cd8ac16ea",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13683,
+    "ref": "dbb28312179d2b7c32c5a2c0c1f7ce54780d8797cf39ad3d5096eb0c6842c741",
+    "sha256": "c594406713e801958d7b7f7d4f7665041c8b590d9582094c57328dcafa2d71d2",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "dbb28312179d2b7c32c5a2c0c1f7ce54780d8797cf39ad3d5096eb0c6842c741",
+     "sha256": "c594406713e801958d7b7f7d4f7665041c8b590d9582094c57328dcafa2d71d2",
+     "shape": [
+      13683
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 1568,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.00617466056704552
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.006591796875
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "b",
+   "record": "4eb1d4a1e42816641150f9acae64da00fbaa25e7949d5bd50a0205109afe4a9c",
+   "result": "3b976eaf6880b410254e5909d269dd9cd0c3908cb28ac58d76330af9eb2042a7",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13690,
+    "ref": "1983063a230a5ed14ebaffedf71c8a525d69bb06ee7608af734c7f8af792bf18",
+    "sha256": "a7ecf91a8ed02cffd5a6e4cf1145dc2ba4c6276f8258730248dc0e004215112f",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "1983063a230a5ed14ebaffedf71c8a525d69bb06ee7608af734c7f8af792bf18",
+     "sha256": "a7ecf91a8ed02cffd5a6e4cf1145dc2ba4c6276f8258730248dc0e004215112f",
+     "shape": [
+      13690
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]"
+   },
+   "bytes": 1760,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.03436826496906631
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.0340576171875
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "c",
+   "record": "317569def95cd6afabda04bd3e2ee3b3756f69821bdd9b468f3bd4eb30119055",
+   "result": "a3a5d78ae49dc2821133cc2e76dd183073d8dca07a5440a777e4f91a311c7f8c",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13685,
+    "ref": "426f29ee65e36e5a98a57dae47b92e2b857e894ac2af3fc84002b3070a158d76",
+    "sha256": "c3cf54ee8f0f0ad5b935c93f4ca2dd9bb8f740979fc39b756eba5a42d055c5a7",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "426f29ee65e36e5a98a57dae47b92e2b857e894ac2af3fc84002b3070a158d76",
+     "sha256": "c3cf54ee8f0f0ad5b935c93f4ca2dd9bb8f740979fc39b756eba5a42d055c5a7",
+     "shape": [
+      13685
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 1376,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.024872166437250737
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.024658203125
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "d",
+   "record": "e551575bc74c00d380851941fbc979882813535e8c9d2b24ed71244faeb0312c",
+   "result": "2f7695278e41cd5abfa8f66062ae9dbccad3930474aa71485ff17ce195747570",
+   "state": "resolved"
+  }
+ ],
+ "qwen2-bf16/each/whatif/stored": "925a43913eb9904bda53ad7e75088c8be5e36551702f373e32c5281d583b3138",
+ "qwen2-bf16/sp/attempts": [],
+ "qwen2-bf16/sp/cut": "2cb4f35af4efefcd72f5305d5ea0351536824f2e79d2d0b3ecda228a4082e3eb",
+ "qwen2-bf16/sp/receipts": [
+  "d34424fdaac79f4cbcf04f55ea3bae6afe8b6732d435f7b7b49bec2f356f48dd",
+  "51bf3a4ac5bfbbc14280b0e9c70ac050ebb0ef314a20e7baf5cdecfbf9cc70bb",
+  "a273090ec5492b42f4e3c46a7a57635eeba114a037e808f501c1fc124a7e27bd",
+  "dbe2166cde6bfbb9d27028314984c1c70e6e85581ab6e3d3867bb068ac27df22",
+  "9bf07b62c0781a96be9251fb2e29c4ae89d4135761610f8bc309e14ccdd2948d"
+ ],
+ "qwen2-fp32/A/logits": {
+  "8": "42392fcbce78fb4b"
+ },
+ "qwen2-fp32/A/receipts": [
+  "85e7f623608d9d0a6bdca8468f19b124143b121e6c23c4dc9b51370550619b4f",
+  "687eb13fdf755a44f17f6f36450ed1bb83a72e76d7a21eec639163fa431c1bea",
+  "ad7bd6d97f6f6f57b25ce32592f5f6dccd098bf91c454dc8af4220e4153e229d",
+  "065fdbb0f1f2546717311746385355dca7715cc4d59849666669afc154e1704a",
+  "f368a01a0290656470f76a3e6eb3030efea6b00773d324d436885a8e2924acc3",
+  "860eb8eeffcb02aa48d15a09bbd8c14de95d56b7215c078e198e8fa0f120c824",
+  "0fd267b7758a736a322aa25f442464d79db610e8f5c06e71862d5b7fd49ab475",
+  "1c7d5604134c0d64f768cf8dd386c517d3f4b2e5a9bf0fbf795e43dc19e19864",
+  "097bcfbb8d4fcb34378d17c876ae0ea18426eba91ca568b486228e3ec146f53e",
+  "d38c186bed5c13c8134b13bd4132a184a205de0c62a030f0f86eab7a455914a0",
+  "e820d608622e90146b4038fa97e6b452597db854e5550aa3a0fa9f1860775e05",
+  "16e95bf6e3250c96df5b932399fb3972273ec2a31052a0b860714d302f6107e9",
+  "76c8a7d0d3c4d1c33cc04a76975845900198fe798a74fe80e6f72d5fb9a19036",
+  "d98f297fb7dd536014eeb8e2cb9cf6637b6ec458d48ac48cf653bbc625394621",
+  "122b21a18cfcb8e61435c1ba335b43f9d454d9e594b748e446036c6f70071262",
+  "23b7b08238ca41a344d41e3d7f942ece225ce639f301e95d79d5d0d84f7fc97c",
+  "19d2b35464c33e44c5191ad2e3c20a8234834909d6957281bb08189eac36d05b",
+  "a7ddcf52d0c5044037c98119fd8e68bdacc20a66b460504b067c0515744ec33b",
+  "528466ccb0b72e46ef75d846aa3dee2e8e1ba85102e23480b2e62240bdf60d3f",
+  "203b5b1909a9501aa8c710fa443ae913e13eb6bb2953228b0320d80fcce02451",
+  "affa44874b6947bb765939d493b76c6e84880019687d5491016d896693895d86",
+  "c6c25a6985ccf70e16968e3638877ff499c45c376ed7204ac415d062991b3c49",
+  "4c6d616a9dbbc266e1df0ec92b632c7d0d982241c8d0459fa34a5f87db9c8886",
+  "6d9981fd5542ab04bea6d5e20896603fd6aaf2e2613d4a3a1d7bc2ebbc4bfebf",
+  "18ebfde8ab4a8ea9f3f06a75a5a18cf61cbfb5aa7667b4af8c80f9b0f9208179",
+  "96af89d633b10711243be7aa22cba4f38b0eb1964a79869d6d709d2d12f0df26"
+ ],
+ "qwen2-fp32/A/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3,
+  20,
+  12
+ ],
+ "qwen2-fp32/A/trail": [
+  "716f36066f629be92a3ff8c3c9d22d2e24cb23a71ca55bdfbeb1ab8c823b1fdb",
+  "f9e6e8a988e203e0e0faa31c064a4c6b06bdda210f5f9f000b7326e37ef134b4",
+  "00bd7f510450b23426b3278adcaaa4db9c87b25567bb01e1e72d98fc20e968a3",
+  "e7e70fa5cb2111aa87dcbe9d175c4ded5dc19bb2cfe80c7306000453a8e45fcb",
+  "1f03e72b789c23a9fc3b7df2fae8a5016e0749350dfa22aa20997d1090c40003",
+  "93c3cee9dcbd17ce123ee87ec4d6aca91032f0866f1aec2bb1e1619a0e890080",
+  "9a73720ed6bb8b15f902e856252b518d0184907cc296b753157f1838dff29488",
+  "681b7a40df5ff9cc07efa680c5167b1db5f801aa5a842c92e985aed9a2955acf",
+  "f20e6d617bceb196917c5f153c0b4e3641fad8645ad89be265d8c8a8f2e03a0a",
+  "e87f46ebdb92dedd7f242ee9dd9530cfaa5425bf1126b621fe07948a8c485f0a",
+  "cc4e3207afd5b81ada1c29750c021de67c49c0867d34d7b0c513af45e80d2f71",
+  "68e90966f6dd9f919612d566059a02989958f2941c55ccf95391839fb80c7871",
+  "68330eb61feec81838e284eec9db95402acdb5a29dd24cbd52631c4d7d6d8b57",
+  "72f615ec9de88ef2062abee5d12a319a0a1b78fcd1e0d799f41d926aac6aa4eb",
+  "f79cecb06a0de68f6c720333e8dc69b4f20b0739795b37f69f1f7b6f45b2708a",
+  "41a88f592c7ac835420c7f272dc2dab664a4cb45c47ac18f103faa5e90d28165",
+  "b21b99856f375f51d31a4cec7ba19a2dc60f76b7a675a588d8eb1832062abeb0",
+  "7a01d8fd36ee84dfc56282eb26b94da08c88de554642fca67e1dc1a7ddd5d0d4",
+  "24629b7c3203d91e7b51647768bf8c9071a86b18776d57b96f7b738a543b90da",
+  "b0032d386d7a336caf7a5a22225de6d45941fd3f2d1759ee0b81238ce0d34913",
+  "7ab5ebd74c4b1ff53bba63a67819aed0bdb3e7d799de26af2932100292fcf804",
+  "2af6da6333347168819fe02d1f4428b26349b31e10f326309dfa55583263eb79",
+  "0770b1e937b10264b99ce725fae8eedf11cbb7284b12c7059100e60a62198f1d",
+  "5a534dd5082dde56cbc356a548dd78b704e8d4c291c703732592ef0a35fcb8c6",
+  "09b072254f4743a806f3f0609a86dd5156bffa13025427fc9fed11490551e92a",
+  "7f672b0f0773747c2e729b7588e6b349dc340d47696ddf31e11bd36a7c9f1c94",
+  "9a45551d7e92b2efc0292b0783d7d40fc8bceb10326bce7305c4417d2ea30739"
+ ],
+ "qwen2-fp32/B/logits": {
+  "0": "c139044b454add70",
+  "1": "b72bf6b895217746",
+  "2": "cbdc9b9b3d21d286",
+  "3": "f1dff51f1c198ac2",
+  "4": "1fec4947049e0a50",
+  "5": "80284fdbc3694092",
+  "6": "a627c32970171892",
+  "7": "746dd976891c89fe"
+ },
+ "qwen2-fp32/B/reads": {
+  "t0.L0.A": "908867433dc94029",
+  "t0.L0.a": "4d31382f695fb24e",
+  "t0.L0.k": "6264894acc639883",
+  "t0.L0.kr": "6264894acc639883",
+  "t0.L0.n": "81a22e4a935c00df",
+  "t0.L0.o": "765e310b982f3d3e",
+  "t0.L0.p": "80b8fd6d60fa85fd",
+  "t0.L0.q": "a276bc6775e80b0d",
+  "t0.L0.qr": "a276bc6775e80b0d",
+  "t0.L0.r": "b5f1da8712d112eb",
+  "t0.L0.s": "a4a76cbab0523d47",
+  "t0.L0.v": "e4e76eeb120bbcb2"
+ },
+ "qwen2-fp32/B/receipts": [
+  "321017f44755f2e7aa722aa5192d9ef9b31d72393deba794652fe24acf95b47e",
+  "f09739e1f994a555b4972477cb82935d2fa6c8b99b346e1a1b211a880ad07f0c",
+  "68ca897367ca1ececb3b26b533528435cdf12fd3b6f1389f43ca5ef2b34d77e8",
+  "9aadecd25cfab2dc1af05e3e321eda9728f95fa19a4246f3d4c4d176852c590b",
+  "7cd5a55c464ac317d2e81a6110f1d773854035ebee90b2cd4f351906a93c730b",
+  "72f299de0246e1f7c9fe3e67a501cabc8a2591eb1da250e8e2b7db12033648ad",
+  "0f0dab637ecb07d08d8af96ce4067ae2df142d6c0b4c074e2b0a7a7b063bb81e",
+  "6cf81527a742f59abd17297253cb6d3fa24ea7da88d1ae7e21d5be0d63d4cbfe",
+  "a7a8233c3027e1adea7fec7ee3340694cb0aa15368f5da99c3649f30123da318",
+  "e255bb7b1e5d092c79a93c79fe259e3b7335c513ca7b65302d6c7fc6fb6cfb71",
+  "9bf102b01b314324304459dbd350ae515ed55dc1d492b1ef0efd177548943ed2",
+  "eb1ac3a4f38f1c6be565208e0e3762e483dced9f3873e6ad9e29c034134920b4",
+  "98c401b4a090a7765560ce93d998b79defa8219f2451ec447e125a0aca929836",
+  "84352b0c0eeee169eb1f717b5d9a81e2bed7774c47e0035b953d5dc64321a270",
+  "16394a4eb7dade661e4f1046122b999b0a956088f611d5c9f662cb4b8e285015",
+  "c18521769d9248071f3410f9dda27ba5c3e167436b93bf9ff700cb96aef479f6",
+  "5ae7edc33cc91615a28b9548e8b4f5903bc9bda4d8998236e538aa91c70f4538",
+  "72748ef6ca19258e1c6128ca9171cac094073b8012d226464a9f691793f34e70",
+  "9ea69d057bf1d7b468b16f10b21d4f4deec050c87e5d7d7e00bf20da51a361e8",
+  "c495e291cad59954806b5a9a93f5e655418b11a9638ff299dbd47b8668f9d1c1",
+  "0d3bbf4f98528d14fde675f525c38410aa417fbdc908c6904ff68a743ad62dab",
+  "d3896386b679466b7e1c09eee3de7caf0e244b5acc185e205e89054ce7a5526d",
+  "de37dbb1b75cf22c951aeba02c1d37f35b827480b352820786cb441b81236adf",
+  "fb47021f68a65b035e842c494eeeeb4d430be9e34abfe92560d70508bbb17576",
+  "867bd4b12dd4ae337c6db81efb634b163fff65c0ec065e2cddebbff9d19f53f8",
+  "0f302cc9827f6b78e3d59ff464de3bf7b3ca8193b409f134b99d47bfecbe99f5",
+  "a8a8b757e80c73ff488f1f99425d06854b9677fb7a69df4268c25f3e98fe8f94",
+  "01cff88292738cf30bb2af2fc2d62a4401512080201f37cf20727f05a4de8b6a",
+  "47787c7d9cdf4f1cd3c0773b8bedb727b4b2786c075ee61382c038b6ca9dd71b",
+  "9520a037542e4ed0861ad5541df193277ecbaa47f98f81c9ec64324a9ea3cd6c",
+  "5a9ed5222c65d9bb046b7235d24f749e18c896b78c13383cc130833c35f733d1",
+  "1c994577f4cf5e4be5470d6373f168cbf97ae7dee0a6c9637240a655daee090c",
+  "71701e825792a9b01e092efd6187973f3aa9c8b0b18d380e510cbc1b09f668a1",
+  "6046c8f537a8d765dcd0d178fd5beadd6011b7d18f1aa120dad15fd28cd7afa6",
+  "d5b50c32e7f47614c8fe46c93e72371b3c003a5b6d880bd29709e4eaa8c7f040",
+  "767210a4d9260569a8281be5e3db37313a5e4f7a61a45b779d89c90734c412b8",
+  "c90e60a55a3c00ba3f8bba5e7c51d9b2a818370c49e754d156a33b288f67b6d5",
+  "83db02efacb993e4f83e791cebfda4c0ed1a70b1c37db0954ef037d85cd3a681",
+  "e47bc2341842280e1d826e8da6fd58874d9b7e49427e50959b7fc9dbc9bb415f",
+  "caf396e4415844cca426d55561b9c24c04ba55201e026e873bdcfc36534db19a",
+  "4dfc139bd3fe0a5cc727430f7b74ac1a7d6f286096d1842abdcd5d97bd0edd7d",
+  "f53fac30c689aeb577e051abc7e14c5e8e983aeffbe70723de63f9c80e14a5f8",
+  "bd04678425298180ffb37d5a0aa28ba55ac1ca984889a58c16c5c63280ed73e4",
+  "142a7b75ae561b93d9a999fcc86aa6bef69de355be92987669feca76d513e4a1",
+  "a062b732ce01be3174db179873f7e18f4b19526d165f4c1a2cba90445db500d7",
+  "4132c224315d5efa44f445b7791ebd8e93a0b4df5424fef770ea8c10d1c1daee",
+  "93f2369caecc2998daf37649779ab47b67bd89fd2075ef220c785322170a61ab",
+  "3833197fdaccea8ec125e33ec426ea21c2cd2e0e0aef6b21120a0b3cbbbc1e3e",
+  "bc8c5fdaf223b72cacdb667593380a7d71cc6b3118c97cf758a58280e96257e8",
+  "ad6a7651382184c20dcedb470a90f1430a1f2dbbbee2b9953f213938f20704ad",
+  "40568ff7bd00f89990ea3350c6231b8a59130c26214e8ed2aaa220a7a97bb927",
+  "c7170d135a5f692c55c03a6f7154b98a56c339c4f8ec00f47c796a05a695386e",
+  "b0fef7ac34005d138add837705cc36048f91d51e0e5876366c638fead1f8c07b",
+  "8cafbd8c08d98f36ef2d4bfe775c8c9baae47f59447162f26c3bd1ee62cc6b3f"
+ ],
+ "qwen2-fp32/B/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3,
+  20
+ ],
+ "qwen2-fp32/B/trail": [
+  "323928fee7aed05752b933355ac16f0bdfa0a70aa2aa197775a115006c8f3b0f",
+  "f9633e757ccdc554e9f9050e9e00d8ae4e5c220d0e01d857589accb6edd410de",
+  "25d080bfd6cd931dbca18490f31a5e272b6cc84b32e64bc044eb1a504d1b890a",
+  "dce923bc2e83b7fd3704a88d01843cf6e576234babf35127dfe41d52d27b557d",
+  "76a12f93328a5d37f3061b18cc7ab29097cb4fe2d481407769b514e4f844bc20",
+  "8037dfbf8653c61a941242901312aff0b76362e85481f97acc839a5fd780c59b",
+  "de87c3111d8d27fce491e926ae3610de2fecc7d784220e70f9f8ef34b5360e1d",
+  "92e34c1b090d95e00e1c2c06d8c491bb4acd2b7def1c67fe73720004b66881d2",
+  "2a321576fc17fe7a90a0b52c71ca24d8fc5cdb55a5c17496a546cbac0dd65f37",
+  "be1fe54dd5bf75d782aacf6c4ebfa6c6c56741cc6ee48e7b9a7e34d6bf368cc7",
+  "2e26122b219d08fcfffd253931ae9c1e5739cd1573d15c8abbfd4a0acec9b5f3",
+  "79d7350a33fc68859a6f5bd0da0e74aaa8b6abb6049377a12cf4455be26f199e",
+  "dc83dbe0352070e20f53aaea65c87039d92485b1ba78a6b23a141c493e8cc6af",
+  "96958472a2ae26adc6aac6a1d06cd42a05c3f561082367a2b6edee8052cac2c2",
+  "9af994ba40103d2cc5eecc664f31910cc89425c3b48487171b9de03373351d90",
+  "97515da526082c9213a58afaa5d219cb7350a07365499520ff3e2c8bf829e506",
+  "d37ab8467ca86d361798105db0953cae08ed963b0cd6378aae97fd06c6ce4206",
+  "860d35d3b4e1dba3c8c64502b04c75d4a381fc7ca48dcffa52dc3d76d39d1c0d",
+  "dc4e285c8b6011d375e86c5fe47aca2f9502e62fefbd851ce78a62bcc532f92c",
+  "6b5656e342f70155440be3c03c024a6c80f45a0daabf71e93666cf7be4870567",
+  "66f756dc3dcd2ad44b912806550ad0decc893946600515d6b1d049c077380702",
+  "d5d129e48ddb072cfdc326d6ed254bbeec8232f5b9a89beb4833cdaa865e83b6",
+  "065763a7f4a1f492a4d7babcdcff6ecf03d8b4698fe855c6c92d314b9e90a721",
+  "a13e062a70567d96a136c24378deecbae292b4891fde17a605dc3f6b15d17a91",
+  "3112b97d574add9e9fe1db0380873d83951713e030c2ccb70a974919a3a1b255",
+  "ad7f0c23099521528593c185b322e7c4ced0c1aad410f70894da42c0300a0ece",
+  "b899747919fa0480d31d5c408f4fb018d54bc61acb722e9b5fc284a4f458e47d",
+  "b278fb90596b8dc0d2d9ac33bccc038444228cd34568c4d201d1c6001e3f3a6b",
+  "5d596ede09c7c86821fd464e25de4df08af6c521d0c36945eb8217cf663c80b5",
+  "4bb0a661e2bdf526c2770987a3f2c3aa64525bf0359f53fe8252b05cca45c9f5",
+  "d5807e0e9850992b33c76974861e67015df74730e1f5583481aba59ce188bf78",
+  "ae39b02f25f2a8cd17a47b4be8abf7df1c4152e1f78d67baec88b5de7839b6f0",
+  "3c23287e29fc888ba4228b7e565a15d72ef41ab372bee1c351a94e74feb61d4a",
+  "40b3415b622ec7cfe7d861f6dd4c2cac4151a1335de1b7e204729b84043a632a",
+  "9d4e62e8841f4e9efe2913607b0d6082c0df76e3759a06df39cf9ce584c2f99b",
+  "50a2618fd90c0d0b65afe97b2f3358458cf4a42ca0244dc3ba7186b32cb6bcef",
+  "6ae054d9aef7df0e1a641587cb95ff04d4222fe4f62617193abf4bb0d9a069d7",
+  "df39659443f910135a754ed3776a985382826777177f47edacbd444bfb525e64",
+  "941e2e95b78a54d6ef74eb49cdd09920e206c919bd2a2b316b75757d7548f09e",
+  "3cfaae99b401d49b84dee5b914335b2ae53566a28ce7b982eeb9455c8fe73537",
+  "fb73e73038ddb9ba7fa9e2586b4b4ce724aa949e7c4558a817db59fe1f70aff9",
+  "de2ba01413bee1cdec0c739c4be9a3638069cb4c6464f70db0705bc2968e2a9a",
+  "95399fcca8384be91d8a7a362b28af173188dd81aaf6c898b487770a5937adc0",
+  "b358af6adaad60d4d422eb265a296897905243367dacdd3b78af55f9b3ebdf74",
+  "ed1c44b5fc613b274aa8b26e29249cae8ec6c0c470be1d3dbd482d8afc031238",
+  "5ef278aaee1677db0a98134658d2afcdbdcff2af88a300171961a50260e2aef3",
+  "95538b4f37701c867ac26b66f09434faff6f55de1cef94905068b64538b54040",
+  "b23f83913a5280f8905029e0c39169021d596ad531cab7cd8863a2d8fd28fbba",
+  "3f19d8c7dad2a2c4fc9be1275697e17e56ca1b1329df7825ecc7cf75b74ef124",
+  "170e57fa47d1d7e6e0f9ec167f5a3ce417dc66973150df5a2c4f7e482bccd3d5",
+  "f7e6db3650bcd6198126ab84ae1a130d6700b68d6eb08f67000808bcb56335d4",
+  "2c08fa3fb1078255d4e8cb072acc88b5ff8eaabea92604720bdd0f20f2335cad",
+  "be820e04fe21fb27a049b914df5ca6a58a53c675ccb86f89c8320cd99a03664e",
+  "b3f18afc1d50cd05b4df8a2a748bdcac71eb0f1904999c6b33e00dd05984b65a",
+  "11202b19e3cf45f62a9e7a73ffd519448e73dc700c3920aa51e4b5b7051ce123"
+ ],
+ "qwen2-fp32/C/logits": {
+  "5": "45c16bcd94c2e0de",
+  "6": "cf7751cd73828dd5"
+ },
+ "qwen2-fp32/C/receipts": [
+  "85e7f623608d9d0a6bdca8468f19b124143b121e6c23c4dc9b51370550619b4f",
+  "687eb13fdf755a44f17f6f36450ed1bb83a72e76d7a21eec639163fa431c1bea",
+  "96212046a2c82b51997d31e4bb9e14931f0152625a785bb2f985a64302a3aea3",
+  "ee8348d908af3e722b11ef7646d833a75c31027ac767d1b04b93e948f881d816",
+  "9cfeda801d91fc8100db8b3291b8ad39759c85d02abcde8de6ba3c5121582236",
+  "5237cba6dffe962f19dddbbd9f5c8f13744a1675fb0054605492814be5ef4123",
+  "441d596d7ebef85346e35bcc6f48f6d735d563d3cfc7bf5c785e314de38f3af4",
+  "818b1e60eb4dd4cbe74a692aee1d34e83e7cfbe61e61fd71355853f12e5283c8",
+  "89860baf3707fe5d92ff31a61b373dec65c86a14ac268003c08b4d5ca53ccf79",
+  "91c4c848b63a3d17290381d72adacb8deaeb72d12a02747e9fde920355a38565",
+  "1fe1c7696c5b869fe0a75fd2fd3eb0fcd4259876afe464e87b86a5f98d95561d",
+  "251431befab6b8e648d74c2b49e0e86bd3e94a93a6fd96f3fb2eff4c5983a090"
+ ],
+ "qwen2-fp32/C/staged": [
+  {
+   "cast_exact": true,
+   "cast_max_abs_error": 0.0,
+   "changed_fraction": 1.0,
+   "fired": true,
+   "labels": {
+    "cast_max_abs_error": "measured",
+    "changed_fraction": "measured",
+    "realised_max_abs_error": "measured"
+   },
+   "layer": 1,
+   "op": "scale",
+   "port": "m",
+   "realised_dtype": "torch.float32",
+   "realised_exact": true,
+   "realised_max_abs_error": 0.0,
+   "realised_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+   "selection": null,
+   "value": {
+    "kind": "scalar",
+    "value": 0.0
+   }
+  }
+ ],
+ "qwen2-fp32/C/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  3
+ ],
+ "qwen2-fp32/C/trail": [
+  "716f36066f629be92a3ff8c3c9d22d2e24cb23a71ca55bdfbeb1ab8c823b1fdb",
+  "f9e6e8a988e203e0e0faa31c064a4c6b06bdda210f5f9f000b7326e37ef134b4",
+  "00bd7f510450b23426b3278adcaaa4db9c87b25567bb01e1e72d98fc20e968a3",
+  "1e5a2bb97d681dcc85db09d0f81fead559a5fd62efa3166afa9c1e6e37c56cd0",
+  "110ad97a120baf2aa450bad54b8cb725e5661faf05e4e22fe28b512c4dce3586",
+  "d9dad6706dd717e489c3b6b7e00acd6a6d4f4b45c7ca1b68c7b6dfab2a5749fb",
+  "29073df230ec40e9a221b41a04d1cbd5fc36d9373adfd76a4764254b4dbe2955",
+  "6fa007ced655e9d3029f19313cdf1244ce0117bb8e78599cd69832d72ec81e00",
+  "fc2515d2848147331481c6a6419d63ee8acc4f0a1485aaa6be55817a975d91fc",
+  "71e374d416d85e20192dcff1ce778f9adafcdf8fd965fa6f77cba891aba90aca",
+  "22a495f6b02790b435e5d58fb0b6ebc7a4b770b305e1adc454f0b9c3d8d3a3e7",
+  "709eef3b6b3edaa64297e8d1c7ff64f3c6ca365d5b0b2da6c107164ea5b09fbc",
+  "fd1264efde9c1f5719b3968efff4554862a4e1c2b0dbddd66551c41d8bd1aaab"
+ ],
+ "qwen2-fp32/D/bytes": {
+  "edits": 96,
+  "marks": 13,
+  "reads": 0,
+  "state": 1144,
+  "total": 2776,
+  "trail": 1728
+ },
+ "qwen2-fp32/D/logits": {
+  "5": "1d5a46ed1a0d7959",
+  "6": "2303c7180c92b802"
+ },
+ "qwen2-fp32/D/trail": [
+  "716f36066f629be92a3ff8c3c9d22d2e24cb23a71ca55bdfbeb1ab8c823b1fdb",
+  "f9e6e8a988e203e0e0faa31c064a4c6b06bdda210f5f9f000b7326e37ef134b4",
+  "00bd7f510450b23426b3278adcaaa4db9c87b25567bb01e1e72d98fc20e968a3",
+  "e7e70fa5cb2111aa87dcbe9d175c4ded5dc19bb2cfe80c7306000453a8e45fcb",
+  "1f03e72b789c23a9fc3b7df2fae8a5016e0749350dfa22aa20997d1090c40003",
+  "93c3cee9dcbd17ce123ee87ec4d6aca91032f0866f1aec2bb1e1619a0e890080",
+  "9a73720ed6bb8b15f902e856252b518d0184907cc296b753157f1838dff29488",
+  "681b7a40df5ff9cc07efa680c5167b1db5f801aa5a842c92e985aed9a2955acf",
+  "f20e6d617bceb196917c5f153c0b4e3641fad8645ad89be265d8c8a8f2e03a0a",
+  "e87f46ebdb92dedd7f242ee9dd9530cfaa5425bf1126b621fe07948a8c485f0a",
+  "cc4e3207afd5b81ada1c29750c021de67c49c0867d34d7b0c513af45e80d2f71",
+  "68e90966f6dd9f919612d566059a02989958f2941c55ccf95391839fb80c7871",
+  "68330eb61feec81838e284eec9db95402acdb5a29dd24cbd52631c4d7d6d8b57"
+ ],
+ "qwen2-fp32/E/trail": [
+  "716f36066f629be92a3ff8c3c9d22d2e24cb23a71ca55bdfbeb1ab8c823b1fdb",
+  "f9e6e8a988e203e0e0faa31c064a4c6b06bdda210f5f9f000b7326e37ef134b4",
+  "00bd7f510450b23426b3278adcaaa4db9c87b25567bb01e1e72d98fc20e968a3",
+  "1e5a2bb97d681dcc85db09d0f81fead559a5fd62efa3166afa9c1e6e37c56cd0",
+  "110ad97a120baf2aa450bad54b8cb725e5661faf05e4e22fe28b512c4dce3586",
+  "d9dad6706dd717e489c3b6b7e00acd6a6d4f4b45c7ca1b68c7b6dfab2a5749fb",
+  "29073df230ec40e9a221b41a04d1cbd5fc36d9373adfd76a4764254b4dbe2955",
+  "6fa007ced655e9d3029f19313cdf1244ce0117bb8e78599cd69832d72ec81e00",
+  "fc2515d2848147331481c6a6419d63ee8acc4f0a1485aaa6be55817a975d91fc",
+  "71e374d416d85e20192dcff1ce778f9adafcdf8fd965fa6f77cba891aba90aca",
+  "22a495f6b02790b435e5d58fb0b6ebc7a4b770b305e1adc454f0b9c3d8d3a3e7",
+  "709eef3b6b3edaa64297e8d1c7ff64f3c6ca365d5b0b2da6c107164ea5b09fbc"
+ ],
+ "qwen2-fp32/E/where": "t6.fn",
+ "qwen2-fp32/each/print/items": [
+  {
+   "blob": {
+    "bytes": 959,
+    "ref": "54b43e830d19854d9264a5952c73088b46fc98cbb28585caea92ae2502960eb6",
+    "sha256": "7347264150a6e986df511efeb4ef9999a7edc36dfe79350e444bea1d21ad03bd",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "54b43e830d19854d9264a5952c73088b46fc98cbb28585caea92ae2502960eb6",
+     "sha256": "7347264150a6e986df511efeb4ef9999a7edc36dfe79350e444bea1d21ad03bd",
+     "shape": [
+      959
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 1440,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.07960264384746552
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.07960264384746552
+     }
+    }
+   },
+   "name": "a",
+   "result": "7347264150a6e986df511efeb4ef9999a7edc36dfe79350e444bea1d21ad03bd",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 959,
+    "ref": "447dc21e701943416c1452ed468e0a50781cf18bb9c49df419f2834faba912bb",
+    "sha256": "ba239a65481f1f45d46a7c8a77c1ed309cfc91f38d17ae200250eae2cc8d7135",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "447dc21e701943416c1452ed468e0a50781cf18bb9c49df419f2834faba912bb",
+     "sha256": "ba239a65481f1f45d46a7c8a77c1ed309cfc91f38d17ae200250eae2cc8d7135",
+     "shape": [
+      959
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 1440,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.09764093160629272
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.09764093160629272
+     }
+    }
+   },
+   "name": "b",
+   "result": "ba239a65481f1f45d46a7c8a77c1ed309cfc91f38d17ae200250eae2cc8d7135",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 959,
+    "ref": "58c4b5b22e9cc31a18fe7896a48ae042119a011209aacd426080b18648b5de4a",
+    "sha256": "ab860d2d667eccc1653c774be06dc6588712ca3ee9db65e73e1959901f9d096e",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "58c4b5b22e9cc31a18fe7896a48ae042119a011209aacd426080b18648b5de4a",
+     "sha256": "ab860d2d667eccc1653c774be06dc6588712ca3ee9db65e73e1959901f9d096e",
+     "shape": [
+      959
+     ]
+    }
+   },
+   "bound": {
+    "address": "t4.logits[i=6]"
+   },
+   "bytes": 1704,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.05623985081911087
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.05623985081911087
+     }
+    }
+   },
+   "name": "c",
+   "result": "ab860d2d667eccc1653c774be06dc6588712ca3ee9db65e73e1959901f9d096e",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 961,
+    "ref": "81c001a96ed27bdaa2352c9c3e86b47d9b8da2727f95252538ed5cd3e91b5a9c",
+    "sha256": "10704604250551db5dc4c5c1031878c079a406d3e53e504c582377c8f18e68a9",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "81c001a96ed27bdaa2352c9c3e86b47d9b8da2727f95252538ed5cd3e91b5a9c",
+     "sha256": "10704604250551db5dc4c5c1031878c079a406d3e53e504c582377c8f18e68a9",
+     "shape": [
+      961
+     ]
+    }
+   },
+   "bound": {
+    "address": "t2.logits[i=4]"
+   },
+   "bytes": 1176,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.025430437177419662
+     },
+     "mean": {
+      "authority": "measured",
+      "value": 0.025430437177419662
+     }
+    }
+   },
+   "name": "d",
+   "result": "10704604250551db5dc4c5c1031878c079a406d3e53e504c582377c8f18e68a9",
+   "state": "resolved"
+  }
+ ],
+ "qwen2-fp32/each/print/stored": "0d663891d1591a53b23645911e3e3a7e887bd2226da03182b9889aa5d30cb621",
+ "qwen2-fp32/each/reads/items": [
+  {
+   "blob": {
+    "bytes": 5886,
+    "ref": "0bd0a3db88c45470f6e2d86b23c220ca0d5a4212cd7bf972ad39e22434a5cabc",
+    "sha256": "6807bf58dc387b05435ee1f02775fefb81def923f02dad45c85f1125d286a3bd",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "0bd0a3db88c45470f6e2d86b23c220ca0d5a4212cd7bf972ad39e22434a5cabc",
+     "sha256": "6807bf58dc387b05435ee1f02775fefb81def923f02dad45c85f1125d286a3bd",
+     "shape": [
+      5886
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 4256,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.014211311936378479
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.011492090861959887
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.24931901693344116
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h0",
+    "verdict": "causal"
+   },
+   "name": "a",
+   "result": "d55ad8ea7c47caac47738fe0a499700888bddc575287d4dfb198c07f1639a874",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5887,
+    "ref": "000e31234657d4e29358b895fee2a57335269758babd7408167e86100b99e2ab",
+    "sha256": "a3959a7d0486ae441885923481773860bbe79b56655b368f7b4d691a47d9e9af",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "000e31234657d4e29358b895fee2a57335269758babd7408167e86100b99e2ab",
+     "sha256": "a3959a7d0486ae441885923481773860bbe79b56655b368f7b4d691a47d9e9af",
+     "shape": [
+      5887
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 4256,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.011457763612270355
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.008204218984829889
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.25132209062576294
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "b",
+   "result": "bf3330e7d79bb2945beff9d4e0712de258422b47330f53ee65c3b24534525ea3",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5879,
+    "ref": "9e83b13f119e333fb10cfbfafabc17cb9cab543e15113194bde8ca63d37d38c2",
+    "sha256": "a4432e20cda9b424503a45468fb3ed66da3649656c892e218da85bd7a2b86bf8",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "9e83b13f119e333fb10cfbfafabc17cb9cab543e15113194bde8ca63d37d38c2",
+     "sha256": "a4432e20cda9b424503a45468fb3ed66da3649656c892e218da85bd7a2b86bf8",
+     "shape": [
+      5879
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]",
+    "source": "t2"
+   },
+   "bytes": 3480,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.007009923458099365
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.007324126896677884
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.1993311494588852
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t4.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "c",
+   "result": "48dfa7543a3638619dc5b655f0bf98b082d00ed2ce1325df1adf8dea5370ab40",
+   "state": "resolved"
+  },
+  {
+   "name": "d",
+   "reason": "no role 'subject' (roles: last)",
+   "state": "refused"
+  }
+ ],
+ "qwen2-fp32/each/reads/stored": "4f75b39212958de6e67ad39319163b47a832ff48491d414bdb919d8348457869",
+ "qwen2-fp32/each/whatif/items": [
+  {
+   "blob": {
+    "bytes": 12935,
+    "ref": "9e6184db7f83adbc29a37323d709f892c705594c0cf314959a0c22a193bc5ac2",
+    "sha256": "4d09b8e8184c6df960481674e6fb1c59e6ea0e9c6bdd83cba7e782e7b6756d50",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "9e6184db7f83adbc29a37323d709f892c705594c0cf314959a0c22a193bc5ac2",
+     "sha256": "4d09b8e8184c6df960481674e6fb1c59e6ea0e9c6bdd83cba7e782e7b6756d50",
+     "shape": [
+      12935
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 3104,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.007427703361204102
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.007427681237459183
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "a",
+   "record": "c6370b0ec6de7704612999aef253d9a827d89bb70805a396c5874dca4f975bb1",
+   "result": "19b177818c66445916a8f6cca2ced22ab290380e1c22e4deff1224e207fe7752",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12935,
+    "ref": "c5ec1a9450a47b4826d9e3d15e5cd519e6cc321fea91bc2460efc713d8a8e54e",
+    "sha256": "dbe783f2173add2fba8d0bc058f0c960c0d33e17163a6d939db99da705cef816",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "c5ec1a9450a47b4826d9e3d15e5cd519e6cc321fea91bc2460efc713d8a8e54e",
+     "sha256": "dbe783f2173add2fba8d0bc058f0c960c0d33e17163a6d939db99da705cef816",
+     "shape": [
+      12935
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 3104,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.006147104754149202
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.0061470940709114075
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "b",
+   "record": "6dd963cd955e843d053eb804518f658aff6a06090b0655005ddb8828c4e4572c",
+   "result": "e97287925559b6bbc5f4be7e01ee21d3669d3a437a98e1127933a3f6dc77564e",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12935,
+    "ref": "49f8e3757ebad365f1c86ab5968289745cdd548a1ffc1cfec20c9b1b1626d831",
+    "sha256": "e0d86bfde065b771a13ba933a31d8ebe998a68f8917389e867fb35e07c79c015",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "49f8e3757ebad365f1c86ab5968289745cdd548a1ffc1cfec20c9b1b1626d831",
+     "sha256": "e0d86bfde065b771a13ba933a31d8ebe998a68f8917389e867fb35e07c79c015",
+     "shape": [
+      12935
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]"
+   },
+   "bytes": 3480,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.034399827410019505
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.034399816766381264
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "c",
+   "record": "6d092a2932fb90aae042c80020957f63f08a4e2531dcce18b5b07c551f54a282",
+   "result": "b29051029fb66eb0960ae4533f9e6cb46210e309f4186b4631a66f6a69ec4154",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12907,
+    "ref": "f39acc6bfb8d1ee24c9c68a8fa06cc9586107cac093f56a0a4cbdad1c0ed3cc6",
+    "sha256": "8d32abf9b24761e5d50bc1d09d6bbae78a900d1662023a2f6862d09c520e033e",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "f39acc6bfb8d1ee24c9c68a8fa06cc9586107cac093f56a0a4cbdad1c0ed3cc6",
+     "sha256": "8d32abf9b24761e5d50bc1d09d6bbae78a900d1662023a2f6862d09c520e033e",
+     "shape": [
+      12907
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 2728,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.025017191264804506
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.02501719817519188
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "d",
+   "record": "b48409282cec5dc165afa7759a77c1df3c7024d1b973826cc91800961c146834",
+   "result": "76a54be0e7c602f21b512c4b4a7f17fd004ccd2c751b01c57ac2d66f6147df93",
+   "state": "resolved"
+  }
+ ],
+ "qwen2-fp32/each/whatif/stored": "127ed384cf9b4009a33a29a0fce61d76bde114c19f026ed2948aa76f9885ef48",
+ "qwen2-fp32/sp/attempts": [],
+ "qwen2-fp32/sp/cut": "2cb4f35af4efefcd72f5305d5ea0351536824f2e79d2d0b3ecda228a4082e3eb",
+ "qwen2-fp32/sp/receipts": [
+  "d34424fdaac79f4cbcf04f55ea3bae6afe8b6732d435f7b7b49bec2f356f48dd",
+  "51bf3a4ac5bfbbc14280b0e9c70ac050ebb0ef314a20e7baf5cdecfbf9cc70bb",
+  "a273090ec5492b42f4e3c46a7a57635eeba114a037e808f501c1fc124a7e27bd",
+  "dbe2166cde6bfbb9d27028314984c1c70e6e85581ab6e3d3867bb068ac27df22",
+  "9bf07b62c0781a96be9251fb2e29c4ae89d4135761610f8bc309e14ccdd2948d"
+ ],
+ "qwen3-bf16/A/logits": {
+  "8": "4d77ebe801d473e8"
+ },
+ "qwen3-bf16/A/receipts": [
+  "1a46934f8e3b5972a2b04aa4a79d1c758bf67787484e8c57f01e5ec83b3b692e",
+  "663b559b7426e69d0f5792b0f48cbea38bd6d64e819892e95fb473dc9844c6d5",
+  "42f4f175bcd60120616d75823aa392934659695a43ca0921fbed77b1c9d0aa2c",
+  "f843e0e96f87dd7d8d87db3ecc1aeaf593387c0abeedbd037ccb1111f2ee704b",
+  "8073b74d05ad1dd154c08d4653c41184cc6ae2c44d4ebc45cb55f9c1f4b31b4a",
+  "fc98245a512981e018f273365b31d137d7a0f1d4aa67034aaf02c35bc78992ea",
+  "572fdf8c675c5ac2ef2943f2fa632435b187b959bd0f6ff2ed5a9dc4d919fa18",
+  "15428d1076af5b91a3640dc9a1efd37a6a1238bd2e48dafeb6c52baee623e0e7",
+  "1f7c53aafb26110d35089239227a2743ea38d96bdd25f60fde30e11a38537c30",
+  "2f0bb6f0798e33d52ec2ae064309dc063645d0b8a0f91c4bf0b1321483b0efa7",
+  "ff58601d111b34999e9d8e528cc0faf7bd8421fe048f8dc487e5a69ad012d853",
+  "f77ead829a292f99e1071eec8138dc411121e6de460f5f515b1929632e504044",
+  "a31127c4e6aac7cfa58ada660d07a6eab455c843fa25cd9a1ccb88e6814eca68",
+  "8af0a11fc574f54ac557c31411c0ea89cd3faa2fae26b62aefe39112ed3be89e",
+  "40098c0c7af063121ea62619256948ebe675a84ee2cfcf32bb6bf49057519a7d",
+  "b69038d5f217c2e0c6e38617b7af34b4d9f8f2ed32cf696b2c70ce2a2d8215fc",
+  "951a5e5bb9d865b6d104120886357f8183c0aeeebd1e27797bd764e57b5148ba",
+  "f23b7706b5e9c5a256cd3f98e0e9efa15a6e4c73280a411ff8e21158b31573ac",
+  "dad203ecd69f72a6c7af36bf5c702cb8cef3116218a5b26a4d266504c66c6ef7",
+  "6242316ac03fffe5549bc9186df6af2560b16390e52db386b6e3c9d708c96e0f",
+  "193991a6546968b2fc762ba85fa6cc8ccfd3a5b86b263c5d27d755dcc5e39941",
+  "25b5cad9adc5173be362c285618d44e74eb1ec893b8311f0270e2ca152f87bb7",
+  "9ba5d4581208ab00bebcbeed2aea3a0c67c398866c3b1705cdc9af5402cd6712",
+  "97e6ec5d4cc9491e0b64605ef1f67ecfd40216aa6aa9c289fcb33d3dc588256f",
+  "1a454ca39414b4bb332bc2a972802857ae3b2364d17d851469cbf21f9bff0679",
+  "c3377ce53ad17e57ab85cda664c7a050b610d6800d82dc6aa26a7480b07f3f97"
+ ],
+ "qwen3-bf16/A/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12,
+  30,
+  27
+ ],
+ "qwen3-bf16/A/trail": [
+  "56f7519511043777429a1d7fdca493fb353467c516061be3d1b155903c1b1224",
+  "0c6e9d740c3c0a516972e01c27163078464408d39119c5381fb6eaa422d53520",
+  "4da7acb982a41b2f786d0478bf537edd32cc86d10ed011c3f864310f3dd04382",
+  "2b4253f749adcb89f23843c4668a176206a5c7ae1670f52113d3233820660b84",
+  "2d3cc1729b553da2ee42be0958ea8c2538b3cbaf91e963aeffcf37995305b4cb",
+  "1fabc1d1fe2d01e1d68c8218fd92784ba4ea6fd13a00afc1addb446faaf5c019",
+  "a4ee8d755b13b19cf6e0bfdeeb219a58274697c2e57ffd93669e8579fcc8ae8c",
+  "34f9de189635b3d1c3de031b436a36663ce83373103472396244d64ed0864fe2",
+  "92afb132566d3cfb630f43ed7add6757da29b033a3920530a23a29526890ab4a",
+  "6052889300e7cca124108edd8eca203cab99a1a098527b2cbc1897a1dd542ae7",
+  "e008a61b15c65a4b4a87d6ee609af211d0c1b53efff5749d3fd26aa02a202c5c",
+  "c30369b0580ed54eba0c2f2dc54d3d8073144068559419d4459974b10f972a85",
+  "2acac9126577e83b4afa0c9c3105d3c4611d2624d66076631bc7f97b4ad53a58",
+  "74cc08d8ccff3c0881e831fba1df117e871201e796195a3b722871bcadd02443",
+  "3204a2a7346afdf9cb1284ec49b922e75f4aa26f63d9775b79cff01ccecbcc4b",
+  "a0cbf46adb3923ddab5bd783e142d0cd294cce7d26b1a0ef4fcc2fd83af36a06",
+  "81cb8ac2dbe6c6640acaeb24188d2fc0306caae10ebf55e0017b9c6bf58c8c90",
+  "d624022dd565d9ffc8ef99f77d564b9eb1a161a29e3807e48024b5bc143d672d",
+  "ee69ad3163d81783d7d0a86c5b786b503a2c3ebdef170b377fb1da7295380a4c",
+  "4401591b4e9dbd978d39cbf97d274e1ff2e5ed9e2af86608ed10b1d575b9b35e",
+  "95e90baa3be588aca8c689bc0bcf1c7dfab15266d2f9cdb4b294998aff7406af",
+  "79a84ec0d7bd3a8ed980df19472ebb7d4e2ac953f85d02ac75724ec14e3f2a1a",
+  "a763a153e87024d37a04ecc7aa20c41448e9ed89f18f7c0914618627164e0e4c",
+  "5b3adacf4f1f9e6921c0db7a44d9b2e87fd5d2101be9d894e0ccec1f9aae23f0",
+  "e373fe323ae18b82bc5cb1731a7d12fc93c834d471a597229970d2eb74d48401",
+  "cdd1993b7aa1057660ea08d8fda370f91baafc43873d20bd7cf92d8fcba48f9f",
+  "70529f3d10eaa5da26d1cf98ecb6afa3238fd011601ee62c2e22c63d087bd913"
+ ],
+ "qwen3-bf16/B/logits": {
+  "0": "31fb721b31cd7e9e",
+  "1": "78f5d421d43dd5c1",
+  "2": "1b73b06817bafb1d",
+  "3": "06df4a410bd1bd03",
+  "4": "4d35ebe65d4d9afd",
+  "5": "30caf293b8ec93ae",
+  "6": "b157ca4a490f22f0",
+  "7": "13de26b60250e000"
+ },
+ "qwen3-bf16/B/reads": {
+  "t0.L0.A": "03681808c48a71bd",
+  "t0.L0.a": "f11b9817980cac40",
+  "t0.L0.k": "2ec0f2f03d23630b",
+  "t0.L0.kn": "49f8cb62aa35a157",
+  "t0.L0.kr": "49f8cb62aa35a157",
+  "t0.L0.o": "5e5902d4b9fc8ce5",
+  "t0.L0.p": "19c73878efaf4541",
+  "t0.L0.q": "931a4794af70c4b8",
+  "t0.L0.qn": "3add21547fbefd00",
+  "t0.L0.qr": "3add21547fbefd00",
+  "t0.L0.s": "81d63e68b447e592",
+  "t0.L0.v": "0097a1db3d71b680"
+ },
+ "qwen3-bf16/B/receipts": [
+  "e5da4521b567624ff02d83161a2eeea73359f664dd4fdf0b70e2a4accee18128",
+  "b87b3aa8c7d42b7a0206133b00661784d79c737aa31cb41516e5a1612c62a398",
+  "e26d0b5b8bf8fa4b7f03eba7264bd20d0be5d90483dc198a2b8cb4526a5728e4",
+  "d1374dec75ed025342dcc574ad40d34ebffd5234993501494e98508a38851b37",
+  "abc62ee65b553934e49ff4c4451acba3f62c8b49f2f94d31c2e0f4edf0ed6001",
+  "074d7648486d0816e16c46cde2d375c7dc68d61f669807458f7da125d1e2bded",
+  "526f704b405c79e8921954909a3e955d76af1ee446e67cb20c4b9b4043eb6007",
+  "5f50154ab258118ca294e977efc8dce8f49bf828836b70331cba2e13594eb96f",
+  "9d1af774120e81d734a8a94f8bd1edde8a18ded6f2004282b5a8be787ca2a0fd",
+  "660aeff6d9086c0361772587c16cd16f6cdb4e32265f24722c589a98f232b6aa",
+  "8a611d98af9a6ee406531fdcd5dc6d6034b2b68206a46039a41924f079493825",
+  "2fda51597839ac0fea5bf15aadef3da69bd96220163f5f8dec91d4fa878525e7",
+  "d66c6c749e300ab9a40c0e86a1333c2eaec589461f2c1563d91e8395d29f7aa5",
+  "9c112868758e1a96e0f105843a702f33a2feaae494fbad3f8695a301a28690d8",
+  "a8e692ee00ae3e9430d0e1c2dad22130a3dea03927842ac05d8ac018f4395ec3",
+  "028cc2d0864509bb6e91f444d462493d0e61632c3e5cb353925147524a3e1b01",
+  "97ec73efb06d6986bee5f681d2ae4df2b87573ce9bc7e0ff83faf8b01021eee6",
+  "41927551cfa58bdaae4cfca48e22ed322d6db005076eab7066bd5ea1879a011b",
+  "338bf9f3cec46571ecae938892cb7379547d630dcae50fe5a65cb6c7ee9d9d00",
+  "95633d1b914ee1a6d103a42f416b3a06f684dc305197b37116ed9952da943e8f",
+  "df73dcd2b5d71857ce09f8b2fa498c1e910ae8f52aa7b3a34ee4b7bb169b2d07",
+  "7a53478a25ae9da6b97d8a9edc69465d5e96d3047f38929b9f77c54343b00c4a",
+  "67ab18378965cba4ec19eda1c15a952fa8af34deb41f1af8073742fc94415653",
+  "9ba02706db91ae8a7398d40548387908b989797bbd04dda374eeca40c14f8a81",
+  "b8c1857bac6b186b16dd6a12d6da3d705ef873467cf87fe21195e1c76b2f4963",
+  "49cd6960797fbd8013bc478a40438cf8a457dfe5718b2aae3641204955f8ba82",
+  "820fe96feed9b262ff15d275ff1a62bcc644793f3d72d9e16473906edef38dde",
+  "8b80fea8182fd42e503fcbeae606c6e3ae48d96e1b3cd7bf774bc1134d186281",
+  "70f006095e3c3335f9f92f54e74d91e684f2a14916fd61144137ff886e45fb11",
+  "a2f08ae62e399ecd2faa1cffe118fce099478d40969ef321b09cca1f35e265d6",
+  "82543a7bef43db4bb1c377b1d72e8814900fa9f8d4197ae7496ff689cf738af1",
+  "50578d7c638e196c09224b15fbba7f334e5064f777d939d775605720ab59413d",
+  "b1dc049e658d0fa7a27071d794a8ca48c3d3d65c63c466139ccce547f4976c7a",
+  "272399fd108f81652e9201d70af9c22b773ab9ae005132a5a817becfd59c516f",
+  "e5dcd285b60d16d419c0823e660304b06653c03acd4242bebd755aefaddc6184",
+  "6ad5dbf1f7a3abf037dec9d8af0c17445177adfd077ac689c22679179162485a",
+  "406782a23946d9b7feee3337e31335b165196e8908f0e053b6cc2ca3a6e1d1ad",
+  "5c3095ae1d64876dc9b0b24e1d0a40009aafb2631285c244661dc0b5f7157f3b",
+  "c09ee527063ded02a17bbe758ef2dee12447ba65c314cf16a7d4774ebfac2d4f",
+  "4a1d291469173013a4b3db8d5f4bf0d94cfcca80216bc07c5b854860b2a11aae",
+  "e87f5bae892def65bf8326e01b0cc9f63f6bbc9167627c4d3414a3673b8f49a1",
+  "3e8b5252153808c4486e5d7868e6d1a2ec17ac81810e5b230727028342faaf71",
+  "8a8540eeb8fa4d674e8ab8c983d94f5e6b63cf6ca6c9200ec25ebd016d7ac90f",
+  "3f669025c1e609980d7b3837106a9338a701bb7b9790754e1aadb1f19dc47955",
+  "d4f6419ddd06b60722e833fab8bc5b867c9a5adff1e6c5c8ab9caff292a92bf7",
+  "1b06551c2b9a79f118a2df399aca6b32e0a609f69db82f4fcfa4ce26a004e7a8",
+  "bfade21c693d5a75b2b07863e390cb2f5009ff4ef0f214bbce7a98386ded4fb0",
+  "b624276ca65414b34c3ab62d8711d1a6837438af80956322e9160912387b24fe",
+  "9cf03eb8274fa70af01941c2af572e0e02b4c665e57e7eb8627424202c8e07f9",
+  "c4d9eaa932e4ed867b27c23a167427b4b7c921ba7008a64f94e9824b436d9fb0",
+  "2957d3b05d6f71c0982c13716f9258fbe4f5dd6c27b8e1d9c68027653ef96ec5",
+  "511a9c0282e77c901d0b0146bf5febb4b8ecacd91dfae7b5e207b7fc89cc6ab8",
+  "4fc80d7a7abd20ca734dd20330c6c7f751d02c2f6b6607a4a825ef689bde06fd",
+  "4dff8b34f11ae206624adf500692452dcff2a6e69a5d2cf3a767c56b8c271ab6"
+ ],
+ "qwen3-bf16/B/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12,
+  30
+ ],
+ "qwen3-bf16/B/trail": [
+  "ec6ae4fb3576c15eb08e4efb5befb62a2b92739d196a61299c401df2f9db658f",
+  "4134a5fec062345d385a192f9704deff97f752fb68317f3a5f4a602735a9a53d",
+  "d377f5f45a328f62a3ecab40fc4565e7e7e2b1264e6f52063f7a207055454bd2",
+  "d62ced14943fca47308e2a11beb704d57eb0c3344daf0f4f25d4fdd3bc0edc11",
+  "1587fe242fc370cce713738d3609ddf3cfcc92c8bb902807d199a4902770dfab",
+  "08912db1bab1712cef6ba84c4b3e4c71e6af0ba39ed3de4a070f67ec1439cd83",
+  "66ea0ede6fac822895279b7fb24b8fbf6a87cc7a6df0406cd47e0d8aae9213e8",
+  "2af93a1bae906aef1a4810a21744bc94e5567958202e02ea93badb152da50697",
+  "ecb170d8d77a2a67e531cd24eb79ed677ca8be3f335659e74dcdd9dbdbae27d6",
+  "f9a084919041e4e560b5081183af268d29d2861641a5bbb05ffa6ab2eeec98d1",
+  "52d4566e62d2298872e8e64eee1a900182db1451e0323eecea001c3f9ce0111c",
+  "86ec0a2a8784b15f4a366f30d22ae5f60d14487d8d0aa6da1579087b8ca4d928",
+  "c2352f145142791da54878cb587f7906ca93af9d019523c66ecbd6c0e96b0d05",
+  "61328cf0e6ee16adb4d84ba3b1a99869b1436a2eba6eeb84547844bac83db4e5",
+  "b32093f8827d5a6d9bdced31124d5854c65373ede857be22585b3826b8952411",
+  "bdd5f16627e9880aebbebae2b2ebf859f187c74fd99f5b1ec258a671fba55a8e",
+  "1567c78851bbebaa27949ffb9d940f8149f763e7f7e8624206b29e832c330fee",
+  "53452e5407580b99bcc705e185fb3797dd015d7898b6013511af8b01f229cad9",
+  "bbbdfaae46c4c8edb81f897ba9d967a41e2d563c7394f95f9f3a78572d1b9ed6",
+  "434fcc6e75a0dc2907f92b56e92b3cee419f45367e9858b25724a9cf6958e369",
+  "47ae5c1c8ad9adfc5f8555a4228b843db091691a8940deae4395ae7cf56fa784",
+  "e30a95a32ab5574c1a05b45cf86d930efcf41040b6a6d5a36340e6fa1f78d83f",
+  "6a8772e65204520e8564e69b51d2ab197feee708cc92a9411fc223665130922f",
+  "ae01db5e23aa2ad0a5c0bdac3b5aba874a1dfb30df946b6ab7b7a8940d1f56e0",
+  "3a6d746ab3a426994b3b3ab5585d5408552baf694573ba498b0826d646c8d0f0",
+  "2c52ae54aa801bf27d152b87db07b84ba32761f1e0303f4b0c7ce651100e7273",
+  "0d5febe2c52a235fbd817fd3fd385b9a877e201507d288f4e220a01f7c9bc301",
+  "478e8b1af5dfa5c14df547bbcd1b1dcd652803507211c0d919b319130aa557d2",
+  "b7d0e0307284ae41050bd6d49b57b49d38bd1f6062f87405ed0ddfea7935d685",
+  "d414542e61d2b1abc9b560012c488bd46df532ae718186e6b041cf0ded54ac68",
+  "bb7d1c26008d6d6dd00b49229abcdfcc80a5fd0a0518dc3b2acf58b6a800f444",
+  "f3533cbfb4ae960230524d14b5c5d0fd98c6508c0e5f280585b74279168a6796",
+  "1fee7e29a8b3b0f699cde6aa8cce8574e75e17b5ba85ea65f434ce48770c7be8",
+  "4d138b52121e00cfccabd0a55160b20634a5a9c534aafdac0dde595a16e45479",
+  "af311f56b4ce7fb9f4a22cc358ca25f3d540dc3007d32dfa569ef41fbbaa87ea",
+  "6fb58c3cfb427687d5d87301547b14b5358f23a14c452a6cd5fd8dfb2f7a5f93",
+  "9fd7c9cc2369a31a39cf873e7709a4e7c045d1a6940d5a35039749295e016da1",
+  "11e802df15a1516f019abb67bdafe7884ad5f1402f6b2750d7fead73e32e5279",
+  "55f1c21409f8a0341c6f0c364e7803f4c12180ba2bd8fbdb83331472a6f023f7",
+  "06ff3ee759737b134f6a41e386a52372bf2c9744e0ed33ee8f4bcb9eb9b242c2",
+  "be81cf9525fcf4d4b0e4a61cdcc97feebe1124cc556cac7fe56237aa8bc30dd7",
+  "4d6384ff6703d557b168b46bbc3ab53850c497b69f6312d4cd755e30311a67f9",
+  "b1a97ac1543ea2a5f8a6f092fe41d486f7d6c2ff04cf1afacd662804d4becb7f",
+  "b4a178fc82ab283f0da029e9ca674f2c30dc287454d732f0c0059ef2bc7b1aca",
+  "cfc03a7b738e2718596823018bf492977dd45f8d79132a5215b003077d316ee3",
+  "616ca2b56ef4403cb4d49936194c8fed4787f9afe25b7e390354f7fc6a7126ec",
+  "0f3af6c7e9173958c8e7b2aacdb5fd4ac443534ad06cf5949ce062b6ccfc1e95",
+  "1cd1f26e029400aab00201eeda99c403a038f4387a1b91f1d676cfacb23a125c",
+  "9dec07aa9497aa753739d1e396df18a3604d01041aa04d5f3b963e810e7671c4",
+  "4549bf44151bfb6037ea22b87b1bf90d3e37543b4daca62369969b17a6299289",
+  "d050d06c5b17c0ceb72fcda8f911fbd81b04f21e6d9196dd10fc505f2a469233",
+  "deffa66cae54d28210c0480d9e8b9b143a7e6af5fa34df798eb88062f735adf1",
+  "35108986820eb7ec9d74912327e40e4694cd2c4500ad644ad6321f9784d742ed",
+  "a01f22844d02e22dd287a04bcee00fa941c658dd20bae4a8a9807ca2b3a76abe",
+  "85d47ec2acdf5772f2a7d174310559efea9070844158dabe808dca60c2d70540"
+ ],
+ "qwen3-bf16/C/logits": {
+  "5": "b0497aa2dd6e3a8b",
+  "6": "de47754d0791d365"
+ },
+ "qwen3-bf16/C/receipts": [
+  "1a46934f8e3b5972a2b04aa4a79d1c758bf67787484e8c57f01e5ec83b3b692e",
+  "663b559b7426e69d0f5792b0f48cbea38bd6d64e819892e95fb473dc9844c6d5",
+  "7f77a8ae69af3ae65f60da897b94411ca894018f55b2d41622d3d8dc3f099029",
+  "f1189f05ab36dae63500aa2e4fa81b969aba06546868171e0459c8a935051c12",
+  "c664157837526b9725e17bdfadb63c7407b6183e0f8035d36899639b33b657d6",
+  "8238c182a75fe551917dc67478bb21e5fa9436c571a9da781a84a8344a2b2931",
+  "572c6c9a573efec8d42f06154eafbb509d8307c009e89e2adec0d74f6084acf2",
+  "db0ac1d11d449ca7006f95ce5344c0fc4dbe0125359970b55c850cd9932ba829",
+  "bf9f7bc7be4700726954d34c8dcb503fc91b7450c1b5f280deb8d32c5637414f",
+  "4c9419aff757ffe01bd5c737b2fbad2884cece5d50f57a0215ef5ebe6e451b6e",
+  "fc64c1bfd8411f743511c9eec536fc57224f51e8904ac88fbfe26552cb8f434c",
+  "cf12816fb19e4777a311a1861ed06da168bed2dc7c245537632a10708e892d79"
+ ],
+ "qwen3-bf16/C/staged": [
+  {
+   "cast_exact": true,
+   "cast_max_abs_error": 0.0,
+   "changed_fraction": 1.0,
+   "fired": true,
+   "labels": {
+    "cast_max_abs_error": "measured",
+    "changed_fraction": "measured",
+    "realised_max_abs_error": "measured"
+   },
+   "layer": 1,
+   "op": "scale",
+   "port": "m",
+   "realised_dtype": "torch.bfloat16",
+   "realised_exact": true,
+   "realised_max_abs_error": 0.0,
+   "realised_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+   "selection": null,
+   "value": {
+    "kind": "scalar",
+    "value": 0.0
+   }
+  }
+ ],
+ "qwen3-bf16/C/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12
+ ],
+ "qwen3-bf16/C/trail": [
+  "56f7519511043777429a1d7fdca493fb353467c516061be3d1b155903c1b1224",
+  "0c6e9d740c3c0a516972e01c27163078464408d39119c5381fb6eaa422d53520",
+  "4da7acb982a41b2f786d0478bf537edd32cc86d10ed011c3f864310f3dd04382",
+  "33a60017f5a9338ea13e3f2a0472db23c5d309b1558a1965655288abdf87c052",
+  "cc46ac2c8a0830d4ff0bfb9e83a92832a76404b0e5826b9ee218edb8709e1cac",
+  "a2102cc47f48f41482f9ee3396d5c75e75fee594900291036cdf40e22b72148f",
+  "a49316c1c26bb0d2811eae9be7e9502c1f97718c03c039d4d22c65e7e0ecc342",
+  "b32dae07ff9b8a07e73a2f18b723bd115ae130141b81ed9fc1654b8b77ba15b5",
+  "69f2e1d1c2037561dec19c28dd1e202f57f5ff55291b4db31b92b11096ddb50c",
+  "07a21796245ec980409382b3cec69e7d5ab403dc291a0766ea9d30b163a78d74",
+  "b7617a99c9fd04b0a959ced7249e211c529462464bae34140de55536b646e9af",
+  "b39270230ca2a38e50d2212d0b5de942e0aa7e45ff96704416b2fdfd12a1b2a3",
+  "442f2e37aa9589b745ed62450368c451e65f44f71f2dc862f5c2402a06e86214"
+ ],
+ "qwen3-bf16/D/bytes": {
+  "edits": 96,
+  "marks": 13,
+  "reads": 0,
+  "state": 1080,
+  "total": 2648,
+  "trail": 1600
+ },
+ "qwen3-bf16/D/logits": {
+  "5": "30caf293b8ec93ae",
+  "6": "b157ca4a490f22f0"
+ },
+ "qwen3-bf16/D/trail": [
+  "56f7519511043777429a1d7fdca493fb353467c516061be3d1b155903c1b1224",
+  "0c6e9d740c3c0a516972e01c27163078464408d39119c5381fb6eaa422d53520",
+  "4da7acb982a41b2f786d0478bf537edd32cc86d10ed011c3f864310f3dd04382",
+  "2b4253f749adcb89f23843c4668a176206a5c7ae1670f52113d3233820660b84",
+  "2d3cc1729b553da2ee42be0958ea8c2538b3cbaf91e963aeffcf37995305b4cb",
+  "1fabc1d1fe2d01e1d68c8218fd92784ba4ea6fd13a00afc1addb446faaf5c019",
+  "a4ee8d755b13b19cf6e0bfdeeb219a58274697c2e57ffd93669e8579fcc8ae8c",
+  "34f9de189635b3d1c3de031b436a36663ce83373103472396244d64ed0864fe2",
+  "92afb132566d3cfb630f43ed7add6757da29b033a3920530a23a29526890ab4a",
+  "6052889300e7cca124108edd8eca203cab99a1a098527b2cbc1897a1dd542ae7",
+  "e008a61b15c65a4b4a87d6ee609af211d0c1b53efff5749d3fd26aa02a202c5c",
+  "c30369b0580ed54eba0c2f2dc54d3d8073144068559419d4459974b10f972a85",
+  "2acac9126577e83b4afa0c9c3105d3c4611d2624d66076631bc7f97b4ad53a58"
+ ],
+ "qwen3-bf16/E/trail": [
+  "56f7519511043777429a1d7fdca493fb353467c516061be3d1b155903c1b1224",
+  "0c6e9d740c3c0a516972e01c27163078464408d39119c5381fb6eaa422d53520",
+  "4da7acb982a41b2f786d0478bf537edd32cc86d10ed011c3f864310f3dd04382",
+  "33a60017f5a9338ea13e3f2a0472db23c5d309b1558a1965655288abdf87c052",
+  "cc46ac2c8a0830d4ff0bfb9e83a92832a76404b0e5826b9ee218edb8709e1cac",
+  "a2102cc47f48f41482f9ee3396d5c75e75fee594900291036cdf40e22b72148f",
+  "a49316c1c26bb0d2811eae9be7e9502c1f97718c03c039d4d22c65e7e0ecc342",
+  "b32dae07ff9b8a07e73a2f18b723bd115ae130141b81ed9fc1654b8b77ba15b5",
+  "69f2e1d1c2037561dec19c28dd1e202f57f5ff55291b4db31b92b11096ddb50c",
+  "07a21796245ec980409382b3cec69e7d5ab403dc291a0766ea9d30b163a78d74",
+  "b7617a99c9fd04b0a959ced7249e211c529462464bae34140de55536b646e9af",
+  "b39270230ca2a38e50d2212d0b5de942e0aa7e45ff96704416b2fdfd12a1b2a3"
+ ],
+ "qwen3-bf16/E/where": "t6.fn",
+ "qwen3-bf16/each/print/items": [
+  {
+   "blob": {
+    "bytes": 919,
+    "ref": "84105f1cab5d42923e82414a654ad187c6244a7593476e270b675d600da71a59",
+    "sha256": "038abfd8fb45d5b558793c3853e6b0aa0a18c6777293c0c23a191eed0533c8aa",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "84105f1cab5d42923e82414a654ad187c6244a7593476e270b675d600da71a59",
+     "sha256": "038abfd8fb45d5b558793c3853e6b0aa0a18c6777293c0c23a191eed0533c8aa",
+     "shape": [
+      919
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 1376,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.0869140625
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.0869140625
+     }
+    }
+   },
+   "name": "a",
+   "result": "038abfd8fb45d5b558793c3853e6b0aa0a18c6777293c0c23a191eed0533c8aa",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 925,
+    "ref": "e474e2b7052094530818604f2a99c861b129e4f267dd97e17a8659bb2216aa45",
+    "sha256": "5afe7f213619aebef791d05b729696854c5a5c2fe88b76d93f98a630e1c23a7d",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "e474e2b7052094530818604f2a99c861b129e4f267dd97e17a8659bb2216aa45",
+     "sha256": "5afe7f213619aebef791d05b729696854c5a5c2fe88b76d93f98a630e1c23a7d",
+     "shape": [
+      925
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 1376,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.10009765625
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.10009765625
+     }
+    }
+   },
+   "name": "b",
+   "result": "5afe7f213619aebef791d05b729696854c5a5c2fe88b76d93f98a630e1c23a7d",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 915,
+    "ref": "39b3cfe31b283ce6c0ef4f8b5d98ab63295cdcde68a5fea8bbeb8a5a7c9e3595",
+    "sha256": "5a3334caa65afeae8a75220a9e93f89b51a3432f40b6d5705aae86ca33a59c9e",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "39b3cfe31b283ce6c0ef4f8b5d98ab63295cdcde68a5fea8bbeb8a5a7c9e3595",
+     "sha256": "5a3334caa65afeae8a75220a9e93f89b51a3432f40b6d5705aae86ca33a59c9e",
+     "shape": [
+      915
+     ]
+    }
+   },
+   "bound": {
+    "address": "t4.logits[i=6]"
+   },
+   "bytes": 1640,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.1630859375
+     },
+     "mean": {
+      "authority": "measured",
+      "value": 0.1630859375
+     }
+    }
+   },
+   "name": "c",
+   "result": "5a3334caa65afeae8a75220a9e93f89b51a3432f40b6d5705aae86ca33a59c9e",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 907,
+    "ref": "62fbc5ae92af5f40724377a18780717a87aef5618e0a9c9648cabf934f76fb70",
+    "sha256": "8481a3b67c305191b33f9198e27481158278933c739076fb55751915a60ba922",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "62fbc5ae92af5f40724377a18780717a87aef5618e0a9c9648cabf934f76fb70",
+     "sha256": "8481a3b67c305191b33f9198e27481158278933c739076fb55751915a60ba922",
+     "shape": [
+      907
+     ]
+    }
+   },
+   "bound": {
+    "address": "t2.logits[i=4]"
+   },
+   "bytes": 1112,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.01953125
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.01953125
+     }
+    }
+   },
+   "name": "d",
+   "result": "8481a3b67c305191b33f9198e27481158278933c739076fb55751915a60ba922",
+   "state": "resolved"
+  }
+ ],
+ "qwen3-bf16/each/print/stored": "caa715392b1c9812d94cf9e5061c795a4aca4bbc746ed2242d3a17330fabc3c0",
+ "qwen3-bf16/each/reads/items": [
+  {
+   "blob": {
+    "bytes": 6025,
+    "ref": "bc49472963251230693fe725569897be4c748c652fc8924d48c036bbd642bd22",
+    "sha256": "7adde0cd9f82ce25546805f16983d3593ae3b2422a3caf23351cb83024119e1b",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "bc49472963251230693fe725569897be4c748c652fc8924d48c036bbd642bd22",
+     "sha256": "7adde0cd9f82ce25546805f16983d3593ae3b2422a3caf23351cb83024119e1b",
+     "shape": [
+      6025
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 4640,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.0166015625
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.015918392327528626
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.1591796875
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L0.h0",
+    "verdict": "causal"
+   },
+   "name": "a",
+   "result": "e5a6514b218ae438207962d3cb945d3d58dea061b33ca71a18cbd3caba6bb4b4",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 6016,
+    "ref": "be6e986382e499ef421c9ac6a08a94a8887b9f2d845ed00dba097b9128da2d0c",
+    "sha256": "16a42920dae7267b53b9c12fb70412c1bf14f51a32d2aaf36f3ec4c43de531bd",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "be6e986382e499ef421c9ac6a08a94a8887b9f2d845ed00dba097b9128da2d0c",
+     "sha256": "16a42920dae7267b53b9c12fb70412c1bf14f51a32d2aaf36f3ec4c43de531bd",
+     "shape": [
+      6016
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 4384,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.01708984375
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.028952871974026816
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.5390625
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "b",
+   "result": "9f754bc0bdd2dc4530449f1d93562248d9c6a0e970d9e1d4de190610044644c2",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 6009,
+    "ref": "97d553e85067bcee12c21b2f8ef2e83379b14f832c81ca305e6d94c3be47215d",
+    "sha256": "8b545f9d2871174766a22be6947074757f5dc8b13e25f010b88c4208acd235b4",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "97d553e85067bcee12c21b2f8ef2e83379b14f832c81ca305e6d94c3be47215d",
+     "sha256": "8b545f9d2871174766a22be6947074757f5dc8b13e25f010b88c4208acd235b4",
+     "shape": [
+      6009
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]",
+    "source": "t2"
+   },
+   "bytes": 4744,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.01171875
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.0076714714151656085
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.35546875
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t4.L1.h3",
+    "verdict": "causal"
+   },
+   "name": "c",
+   "result": "230284b208a5c85b3a6577fb26c42b0ae8f75d8279f5b65bc6f31d996599a907",
+   "state": "resolved"
+  },
+  {
+   "name": "d",
+   "reason": "no role 'subject' (roles: last)",
+   "state": "refused"
+  }
+ ],
+ "qwen3-bf16/each/reads/stored": "6a06446eeb98f9510ba9441e263012f105c2b8b7ff1a6df59a6262ff2c18d6ec",
+ "qwen3-bf16/each/whatif/items": [
+  {
+   "blob": {
+    "bytes": 13784,
+    "ref": "1fa8dc5fa8fafa311ed82da5b3f5ac4ce5204a776fffd190b19bf474534c4a64",
+    "sha256": "3641375e027699ed14fbba0e874741752761a8cd6414cfbc1482267267a5e06f",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "1fa8dc5fa8fafa311ed82da5b3f5ac4ce5204a776fffd190b19bf474534c4a64",
+     "sha256": "3641375e027699ed14fbba0e874741752761a8cd6414cfbc1482267267a5e06f",
+     "shape": [
+      13784
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 3136,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.02182490880807983
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.02197265625
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "a",
+   "record": "7e9e155925de226811256b6f61a449d903d3540d42511d8678819bc14f09fd51",
+   "result": "e70a3a68f0987f7bcc4751b0c6b36e5050fa49dff5d7c20f6a8f1dece63ce783",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13757,
+    "ref": "03fb5d57b2e0acf10d13cd872915db3d4553643300e6d235b25a007693566668",
+    "sha256": "54b6b730c1815ee4dc1ca91be66744830a92ddccb1c4096df110e2f8c006cac6",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "03fb5d57b2e0acf10d13cd872915db3d4553643300e6d235b25a007693566668",
+     "sha256": "54b6b730c1815ee4dc1ca91be66744830a92ddccb1c4096df110e2f8c006cac6",
+     "shape": [
+      13757
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 3136,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.005743213868805386
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.005859375
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "b",
+   "record": "5bd38be1a15ea4dc7dbb229d5fdf3b22b324a76f8de7f3edf524ad1b5de8a7a7",
+   "result": "6feec70f6f1ebad4edb82a076d2537ed89d3be89f0c8b6441c2b1fa6b1ef59ef",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13641,
+    "ref": "ed05e288aec41f228e477ab536bdc6894c25dac6747a15c36969324189efc65f",
+    "sha256": "324a9fb9b8fd5b404695eff8b1ec2f53e11117bcff31d0966623374cac3c9338",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "ed05e288aec41f228e477ab536bdc6894c25dac6747a15c36969324189efc65f",
+     "sha256": "324a9fb9b8fd5b404695eff8b1ec2f53e11117bcff31d0966623374cac3c9338",
+     "shape": [
+      13641
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]"
+   },
+   "bytes": 3512,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.06682493735757802
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.064453125
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "c",
+   "record": "2e6cf4622c0f564689ed2c8d0b259831d6883de253ae5a1902cba3ac91ce4bdd",
+   "result": "eafcaae4c887af368ecdb2e21591a0bf377a97ec76a17f70134abcc5148292b9",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 13641,
+    "ref": "f1c86f633f2cc628b53bbf168e48711305caff90ea1e6bf569914ad554793274",
+    "sha256": "c09ff13faa34f70d4cf2e2f4285b949e872e97a0b5e7712b9bf11ea4f17ad1f9",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "f1c86f633f2cc628b53bbf168e48711305caff90ea1e6bf569914ad554793274",
+     "sha256": "c09ff13faa34f70d4cf2e2f4285b949e872e97a0b5e7712b9bf11ea4f17ad1f9",
+     "shape": [
+      13641
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 2760,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.015623674345923502
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.015625
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "d",
+   "record": "eb55977dbd47eddc6d244c0bd7e7393abef70c1c43c8948beb621659b7d59417",
+   "result": "ee77919730fef381d6920807087b100748a576714cfd960bd488aa5c60f203ef",
+   "state": "resolved"
+  }
+ ],
+ "qwen3-bf16/each/whatif/stored": "4f37bd9e461c3995ab4b95d88e58bcc8c5ce14af1c973182341360942dafc560",
+ "qwen3-bf16/sp/attempts": [],
+ "qwen3-bf16/sp/cut": "e17cc30445b91e46097ad0b188ef48f81af027a73500a61434d371e28397d77f",
+ "qwen3-bf16/sp/receipts": [
+  "d6c040d94b7b68973537c413192d03605cfd9fb59a3eab7c310c87844117cb59",
+  "2c827dab08743e2ae9312a99a8ed23b601c5b6f733475baed6a1fc5430f900d5",
+  "bdbd350743bb5002c3bfa35079dfc9b5c7029805addb72e90d67753f4435c6aa",
+  "de080fced1df5b458e74a3ad4d538b31b3fd8ec6cd9511cafee5357280a4a6fc",
+  "d2a15d8ed722bccbf181e052c2badbc87fc9540cbd89d36ad8d5d71e894cdf37"
+ ],
+ "qwen3-fp32/A/logits": {
+  "8": "5c46a6332b4a1aa6"
+ },
+ "qwen3-fp32/A/receipts": [
+  "5f570a3b8979cdedf3b0811844877a347ac8706d76e326e6a33131c005d30536",
+  "a9df4c13c26fb6cf6b5826c778ccac2747406ff355126592bf1b868e15e68ba5",
+  "56fa0949e220971bb40c873a3b5182add7423ff9eac6551bdd2e9d70748a9e89",
+  "57b432be47135a3f82a2bc9792696c798ef202fcff93543f54f961667190e2ca",
+  "cc41c7c9d678883e449ea34f27fa5d2760ad8042b926561df5ef24f402516251",
+  "4b2448f98c8e35dcfba2a59ee9d38e86eb47adfab1530b2801d36a13100e0a9d",
+  "f083f9d6ade3f6643ad737a283fa4ebf0898e97648537089e4512e11e001e100",
+  "feb3017c2b7ae167ce2c1c808ee9cd546784f38720c1f2915d058f1b586faa20",
+  "c766f979bc25acefaf6ac81e80fa2ff37ddf96c9148aed34d8d4d2183e5c4782",
+  "b92117a6582e52845f524d86d4dd82bd62dc172198a02aee84ca928effcaee83",
+  "91ed843f9aa46184c40dae082ed8a81e3a892ddb907e539d9de3652c1a0c610f",
+  "3f2c482bc4b88f8ea2a3a8df66c9660cefb2930567ee3a59f8da719fbddfea3c",
+  "aa3ab0b881bfc48ee75194d3985384830b834a0fdf19087caeaf2c1344afae36",
+  "5ee60c44cc6883bf7782b6fd9c232206f628b2aecdd2f6508a27b3e45de862c8",
+  "9a9cf5e3201da55f9c42bbf8f44ad83204b9dc598fd76ca8ad63119bff43362a",
+  "fbc8706a762a1895f9fafd9bb09e104bec63755af37687b604230d3d24c54539",
+  "b0829b15014071e70494250effec829bfe30ed5740ed9af24c2272a7cc9317e0",
+  "5c27544a41ffbedc98005a5322af8b95e5ab43da9868623f8c438b87469df91b",
+  "97d9b07daf2cc2f95930af351ee535030f94d60197f8b80c53e951fe514d9c0b",
+  "4b0db312e47eef77247ea8a221813c44446d3aa0135d2b347854017cba6ccfd1",
+  "154bf8e89590ade9739593e9e4f67275cba07deabeb8a0e728975e478bed7ee4",
+  "17cbb9a277215e93cf2472554763165a643034ec5262412f0de7c3e1ae8f03c5",
+  "7182fdd09da7933fb2e1208ab542100ee0cf56097cfac1af0d44802be92e9295",
+  "e4a5a47a10a26b4f8efcd8004505719c39b1b23d48fa5dea6da97807578ea2ff",
+  "df1be26cff555c816bc0cee0aa45476bc7c767920c15d7fc5fe666e1765b58c0",
+  "6774d954e2cdd0797c7e417c3d2032e9d113de7a284844dcc37717995d5617e2"
+ ],
+ "qwen3-fp32/A/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12,
+  30,
+  27
+ ],
+ "qwen3-fp32/A/trail": [
+  "02d69db7144a40870cfd29241a2c265b62930fa7a284c154cb7a61d09adeedc0",
+  "9a47b58042ef815ab536ce9841216fb62613568eaf9f3d61efa430550627ded9",
+  "edeadc7fef20cdf50e789b64c834c504e0d18dedddc7b60d476ed4f65f6d423a",
+  "8c9a228ed01672a6686fa6851ca1b663fdbb03be7a46568f3c1939015b53173e",
+  "da35189e86766f4bb76ac013f21a86abd9362f1b9513e9ccd19d376d10fd6755",
+  "5b87141443bb5da316125ec639f04c9eee782801e065d69b14b26ea811e076f6",
+  "d3a3a9d1ea6b24376e26e20a037c7fd5695fac321087859844522699b48e8ba0",
+  "d919f8ddfda022ed4beb59420c44610fd4d293aee15b0f4f6cc0e0d561d0c022",
+  "f66bf8b5e4dc980c1133dfc047454b4f022fc4b8eb42432da4d254289e98ed6e",
+  "eb433b54f08128daaf4510ad5a102769cb0c6ac4541f588dd7813c9a746d8f7b",
+  "78aca8eeb9062a1a386420667d02bcd6b36345a23aca891f531d3f0f6dc19a9c",
+  "faf8672fa43366ca24d44b26aa606a1403a15ea5f24fd0f23a1a0ebb35f2fd21",
+  "2e5ed8e5489623e93b15b459990ebd35e360fead54309927d241dba772867530",
+  "9f2471fb8cd9e05c0021c27d2479eecd89170c3587f2b3a08535b93457cc3cb0",
+  "734600c1d8f480d7551f68563662f0b8d33805ffd08524150993f871b189bd23",
+  "aa2b47731c64172b475126ebf02ed27148009159023aba9cea8a1b1e1c186ba9",
+  "e9b7e1c4bd859b0e90fddc7a3353322a53bfdbf413755ad2007f4283c0501d6b",
+  "ac8c01cef41562347bf898f16557f0d12f4a7ac460cf571bb5f19f9bb86939e2",
+  "87cf9476212279263136d50b78bfcc8a5c4be968916a401f80bbf582835774c0",
+  "6914a9c2b75d7af5254b1d35150d8ee7598580fe30a1b59423927f46fa687b18",
+  "2417f8c8ffa41dcb6a1482d4f035f7a869d17159b1e1ff443907e336a243a599",
+  "6a65f14c7fd663f00f4326fdb97e7bca8783ddd84931cf2d7cfa735896165abb",
+  "07e8118707b655a1291dfbcdb34924f88f061f2b63f6b2586201f7e77fa41a2f",
+  "50d85462cddfeda367f1d76c20acab044c677e69fac8a8b2080684ea135723a7",
+  "d86a3cff8a2ef368183fd1176fbbcaedc2b4db2ac75305a654a993519285ad27",
+  "3272fd9508ea1475132896e2cf4141a733acd08df48a7cc4c85dcf6e588e224c",
+  "bf5fd0d51a6dcc4da68dc566f18aaa97e16bcb721351c429320f4c87ef89699f"
+ ],
+ "qwen3-fp32/B/logits": {
+  "0": "56d7e605294b4ed6",
+  "1": "710dd386b7d4ee49",
+  "2": "e2bc2d45e6b89e81",
+  "3": "e06441ec19e56326",
+  "4": "f2340e177c9475d1",
+  "5": "23d4a15f14bff416",
+  "6": "27ac9c09a05943d9",
+  "7": "03bad520a8714627"
+ },
+ "qwen3-fp32/B/reads": {
+  "t0.L0.A": "2f6878f7f406baf8",
+  "t0.L0.a": "433494380c724b21",
+  "t0.L0.k": "120965e85ef8b279",
+  "t0.L0.kn": "9e397af71e11882d",
+  "t0.L0.kr": "9e397af71e11882d",
+  "t0.L0.o": "249384f7783b139e",
+  "t0.L0.p": "f6bb1294da2f78cd",
+  "t0.L0.q": "621df5765218ff41",
+  "t0.L0.qn": "a171284fc4506911",
+  "t0.L0.qr": "a171284fc4506911",
+  "t0.L0.s": "5e8285dfd174fc24",
+  "t0.L0.v": "8f88e4ad67f0586f"
+ },
+ "qwen3-fp32/B/receipts": [
+  "cea05ba0ee5d0adb023463f91d28403add1d44b64d707224b2109e07c646a300",
+  "0319bd73d49aba045b2b669330ca0f05e6d4f4ab120a54e1528dd76c5a588aa7",
+  "5c7610f302113f1dd41950a61eff229dec6608c72e7d6a6fde5d8e18643074c2",
+  "62ac08b86535d1e7654ba7112a38def5c15262c744ea8f94f3b675e346b1390f",
+  "bc9811401c408ee0afccfe9fcaa4be7f99d61b989a29f4d7967c6f9a522d44aa",
+  "5b300ed154747b363e113c217ae008161fe2a5c6a23b3cfacb81e1bb64dcb0cb",
+  "7152f2756060eec14be6a5e83f58b87f054cdeadf1b9029ef779b8a6b4aae75c",
+  "6dac89f1bc6e05a97856f2e305317b4e863c21e81b4ddce0182e5e2fbe18c517",
+  "66823137563f2fca3d107aa209527aed0a23ca494514d129c793ac94300b3ecf",
+  "38cf42003e6daf197eb4b3100f4b04faad9e3c790b8cdf1b08eb813b37c01fec",
+  "7854e3a27f37ef8af8f9b380ca5fa2faca0df1798d6e3723e2f0f6aec39d7594",
+  "f080f566d32a6444bd6d56dee4643740c9adc3321a69caa22d28f57ebed72c83",
+  "034d38715bbc2bed8ce0f292fdf8329af4242d768b51a4aa83c9b1070f664188",
+  "dba3f9fbd40cfc2edf0f79543a069a7c2386ff3a4b3e3493d87a1a8dc4ebb776",
+  "22da1da58b1096504fb757491bda7578c40bd98030bddf54db51de4d5149d6f7",
+  "fa10b59af23a1a97f1512e18d23166916e4f71707e9838dd1ee3d84d23330e68",
+  "f6133cf1170c9c9a2ad0db4813894eccfed87915a43e328edb04483d2777942d",
+  "750d874e66d333aa75bb4214f7a7c78bf5353b424db0f20e545324610adf168e",
+  "5f413b817d15e79c306a383e5964c5ffc8f79e61c786c18cf5928f542ff42a3e",
+  "c4d066aac2f98af4a45a226f7362a8580104a32ed8d2eff6c8bb2a132de81b57",
+  "f7828eb29f9edee58c331f9eb498dc7624ce401714d291a6eacbf70687556720",
+  "ef4d258c2e7bff3e5d1616e36979bc7c8e634d5b0e1b759cdf182818dde6a666",
+  "41546d1689c5d3698b417aaeb794581005db9c029603295e496e5594c2896ccd",
+  "e0d9289bc19dc7bf84060f67eb0b5bd3ec913ee89a4768f806d83fcd750b6d56",
+  "4e79f9a210216bdac12bd7da84dd94a3ec466b083395c9399a0313d7d75cd82a",
+  "5000501e4a697af67f521130e2463c0530331c9bbb4f59a1a2e800ae3fe50138",
+  "592ce25bdc721a4363b0bb9082e3fdb30e380e4e4b5e9759842c83ce15b12afb",
+  "82fed78b00234e5ef3dcff361a84003e18f0d857cd2708dd1a7ddc599e057c46",
+  "a403ba013e5fd2c4d677c7f67cb396eab04ca221ce4004af64d8bcb0d7fc80c5",
+  "672ff516e62943a94bede63e5b2f7f8bb614ee9d4fe048dbc1d647403545ac04",
+  "18fa0040b331cfdfad55da2ad51e06cd77417cf364e5807a60b340ba4459cfeb",
+  "568674c3a5f078311dd3e7040adf986913099e5bc455be9e1e71c36fbcaf3b92",
+  "ff3144e76df2c542f6606301a7a5c49beb0bea20f784dc0b58411cfd27bb6f04",
+  "a02141c7f19e6c6db59d64d73add89659584bca830dbc20db5ee2dae9eff69fb",
+  "9c16a5392be12820afd302b527ad817ce1733f532c98419fc1d3f1256228d567",
+  "844ea54a9c2bb3f987c4e81dd063bad352a7e2b030f62c8621fa3c9379d42890",
+  "c9cb389d9faa8b69976269e4e0c1ad9029dfcffe74e90359522490b07b9e9e7e",
+  "9dc30ffd2a28621fa75654cb246aaeb036143565a162aa25c362b306c0c244b4",
+  "22bbc8536f13016068309261e403102ad7eea20428017f9ea334a7109eb11c47",
+  "91bbe4445a64204171e5a26a41912bb540f7607b7131beafabc57b19c720dab5",
+  "d704c60555680c8c6c052d4e68b74b3ecc3be55bcc4137046e18f06f10f42225",
+  "baf7c7ea3439962a580f1510b137e4190a118d3da9b29177108e57b812ca767b",
+  "ade9b392d604a3e515c5f302d324a95411b45feb9dbd4f8c16cf0e7a86c92d5f",
+  "231b18c3bd49a3324b9c10424d61503be74d8ab24d789ee877d7ec8e34d6533f",
+  "d4b4b0d1478271a2bf157a7152e45a07c11ba191aa027df4c5f84fdc3cda5509",
+  "bae9c3f70de9eca2730344a73eae2ccfcb3f84493cd71990eeaa98823e5d1af7",
+  "4c41a6550eb3d12c90fd2a2d9c9b560d4dd6ce2c3c9e81d2317351a201fa9e43",
+  "f4e625b83cff68db5009efc961e79daff085f0ec0846e76a1deb975fa454903f",
+  "3b828f34ee5a77be7b835b2760077c7f5bb809e8ea8e4cd053a5aa55e4a98025",
+  "c8637e89305a0a8d84b370325e9ade70cea3a4c7e64873144a754005c82c3d22",
+  "eb25ea3f8d1206b2bfcda90ed572e44781a32e9d6543ceb887982318b1642ef7",
+  "ab3f628a27affc5a0c14ccbba0681d7f4105c607c29e58767814e6b78e91fafb",
+  "8d413486818256150a2fb471e8b40e157800e513b469e13f772783c03d747225",
+  "0ded9022a73476153ca1dac22afb0cdbcdaae906f3028d4023f0ea9641cd9316"
+ ],
+ "qwen3-fp32/B/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12,
+  30
+ ],
+ "qwen3-fp32/B/trail": [
+  "ca1dd94b32c408446a50d43c256e784bcfb637a4f0fb7e27ab9c30b3ca0e4718",
+  "dde98bce088af100fb3b883219f307bbc5b3274e61f122608907ce3c4065e152",
+  "dbac41a6ed8577c61e88d3c1a49e6bb3e35fa8d15ca09e14fb77df6221d90b77",
+  "6c6a5beeb74a4822ea52f878292a9dc7600635982038480b154f33ceea068e6f",
+  "aaae2342ca39dbfe8924bd31b4c3e377e5084e5f2b2be46296f55be6f9441d64",
+  "4138fb48eb9160fb2c7cc00db600247a4c27a96b59433bf19c6a113ea5ac221b",
+  "c4ac172908492d90ab43c3748f4d47fb6d41e66a8c538533a922d7047735ca03",
+  "f2422b22b121a465e5b189655ad468683bd7358c92ee50c59f9fd397053002b8",
+  "0eac23809db0d61dc42fe40e7684a44fb27f21c1847ce7dd7548da23477e7645",
+  "6806c204a6b074039d2aef3349c6eee8f764d53f974f360d198dc081b0dd1bb9",
+  "72a6307feb22bdcd0509fdab0fdc957d951dd58286792c847cf87c828ef48f35",
+  "da1dbc67c7b540dc88e7e3ab65069d42b12f305685dc6a90a34d69087b53376d",
+  "aff103dc321f81eac02e4d1fe3bd6cdd00b95acf96dbdffa3ede826179df997f",
+  "b85b8054d9c09a58463a67fcfc9afe60bac3f78f36112dd76dc1a093669bcc4f",
+  "292fb17cf35f656d05ace21fc30394de4c8ce0bd54251b560ba3e38645bef581",
+  "c3961309bcfb492a284fa40a7ef325418807f97243c13039a9e1514357667c97",
+  "258fa7981f773564f2145635638e2f83e6017e73a3ac6699ccff77ee2e6c8f26",
+  "d9ae79e2345cd0b31c4688fa948e10b2deca3110ca8fe68a2184e1a199f65b80",
+  "f8bf93a2271a74b8f5e8d73e405e591277ebd7e6ffa4e22f69cd54ef3d3dab6a",
+  "03501d3830f8a8b310e3d8432579b093de4fa482f2042b6b5b063ae26997749b",
+  "d2fcee1f6fb972eb488adeaf8d31158a63836331eb1487b4d33e2ae0d68a83cb",
+  "be215a2d91ca00d94692cde6f09469264852b75a076019d561005e9a2e222a67",
+  "e81cb5c7353db48f30ae84724520f1d0a8a96e00ecdc5373400f1fe0e7e3e682",
+  "10a54c5bcd1424e1a097a55ec37e7e3b44f8906db88bf6b5936252e5d3bde43e",
+  "dd59d25b22bf93606ff7d7bcbf73d0c301816b3d397a5c11a97d57124f1ec6a7",
+  "a7a2e93975c9a883ad28cd007625e68554ef5210c56ac54a0a314913b72b7df1",
+  "1a00932ceb04f1e9415ad8beac1600901d46ea94460c30f02e0098b310abe054",
+  "47ed1f6a1c9f4f6f212e5c129270fa70ccbebcc228f4d61f05fb30982fa4f6d2",
+  "ff01b643871735c4b30d828b6709aed85b9480bcab57de686d996f8fc3854ed2",
+  "1f62eef237d78d1c66e60574d0fe0b7e681b75370b07b50f5544a0b5e024a9e0",
+  "0bd035f98f882a9913a9a22ffed13c96b079eb251d8fb9b5dbfd29aeee7b3215",
+  "86aa67c67c6b60a120d265457a91220634d741d3db87b25ce2485fc514f3a66c",
+  "4523bab6ffc99f553acdd3d1f1a4c8896d72a4af2ab0b607226989ee123c235c",
+  "383b5100342bd06c8866621a9efae00ca9591f06f56b81d40b952da9d0a1e659",
+  "5139e02328aa69e74742432ea74215914a834334d9b1d7ba462f7b87fc0eeedd",
+  "1dec6190b0336d4e2e74c8ec3acbc0f05eb84d5d3babe3da8cfe0f89e7bf0033",
+  "58f6825b0cb60c4369dfc9f42717fcac3ba539e101203c108ab35fedd35e7acb",
+  "c8b99e9f942813cbb3b5d3b4722573d28c54044a93ed51b134db0fa98825e830",
+  "166078c0e943693485a453363dc41ec291af54ee83ad5b6bfd7e365e1e741783",
+  "8c0e57eed1fa2ae4501f4f2df7eeae7d3dbb0620199c21e8cbd220b930841da6",
+  "de10a9bdc776903e7e5daf9e90265bb7be54d8d8925ee7c81dd81cfd7007f2e7",
+  "a5ab27d8d26b789329a926b3ef6c96b48b335d8f5b44548b58d9ff4e76c906e4",
+  "0b1f946c96eea9ea4950cb61333b8424ef5d3bc3882251c956962ef3629fe634",
+  "f5cfed24fab068b8d15fca5fea63d839a7d223aead64c058e761eeffe2fad5d1",
+  "66fbd7a6d483b0f1a1a7a7a78c2df09ad8c8a7327ff86be1bbe8544d6a5fbe92",
+  "8a0995eb9bada5ef7e9de05910d7aba0175fde7fbd01c48b27198edc3782d09a",
+  "e6f550bda9058aeb8604d00ac0dd26f5a9f8c63b2e341651976918876970cae1",
+  "78e3b8650ea0c6a4584f1e0555497a77131dfd0f2580e5fa77b04a29a452e416",
+  "b1dc9f29f2af49ac56081b147c74d7aa0816c4cd3bfb357c1fa70aff8a4d7441",
+  "ce63dc89b1b3edce535fe6c231635c05ca85c72c59ac26ab8a53c1d27b612bf2",
+  "854cfab62b0df525cdd5a4ff63cf62b7cf6c77839986cce7335df8a2c824a896",
+  "09615bade93b45edc9c9ccb17179c0d3254ccb858df8276cb4d12e3e69994d16",
+  "c6a7d54de4a10ccd2e8d7f1a95840ac9f3e0db31620e02d084505bbd71a7562b",
+  "7f22d24621a3256ed1fedd0a9e1886142c7bf11251b11e8e84770dd273d65000",
+  "516b238e1ab5f0388daa8df701b0bc4c9a88133a45f20c3480ba604a2fdcccbb"
+ ],
+ "qwen3-fp32/C/logits": {
+  "5": "905b2ca542aa2e84",
+  "6": "d9ea3064c44e511b"
+ },
+ "qwen3-fp32/C/receipts": [
+  "5f570a3b8979cdedf3b0811844877a347ac8706d76e326e6a33131c005d30536",
+  "a9df4c13c26fb6cf6b5826c778ccac2747406ff355126592bf1b868e15e68ba5",
+  "3f8a076ba4dd160dd8c8a7ed483daa0cb3e335c65e6b932eda1c2a0184d6e727",
+  "8dc9bb00699c4adc66ef0bc059bde3a1db1fe8974dae412c4454ed98f8a7205e",
+  "3ad1e7dfc2ae93d025f6512bb9d56166d0139bb9fcfe0fa9f92db5ef81e94d62",
+  "6c9ef102a9668a74488f8c752c314de4c58350a0c64b2e8b25ce23686bbf734d",
+  "9f2f1d433f866a00d5b4d52e29b8f7052c49853f07621f7d9a140b22cd7fed70",
+  "55e3c750328d29151ed7bb9ec15daad31813fd7daf7ea51f54626ae785535734",
+  "98faa34f6974edd2a6dcb13f016e965b2d178ad61268d31171107cd3f92c43ce",
+  "164bbdc76900a9bfd47434ef327499fee0f20a3663549d8191df32a71dbe2c4f",
+  "411500cc857dad540136ef051d3412389311811d484ce8eb815827aab878c614",
+  "620fce4465b533cf21e7b4f10c40f534f41e05f8d2c36bc35dcdf02d52fc448d"
+ ],
+ "qwen3-fp32/C/staged": [
+  {
+   "cast_exact": true,
+   "cast_max_abs_error": 0.0,
+   "changed_fraction": 1.0,
+   "fired": true,
+   "labels": {
+    "cast_max_abs_error": "measured",
+    "changed_fraction": "measured",
+    "realised_max_abs_error": "measured"
+   },
+   "layer": 1,
+   "op": "scale",
+   "port": "m",
+   "realised_dtype": "torch.float32",
+   "realised_exact": true,
+   "realised_max_abs_error": 0.0,
+   "realised_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+   "selection": null,
+   "value": {
+    "kind": "scalar",
+    "value": 0.0
+   }
+  }
+ ],
+ "qwen3-fp32/C/tokens": [
+  1,
+  5,
+  9,
+  3,
+  2,
+  7,
+  12
+ ],
+ "qwen3-fp32/C/trail": [
+  "02d69db7144a40870cfd29241a2c265b62930fa7a284c154cb7a61d09adeedc0",
+  "9a47b58042ef815ab536ce9841216fb62613568eaf9f3d61efa430550627ded9",
+  "edeadc7fef20cdf50e789b64c834c504e0d18dedddc7b60d476ed4f65f6d423a",
+  "5c90d5d9e52942961ed64d88b6570d8f1b18a11e3c629a7af44a9a0a3d47d489",
+  "2200400d525bd670fdb6c2a369a76f3ae9357dd6b08771fff2ad291acccacf40",
+  "0bd1ae78a3b1db5766dc3abf86f451ed65a9ed5c516365f4574abc7a96ceadbb",
+  "d52be98fdb50052578da28cf4bd166cdd269ffe8a656eaf85397526fb8eed2a0",
+  "5d4c08736c041ed26e0359e05101e50665447985045496d236e2a0e42c3d2e39",
+  "448e5bb0189b5cba76a4d90b2799c14133e28aa3fe24dfe4c5e53476e7b55c02",
+  "49b9cd7185f9948f317b555fdcf4c94c5d4f79c94b159ffb9790b4b387b05765",
+  "e08cc80f7ccf71a42cce0e150de84401b8d7b7fb48970f93f632c92300204811",
+  "910d75b365b5b8d77092c6bea73764697e90fe8f4578a3d87dadd60e842b0e93",
+  "744fae228a79b333c8d71fe170b55f872406e78a74bb4dfbe3880d1e5ac16eef"
+ ],
+ "qwen3-fp32/D/bytes": {
+  "edits": 192,
+  "marks": 13,
+  "reads": 0,
+  "state": 2104,
+  "total": 5176,
+  "trail": 3136
+ },
+ "qwen3-fp32/D/logits": {
+  "5": "4c05b388b5013744",
+  "6": "80992a274ab343cf"
+ },
+ "qwen3-fp32/D/trail": [
+  "02d69db7144a40870cfd29241a2c265b62930fa7a284c154cb7a61d09adeedc0",
+  "9a47b58042ef815ab536ce9841216fb62613568eaf9f3d61efa430550627ded9",
+  "edeadc7fef20cdf50e789b64c834c504e0d18dedddc7b60d476ed4f65f6d423a",
+  "8c9a228ed01672a6686fa6851ca1b663fdbb03be7a46568f3c1939015b53173e",
+  "da35189e86766f4bb76ac013f21a86abd9362f1b9513e9ccd19d376d10fd6755",
+  "5b87141443bb5da316125ec639f04c9eee782801e065d69b14b26ea811e076f6",
+  "d3a3a9d1ea6b24376e26e20a037c7fd5695fac321087859844522699b48e8ba0",
+  "d919f8ddfda022ed4beb59420c44610fd4d293aee15b0f4f6cc0e0d561d0c022",
+  "f66bf8b5e4dc980c1133dfc047454b4f022fc4b8eb42432da4d254289e98ed6e",
+  "eb433b54f08128daaf4510ad5a102769cb0c6ac4541f588dd7813c9a746d8f7b",
+  "78aca8eeb9062a1a386420667d02bcd6b36345a23aca891f531d3f0f6dc19a9c",
+  "faf8672fa43366ca24d44b26aa606a1403a15ea5f24fd0f23a1a0ebb35f2fd21",
+  "2e5ed8e5489623e93b15b459990ebd35e360fead54309927d241dba772867530"
+ ],
+ "qwen3-fp32/E/trail": [
+  "02d69db7144a40870cfd29241a2c265b62930fa7a284c154cb7a61d09adeedc0",
+  "9a47b58042ef815ab536ce9841216fb62613568eaf9f3d61efa430550627ded9",
+  "edeadc7fef20cdf50e789b64c834c504e0d18dedddc7b60d476ed4f65f6d423a",
+  "5c90d5d9e52942961ed64d88b6570d8f1b18a11e3c629a7af44a9a0a3d47d489",
+  "2200400d525bd670fdb6c2a369a76f3ae9357dd6b08771fff2ad291acccacf40",
+  "0bd1ae78a3b1db5766dc3abf86f451ed65a9ed5c516365f4574abc7a96ceadbb",
+  "d52be98fdb50052578da28cf4bd166cdd269ffe8a656eaf85397526fb8eed2a0",
+  "5d4c08736c041ed26e0359e05101e50665447985045496d236e2a0e42c3d2e39",
+  "448e5bb0189b5cba76a4d90b2799c14133e28aa3fe24dfe4c5e53476e7b55c02",
+  "49b9cd7185f9948f317b555fdcf4c94c5d4f79c94b159ffb9790b4b387b05765",
+  "e08cc80f7ccf71a42cce0e150de84401b8d7b7fb48970f93f632c92300204811",
+  "910d75b365b5b8d77092c6bea73764697e90fe8f4578a3d87dadd60e842b0e93"
+ ],
+ "qwen3-fp32/E/where": "t6.fn",
+ "qwen3-fp32/each/print/items": [
+  {
+   "blob": {
+    "bytes": 959,
+    "ref": "68953e6a6051f974ea2933753b59596926a34c23d6d87a27e77c880844739b22",
+    "sha256": "5e88c1c3377629b872496882060d2cad1adbd79c325ef4d9b2280f721bfa09ac",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "68953e6a6051f974ea2933753b59596926a34c23d6d87a27e77c880844739b22",
+     "sha256": "5e88c1c3377629b872496882060d2cad1adbd79c325ef4d9b2280f721bfa09ac",
+     "shape": [
+      959
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 2720,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.08739558607339859
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.08739558607339859
+     }
+    }
+   },
+   "name": "a",
+   "result": "5e88c1c3377629b872496882060d2cad1adbd79c325ef4d9b2280f721bfa09ac",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 953,
+    "ref": "2d8b59285f87926ddcfd49626cfc71d940661a45ceda4e5d5650aed37d4c35f8",
+    "sha256": "0516edda779823ac287bf5f284215781ba93abee7c755515e0a8fd31c89a915b",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "2d8b59285f87926ddcfd49626cfc71d940661a45ceda4e5d5650aed37d4c35f8",
+     "sha256": "0516edda779823ac287bf5f284215781ba93abee7c755515e0a8fd31c89a915b",
+     "shape": [
+      953
+     ]
+    }
+   },
+   "bound": {
+    "address": "t3.logits[i=4]"
+   },
+   "bytes": 2720,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.1005486249923706
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.1005486249923706
+     }
+    }
+   },
+   "name": "b",
+   "result": "0516edda779823ac287bf5f284215781ba93abee7c755515e0a8fd31c89a915b",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 949,
+    "ref": "ab2ead7c412dc3dd79ad53ac2d3995a22ee1402cae528334f608a20db46d752a",
+    "sha256": "8253554290cb3ca31fc8759997dc7687571c4140f9ad0278a411fd8e3449f369",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "ab2ead7c412dc3dd79ad53ac2d3995a22ee1402cae528334f608a20db46d752a",
+     "sha256": "8253554290cb3ca31fc8759997dc7687571c4140f9ad0278a411fd8e3449f369",
+     "shape": [
+      949
+     ]
+    }
+   },
+   "bound": {
+    "address": "t4.logits[i=6]"
+   },
+   "bytes": 3240,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.1622173935174942
+     },
+     "mean": {
+      "authority": "measured",
+      "value": 0.1622173935174942
+     }
+    }
+   },
+   "name": "c",
+   "result": "8253554290cb3ca31fc8759997dc7687571c4140f9ad0278a411fd8e3449f369",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 965,
+    "ref": "84f3878140118db9e613145a886340ff1d3f396e157385355d8f50494d71040e",
+    "sha256": "9d690e4652ea1ecf015890a8f151ec68cd7833c018edbd28e0c022eba5c68b26",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "84f3878140118db9e613145a886340ff1d3f396e157385355d8f50494d71040e",
+     "sha256": "9d690e4652ea1ecf015890a8f151ec68cd7833c018edbd28e0c022eba5c68b26",
+     "shape": [
+      965
+     ]
+    }
+   },
+   "bound": {
+    "address": "t2.logits[i=4]"
+   },
+   "bytes": 2200,
+   "key": {
+    "columns": {
+     "abs_max": {
+      "authority": "measured",
+      "value": 0.019069291651248932
+     },
+     "mean": {
+      "authority": "measured",
+      "value": -0.019069291651248932
+     }
+    }
+   },
+   "name": "d",
+   "result": "9d690e4652ea1ecf015890a8f151ec68cd7833c018edbd28e0c022eba5c68b26",
+   "state": "resolved"
+  }
+ ],
+ "qwen3-fp32/each/print/stored": "752ec40fdfd1e56dbe39694db49ff1dd0a4df173d394c7da528e46d8137b97e0",
+ "qwen3-fp32/each/reads/items": [
+  {
+   "blob": {
+    "bytes": 6001,
+    "ref": "2cc1f25bf2674b83c7481b89cd9bebc1929cd40e8d7ea700f5fd5aa41366a5d2",
+    "sha256": "ff7c21ab24b82a9ec99760692e8b0393943372689e83772912b3a08da30498db",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "2cc1f25bf2674b83c7481b89cd9bebc1929cd40e8d7ea700f5fd5aa41366a5d2",
+     "sha256": "ff7c21ab24b82a9ec99760692e8b0393943372689e83772912b3a08da30498db",
+     "shape": [
+      6001
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 9248,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.016209453344345093
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.015993531193918747
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.16005806624889374
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L0.h0",
+    "verdict": "causal"
+   },
+   "name": "a",
+   "result": "1c57393b22eeaaa2b5061ed3585fd96a9b9970d5c14c689df8881c437a0cb282",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5984,
+    "ref": "7be8203e5717aacda3879cd0e5efa74c2f99b1f4d513a2bb7260613bb5778f16",
+    "sha256": "62bdd57afe46f8c8dcf7df3a217da2518ba55d4484692db6594a644af8877a21",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "7be8203e5717aacda3879cd0e5efa74c2f99b1f4d513a2bb7260613bb5778f16",
+     "sha256": "62bdd57afe46f8c8dcf7df3a217da2518ba55d4484692db6594a644af8877a21",
+     "shape": [
+      5984
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]",
+    "source": "t1"
+   },
+   "bytes": 8736,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": 0.01647631824016571
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": -0.02901181015621724
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.5391867160797119
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t3.L1.h1",
+    "verdict": "causal"
+   },
+   "name": "b",
+   "result": "cac8b12f14b2f2497d8d6982fe772879a973b6134025ae42a1d11b6b8e87a528",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 5992,
+    "ref": "0a8393b5578f687cbc0ffb05c46f2f80b9d642952ccfaebc23e0cefdb384f386",
+    "sha256": "dd4db20cdd481dc59e98009282a6b69b06d0b95625c315526b85180c345af198",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "0a8393b5578f687cbc0ffb05c46f2f80b9d642952ccfaebc23e0cefdb384f386",
+     "sha256": "dd4db20cdd481dc59e98009282a6b69b06d0b95625c315526b85180c345af198",
+     "shape": [
+      5992
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]",
+    "source": "t2"
+   },
+   "bytes": 9448,
+   "key": {
+    "columns": {
+     "causal": {
+      "authority": "measured",
+      "value": -0.010879024863243103
+     },
+     "effect": {
+      "authority": "derived-exact",
+      "value": 0.007579993013285876
+     },
+     "mass": {
+      "authority": "measured",
+      "value": 0.356487900018692
+     },
+     "resid sp": {
+      "authority": "measured",
+      "value": 0.0
+     }
+    },
+    "label": "t4.L1.h3",
+    "verdict": "causal"
+   },
+   "name": "c",
+   "result": "66bd8708d11c894b07f318894a1ab0f29aadee27fa392b9408f0c05b25b38a7c",
+   "state": "resolved"
+  },
+  {
+   "name": "d",
+   "reason": "no role 'subject' (roles: last)",
+   "state": "refused"
+  }
+ ],
+ "qwen3-fp32/each/reads/stored": "8277053108cc302ef4d15134c0821d9c37e1431d4e20a3f4c8498daa4e4210ec",
+ "qwen3-fp32/each/whatif/items": [
+  {
+   "blob": {
+    "bytes": 12943,
+    "ref": "41feb249b8c43b4131e203c049956d060b69196a7329f5cf4771e81ed7f90cf7",
+    "sha256": "267510c45c671ee948cda091044255d8b190a239963249287789f5edc68a3457",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "41feb249b8c43b4131e203c049956d060b69196a7329f5cf4771e81ed7f90cf7",
+     "sha256": "267510c45c671ee948cda091044255d8b190a239963249287789f5edc68a3457",
+     "shape": [
+      12943
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 6240,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.021611400352139876
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.02161138504743576
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "a",
+   "record": "1f569c41bb32ea3819fcfaeefb67b3d40db17e6addae920d071624f395eaff68",
+   "result": "e9737b051f80868353e0dc652fc88d8320189e55cf02a911ddd472caddf34cf7",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12928,
+    "ref": "dc2154cbae3cc8117f72176a62b48ae947dffddbf6a7eba35c9a51ae00f1fa25",
+    "sha256": "bfbe030c26c1b339e29567e8fabce8cfe9eeb58aca34ec75d443cae6e5304e89",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "dc2154cbae3cc8117f72176a62b48ae947dffddbf6a7eba35c9a51ae00f1fa25",
+     "sha256": "bfbe030c26c1b339e29567e8fabce8cfe9eeb58aca34ec75d443cae6e5304e89",
+     "shape": [
+      12928
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 6240,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.005803001301260546
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.005803018808364868
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "b",
+   "record": "7b55692698f9bd04636c71d6a204198904934ac95c8e98b87ba9a4d773bcced0",
+   "result": "bd0d1bc1e075ec5c8a44992bc1058d62aee4794a522e409bf70fc8d66a5b842a",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12922,
+    "ref": "51e1c570dedd09852ba6662fa2ddc7e531d419ccbc578ce8cde47087f693def3",
+    "sha256": "0d1cddbb08e05b3a023ccaa1ef385de17f7cd2a0ff10c2c5eb8d9616ea0bfdbb",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "51e1c570dedd09852ba6662fa2ddc7e531d419ccbc578ce8cde47087f693def3",
+     "sha256": "0d1cddbb08e05b3a023ccaa1ef385de17f7cd2a0ff10c2c5eb8d9616ea0bfdbb",
+     "shape": [
+      12922
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[6,7]"
+   },
+   "bytes": 6984,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": 0.06667297128895966
+     },
+     "native": {
+      "authority": "measured",
+      "value": 0.06667299568653107
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "c",
+   "record": "45d5c0b000cb9efc8d0638680dc540a56ad7006a8f9a4b1994a331ff90869bad",
+   "result": "7e63a05c78338ea0e88e7f27293f42645e9f339ab56bc695f6505cf5a8d15d6d",
+   "state": "resolved"
+  },
+  {
+   "blob": {
+    "bytes": 12925,
+    "ref": "99478ba9a1b7687796335ee21d96b22632cfe0a5e668a42d23346aa81e083d3b",
+    "sha256": "a18f6db359add02baa5c52387e00338a162ceac354d988c93778ea6c521c8c01",
+    "state": "stored",
+    "tensor": {
+     "dtype": "uint8",
+     "kind": "tensor",
+     "ref": "99478ba9a1b7687796335ee21d96b22632cfe0a5e668a42d23346aa81e083d3b",
+     "sha256": "a18f6db359add02baa5c52387e00338a162ceac354d988c93778ea6c521c8c01",
+     "shape": [
+      12925
+     ]
+    }
+   },
+   "bound": {
+    "consumer": "M[4,9]"
+   },
+   "bytes": 5496,
+   "key": {
+    "columns": {
+     "exact": {
+      "authority": "derived-exact",
+      "value": -0.015551315557658013
+     },
+     "native": {
+      "authority": "measured",
+      "value": -0.015551302582025528
+     }
+    },
+    "verdict": "effect"
+   },
+   "name": "d",
+   "record": "684fe6bfa2ff7a6e92de4e4978202bfd2e578b952fec876e53658b613d58a310",
+   "result": "145ac1a4e9eee4a63296f605cd3a07f0be7458363906c5512d54f41ccf080726",
+   "state": "resolved"
+  }
+ ],
+ "qwen3-fp32/each/whatif/stored": "6b8027d64e9e09699bc2d716623ff8831505ccbd15fbabc7edec42403666bc69",
+ "qwen3-fp32/sp/attempts": [],
+ "qwen3-fp32/sp/cut": "e17cc30445b91e46097ad0b188ef48f81af027a73500a61434d371e28397d77f",
+ "qwen3-fp32/sp/receipts": [
+  "d6c040d94b7b68973537c413192d03605cfd9fb59a3eab7c310c87844117cb59",
+  "2c827dab08743e2ae9312a99a8ed23b601c5b6f733475baed6a1fc5430f900d5",
+  "bdbd350743bb5002c3bfa35079dfc9b5c7029805addb72e90d67753f4435c6aa",
+  "de080fced1df5b458e74a3ad4d538b31b3fd8ec6cd9511cafee5357280a4a6fc",
+  "d2a15d8ed722bccbf181e052c2badbc87fc9540cbd89d36ad8d5d71e894cdf37"
+ ]
+}

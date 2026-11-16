@@ -1,0 +1,28 @@
+mrun: job-96d55d2e2244 -> succeeded
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+main c83e47fd43fccaa331d86e3040946de017f3941c
+branch 1c20d2e50271bc355794da7a5d768096d35b0337
+torch 2.13.0+cu130 transformers 5.13.1 NVIDIA GeForce RTX 4080
+== bench main
+rc 0
+[main] loaded 2.4s layers 28 device cuda:0
+RESULT {"T": 64, "case": "rows", "logits": ["7e3362154f23a3c5"], "ms_per_row": [244.9], "peak_rss_mb": 3995.5, "peak_vram_mb": 2973.6, "rows": 1, "s": 0.512, "tokens": [14796, 11], "trail": "1331a68cd036aae2", "tree": "main"}
+RESULT {"T": 6, "case": "p0", "held_bytes_s": 0.039, "held_total": 2720440, "logits": ["398e584b040c6df1", "6ee6e5a2b73d226e", "9723517008472b24", "8002147e0da06cf1", "ced7bba56eb89436", "14c8eb9b34f3e886"], "marks": 197, "peak_rss_mb": 3995.5, "peak_vram_mb": 2956.8, "s": 1.453, "trail": "cb676614fb5b808b", "tree": "main", "until_s": 1.26}
+RESULT {"T": 32, "calls": {"layer": 28, "probe": 504, "transition": 5}, "case": "ports", "lookahead": "none", "n_reads": 504, "peak_rss_mb": 3995.5, "peak_vram_mb": 2963.3, "reads": "3292fdb3c33c3345", "row_s": 1.43, "s": 1.446, "trail": "0ba4e37259429f64", "tree": "main"}
+[main] done 5.8s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.57
+	Maximum resident set size (kbytes): 4091412
+== bench branch
+rc 0
+[branch] loaded 2.4s layers 28 device cuda:0
+RESULT {"T": 64, "case": "rows", "logits": ["7e3362154f23a3c5"], "ms_per_row": [109.6], "peak_rss_mb": 3996.8, "peak_vram_mb": 2973.6, "rows": 1, "s": 0.379, "tokens": [14796, 11], "trail": "1331a68cd036aae2", "tree": "branch"}
+RESULT {"T": 6, "case": "p0", "held_bytes_s": 0.005, "held_total": 2720440, "logits": ["398e584b040c6df1", "6ee6e5a2b73d226e", "9723517008472b24", "8002147e0da06cf1", "ced7bba56eb89436", "14c8eb9b34f3e886"], "marks": 197, "peak_rss_mb": 3996.8, "peak_vram_mb": 2957.3, "s": 0.579, "trail": "cb676614fb5b808b", "tree": "branch", "until_s": 0.57}
+RESULT {"T": 32, "calls": {"layer": 28, "probe": 504, "transition": 5}, "case": "ports", "lookahead": "none", "n_reads": 504, "peak_rss_mb": 3996.8, "peak_vram_mb": 2963.3, "reads": "3292fdb3c33c3345", "row_s": 0.91, "s": 0.926, "trail": "0ba4e37259429f64", "tree": "branch"}
+[branch] done 4.3s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.06
+	Maximum resident set size (kbytes): 4092708
+CASE ('rows', 64, None) identical | main {'s': 0.512, 'ms_per_row': [244.9], 'peak_vram_mb': 2973.6, 'peak_rss_mb': 3995.5} | branch {'s': 0.379, 'ms_per_row': [109.6], 'peak_vram_mb': 2973.6, 'peak_rss_mb': 3996.8}
+CASE ('p0', 6, None) identical | main {'s': 1.453, 'until_s': 1.26, 'held_bytes_s': 0.039, 'peak_vram_mb': 2956.8, 'peak_rss_mb': 3995.5} | branch {'s': 0.579, 'until_s': 0.57, 'held_bytes_s': 0.005, 'peak_vram_mb': 2957.3, 'peak_rss_mb': 3996.8}
+CASE ('ports', 32, 'none') identical | main {'s': 1.446, 'row_s': 1.43, 'peak_vram_mb': 2963.3, 'peak_rss_mb': 3995.5} | branch {'s': 0.926, 'row_s': 0.91, 'peak_vram_mb': 2963.3, 'peak_rss_mb': 3996.8}
+ALL_IDENTICAL True
+mrun: job-96d55d2e2244 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 18.0, 'peak_rss_mb': 1967.7, 'peak_vram_mb': 3622.0}

@@ -1,0 +1,234 @@
+............................................F........................... [  1%]
+........................................................................ [  3%]
+........................................................................ [  5%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+......................................................s................. [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+....................................................s................... [ 21%]
+........s............................................................... [ 23%]
+........................................................................ [ 25%]
+..................................................s...ssss.............. [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 31%]
+........................................ssssssssss...................... [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+............................................................s........... [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+....s................F.................................................. [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................sss..............................                [100%]
+=================================== FAILURES ===================================
+____________________ test_two_logits_are_indexed_then_cast _____________________
+
+debugger = <mdb.ops.debugger.Debugger object at 0x1551c7b60>
+casts = [(tensor([[[ 0.0503,  0.0095, -0.0308,  0.0005, -0.0133,  0.0005, -0.0532,
+          -0.0183,  0.0183, -0.0113,  0.025...1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+       dtype=torch.bfloat16, requires_grad=True), '_weight'), ...]
+
+    def test_two_logits_are_indexed_then_cast(debugger, casts):
+        run = debugger.run(PROMPT)
+        run.until("t3.L1.n")
+        forecast.seal(run, MARGIN)
+        run.until("t3.logits")
+        forecast.verify(run)                                    # forecast._native
+        compare.measure(run, [], MARGIN)                        # compare.consumer_value
+        whatif(run, Edit("t3.L1.m", 0.5, "add"), MARGIN)        # propagate._scalar
+        explain.explain_margin(run, 4, 9, first_order=True)     # explain_margin, _first_order
+        reads.readout(run, MARGIN)
+        # a row model's captured logits are its value (all V of them); every other reader needs two
+        full = {where for x, where in casts if x.numel() == V and where != "_compute"}
+>       assert full == set()
+E       AssertionError: assert {'stage_checks'} == set()
+E         
+E         Extra items in the left set:
+E         'stage_checks'
+E         Use -v to get more diff
+
+tests/test_analysis_casts.py:101: AssertionError
+_______________ test_head_selected_patch_on_a_second_device[mps] _______________
+
+ctx = <mdb.ops.context.Context object at 0x177993320>, name = 'compare'
+args = {'a': 'L0.A[h1]=clean:L0.A[h1]', 'b': 'L1.m=clean:L1.m', 'consumer': 'M[4,9]'}
+
+    def dispatch(ctx: Any, name: str, args: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Validate, run one op, and return its bounded JSON result.
+    
+        Raises ``UnknownOp``, ``BadArgs`` or ``Refused`` (all ``OpError``); a ``ValueError`` from
+        the engine (a request the run cannot honour, such as a target behind the cursor) becomes
+        ``Refused``, and any other ``Exception`` becomes ``OpError(kind="internal")`` carrying the
+        exception type and message, so no traceback ever reaches a front end.
+    
+        Every result carries a top-level ``state``: ``resolved``, or ``unresolved`` when some
+        requested part could not be computed (that part is ``{"state": "unresolved", "reason"}``).
+        """
+        found = _REGISTRY.get(name)
+        if found is None:
+            raise UnknownOp(f"no operation {name!r}")
+        values = validate(found, args)
+        if found.needs_live and getattr(ctx, "run", None) is None:
+            raise Refused(f"{name} needs a live run; start one with `start`")
+        notes: list[Any] = []
+        try:
+            for before, _ in _HOOKS:
+                if before is not None:
+                    values, extra = before(ctx, found.name, values)
+                    notes += extra
+>           result = found.fn(ctx, **values)
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+
+src/mdb/ops/registry.py:291: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mdb/ops/inspect.py:543: in _compare
+    result = compare.compare(run, _side(ctx, a), _side(ctx, b), chosen)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mdb/analysis/compare.py:268: in compare
+    base = measure(run, [], consumer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mdb/analysis/compare.py:162: in measure
+    value, authority, scale = _read(run, consumer)
+                              ^^^^^^^^^^^^^^^^^^^^
+src/mdb/analysis/compare.py:100: in _read
+    return (consumer_value(consumer, native), info["authority"] or MEASURED,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mdb/analysis/compare.py:86: in consumer_value
+    return f64(flat[consumer.a]) - f64(flat[consumer.b])
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+x = tensor(-0.0874, device='mps:0')
+
+    def f64(x: Any) -> Any:
+        """Float64 CPU copy of a tensor or array-like (exact for bf16/fp16/fp32 inputs).
+    
+        Model weights (and slices of them) are detached; float64 tensors keep autograd tracking so a
+        caller's float64 replica can be differentiated through these functions.
+        """
+        torch = _torch()
+        if isinstance(x, torch.Tensor) and (isinstance(x, torch.nn.Parameter)
+                                            or (x.requires_grad and x.dtype != torch.float64)):
+            x = x.detach()
+        if isinstance(x, torch.Tensor):
+>           return x.to(device="cpu", dtype=torch.float64)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: Cannot convert a MPS Tensor to float64 dtype as the MPS framework doesn't support float64. Please use float32 instead.
+
+src/mdb/analysis/finite.py:53: TypeError
+
+The above exception was the direct cause of the following exception:
+
+device = 'mps'
+
+    @pytest.mark.parametrize("device", _other_devices())
+    def test_head_selected_patch_on_a_second_device(device):
+        """``set`` / ``compare`` / ``whatif`` with a head selector and a value of another run, on a
+        model that lives on ``device`` (the donor block is there, the selector's index and mask are
+        built on the host): the one-head patch equals the whole-block masked edit, then steps."""
+        from mdb.engine.models import tiny_model
+    
+        debugger = mdb.attach(tiny_model("qwen3", "fp32").to(device))
+        ctx = _ctx(debugger)
+        clean = debugger.runs["clean"]
+        block = clean.read("t3.L0.A")[..., _head(debugger, 1)]
+        assert block.device.type == device
+        if device == "cuda":   # the float64 chain; on mps its baseline is NaN (not this item)
+            result = dispatch(ctx, "whatif", {"target": "L0.A[h1]", "value": "clean:L0.A[h1]",
+                                              "consumer": "M[4,9]"})
+            assert result["prediction"]["state"] == "resolved"
+>       compared = dispatch(ctx, "compare", {"a": "L0.A[h1]=clean:L0.A[h1]", "b": "L1.m=clean:L1.m",
+                                             "consumer": "M[4,9]"})
+
+tests/test_ops_port_origin.py:262: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ctx = <mdb.ops.context.Context object at 0x177993320>, name = 'compare'
+args = {'a': 'L0.A[h1]=clean:L0.A[h1]', 'b': 'L1.m=clean:L1.m', 'consumer': 'M[4,9]'}
+
+    def dispatch(ctx: Any, name: str, args: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Validate, run one op, and return its bounded JSON result.
+    
+        Raises ``UnknownOp``, ``BadArgs`` or ``Refused`` (all ``OpError``); a ``ValueError`` from
+        the engine (a request the run cannot honour, such as a target behind the cursor) becomes
+        ``Refused``, and any other ``Exception`` becomes ``OpError(kind="internal")`` carrying the
+        exception type and message, so no traceback ever reaches a front end.
+    
+        Every result carries a top-level ``state``: ``resolved``, or ``unresolved`` when some
+        requested part could not be computed (that part is ``{"state": "unresolved", "reason"}``).
+        """
+        found = _REGISTRY.get(name)
+        if found is None:
+            raise UnknownOp(f"no operation {name!r}")
+        values = validate(found, args)
+        if found.needs_live and getattr(ctx, "run", None) is None:
+            raise Refused(f"{name} needs a live run; start one with `start`")
+        notes: list[Any] = []
+        try:
+            for before, _ in _HOOKS:
+                if before is not None:
+                    values, extra = before(ctx, found.name, values)
+                    notes += extra
+            result = found.fn(ctx, **values)
+        except OpError:
+            raise
+        except ValueError as error:
+            raise Refused(str(error)) from error
+        except Exception as error:  # noqa: BLE001 - the contract: never a traceback to the user
+>           raise internal(error) from error
+E           mdb.core.errors.OpError: TypeError: Cannot convert a MPS Tensor to float64 dtype as the MPS framework doesn't support float64. Please use float32 instead.
+
+src/mdb/ops/registry.py:297: OpError
+=============================== warnings summary ===============================
+tests/test_analysis_accumulation.py: 18 warnings
+  /private/tmp/claude-501/-Users-jakeholl-domains/f9daae27-47d0-4118-8855-2c7a6f58eecf/scratchpad/libvenv/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+tests/test_analysis_circuit_map.py::test_hop_edge_cell_consumer_closes_on_the_cells_native_change[qwen3-fp32]
+  /private/tmp/claude-501/-Users-jakeholl-domains/f9daae27-47d0-4118-8855-2c7a6f58eecf/scratchpad/main-ref/packages/mdb/tests/test_analysis_circuit_map.py:158: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+    assert reader.native == pytest.approx(float(d @ (w_g @ v)), rel=1e-12, abs=1e-12)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_analysis_casts.py::test_two_logits_are_indexed_then_cast - ...
+FAILED tests/test_ops_port_origin.py::test_head_selected_patch_on_a_second_device[mps]
+2 failed, 4280 passed, 29 skipped, 19 warnings in 434.76s (0:07:14)

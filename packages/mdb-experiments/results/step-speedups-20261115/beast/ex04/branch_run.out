@@ -1,0 +1,22 @@
+[    4.7s] model loaded; custody script 7140cbc76954 prereg 0adac2733d6e
+2 items: 1 wrong, 1 correct; 58 country features; SAE site L19.h_out k 50
+[    6.9s] pool: 6 cells, kernel path mdb-stepped, record 5ff2af44b854a0db
+[    8.5s] d3-lm:Anitkabir                            right watch=FIRE content=true donor=d2:Ankara R1:lang(0.5fl) R2:lang(0.8fl) RND:lang(0.0fl) rnd:lang(0.0fl) [1.65s]
+[    9.6s] d3-per:Franz Kafka                         wrong watch=FIRE content=other donor=d3-lm:the Charles Bridge R1:lang(4.5fl) R2:lang(14.0fl) RND:other(0.5fl) rnd:other(0.0fl) [1.01s]
+one R2 edit's origin (from the pool): {"kind": "pool", "pool": "carrier-v", "rule": "donor (same:country)", "donor": "d2:Ankara", "record": "5ff2af44b854a0db9d9fba9d60fbff67ee3c309643960b1ea01d368b1d8ce846"}
+key number                          showcase (same items)        now
+fired_wrong                                         18/27        1/1
+fired_correct                                        6/12        1/1
+content_true_wrong                                   5/27        0/1
+content_true_correct                                11/12        1/1
+R1_repairs_wrong                                    12/27        1/1
+R1_repairs_where_fired                               9/18        1/1
+R2_repairs_wrong                                    22/27        1/1
+RND_repairs_wrong                                    2/26        0/1
+R1_on_correct_argmax_changes                         1/12        0/1
+median_R1_over_R2                                   0.387      0.321
+rnd_gauss_repairs_wrong                             (new)        0/1
+full 110-item panel (audited): {"n": 110, "fired_wrong": "18/27", "fired_correct": "30/83", "content_true_correct": "78/83", "content_true_wrong": "5/27", "R1_repairs_wrong": "12/27", "R2_repairs_wrong": "22/27", "RND_repairs_wrong": "2/26", "R1_repairs_where_fired": "9/18", "median_R1_over_R2": 0.387}
+per-item agreement with the showcase: 2/2 items identical on every compared field
+[    9.9s] done; 3 sealed records in out/records.jsonl
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "smoke": true, "custody": {"script_sha256": "7140cbc76954324cecbe14cac2ee1fbfb4197867b80e3171da26b436b5664112", "prereg_sha256": "0adac2733d6e9a17eb77d8bca39f205cac4958020b621ec914e18415c4418a71", "kernel_path": "mdb-stepped"}, "pool": {"n": 6, "kernel_path": "mdb-stepped", "record": "5ff2af44b854a0db9d9fba9d60fbff67ee3c309643960b1ea01d368b1d8ce846"}, "summary": {"n": 2, "wrong": 1, "correct": 1, "fired_wrong": "1/1", "fired_correct": "1/1", "content_true_wrong": "0/1", "content_true_correct": "1/1", "R1_repairs_wrong": "1/1", "R1_repairs_where_fired": "1/1", "R2_repairs_wrong": "1/1", "RND_repairs_wrong": "0/1", "rnd_gauss_repairs_wrong": "0/1", "R1_on_correct_argmax_changes": "0/1", "median_R1_over_R2": 0.32142857142857145, "n_ratio": 1}, "per_item_differences": [], "records": {"path": "out/records.jsonl", "n": 3}, "seconds": 9.9, "peak_vram_mb": 3388}

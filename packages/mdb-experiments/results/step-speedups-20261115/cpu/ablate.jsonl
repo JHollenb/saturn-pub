@@ -1,0 +1,28 @@
+{"ablate": "1", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 418.3, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "1", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 5.96, "held_bytes_s": 0.158, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "2", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 368.9, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "2", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 6.6, "held_bytes_s": 0.157, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "3", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 141.2, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "3", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 5.56, "held_bytes_s": 0.158, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "6", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 116.2, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "6", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 8.37, "held_bytes_s": 0.158, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "7", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 140.6, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "7", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 7.79, "held_bytes_s": 0.156, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "8", "case": "row 28 1024 4"}
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 184.7, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"ablate": "8", "case": "prefill0 28 64"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 10.14, "held_bytes_s": 0.156, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "none"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 5.17, "held_bytes_s": 0.157, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}
+{"ablate": "main"}
+{"mode": "prefill0", "L": 28, "T": 64, "until_s": 15.32, "held_bytes_s": 4.1, "held": {"trail": 3343864, "state": 1844736, "reads": 0, "edits": 0, "total": 5179384, "marks": 2111}, "trail": "36884432de06702d", "logits": "00647c0c3f2a5f52"}

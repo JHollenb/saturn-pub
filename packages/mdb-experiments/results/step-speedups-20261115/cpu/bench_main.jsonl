@@ -1,0 +1,5 @@
+{"mode": "row", "L": 28, "T": 1024, "rows": 4, "ms_per_row": 801.7, "trail": "abbc0130f896d66e", "tokens_tail": [1395, 363, 2706], "logits": "4063ecaff97d5191"}
+{"mode": "row", "L": 28, "T": 256, "rows": 4, "ms_per_row": 450.5, "trail": "51dc2d0358a2f2d9", "tokens_tail": [727, 3759, 2706], "logits": "b34fae0a2d768473"}
+{"mode": "prefill0", "L": 28, "T": 96, "until_s": 27.21, "held_bytes_s": 9.071, "held": {"trail": 5015800, "state": 2762752, "reads": 0, "edits": 0, "total": 7769080, "marks": 3167}, "trail": "b8b04d85c647d9f8", "logits": "6f92a7004759c56d"}
+{"mode": "ports", "lookahead": "none", "L": 28, "T": 512, "ms_row": 1997.0, "calls": {"layer": 28, "transition": 5, "probe": 504}, "reads": "952865687915d63d", "trail": "ca1c79e0c38a2aeb"}
+{"mode": "ports", "lookahead": "layer", "L": 28, "T": 512, "ms_row": 646.2, "calls": {"layer": 28, "transition": 5, "probe": 28}, "reads": "952865687915d63d", "trail": "ca1c79e0c38a2aeb"}

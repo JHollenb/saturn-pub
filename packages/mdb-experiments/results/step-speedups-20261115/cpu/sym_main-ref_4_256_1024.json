@@ -1,0 +1,2115 @@
+{
+ "edge1": {
+  "closure": {
+   "gap": {
+    "authority": "measured",
+    "value": 0.0006697304416737881
+   },
+   "sum_of_terms": {
+    "authority": "measured",
+    "value": 0.1380021445583262
+   }
+  },
+  "consumer": {
+   "kind": "margin",
+   "native_delta": {
+    "authority": "measured",
+    "value": 0.138671875
+   },
+   "text": "t3.M[4,9]"
+  },
+  "direct": {
+   "authority": "derived-exact",
+   "proof": "P19",
+   "value": 0.13775413394014116
+  },
+  "mlp": [
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.01914098209549707
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.0001719575732841011
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.01896902452221297
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9584851502080647
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9597562887263603
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 1.0606986753855183
+     }
+    },
+    "layer": 0,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.08700427635543344
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.2475738525390625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.3974609375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.11328125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.207305908203125
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.030422210693359375
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.015934820862007926
+      },
+      "name": "L0.f112",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.009845733642578125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.056285858154296875
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.15625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.283203125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.20231246948242188
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.035953521728515625
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.01453749993656596
+      },
+      "name": "L0.f598",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.11007308959960938
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.013865470886230469
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.169921875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.35107421875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.11534786224365234
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.04594135284423828
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.012597856194559226
+      },
+      "name": "L0.f518",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.14742374420166016
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.0035877227783203125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.181640625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.4141845703125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.17680907249450684
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.05824470520019531
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.012069297183204585
+      },
+      "name": "L0.f555",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.12215209007263184
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": -0.06803525183322047
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": -0.012031855287715543
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": -0.0035341233015060425
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.44051095716487626
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.44006306373321213
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.6208502859050209
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.6236370661989317
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7297305025187996
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.5265566588595902e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.0509501751605459
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": -0.013216080983938833
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.0003669448716421674
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": -0.013583025855581
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9820629125987903
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9824720084304239
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9851501720118254
+     }
+    },
+    "layer": 1,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.0033632187044488546
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.01557159423828125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.033203125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.248046875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.08485031127929688
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.006298065185546875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.012955959471827651
+      },
+      "name": "L1.f358",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.0755767822265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.13216018676757812
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.259765625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.01953125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.1337432861328125
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.003223419189453125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.010219416292737833
+      },
+      "name": "L1.f316",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.0048065185546875
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.058928489685058594
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.2470703125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.1328125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.06975841522216797
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.015531539916992188
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.008801671231619073
+      },
+      "name": "L1.f828",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.0047016143798828125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.03546142578125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.1171875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.193359375
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.12844085693359375
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.021148681640625
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.00719276429735825
+      },
+      "name": "L1.f430",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.14275360107421875
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": -0.016946244560029855
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.02558678543796181
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": 0.003648781217634678
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.427721540926161
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.42201458174449136
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.590714474282487
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.5829813484633932
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7273080052132654
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.6653345369377348e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.05596637183868841
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.024567858235662092
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.00012369979218820187
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.02444415844347389
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9886778844301625
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.988628038437368
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9792889025264899
+     }
+    },
+    "layer": 2,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.020384647102645426
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.03875732421875
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.08984375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.087890625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.089569091796875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.006866455078125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.011522776150753757
+      },
+      "name": "L2.f410",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.05767822265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.05487871170043945
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.2138671875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.201171875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.08532953262329102
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.02490091323852539
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.008095216291326878
+      },
+      "name": "L2.f924",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.005549907684326172
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.075225830078125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.15625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.103515625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.12496185302734375
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.0137481689453125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.007332748095833983
+      },
+      "name": "L2.f529",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.06348419189453125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.0009224414825439453
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.07421875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.204345703125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.05215954780578613
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.010576486587524414
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.006938952838386009
+      },
+      "name": "L2.f586",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.042505502700805664
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": 0.004059511340828464
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.03528829951826701
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": 0.0026227860362268984
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.435455556276594
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.41870458847877945
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.6284162279274018
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.5925414931808409
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7345298756099301
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.1102230246251565e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.05495752463849226
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.015704991972279647
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 6.776399152964852e-05
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.01563722798075
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9915817223152666
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9913048725557528
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9819783333892176
+     }
+    },
+    "layer": 3,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.000753048932838252
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.01770782470703125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.0546875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.16015625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.07714080810546875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.0068817138671875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.007775853556707374
+      },
+      "name": "L3.f464",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.066314697265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.00522613525390625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.0859375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.118896484375
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.07976627349853516
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.009288787841796875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.006067495798196478
+      },
+      "name": "L3.f505",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.07570362091064453
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.05635833740234375
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.05078125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.06756591796875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.004116058349609375
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.004941187805223899
+      },
+      "name": "L3.f526",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.007091522216796875
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.00437164306640625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.01171875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.1259765625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.061077117919921875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.001476287841796875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.004566455450375979
+      },
+      "name": "L3.f606",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.06397247314453125
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": 0.014884179047911747
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.004421226966639238
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": -0.0006154365837574005
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.4298101668667801
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.43658345076896143
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.606873014118579
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.6221484791062412
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7338828572164179
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 7.632783294297951e-17
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.04697416675218932
+    }
+   }
+  ],
+  "norm": {
+   "authority": "derived-exact",
+   "value": 0.0009164388645322383
+  },
+  "reread": [
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": -0.03879548495074095
+    },
+    "layer": 1,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   },
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": -0.008844992099855065
+    },
+    "layer": 2,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   },
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": 0.003945488550267578
+    },
+    "layer": 3,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   }
+  ],
+  "residual_add_rounding": {
+   "authority": "measured",
+   "value": -0.003171191065518719
+  },
+  "rounding": {
+   "authority": "measured",
+   "value": 0.0006697304416737881
+  },
+  "shares": {
+   "direct": {
+    "authority": "measured",
+    "value": 0.9933819236246799
+   },
+   "meaning": "each exact term over the native delta; signed",
+   "mlp": {
+    "authority": "measured",
+    "value": 0.33314434754343647
+   },
+   "norm": {
+    "authority": "measured",
+    "value": 0.006608685896345156
+   },
+   "reread": {
+    "authority": "measured",
+    "value": -0.31509625510096
+   }
+  },
+  "totals": {
+   "mlp": {
+    "authority": "measured",
+    "value": 0.04619775131949998
+   },
+   "mlp_exact": {
+    "authority": "derived-exact",
+    "value": 0.04546738509085586
+   },
+   "mlp_linear": {
+    "authority": "derived-local",
+    "value": 0.11150519109536597
+   },
+   "reread": {
+    "authority": "derived-exact",
+    "value": -0.043694988500328436
+   }
+  },
+  "upstream": {
+   "authority": "derived-exact",
+   "proof": "P07",
+   "value": 0.0
+  }
+ },
+ "edge2": {
+  "closure": {
+   "gap": {
+    "authority": "measured",
+    "value": 0.0006697304416737881
+   },
+   "sum_of_terms": {
+    "authority": "measured",
+    "value": 0.1380021445583262
+   }
+  },
+  "consumer": {
+   "kind": "margin",
+   "native_delta": {
+    "authority": "measured",
+    "value": 0.138671875
+   },
+   "text": "t3.M[4,9]"
+  },
+  "direct": {
+   "authority": "derived-exact",
+   "proof": "P19",
+   "value": 0.13775413394014116
+  },
+  "mlp": [
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.01914098209549707
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.0001719575732841011
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.01896902452221297
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9584851502080647
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9597562887263603
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 1.0606986753855183
+     }
+    },
+    "layer": 0,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.08700427635543344
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.2475738525390625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.3974609375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.11328125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.207305908203125
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.030422210693359375
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.015934820862007926
+      },
+      "name": "L0.f112",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.009845733642578125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.056285858154296875
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.15625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.283203125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.20231246948242188
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.035953521728515625
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.01453749993656596
+      },
+      "name": "L0.f598",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.11007308959960938
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.013865470886230469
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.169921875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.35107421875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.11534786224365234
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.04594135284423828
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.012597856194559226
+      },
+      "name": "L0.f518",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.14742374420166016
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.0035877227783203125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.181640625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.4141845703125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.17680907249450684
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.05824470520019531
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.012069297183204585
+      },
+      "name": "L0.f555",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.12215209007263184
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": -0.06803525183322047
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": -0.012031855287715543
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": -0.0035341233015060425
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.44051095716487626
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.44006306373321213
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.6208502859050209
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.6236370661989317
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7297305025187996
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.5265566588595902e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.0509501751605459
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": -0.013216080983938833
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.0003669448716421674
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": -0.013583025855581
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9820629125987903
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9824720084304239
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9851501720118254
+     }
+    },
+    "layer": 1,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.0033632187044488546
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.01557159423828125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.033203125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.248046875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.08485031127929688
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.006298065185546875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.012955959471827651
+      },
+      "name": "L1.f358",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.0755767822265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.13216018676757812
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.259765625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.01953125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.1337432861328125
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.003223419189453125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.010219416292737833
+      },
+      "name": "L1.f316",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.0048065185546875
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.058928489685058594
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.2470703125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.1328125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.06975841522216797
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.015531539916992188
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.008801671231619073
+      },
+      "name": "L1.f828",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.0047016143798828125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.03546142578125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.1171875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.193359375
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.12844085693359375
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.021148681640625
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.00719276429735825
+      },
+      "name": "L1.f430",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.14275360107421875
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": -0.016946244560029855
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.02558678543796181
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": 0.003648781217634678
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.427721540926161
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.42201458174449136
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.590714474282487
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.5829813484633932
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7273080052132654
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.6653345369377348e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.05596637183868841
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.024567858235662092
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 0.00012369979218820187
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.02444415844347389
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9886778844301625
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.988628038437368
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9792889025264899
+     }
+    },
+    "layer": 2,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.020384647102645426
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.03875732421875
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.08984375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.087890625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.089569091796875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.006866455078125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.011522776150753757
+      },
+      "name": "L2.f410",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.05767822265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.05487871170043945
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.2138671875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.201171875
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.08532953262329102
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.02490091323852539
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.008095216291326878
+      },
+      "name": "L2.f924",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.005549907684326172
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.075225830078125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.15625
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.103515625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.12496185302734375
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.0137481689453125
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.007332748095833983
+      },
+      "name": "L2.f529",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.06348419189453125
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.0009224414825439453
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.07421875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.204345703125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.05215954780578613
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.010576486587524414
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.006938952838386009
+      },
+      "name": "L2.f586",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.042505502700805664
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": 0.004059511340828464
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.03528829951826701
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": 0.0026227860362268984
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.435455556276594
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.41870458847877945
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.6284162279274018
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.5925414931808409
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7345298756099301
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 1.1102230246251565e-16
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.05495752463849226
+    }
+   },
+   {
+    "captured": {
+     "authority": "measured",
+     "value": 0.015704991972279647
+    },
+    "down_rounding": {
+     "authority": "measured",
+     "value": 6.776399152964852e-05
+    },
+    "exact": {
+     "authority": "derived-exact",
+     "proof": "P15",
+     "value": 0.01563722798075
+    },
+    "input_linearity": {
+     "cos_da": {
+      "authority": "derived-exact",
+      "value": 0.9915817223152666
+     },
+     "cos_dn": {
+      "authority": "derived-exact",
+      "value": 0.9913048725557528
+     },
+     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) against the captured Delta n and Delta a",
+     "norm_ratio_dn": {
+      "authority": "derived-exact",
+      "value": 0.9819783333892176
+     }
+    },
+    "layer": 3,
+    "linear": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.000753048932838252
+    },
+    "neurons": [
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.01770782470703125
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": -0.0546875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.16015625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.07714080810546875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.0068817138671875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.007775853556707374
+      },
+      "name": "L3.f464",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.066314697265625
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": -0.00522613525390625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.0859375
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.118896484375
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.07976627349853516
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.009288787841796875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": -0.006067495798196478
+      },
+      "name": "L3.f505",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.07570362091064453
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.05635833740234375
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.125
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": 0.05078125
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": 0.06756591796875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": 0.004116058349609375
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.004941187805223899
+      },
+      "name": "L3.f526",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": 0.007091522216796875
+      }
+     },
+     {
+      "b0_ds": {
+       "authority": "derived-exact",
+       "value": 0.00437164306640625
+      },
+      "da": {
+       "authority": "derived-exact",
+       "value": 0.01171875
+      },
+      "db": {
+       "authority": "derived-exact",
+       "value": -0.1259765625
+      },
+      "df": {
+       "authority": "derived-exact",
+       "value": -0.061077117919921875
+      },
+      "ds_db": {
+       "authority": "derived-exact",
+       "value": -0.001476287841796875
+      },
+      "effect": {
+       "authority": "derived-exact",
+       "proof": "P15",
+       "value": 0.004566455450375979
+      },
+      "name": "L3.f606",
+      "s0_db": {
+       "authority": "derived-exact",
+       "value": -0.06397247314453125
+      }
+     }
+    ],
+    "nonlinear": {
+     "authority": "derived-exact",
+     "value": 0.014884179047911747
+    },
+    "omitted": {
+     "count": 1020,
+     "effect": {
+      "authority": "derived-exact",
+      "proof": "P15",
+      "value": 0.004421226966639238
+     }
+    },
+    "shared_gate": {
+     "authority": "derived-exact",
+     "value": -0.0006154365837574005
+    },
+    "spectral": {
+     "bins": 129,
+     "credit_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.4298101668667801
+     },
+     "credit_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.43658345076896143
+     },
+     "energy_top_bins_share": {
+      "authority": "derived-exact",
+      "value": 0.606873014118579
+     },
+     "energy_top_bins_share_permuted": {
+      "authority": "derived-exact",
+      "value": 0.6221484791062412
+     },
+     "meaning": "Parseval split of each neuron's Delta a over channel-rfft bins of Delta n, weighted by |effect|; permuted = same with a random channel order; neuron share = top neurons at the same unit fraction",
+     "neuron_top_share_same_fraction": {
+      "authority": "derived-exact",
+      "value": 0.7338828572164179
+     },
+     "neurons_at_same_fraction": 254,
+     "parseval_max_error": {
+      "authority": "measured",
+      "value": 7.632783294297951e-17
+     },
+     "top_bins": 32
+    },
+    "top_share": {
+     "authority": "derived-exact",
+     "value": 0.04697416675218932
+    }
+   }
+  ],
+  "norm": {
+   "authority": "derived-exact",
+   "value": 0.0009164388645322383
+  },
+  "reread": [
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": -0.03879548495074095
+    },
+    "layer": 1,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   },
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": -0.008844992099855065
+    },
+    "layer": 2,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   },
+   {
+    "effect": {
+     "authority": "derived-exact",
+     "proof": "P07",
+     "value": 0.003945488550267578
+    },
+    "layer": 3,
+    "meaning": "c . Delta o at the consumer row: later heads re-reading changed rows, not an MLP path"
+   }
+  ],
+  "residual_add_rounding": {
+   "authority": "measured",
+   "value": -0.003171191065518719
+  },
+  "rounding": {
+   "authority": "measured",
+   "value": 0.0006697304416737881
+  },
+  "shares": {
+   "direct": {
+    "authority": "measured",
+    "value": 0.9933819236246799
+   },
+   "meaning": "each exact term over the native delta; signed",
+   "mlp": {
+    "authority": "measured",
+    "value": 0.33314434754343647
+   },
+   "norm": {
+    "authority": "measured",
+    "value": 0.006608685896345156
+   },
+   "reread": {
+    "authority": "measured",
+    "value": -0.31509625510096
+   }
+  },
+  "totals": {
+   "mlp": {
+    "authority": "measured",
+    "value": 0.04619775131949998
+   },
+   "mlp_exact": {
+    "authority": "derived-exact",
+    "value": 0.04546738509085586
+   },
+   "mlp_linear": {
+    "authority": "derived-local",
+    "value": 0.11150519109536597
+   },
+   "reread": {
+    "authority": "derived-exact",
+    "value": -0.043694988500328436
+   }
+  },
+  "upstream": {
+   "authority": "derived-exact",
+   "proof": "P07",
+   "value": 0.0
+  }
+ },
+ "gsf": {
+  "F1": {
+   "authority": "derived-local",
+   "value": 0.2492593250355071
+  },
+  "F1_ratio": {
+   "authority": "measured",
+   "value": 1.797475696030699
+  },
+  "F2": {
+   "1": {
+    "authority": "derived-local",
+    "value": 0.24902623444617616
+   },
+   "4": {
+    "authority": "derived-local",
+    "value": 0.23787360859639103
+   }
+  },
+  "F2_ratio": {
+   "1": {
+    "authority": "measured",
+    "value": 1.7957948174146787
+   },
+   "4": {
+    "authority": "measured",
+    "value": 1.715370247906369
+   }
+  },
+  "F3": {
+   "0": {
+    "authority": "derived-local",
+    "value": 0.20822868468394695
+   },
+   "1": {
+    "authority": "derived-local",
+    "value": 0.20843663457125594
+   },
+   "4": {
+    "authority": "derived-local",
+    "value": 0.19313193181123062
+   }
+  },
+  "F3_ratio": {
+   "0": {
+    "authority": "measured",
+    "value": 1.5015927684250823
+   },
+   "1": {
+    "authority": "measured",
+    "value": 1.5030923507110288
+   },
+   "4": {
+    "authority": "measured",
+    "value": 1.3927260434838038
+   }
+  },
+  "consumer": {
+   "native_delta": {
+    "authority": "measured",
+    "value": 0.138671875
+   },
+   "text": "t3.M[4,9]"
+  },
+  "direct": {
+   "authority": "derived-exact",
+   "proof": "P19",
+   "value": 0.13775413394014116
+  },
+  "layers": [
+   {
+    "F1": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.08700427635543342
+    },
+    "F2": {
+     "1": {
+      "authority": "derived-local",
+      "value": 0.08699650210485546
+     },
+     "4": {
+      "authority": "derived-local",
+      "value": 0.07346581424230249
+     }
+    },
+    "captured": {
+     "authority": "measured",
+     "value": 0.01914098209549707
+    },
+    "gate_sign_switches": 173,
+    "layer": 0
+   },
+   {
+    "F1": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.0033632187044488476
+    },
+    "F2": {
+     "1": {
+      "authority": "derived-local",
+      "value": 0.002486424981969222
+     },
+     "4": {
+      "authority": "derived-local",
+      "value": 0.0027521135566830404
+     }
+    },
+    "captured": {
+     "authority": "measured",
+     "value": -0.013216080983938833
+    },
+    "gate_sign_switches": 146,
+    "layer": 1
+   },
+   {
+    "F1": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.020384647102645422
+    },
+    "F2": {
+     "1": {
+      "authority": "derived-local",
+      "value": 0.020757213690375847
+     },
+     "4": {
+      "authority": "derived-local",
+      "value": 0.02111403312033401
+     }
+    },
+    "captured": {
+     "authority": "measured",
+     "value": 0.024567858235662092
+    },
+    "gate_sign_switches": 99,
+    "layer": 2
+   },
+   {
+    "F1": {
+     "authority": "derived-local",
+     "proof": "P14",
+     "value": 0.0007530489328382486
+    },
+    "F2": {
+     "1": {
+      "authority": "derived-local",
+      "value": 0.0010319597288345021
+     },
+     "4": {
+      "authority": "derived-local",
+      "value": 0.002787513736930332
+     }
+    },
+    "captured": {
+     "authority": "measured",
+     "value": 0.015704991972279647
+    },
+    "gate_sign_switches": 82,
+    "layer": 3
+   }
+  ],
+  "meaning": "F1 first order on actual layer inputs (direct + linear MLP); F2[k] the k largest |Jacobian Delta g| gates per layer exact; F3[k] chained from the direct write, re-reads not forecast"
+ }
+}

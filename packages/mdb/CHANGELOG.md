@@ -4,7 +4,7 @@ All notable changes to `mdb-runtime` (packages/mdb). The version number is set b
 
 ## Unreleased (proposed 0.2.1; 0.3.0 if the owner counts the in-place-write refusal below as breaking)
 
-Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on every case checked (tiny Qwen2/Qwen3 CPU in bf16 and fp32, `00-hello-tiny`, the test suites, Qwen2.5-1.5B and example 04 on the GPU host); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`.
+Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on tiny Qwen2/Qwen3 CPU in bf16 and fp32 and in `00-hello-tiny`; trail fingerprints, tokens and logits are identical on Qwen2.5-1.5B on the GPU host, and example 04's records match field for field except the fields that differ between any two runs (custody time, payload path, per-arm seconds); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`. Measured: a stepped row at T=1024 went from 802 to 98 ms on the laptop CPU (the review's probe config) and from 644 to 109 ms on Qwen2.5-1.5B on an RTX 4080; example 04's smoke items ran 2.7x faster.
 
 ### Changed (faster, same output)
 

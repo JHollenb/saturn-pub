@@ -37,6 +37,9 @@ if "7" in which:
     sc.Session._sealed_again = lambda self, *a: None
     sv._PLAIN_KEY = __import__("re").compile(r"(?!x)x")  # never matches: canonical sort
 if "8" in which:
-    dec._FrozenSnapshot.holds = lambda self: False
+    def _verify_frozen_model(self):  # main's check: the exact named walk every call
+        if dec._tensor_guards(self.model) != self._frozen_versions:
+            raise ValueError("model parameters or buffers changed")
+    dec.DecoderAdapter._verify_frozen_model = _verify_frozen_model
 sys.argv = sys.argv[1:]
 runpy.run_path(sys.argv[0], run_name="__main__")

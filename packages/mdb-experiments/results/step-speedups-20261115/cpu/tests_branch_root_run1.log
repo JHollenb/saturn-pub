@@ -1,0 +1,98 @@
+.....................................F.................................. [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 37%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 74%]
+........................................................................ [ 86%]
+.............................FFF........................................ [ 98%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore _______
+
+    def test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore():
+        session = Repair().session()
+        parent = session.capture()
+        table = SymbolTable()
+        for cursor in range(4):
+            table.bindings.append(bind(session))
+            if cursor < 3:
+                session.step()
+        session.restore(parent)
+        debugger = Debugger(session)
+        debugger.symbols, debugger.symbol_context = table, "supplied-v1"
+>       assert debugger.execute("info steps")["next_transition"]["operation"] == "first"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_debug_symbols_paths.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <saturn_pub.cli.Debugger object at 0x107995d00>, line = 'info steps'
+
+    def execute(self, line: str) -> Any:
+        args = shlex.split(line)
+        if not args:
+            return None
+        command, *rest = args
+        if command == "info" and rest == ["steps"]:
+            cut = self.session.capture(retain=False)
+>           state, _ = self.session._cut_state(cut)
+            ^^^^^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+src/saturn_pub/cli.py:143: ValueError
+________________ test_from_cut_hashes_copies_and_validates_once ________________
+
+adapter = <saturn_pub.adapters.decoder.DecoderAdapter object at 0x124941340>
+counts = Counter({'host syncs': 106, 'state validations': 1})
+
+    def test_from_cut_hashes_copies_and_validates_once(adapter, counts):
+        session = _at_layer(adapter)
+        cut = session.capture()
+        counts.clear()
+        hydrated = Session.from_cut(adapter, cut)
+>       assert counts["tensor hashes"] == _tensors(cut._payload)  # verify, once
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 0 == 6
+E        +  where 6 = _tensors({'tokens': tensor([[3, 1, 4, 1]]), 'keys': [<saturn_pub.core._Appended object at 0x123c5ae40>, tensor([[[[ 0.0254,  0....],\n          [ 0.1426, -0.1266, -0.0317,  0.0991, -0.0081, -0.0847,  0.0205,\n           -0.0550]]]])], 'layer': 1, ...})
+E        +    where {'tokens': tensor([[3, 1, 4, 1]]), 'keys': [<saturn_pub.core._Appended object at 0x123c5ae40>, tensor([[[[ 0.0254,  0....],\n          [ 0.1426, -0.1266, -0.0317,  0.0991, -0.0081, -0.0847,  0.0205,\n           -0.0550]]]])], 'layer': 1, ...} = StateCut(model_identity='0eecb9f70aa7920c52abddbd0523fe9cee9ca437fcba23c7c85368138e845473', execution=mappingproxy({'f...', 'readout', 'sample', 'commit']}}]}), fingerprint='07a30490913402b2cfd89880f0dc0416cd444c6d42b13f72267b09c1be6073c3')._payload
+
+tests/test_substrate_counts.py:80: AssertionError
+________________ test_restore_hashes_copies_and_validates_once _________________
+
+adapter = <saturn_pub.adapters.decoder.DecoderAdapter object at 0x12493aa50>
+counts = Counter({'host syncs': 106, 'state validations': 1})
+
+    def test_restore_hashes_copies_and_validates_once(adapter, counts):
+        session = _at_layer(adapter)
+        cut = session.capture()
+        session.continue_()
+        counts.clear()
+        receipt = session.restore(cut).to_dict()
+>       assert counts["tensor hashes"] == _tensors(cut._payload)
+E       AssertionError: assert 0 == 6
+E        +  where 6 = _tensors({'tokens': tensor([[3, 1, 4, 1]]), 'keys': [<saturn_pub.core._Appended object at 0x1239358c0>, tensor([[[[ 0.0254,  0....],\n          [ 0.1426, -0.1266, -0.0317,  0.0991, -0.0081, -0.0847,  0.0205,\n           -0.0550]]]])], 'layer': 1, ...})
+E        +    where {'tokens': tensor([[3, 1, 4, 1]]), 'keys': [<saturn_pub.core._Appended object at 0x1239358c0>, tensor([[[[ 0.0254,  0....],\n          [ 0.1426, -0.1266, -0.0317,  0.0991, -0.0081, -0.0847,  0.0205,\n           -0.0550]]]])], 'layer': 1, ...} = StateCut(model_identity='0eecb9f70aa7920c52abddbd0523fe9cee9ca437fcba23c7c85368138e845473', execution=mappingproxy({'f...', 'readout', 'sample', 'commit']}}]}), fingerprint='07a30490913402b2cfd89880f0dc0416cd444c6d42b13f72267b09c1be6073c3')._payload
+
+tests/test_substrate_counts.py:96: AssertionError
+_ test_a_transition_hashes_each_slot_once_and_capture_after_it_hashes_nothing __
+
+adapter = <saturn_pub.adapters.decoder.DecoderAdapter object at 0x1242fa120>
+counts = Counter({'host syncs': 2, 'state validations': 1})
+
+    def test_a_transition_hashes_each_slot_once_and_capture_after_it_hashes_nothing(adapter, counts):
+        session = _at_layer(adapter)
+        counts.clear()
+        receipt = session.continue_().to_dict()
+        after = _tensors(session._state)
+>       assert counts["tensor hashes"] == after  # the new state's slots, each once
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 0 == 6
+
+tests/test_substrate_counts.py:107: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_debug_symbols_paths.py::test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore
+FAILED tests/test_substrate_counts.py::test_from_cut_hashes_copies_and_validates_once
+FAILED tests/test_substrate_counts.py::test_restore_hashes_copies_and_validates_once
+FAILED tests/test_substrate_counts.py::test_a_transition_hashes_each_slot_once_and_capture_after_it_hashes_nothing
+4 failed, 578 passed, 1 skipped in 31.15s

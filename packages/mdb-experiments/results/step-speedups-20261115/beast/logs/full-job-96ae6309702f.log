@@ -1,0 +1,51 @@
+mrun: job-96ae6309702f -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+main c83e47fd43fccaa331d86e3040946de017f3941c
+branch 1c20d2e50271bc355794da7a5d768096d35b0337
+torch 2.13.0+cu130 transformers 5.13.1 NVIDIA GeForce RTX 4080
+== bench main
+rc 0
+[main] loaded 2.4s layers 28 device cuda:0
+RESULT {"T": 1024, "case": "rows", "logits": ["1c4cde3fb6b2c3d0", "e3792e6c20bd02be", "9a0b4319c1137f74", "a808574dc7759806"], "ms_per_row": [657.6, 641.8, 644.5, 643.8], "peak_rss_mb": 3994.8, "peak_vram_mb": 3280.3, "rows": 4, "s": 2.925, "tokens": [576, 3840, 315, 279, 3283], "trail": "127b2a0ea2c3e74b", "tree": "main"}
+RESULT {"T": 256, "case": "rows", "logits": ["639ebd1a4ead024f", "e0d4b5bc06568d01", "646604ca4ed68264", "42ee929a04b8c54b"], "ms_per_row": [322.3, 321.6, 329.3, 459.4], "peak_rss_mb": 3994.8, "peak_vram_mb": 3034.1, "rows": 4, "s": 1.459, "tokens": [264, 25079, 13, 576, 3840], "trail": "31ad460f6382a960", "tree": "main"}
+RESULT {"T": 32, "case": "p0", "held_bytes_s": 1.008, "held_total": 14509048, "logits": ["398e584b040c6df1", "6ee6e5a2b73d226e", "9723517008472b24", "8002147e0da06cf1", "ced7bba56eb89436", "14c8eb9b34f3e886", "e5d13786dd872c39", "5c4becd703f62b9f", "e356a3ce401ae39e", "a05632915c7a24d3", "db746de99a3836da", "8393be215adcacd9", "a31d07c10762f0e8", "cd7f501d37de3795", "aff83f1acd65c780", "234b45ec9d055050", "798faace7628a813", "1b5182fe3bbad1f4", "ac8f1950599e69fd", "87115e1cde8815f6", "9ccab5f4e5b26310", "913f842b63a1eb02", "8ed9b60933027171", "21c7dfa9bb02f95f", "315480a7f6d8543d", "bd623a041833fccd", "c284deec0350592b", "7761067796f2a400", "c414bd93e1c7e57a", "6222fa14646aa9a3", "afeeb63608416f1d", "4d33f3c58d31ffdb"], "marks": 1055, "peak_rss_mb": 3994.8, "peak_vram_mb": 2968.1, "s": 9.402, "trail": "14f9e33aeafce44b", "tree": "main", "until_s": 8.34}
+RESULT {"T": 256, "calls": {"layer": 28, "probe": 504, "transition": 5}, "case": "ports", "lookahead": "none", "n_reads": 504, "peak_rss_mb": 3994.8, "peak_vram_mb": 3035.0, "reads": "d01cddab9d8e5363", "row_s": 1.55, "s": 1.581, "trail": "e2f194a436742a6b", "tree": "main"}
+RESULT {"T": 256, "calls": {"layer": 28, "probe": 28, "transition": 5}, "case": "ports", "lookahead": "layer", "n_reads": 504, "peak_rss_mb": 3994.8, "peak_vram_mb": 3035.0, "reads": "d01cddab9d8e5363", "row_s": 0.41, "s": 0.429, "trail": "e2f194a436742a6b", "tree": "main"}
+[main] done 18.2s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:20.95
+	Maximum resident set size (kbytes): 4090724
+== bench branch
+rc 0
+[branch] loaded 2.4s layers 28 device cuda:0
+RESULT {"T": 1024, "case": "rows", "logits": ["1c4cde3fb6b2c3d0", "e3792e6c20bd02be", "9a0b4319c1137f74", "a808574dc7759806"], "ms_per_row": [125.3, 110.3, 108.8, 108.7], "peak_rss_mb": 3995.4, "peak_vram_mb": 3280.3, "rows": 4, "s": 0.777, "tokens": [576, 3840, 315, 279, 3283], "trail": "127b2a0ea2c3e74b", "tree": "branch"}
+RESULT {"T": 256, "case": "rows", "logits": ["639ebd1a4ead024f", "e0d4b5bc06568d01", "646604ca4ed68264", "42ee929a04b8c54b"], "ms_per_row": [101.7, 98.9, 98.9, 97.2], "peak_rss_mb": 3995.4, "peak_vram_mb": 3090.4, "rows": 4, "s": 0.421, "tokens": [264, 25079, 13, 576, 3840], "trail": "31ad460f6382a960", "tree": "branch"}
+RESULT {"T": 32, "case": "p0", "held_bytes_s": 0.036, "held_total": 14509048, "logits": ["398e584b040c6df1", "6ee6e5a2b73d226e", "9723517008472b24", "8002147e0da06cf1", "ced7bba56eb89436", "14c8eb9b34f3e886", "e5d13786dd872c39", "5c4becd703f62b9f", "e356a3ce401ae39e", "a05632915c7a24d3", "db746de99a3836da", "8393be215adcacd9", "a31d07c10762f0e8", "cd7f501d37de3795", "aff83f1acd65c780", "234b45ec9d055050", "798faace7628a813", "1b5182fe3bbad1f4", "ac8f1950599e69fd", "87115e1cde8815f6", "9ccab5f4e5b26310", "913f842b63a1eb02", "8ed9b60933027171", "21c7dfa9bb02f95f", "315480a7f6d8543d", "bd623a041833fccd", "c284deec0350592b", "7761067796f2a400", "c414bd93e1c7e57a", "6222fa14646aa9a3", "afeeb63608416f1d", "4d33f3c58d31ffdb"], "marks": 1055, "peak_rss_mb": 3995.4, "peak_vram_mb": 2968.0, "s": 3.299, "trail": "14f9e33aeafce44b", "tree": "branch", "until_s": 3.24}
+RESULT {"T": 256, "calls": {"layer": 28, "probe": 504, "transition": 5}, "case": "ports", "lookahead": "none", "n_reads": 504, "peak_rss_mb": 3995.4, "peak_vram_mb": 3035.0, "reads": "d01cddab9d8e5363", "row_s": 0.91, "s": 0.937, "trail": "e2f194a436742a6b", "tree": "branch"}
+RESULT {"T": 256, "calls": {"layer": 28, "probe": 28, "transition": 5}, "case": "ports", "lookahead": "layer", "n_reads": 504, "peak_rss_mb": 3995.4, "peak_vram_mb": 3049.3, "reads": "d01cddab9d8e5363", "row_s": 0.17, "s": 0.19, "trail": "e2f194a436742a6b", "tree": "branch"}
+RESULT {"T": 256, "calls": {"layer": 28, "probe": 28, "transition": 5}, "case": "ports", "lookahead": "auto", "n_reads": 504, "peak_rss_mb": 3995.4, "peak_vram_mb": 3049.3, "reads": "d01cddab9d8e5363", "row_s": 0.3, "s": 0.326, "trail": "e2f194a436742a6b", "tree": "branch"}
+[branch] done 8.3s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.09
+	Maximum resident set size (kbytes): 4091280
+== example 04 smoke main
+rc 0
+[   16.8s] done; 3 sealed records in out/records.jsonl
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "smoke": true, "custody": {"script_sha256": "7140cbc76954324cecbe14cac2ee1fbfb4197867b80e3171da26b436b5664112", "prereg_sha256": "0adac2733d6e9a17eb77d8bca39f205cac4958020b621ec914e18415c4418a71", "kernel_path": "mdb-stepped"}, "pool": {"n": 6, "kernel_path": "mdb-stepped",
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.67
+	Maximum resident set size (kbytes): 4437044
+== example 04 smoke branch
+rc 0
+[    9.9s] done; 3 sealed records in out/records.jsonl
+RESULT_JSON {"model": "/mnt/big/llm-models/Qwen3-1.7B-Base", "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50", "smoke": true, "custody": {"script_sha256": "7140cbc76954324cecbe14cac2ee1fbfb4197867b80e3171da26b436b5664112", "prereg_sha256": "0adac2733d6e9a17eb77d8bca39f205cac4958020b621ec914e18415c4418a71", "kernel_path": "mdb-stepped"}, "pool": {"n": 6, "kernel_path": "mdb-stepped",
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:10.75
+	Maximum resident set size (kbytes): 4437624
+CASE ('rows', 1024, None) identical | main {'s': 2.925, 'ms_per_row': [657.6, 641.8, 644.5, 643.8], 'peak_vram_mb': 3280.3, 'peak_rss_mb': 3994.8} | branch {'s': 0.777, 'ms_per_row': [125.3, 110.3, 108.8, 108.7], 'peak_vram_mb': 3280.3, 'peak_rss_mb': 3995.4}
+CASE ('rows', 256, None) identical | main {'s': 1.459, 'ms_per_row': [322.3, 321.6, 329.3, 459.4], 'peak_vram_mb': 3034.1, 'peak_rss_mb': 3994.8} | branch {'s': 0.421, 'ms_per_row': [101.7, 98.9, 98.9, 97.2], 'peak_vram_mb': 3090.4, 'peak_rss_mb': 3995.4}
+CASE ('p0', 32, None) identical | main {'s': 9.402, 'until_s': 8.34, 'held_bytes_s': 1.008, 'peak_vram_mb': 2968.1, 'peak_rss_mb': 3994.8} | branch {'s': 3.299, 'until_s': 3.24, 'held_bytes_s': 0.036, 'peak_vram_mb': 2968.0, 'peak_rss_mb': 3995.4}
+CASE ('ports', 256, 'none') identical | main {'s': 1.581, 'row_s': 1.55, 'peak_vram_mb': 3035.0, 'peak_rss_mb': 3994.8} | branch {'s': 0.937, 'row_s': 0.91, 'peak_vram_mb': 3035.0, 'peak_rss_mb': 3995.4}
+CASE ('ports', 256, 'layer') identical | main {'s': 0.429, 'row_s': 0.41, 'peak_vram_mb': 3035.0, 'peak_rss_mb': 3994.8} | branch {'s': 0.19, 'row_s': 0.17, 'peak_vram_mb': 3049.3, 'peak_rss_mb': 3995.4}
+AUTO vs NONE reads/trail identical: True | auto 0.3 {'layer': 28, 'probe': 28, 'transition': 5}
+EX04 records byte-identical: False | ids main [None, '6888083dd474d53b8d6da691385c9ccc7d69a14b2e46a0d565f2b983c48a8fc2', '605c8e020fecf34d9d0f57e16f7197e9f939d13f23e1ed57319268be7a90aa1f', '752f8f817950b9687cbb18577c0a3a729df2cbcef1f7487f5f8edacc5f280c33'] | ids branch [None, '5ff2af44b854a0db9d9fba9d60fbff67ee3c309643960b1ea01d368b1d8ce846', 'bee85f46d1f0dd7448ce32acd0aaeb2f46218afad5bf6eb851524b0b1632780f', 'aef49f5315265e55f1f619dd838bc97bd736784b6c950c64bb2a424669e23a54']
+EX04 RESULT_JSON (minus seconds/peak_vram) identical: False
+ALL_IDENTICAL False
+mrun: job-96ae6309702f -> succeeded
+mrun: job-96ae6309702f finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 62.18, 'peak_rss_mb': 2752.2, 'peak_vram_mb': 4030.0}

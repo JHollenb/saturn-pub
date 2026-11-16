@@ -1,0 +1,185 @@
+{
+ "model": "/mnt/big/llm-models/Qwen3-1.7B-Base",
+ "sae": "/mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50",
+ "smoke": true,
+ "custody": {
+  "script_sha256": "7140cbc76954324cecbe14cac2ee1fbfb4197867b80e3171da26b436b5664112",
+  "prereg_sha256": "0adac2733d6e9a17eb77d8bca39f205cac4958020b621ec914e18415c4418a71",
+  "kernel_path": "mdb-stepped"
+ },
+ "pool": {
+  "n": 6,
+  "kernel_path": "mdb-stepped",
+  "record": "6888083dd474d53b8d6da691385c9ccc7d69a14b2e46a0d565f2b983c48a8fc2"
+ },
+ "items": [
+  {
+   "id": "d3-lm:Anitkabir",
+   "role": "correct, watch fired (false alarm)",
+   "correct": true,
+   "carrier_row": 46,
+   "language": 23734,
+   "foil": 34117,
+   "native_logits": [
+    32.5,
+    29.125
+   ],
+   "native_argmax": 23734,
+   "stop": {
+    "reason": "watch+breakpoint",
+    "where": "t47.L20.h"
+   },
+   "watch_fired": true,
+   "best_feature_label": 27602,
+   "content_C": 17009,
+   "r1": {
+    "wrong_feature": 2502,
+    "truth_feature": [
+     26436,
+     52.328339303301334
+    ],
+    "delta_norm": 26.948354760968957,
+    "cell_norm": 102.45993109589473,
+    "component_vs_image_max_abs": 0.0
+   },
+   "donor": "d2:Ankara",
+   "floor": 0.5,
+   "M0": 3.375,
+   "arms": {
+    "R1": {
+     "argmax": 23734,
+     "dM": -0.25,
+     "floors": 0.5,
+     "stability": "kernel-sensitive",
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 23734,
+     "dM": 0.375,
+     "floors": 0.75,
+     "stability": "kernel-sensitive",
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 23734,
+     "dM": 0.0,
+     "floors": 0.0,
+     "stability": "kernel-sensitive",
+     "repaired": true
+    },
+    "rnd": {
+     "argmax": 23734,
+     "dM": 0.0,
+     "floors": 0.0,
+     "stability": "kernel-sensitive",
+     "repaired": true
+    }
+   },
+   "r2_origin": {
+    "kind": "pool",
+    "pool": "carrier-v",
+    "rule": "donor (same:country)",
+    "donor": "d2:Ankara",
+    "record": "6888083dd474d53b8d6da691385c9ccc7d69a14b2e46a0d565f2b983c48a8fc2"
+   },
+   "record": "605c8e020fecf34d9d0f57e16f7197e9f939d13f23e1ed57319268be7a90aa1f",
+   "seconds": 4.38
+  },
+  {
+   "id": "d3-per:Franz Kafka",
+   "role": "wrong",
+   "correct": false,
+   "carrier_row": 45,
+   "language": 33150,
+   "foil": 5938,
+   "native_logits": [
+    30.625,
+    31.25
+   ],
+   "native_argmax": 5938,
+   "stop": {
+    "reason": "watch+breakpoint",
+    "where": "t46.L20.h"
+   },
+   "watch_fired": true,
+   "best_feature_label": 34340,
+   "content_C": 34898,
+   "r1": {
+    "wrong_feature": 22369,
+    "truth_feature": [
+     26772,
+     82.89247206590377
+    ],
+    "delta_norm": 40.193358682025654,
+    "cell_norm": 93.8901613490337,
+    "component_vs_image_max_abs": 0.0
+   },
+   "donor": "d3-lm:the Charles Bridge",
+   "floor": 0.25,
+   "M0": -0.625,
+   "arms": {
+    "R1": {
+     "argmax": 33150,
+     "dM": 1.125,
+     "floors": 4.5,
+     "stability": "stable",
+     "repaired": true
+    },
+    "R2": {
+     "argmax": 33150,
+     "dM": 3.5,
+     "floors": 14.0,
+     "stability": "stable",
+     "repaired": true
+    },
+    "RND": {
+     "argmax": 5938,
+     "dM": -0.125,
+     "floors": 0.5,
+     "stability": "kernel-sensitive",
+     "repaired": false
+    },
+    "rnd": {
+     "argmax": 5938,
+     "dM": 0.0,
+     "floors": 0.0,
+     "stability": "kernel-sensitive",
+     "repaired": false
+    }
+   },
+   "r2_origin": {
+    "kind": "pool",
+    "pool": "carrier-v",
+    "rule": "donor (same:country)",
+    "donor": "d3-lm:the Charles Bridge",
+    "record": "6888083dd474d53b8d6da691385c9ccc7d69a14b2e46a0d565f2b983c48a8fc2"
+   },
+   "record": "752f8f817950b9687cbb18577c0a3a729df2cbcef1f7487f5f8edacc5f280c33",
+   "seconds": 2.7
+  }
+ ],
+ "summary": {
+  "n": 2,
+  "wrong": 1,
+  "correct": 1,
+  "fired_wrong": "1/1",
+  "fired_correct": "1/1",
+  "content_true_wrong": "0/1",
+  "content_true_correct": "1/1",
+  "R1_repairs_wrong": "1/1",
+  "R1_repairs_where_fired": "1/1",
+  "R2_repairs_wrong": "1/1",
+  "RND_repairs_wrong": "0/1",
+  "rnd_gauss_repairs_wrong": "0/1",
+  "R1_on_correct_argmax_changes": "0/1",
+  "median_R1_over_R2": 0.32142857142857145,
+  "n_ratio": 1
+ },
+ "per_item_differences": [],
+ "records": {
+  "path": "out/records.jsonl",
+  "n": 3
+ },
+ "seconds": 16.8,
+ "peak_vram_mb": 3388
+}

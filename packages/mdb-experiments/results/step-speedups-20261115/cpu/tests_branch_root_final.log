@@ -1,0 +1,46 @@
+.....................................F.................................. [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 37%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 74%]
+........................................................................ [ 86%]
+........................................................................ [ 98%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore _______
+
+    def test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore():
+        session = Repair().session()
+        parent = session.capture()
+        table = SymbolTable()
+        for cursor in range(4):
+            table.bindings.append(bind(session))
+            if cursor < 3:
+                session.step()
+        session.restore(parent)
+        debugger = Debugger(session)
+        debugger.symbols, debugger.symbol_context = table, "supplied-v1"
+>       assert debugger.execute("info steps")["next_transition"]["operation"] == "first"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_debug_symbols_paths.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <saturn_pub.cli.Debugger object at 0x12d257da0>, line = 'info steps'
+
+    def execute(self, line: str) -> Any:
+        args = shlex.split(line)
+        if not args:
+            return None
+        command, *rest = args
+        if command == "info" and rest == ["steps"]:
+            cut = self.session.capture(retain=False)
+>           state, _ = self.session._cut_state(cut)
+            ^^^^^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+src/saturn_pub/cli.py:143: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_debug_symbols_paths.py::test_debugger_reuses_symbol_watch_and_provenance_stops_at_restore
+1 failed, 581 passed, 1 skipped in 30.49s
