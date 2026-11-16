@@ -944,6 +944,7 @@ def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any],
         out["base"] = run.read(p.consumer_stop).clone()
         out["base_info"] = run.read_info(p.consumer_stop)
         _check(run, out, "base")    # the unedited run already stands past the consumer
+        out["base_port"] = _base_port(run, p)
         _edited(run, p, edit, entry, out)
 
     _restoring(run, checkpoint, body)
@@ -962,7 +963,17 @@ def _base_ahead(run: Any, p: Plan, edit: Edit, out: dict[str, Any]) -> None:
     out["base"] = run.read(p.consumer_stop).clone()
     out["base_info"] = run.read_info(p.consumer_stop)
     _check(run, out, "base")
+    out["base_port"] = _base_port(run, p)
     out["posthoc"] = _measured_exact(run, p, edit, out["realised"])
+
+
+def _base_port(run: Any, p: Plan) -> Any:
+    """The unedited run's value at the edited port (None when it cannot be read): what
+    ``donors.informative`` compares the written value with."""
+    try:
+        return run.read(p.edit_stop).clone()
+    except (ValueError, KeyError, IndexError, RuntimeError):
+        return None
 
 
 def _written_exact(run: Any, p: Plan, edit: Edit, found: dict[str, Any], realised: Any
@@ -1061,7 +1072,8 @@ def _measure_batch(run: Any, items: list[_Prepared]) -> list[dict[str, Any]]:
         else:
             results[i] = _measure(run, item.p, item.edit, item.checkpoint, item.check)
     base = {i: (run.read(items[i].p.consumer_stop).clone(),
-                run.read_info(items[i].p.consumer_stop)) for i in batch}
+                run.read_info(items[i].p.consumer_stop), _base_port(run, items[i].p))
+            for i in batch}
     # the unedited run stands past every batched consumer: check its stages there, as `_measure`
     checked = {i: items[i].check(run, "base", base[i][0]) for i in batch
                if items[i].check is not None}
@@ -1072,7 +1084,7 @@ def _measure_batch(run: Any, items: list[_Prepared]) -> list[dict[str, Any]]:
         cuts: dict[str, dict[str, Any]] = {}   # entry -> checkpoint there (several heads per layer)
         for i in batch:
             out: dict[str, Any] = {"moves": [], "base": base[i][0], "base_info": base[i][1],
-                                   "check": items[i].check}
+                                   "base_port": base[i][2], "check": items[i].check}
             if i in checked:
                 out["check_base"] = checked[i]
             cuts[entries[i]] = _edited(run, items[i].p, items[i].edit, entries[i], out,
@@ -1516,6 +1528,9 @@ def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> Wh
     edited_label = native["edited_info"]["authority"] or MEASURED
     base, edited = _scalar(p, native["base"]), _scalar(p, native["edited"])
     change = edited - base
+    from .donors import informative
+    known = informative(native.get("base_port"), native.get("realised"))
+    donors = (1, None if known is None else int(known))
     size = magnitude(p.margin or p.logit, native["base"], native["edited"])
     dtype = native["base"].dtype
     measured = {"base": _claim(base, base_label), "edited": _claim(edited, edited_label),
@@ -1603,11 +1618,11 @@ def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> Wh
         effect = decide(native_change, emulated, size, dtype, exact=at_realised,
                         why_native_only=f"the emulated chain is refused "
                                         f"({found.get('emulated_reason')})",
-                        parting=_parting(native))
+                        parting=_parting(native), donors=donors)
     else:
         report["split"] = {"state": "refused", "reason": reason}
         effect = decide(change, None, size, dtype,
-                        why_native_only=f"the prediction is refused ({reason})")
+                        why_native_only=f"the prediction is refused ({reason})", donors=donors)
     # the verdict follows the P20 accounting (measured), never the worst-case interval bound
     report["effect"] = effect
     report["state"] = effect["state"]

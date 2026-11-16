@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import math
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -528,6 +529,42 @@ def _verdict(result: Any, min_effect: float) -> dict[str, Any]:
     return out
 
 
+_POOLED = {"causal": EFFECT, "not causal at this dose": NO_EFFECT}
+
+
+def _donor_verdicts(run: Any, entries: list[dict[str, Any]], requests: list[Any],
+                    donors: Sequence[Any], min_effect: float) -> None:
+    """Multi-donor mode (``donors.pooled``): each listed read's ``p[h, j, src]`` is set to each
+    donor run's weight at the same address (the donor must have computed it), measured like the
+    removal; ``causal.donors`` holds the pooled verdict and the per-donor rows."""
+    from .donors import pooled
+    from .propagate import Edit, whatif_many
+
+    rows: list[list[dict[str, Any]]] = [[] for _ in entries]
+    for donor in donors:
+        batch, where = [], []
+        for i, (edit, target) in enumerate(requests):
+            try:
+                value = donor.read(edit.address)
+            except (ValueError, KeyError, IndexError) as error:
+                rows[i].append({"verdict": "unresolved", "informative": None,
+                                "reason": f"the donor has no {edit.address}: {error}"})
+                continue
+            batch.append((Edit(edit.address, value, "replace", edit.mask, edit.selection,
+                               f"donor {getattr(donor, 'name', '?')}"), target))
+            where.append(i)
+        for i, result in zip(where, whatif_many(run, batch, stages=False) if batch else [],
+                             strict=True):
+            one = _verdict(result, min_effect)
+            known = ((one.get("effect") or {}).get("donors") or {}).get("informative", {})
+            rows[i].append({"verdict": _POOLED.get(one["verdict"], "unresolved"),
+                            "informative": bool(known["value"]) if "value" in known else None,
+                            "delta": one.get("delta")})
+    for entry, found in zip(entries, rows, strict=True):
+        entry["causal"]["donors"] = {**pooled(found), "per_donor": found,
+                                     "dose": "p[h, j, src] := the donor's weight there"}
+
+
 def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
             min_effect: float) -> dict[str, Any]:
     """The causal verdict of one read: ``p`` at ``address`` set to 0 on ``mask`` through
@@ -557,7 +594,8 @@ def _decide(delta: Any, effect: dict[str, Any], min_effect: float) -> dict[str, 
 
 
 def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: Any = None,
-          top: int = 8, causal: bool = True, min_effect: float = 0.0) -> Reads:
+          top: int = 8, causal: bool = True, min_effect: float = 0.0,
+          donors: Sequence[Any] = ()) -> Reads:
     """The attention reads of ``source`` made at the reader rows (the cursor's row by default),
     one entry per (reader row, layer, head), ranked by the size of the exact contribution to
     the consumer (default: ``o`` of the read's own layer). The first ``top`` entries carry a
@@ -646,6 +684,8 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
         for entry, result in zip(measured, whatif_many(run, requests, stages=False),
                                  strict=True):
             entry["causal"] = _verdict(result, min_effect)
+        if donors:
+            _donor_verdicts(run, measured, requests, donors, min_effect)
     report: dict[str, Any] = {
         "source": {"row": source.row, "address": source.text or f"t{source.row}",
                    "token": int(run.tokens[source.row]) if source.row < len(run.tokens) else

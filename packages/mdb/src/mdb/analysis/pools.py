@@ -237,6 +237,25 @@ class Pool:
             return ref
         raise Refusal(f"pool {self.name}: no donor for {key!r} under rule {rule!r}")
 
+    def donors(self, item: Any, n: int, *, seed: int = 0, exclude: str = "tokens") -> list[Any]:
+        """``n`` other items' values for ``item`` (multi-donor mode, ``analysis.donors``): a
+        seeded draw without replacement over the items ``item`` may take from (itself and, by
+        default, same-token duplicates excluded); fewer when the pool has fewer."""
+        import random
+
+        key = str(item["id"] if isinstance(item, dict) else item)
+        gone = self._excluded(item, exclude)
+        eligible = [i for i in range(len(self)) if i not in gone]
+        chosen = sorted(random.Random(int(seed)).sample(eligible, min(int(n), len(eligible))))
+        out = []
+        for position in chosen:
+            ref = self._ref(self.values[position].clone(), f"donor (draw of {n}, seed {seed})",
+                            [self.ids[position]], key if key in self._index else None,
+                            donor=self.ids[position])
+            ref.pointer["donor_origin"] = self.items[position]["origin"]
+            out.append(ref)
+        return out
+
     def random(self, item: Any = None, *, norm: float | None = None, seed: int = 0) -> Any:
         """A seeded Gaussian of the pool's value shape (float64), rescaled to ``norm`` or to the
         norm of ``item``'s own value (matched-norm random)."""

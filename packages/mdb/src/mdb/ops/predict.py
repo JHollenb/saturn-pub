@@ -99,7 +99,7 @@ def _whole_stop(ctx, text: str, verb: str) -> str:
 # --------------------------------------------------------------------------- explain
 
 
-def _explain(ctx, address):
+def _explain(ctx, address, units=0):
     from mdb.analysis import explain as explain_mod
 
     run = ctx.run
@@ -117,7 +117,7 @@ def _explain(ctx, address):
         raise Refused(f"explain reads the whole captured row t{target_row}: run `until "
                       f"t{target_row}.logits` first (cursor {run.where})")
     if margin is not None:
-        result = explain_mod.explain_margin(run, margin.a, margin.b)
+        result = explain_mod.explain_margin(run, margin.a, margin.b, units=units)
         project = getattr(ctx.debugger, "project", None)
         explain_mod.bound_terms(
             result, run=run,
@@ -296,7 +296,7 @@ def split_assignment(target: str, value: Any) -> tuple[str, Any]:
     return target, value
 
 
-def _whatif(ctx, target, value, op, consumer, dose=None):
+def _whatif(ctx, target, value, op, consumer, dose=None, path=False):
     from mdb.analysis import forecast, propagate
 
     address, value = split_assignment(target, value)
@@ -309,10 +309,20 @@ def _whatif(ctx, target, value, op, consumer, dose=None):
         result = propagate.whatif(ctx.run, edit, chosen, store=store)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
+    report = dict(result.report)
+    if path:    # downstream attention selections and the frozen-selection effect (paths.paired)
+        from mdb.analysis.paths import paired
+
+        if edit.cell is not None or not hasattr(chosen, "row"):
+            raise Refused("path=true takes a port edit and a margin or logit consumer")
+        try:
+            report["path"] = paired(ctx.run, [(edit.address, edit.value, edit.op, edit.mask)],
+                                    chosen)
+        except forecast.Refusal as error:
+            raise Refused(str(error)) from None
     after = session_digest(ctx)
     if after != before:
         raise RuntimeError("whatif changed the debugger session")
-    report = dict(result.report)
     report["session"] = {**report["session"], "debugger_before": before,
                          "debugger_after": after}
     return {**report, "where": ctx.run.where, "sealed_record": record_view(result.record)}
@@ -322,8 +332,11 @@ def _whatif(ctx, target, value, op, consumer, dose=None):
 
 register(Op("explain", "Exact accounting of a margin M[a,b] or of one port, with proof IDs "
             "and the measured remainder (cursor at the row's logits/sample)",
-            (Arg("address", "address", required=True),), "read", True, _explain,
-            usage="explain M[a,b]|ADDR"), replace=True)
+            (Arg("address", "address", required=True),
+             Arg("units", "int", default=0, minimum=0, maximum=32, positional=False,
+                 help="list the K MLP units of largest contribution and the K selected but "
+                      "zero-valued units (gate on, contribution ~0)")), "read", True, _explain,
+            usage="explain M[a,b]|ADDR [units=K]"), replace=True)
 register(Op("forecast", "Seal a prediction of the next stop (or a later stop of this row, or a "
             "margin M[a,b]) from values at the cursor, before native code runs",
             (Arg("target", "address"),), "mutate", True, _forecast,
@@ -339,10 +352,13 @@ register(Op("whatif", "Predicted, then natively measured change of a consumer un
             (Arg("target", "str", required=True), Arg("value", "value"),
              Arg("op", "choice", default="replace", choices=("replace", "add", "scale", "mix")),
              Arg("consumer", "str", required=True, positional=False),
-             Arg("dose", "number", positional=False, help="mix only (state cells)")),
+             Arg("dose", "number", positional=False, help="mix only (state cells)"),
+             Arg("path", "bool", default=False, positional=False,
+                 help="also run the edit free and with downstream p held at the base "
+                      "(paths.paired): path-diverged, total and frozen-selection effects")),
             "navigate", True, _whatif,
             usage="whatif ADDR=EXPR [replace|add|scale|mix DOSE] "
-                  "consumer=M[a,b]|logits[i]|ADDR"),
+                  "consumer=M[a,b]|logits[i]|ADDR [path=true]"),
          replace=True)
 
 # old private names, kept for one commit
