@@ -180,3 +180,14 @@ def test_suffixless_missing_path_is_a_directory(tmp_path):
     with custody.records_to(new_dir) as sink:
         _seal()
     assert sink.path.parent == new_dir.absolute() and new_dir.is_dir()
+
+
+def test_environment_sink_opens_when_custody_is_declared_in_code_first(tmp_path, monkeypatch):
+    """``custody.declare`` before the first seal used to mark the environment read, so the
+    ``MDB_RECORDS`` sink never opened and the records were sealed but not written."""
+    sink_path = tmp_path / "declared-first.jsonl"
+    monkeypatch.setenv("MDB_RECORDS", str(sink_path))
+    custody._STATE["env_read"] = custody._STATE["sinks_read"] = False   # a new process
+    custody.declare(kernel_path="k")
+    record = _seal()
+    assert [r["id"] for r in custody.Sink(sink_path).records()] == [record["id"]]
