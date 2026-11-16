@@ -145,10 +145,11 @@ def test_the_index_uses_the_public_interface(project):
     assert I.list_records(reader, "s1") == [record]
 
 
-def test_a_record_over_64_kib_or_holding_an_array_is_refused_at_write(project):
+def test_a_record_over_the_bound_or_holding_an_array_is_refused_at_write(project):
     np = pytest.importorskip("numpy")
-    with pytest.raises(RecordError, match="bytes"):
-        _record(note=["x" * 4000] * 17)
+    _record(note=["x" * 4000] * 17)                       # 68 KB: over v2's 64 KiB, inside v3
+    with pytest.raises(RecordError, match="bytes"):        # v3: 1 MiB
+        _record(note={f"n{i}": ["x" * 4000] * 60 for i in range(5)})
     with pytest.raises(RecordError, match="array or tensor"):
         _record(values=np.zeros(3))
     forged = {**_record(), "body": {"margin": R.num(1.0, "measured"), "values": [0.5] * 3}}

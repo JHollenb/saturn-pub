@@ -3,7 +3,9 @@ import json
 import pytest
 
 from mdb.core import records as R
-from mdb.core.pointers import MAX_RECORD_BYTES, RecordError, _canonical, occurrence_pointer
+from mdb.core.pointers import MAX_RECORD_BYTES, RecordError, occurrence_pointer
+
+MAX_V3 = R.MAX_RECORD_BYTES_V3
 
 R.declare_kind("test-margin", numeric=("margin", "effects.*", "layers.*.value"),
                required=("margin", "consumer"), plain_numeric=("layers.*.index",))
@@ -23,27 +25,31 @@ def _seal(body=None, *, kind="test-margin", authority="measured", pointers=()):
                          body=_body() if body is None else body, pointers=pointers)
 
 
-def _hand_seal(kind, body, pointers=()):
-    """A record sealed without ``seal_record`` (what a hostile or old writer could store)."""
+def _hand_seal(kind, body, pointers=(), schema=R.SCHEMA):
+    """A record sealed without ``seal_record`` (what a hostile or old writer could store): v3
+    (digest of the stored form) or, with ``schema=R.SCHEMA_V2``, v2 (digest of the record)."""
     from mdb.core.pointers import seal_digest
 
-    envelope = {"schema": R.SCHEMA, "session_id": "s1", "kind": kind, "model_identity": "model-x",
+    envelope = {"schema": schema, "session_id": "s1", "kind": kind, "model_identity": "model-x",
                 "execution": {"dtype": "bfloat16"}, "authority": "measured",
                 "pointers": list(pointers),
                 "body": body}
-    digest = seal_digest(envelope)
+    digest = seal_digest(R.stored_record(envelope))
     return {**envelope, "id": digest, "digest": digest}
 
 
 def test_seal_and_verify():
     record = _seal()
     assert set(record) == set(R.FIELDS)
-    assert record["schema"] == "mdb-record-v2" and record["id"] == record["digest"]
+    assert record["schema"] == "mdb-record-v3" and record["id"] == record["digest"]
     assert R.verify_record(json.loads(json.dumps(record))) == record
     assert _seal() == record  # deterministic
     envelope = {k: v for k, v in record.items() if k not in ("id", "digest")}
     from mdb.core.pointers import seal_digest
-    assert record["digest"] == seal_digest(envelope)
+    stored = R.stored_record(envelope)
+    assert "execution" not in stored
+    assert stored["execution_sha256"] == seal_digest({"dtype": "bfloat16"})
+    assert record["digest"] == seal_digest(stored)
 
 
 @pytest.mark.parametrize("path, value", [
@@ -146,56 +152,70 @@ def test_redeclaring_a_kind_differently_fails():
         R.declare_kind("test-free", plain_numeric=("x", "n", "ids", "more"))
 
 
-def _sized(n):
-    """A test-free record whose filler text totals ``n`` ASCII characters."""
-    filler = {f"f{i:03d}": "x" * min(4000, n - 4000 * i) for i in range(-(-n // 4000))}
-    return _seal({"filler": filler}, kind="test-free")
+def _filler(n, char="x"):
+    """``n`` bytes of text (``char`` is 1 or 3 UTF-8 bytes) in 4000-byte chunks, 128 per
+    mapping, so a record can reach 1 MiB within the structural bounds."""
+    width = len(char.encode())
+    chunks, i = {}, 0
+    while n > 0:
+        take = min(4000, n)
+        chunks[f"f{i:04d}"] = char * (take // width) + "x" * (take % width)
+        n -= take
+        i += 1
+    keys = sorted(chunks)
+    return {f"g{j:02d}": {k: chunks[k] for k in keys[j * 128:(j + 1) * 128]}
+            for j in range(-(-len(keys) // 128))}
 
 
-def test_record_bound_at_exactly_the_limit():
-    # With 17 chunks fixed, the size grows by exactly one byte per filler character.
-    start = 16 * 4000 + 1
-    size = len(_canonical(_sized(start)).encode())
-    n = start + MAX_RECORD_BYTES - size
-    assert size < MAX_RECORD_BYTES and n + 1 <= 17 * 4000
-    record = _sized(n)
-    assert len(_canonical(record).encode()) == MAX_RECORD_BYTES
+def _exact(limit, size_of, char="x"):
+    """The filler length whose record is exactly ``limit`` bytes (chunk count held fixed)."""
+    n = limit - 8000
+    for _ in range(6):            # one byte of filler is one stored byte while chunks stay put
+        n += limit - size_of(_filler(n, char))
+    assert size_of(_filler(n, char)) == limit
+    return n
+
+
+def test_v3_record_bound_at_exactly_the_limit():
+    def size(filler):
+        return len(R.stored_bytes(_hand_seal("test-free", {"filler": filler})))
+
+    n = _exact(MAX_V3, size)
+    record = _seal({"filler": _filler(n)}, kind="test-free")
+    assert len(R.stored_bytes(record)) == MAX_V3 and MAX_V3 == 1024 * 1024
     assert R.verify_record(record) == record
-    with pytest.raises(RecordError, match=f"{MAX_RECORD_BYTES + 1} bytes"):
-        _sized(n + 1)
-
-
-def _multibyte(extra):
-    """A test-free record of 16 full 4000-byte chunks (text of 3-byte characters) and a last
-    chunk sized so the stored form is exactly ``MAX_RECORD_BYTES + extra`` bytes."""
-    def text(nbytes):
-        return "\u2211" * (nbytes // 3) + "x" * (nbytes % 3)
-
-    def build(last):
-        filler = {f"f{i:03d}": text(4000) for i in range(16)}
-        filler["f016"] = text(last)
-        return {"filler": filler}
-
-    def size(last):
-        return len(R.stored_bytes(_hand_seal("test-free", build(last))))
-
-    last = 1 + MAX_RECORD_BYTES + extra - size(1)
-    assert 1 <= last <= 4000
-    assert size(last) == MAX_RECORD_BYTES + extra
-    return build(last)
-
-
-def test_size_bound_is_measured_on_the_stored_non_ascii_form():
-    body = _multibyte(0)
-    record = _seal(body, kind="test-free")
-    assert len(R.stored_bytes(record)) == MAX_RECORD_BYTES
-    assert len(R.stored_form(record)) < MAX_RECORD_BYTES        # characters, not bytes
-    assert len(R.stored_form(record).encode("ascii", "backslashreplace")) > MAX_RECORD_BYTES
-    assert R.verify_record(json.loads(json.dumps(record, ensure_ascii=False))) == record
-    with pytest.raises(RecordError, match=f"{MAX_RECORD_BYTES + 1} bytes"):
-        _seal(_multibyte(1), kind="test-free")
+    with pytest.raises(RecordError, match=f"{MAX_V3 + 1} bytes"):
+        _seal({"filler": _filler(n + 1)}, kind="test-free")
     with pytest.raises(RecordError, match="bytes"):
-        R.verify_record(_hand_seal("test-free", _multibyte(1)))
+        R.verify_record(_hand_seal("test-free", {"filler": _filler(n + 1)}))
+
+
+def test_v3_size_bound_is_measured_on_the_stored_non_ascii_form():
+    def size(filler):
+        return len(R.stored_bytes(_hand_seal("test-free", {"filler": filler})))
+
+    n = _exact(MAX_V3, size, "\u2211")
+    record = _seal({"filler": _filler(n, "\u2211")}, kind="test-free")
+    assert len(R.stored_bytes(record)) == MAX_V3
+    assert len(R.stored_form(record)) < MAX_V3                     # characters, not bytes
+    assert R.verify_record(json.loads(json.dumps(record, ensure_ascii=False))) == record
+    with pytest.raises(RecordError, match=f"{MAX_V3 + 1} bytes"):
+        _seal({"filler": _filler(n + 1, "\u2211")}, kind="test-free")
+
+
+def test_v2_records_keep_their_64_kib_bound():
+    def size(filler):
+        return len(R.stored_bytes(_hand_seal("test-free", {"filler": filler}, schema=R.SCHEMA_V2)))
+
+    n = _exact(MAX_RECORD_BYTES, size)
+    at = _hand_seal("test-free", {"filler": _filler(n)}, schema=R.SCHEMA_V2)
+    assert len(R.stored_bytes(at)) == MAX_RECORD_BYTES == 64 * 1024
+    assert R.verify_record(at) == at
+    with pytest.raises(RecordError, match=f"{MAX_RECORD_BYTES + 1} bytes"):
+        R.verify_record(_hand_seal("test-free", {"filler": _filler(n + 1)},
+                                   schema=R.SCHEMA_V2))
+    # the same content is a valid v3 record (the v3 bound is 1 MiB)
+    assert R.migrate_record(at)["body"] == at["body"]
 
 
 def test_lone_surrogates_are_a_record_error():
@@ -372,18 +392,25 @@ def test_authority_rule_table(name, body, accepted):
         hand = _hand_seal("test-shapes", json.loads(json.dumps(body, allow_nan=True)))
     except ValueError:   # a NaN has no digest: nothing to hand-seal
         hand = None
+    try:
+        v2 = _hand_seal("test-shapes", json.loads(json.dumps(body, allow_nan=True)),
+                        schema=R.SCHEMA_V2)
+    except ValueError:
+        v2 = None
     if accepted:
         record = _seal(body, kind="test-shapes")
         assert R.verify_record(record) == record
         assert R.verify_record(hand) == hand
+        assert R.verify_record(v2) == v2          # the rule is the same for v2 records
     else:
         with pytest.raises(RecordError):
             _seal(body, kind="test-shapes")
         # verify_record applies the same rule to a record some other writer sealed (a NaN does
         # not survive the digest: the seal itself is refused)
-        if hand is not None:
-            with pytest.raises(RecordError):
-                R.verify_record(hand)
+        for other in (hand, v2):
+            if other is not None:
+                with pytest.raises(RecordError):
+                    R.verify_record(other)
 
 
 _OCC_PTR = occurrence_pointer("t18.L20.v[kv0]", program="stepped", shape=[1, 128],
@@ -493,15 +520,17 @@ def _both_refuse(kind, body, pointers=(), **kw):
         R.seal_record(session_id="s1", kind=kind, model_identity=kw.get("mi", "m"),
                       execution=kw.get("ex", {"dtype": "bf16"}), authority="measured", body=body,
                       pointers=list(pointers))
-    envelope = {"schema": R.SCHEMA, "session_id": "s1", "kind": kind,
-                "model_identity": kw.get("mi", "m"), "execution": kw.get("ex", {"dtype": "bf16"}),
-                "authority": "measured", "pointers": list(pointers), "body": body}
-    try:
-        digest = seal_digest(envelope)
-    except ValueError:            # a huge int cannot even be digested here: verify must still refuse
-        digest = "0" * 64
-    with pytest.raises(RecordError):
-        R.verify_record({**envelope, "id": digest, "digest": digest})
+    for schema in R.SCHEMAS:
+        envelope = {"schema": schema, "session_id": "s1", "kind": kind,
+                    "model_identity": kw.get("mi", "m"),
+                    "execution": kw.get("ex", {"dtype": "bf16"}),
+                    "authority": "measured", "pointers": list(pointers), "body": body}
+        try:
+            digest = seal_digest(R.stored_record(envelope))
+        except ValueError:        # a huge int cannot even be digested here: verify must still refuse
+            digest = "0" * 64
+        with pytest.raises(RecordError):
+            R.verify_record({**envelope, "id": digest, "digest": digest})
 
 
 @pytest.mark.parametrize("name, body", [

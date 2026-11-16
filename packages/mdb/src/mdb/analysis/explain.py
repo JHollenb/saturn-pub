@@ -838,7 +838,7 @@ def consumer_gradient(session: Any, token: int, contrast: int) -> tuple[float, A
         hidden = hidden.detach().clone().requires_grad_(True)
         keys = [x.detach().clone() for x in state["keys"]]
         values = [x.detach().clone() for x in state["values"]]
-        cache = adapter._cache(keys, values)
+        cache = adapter._cache(keys, values, index)   # private clones: by reference is safe
         position = session.read("tokens").shape[-1] - 1
         out = hidden
         for layer in range(index, adapter.layers):

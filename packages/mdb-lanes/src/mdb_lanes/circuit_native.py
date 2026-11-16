@@ -150,7 +150,7 @@ def consumer_gradient(session, consumer):
         state = session.capture(retain=False).payload
         keys = [x.detach().clone() for x in state["keys"]]
         values = [x.detach().clone() for x in state["values"]]
-        cache = adapter._cache(keys, values)
+        cache = adapter._cache(keys, values, index)   # private clones: by reference is safe
         position = session.read("tokens").shape[-1] - 1
         with _ports(adapter._layer_modules[index], detach=False) as ports:
             out = hidden

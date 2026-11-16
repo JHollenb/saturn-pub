@@ -294,7 +294,7 @@ def test_a_corrupt_blob_is_not_indexed(project):
 
 
 def test_non_ascii_record_is_stored_in_the_bounded_form(project):
-    from mdb.core.pointers import MAX_RECORD_BYTES
+    MAX_RECORD_BYTES = R.MAX_RECORD_BYTES_V3     # schema v3: 1 MiB stored form
 
     R.declare_kind("test-wide")
 
@@ -302,15 +302,17 @@ def test_non_ascii_record_is_stored_in_the_bounded_form(project):
         def text(nbytes):
             return "∑" * (nbytes // 3) + "x" * (nbytes % 3)
 
-        def build(last):
-            return {"filler": {**{f"f{i:03d}": text(4000) for i in range(16)},
-                               "f016": text(last)}}
+        def build(last):          # 261 full chunks in two mappings (<= 256 keys each), then last
+            full = {f"f{i:03d}": text(4000) for i in range(261)}
+            return {"filler": {"a": dict(list(full.items())[:128]),
+                               "b": {**dict(list(full.items())[128:]), "f261": text(last)}}}
 
         def make(last):
             return R.seal_record(session_id="s1", kind="test-wide", model_identity=IDENTITY,
                                  execution=EXECUTION, authority="measured", body=build(last))
 
         last = 1 + MAX_RECORD_BYTES + extra - len(R.stored_bytes(make(1)))
+        assert 1 <= last <= 4000
         return make(last)
 
     record = sized(0)
@@ -330,7 +332,7 @@ def test_undeclared_record_kinds_cannot_be_indexed(project):
                 "pointers": [], "body": {"note": "text"}}
     from mdb.core.pointers import seal_digest
 
-    digest_ = seal_digest(envelope)
+    digest_ = seal_digest(R.stored_record(envelope))
     with pytest.raises(RecordError, match="not declared"):
         I.put_record(project, {**envelope, "id": digest_, "digest": digest_})
     assert "records" not in _objects(project)

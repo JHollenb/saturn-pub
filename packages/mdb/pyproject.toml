@@ -1,6 +1,6 @@
 [project]
 name = "mdb-runtime"
-version = "0.2.1"
+version = "0.2.2"
 description = "A gdb-style debugger for language models: step native decoder layers port by port, edit, checkpoint, rewind, and capture ports passively."
 readme = "README.md"
 requires-python = ">=3.10"

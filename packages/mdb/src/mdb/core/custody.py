@@ -16,7 +16,10 @@ branch, pool, ...), because they act inside ``records.seal_record``:
 * ``records_to(path)``: a sink. Every record sealed after it (in any module) is appended to
   ``path`` as one canonical JSON line (``records.stored_form``, the digest's form), so a record
   persists with no project attached; ``Sink.records()`` reads them back verified. Several sinks
-  may be open; ``Sink.close()`` stops one.
+  may be open; ``Sink.close()`` stops one. A v3 record's stored form keeps its execution profile
+  by sha256, so before the first record of each profile the sink writes the profile once as an
+  ``{"mdb_execution": "mdb-execution-v1", "sha256", "execution"}`` line; ``Sink.records()``
+  reads v3 and v2 lines (one file may hold both).
 
   Sink names (pre-release custody fix, 2026-11-14): shard jobs that all opened
   ``records-<tag>.jsonl`` were collected into one directory and only the last shard's records
@@ -189,15 +192,26 @@ class Sink:
         self.count = 0
         self.payload_count = 0
         self.payloads_on = bool(payloads)
+        self._executions: set[str] = set()   # execution profiles this sink has written
 
     def _append(self, line: str) -> None:
         with _LOCK, self.path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
 
     def write(self, record: dict[str, Any]) -> None:
-        from .records import stored_form
+        """Append one record's stored form. A v3 record keeps its execution profile by sha256,
+        so the profile is written first, once per sink, as an ``mdb_execution`` line."""
+        from .records import EXECUTION_SCHEMA, SCHEMA, stored_record
+        from .records import _canonical as canonical
 
-        self._append(stored_form(record))
+        stored = stored_record(record)
+        if record.get("schema") == SCHEMA and "execution" in record:
+            digest = stored["execution_sha256"]
+            if digest not in self._executions:
+                self._append(canonical({"mdb_execution": EXECUTION_SCHEMA, "sha256": digest,
+                                        "execution": record["execution"]}))
+                self._executions.add(digest)
+        self._append(canonical(stored))
         self.count += 1
 
     def write_payload(self, digest: str, raw: bytes) -> None:
@@ -212,16 +226,35 @@ class Sink:
     def _lines(self) -> list[dict[str, Any]]:
         if not self.path.exists():
             return []
-        return [json.loads(line) for line in self.path.read_text(encoding="utf-8").splitlines()
-                if line.strip()]
+        from .pointers import RecordError
+        from .records import parse_line
+
+        out = []
+        for number, line in enumerate(self.path.read_text(encoding="utf-8").splitlines(), 1):
+            if not line.strip():
+                continue
+            # a payload line may exceed the record bound (it carries a bounded object's bytes)
+            big = line.startswith('{"bytes":') and '"mdb_payload"' in line[:200]
+            value = parse_line(line, f"{self.path}:{number}", limit=None if big else _LIMIT())
+            if not isinstance(value, dict):
+                raise RecordError(f"{self.path}:{number}: not a record, payload or execution line")
+            out.append(value)
+        return out
 
     def records(self, *, verify: bool = True) -> list[dict[str, Any]]:
-        """The records written to this file (by any process), verified unless ``verify=False``.
-        Payload lines are not records and are skipped (``payloads()``)."""
-        from .records import verify_record
+        """The records written to this file (by any process), as logical records (v3 and v2),
+        verified unless ``verify=False``. Payload and execution lines are not records and are
+        skipped (``payloads()``, ``executions()``)."""
+        from .records import load_record
 
-        return [verify_record(r) if verify else r for r in self._lines()
-                if "mdb_payload" not in r]
+        lines = self._lines()
+        executions = _executions(lines)
+        return [load_record(r, executions=executions, verify=verify) for r in lines
+                if "mdb_payload" not in r and "mdb_execution" not in r]
+
+    def executions(self) -> dict[str, Any]:
+        """sha256 -> execution profile for every ``mdb_execution`` line, each checked."""
+        return _executions(self._lines())
 
     def payloads(self) -> dict[str, bytes]:
         """sha256 -> payload bytes for every payload line, each checked against its sha256."""
@@ -252,6 +285,34 @@ class Sink:
 
     def __exit__(self, *exc: Any) -> None:
         self.close()
+
+
+def _LIMIT() -> int:
+    from .records import MAX_LINE_BYTES
+
+    return MAX_LINE_BYTES
+
+
+def _executions(lines: list[dict[str, Any]]) -> dict[str, Any]:
+    """sha256 -> profile of every ``mdb_execution`` line; a malformed or edited one is a
+    ``RecordError``."""
+    from .pointers import RecordError
+    from .records import seal_digest
+
+    out = {}
+    for line in lines:
+        if "mdb_execution" not in line:
+            continue
+        try:
+            sha, profile = line["sha256"], line["execution"]
+            same = seal_digest(profile) == sha
+        except (KeyError, TypeError, ValueError) as error:
+            raise RecordError(f"execution line is malformed: {type(error).__name__}: "
+                              f"{error}") from error
+        if not same:
+            raise RecordError(f"execution profile {sha[:12]} differs from its sha256")
+        out[sha] = profile
+    return out
 
 
 def run_tag() -> str:

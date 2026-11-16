@@ -311,12 +311,13 @@ def test_probes_read_each_arm_before_restore(dbg, donor):
 
 def test_seal_large_branches_by_pointer(dbg, donor):
     """Many arms with probes exceed one record: the record keeps a compact arm table and the full
-    rows by pointer (amplitude programme, arm B had 33 arms x 6 probes)."""
+    rows by pointer (amplitude programme, arm B had 33 arms x 6 probes; under the 1 MiB v3 bound
+    that fits, so this uses 25 arms x 16 probes x 64 values)."""
     from mdb.core.bounded import load_json
 
     run = dbg.run(P, name="big", prefill=2)
     br = Branches(run, Margin(LAST, 3, 7), at="t2.L0.h",
-                  probes={f"p{i}": (lambda r: [0.125] * 40) for i in range(6)})
+                  probes={f"p{i}": (lambda r: [0.125] * 64) for i in range(16)})
     for i in range(24):
         br.add_null(f"n{i}", "self", like=br.add("H", []).name) if i == 0 else \
             br.add_null(f"n{i}", "random", like="H", seed=i)
@@ -336,7 +337,7 @@ def test_compact_branches_payload_sealed_in_sink(dbg, donor, tmp_path):
 
     run = dbg.run(P, name="big-sink", prefill=2)
     br = Branches(run, Margin(LAST, 3, 7), at="t2.L0.h",
-                  probes={f"p{i}": (lambda r: [0.125] * 40) for i in range(6)})
+                  probes={f"p{i}": (lambda r: [0.125] * 64) for i in range(16)})
     br.add("H", [])
     for i in range(24):
         br.add_null(f"n{i}", "random", like="H", seed=i)
@@ -350,5 +351,5 @@ def test_compact_branches_payload_sealed_in_sink(dbg, donor, tmp_path):
     import json
 
     measured = [a.result for a in br.arms.values() if a.result is not None]
-    assert len(full) == 25 and sorted(full[0]["probes"]) == [f"p{i}" for i in range(6)]
+    assert len(full) == 25 and sorted(full[0]["probes"]) == sorted(f"p{i}" for i in range(16))
     assert full == json.loads(json.dumps(measured))              # every arm's probe values

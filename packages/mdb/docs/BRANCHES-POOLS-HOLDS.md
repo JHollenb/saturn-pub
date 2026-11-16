@@ -94,7 +94,7 @@ A `TranscoderBasis` has the mwhanna layout that SAELens's `mwhanna_transcoder` l
 ```python
 dbg.custody(script=__file__, prereg="prereg.json", kernel_path="mdb-stepped")
 sink = dbg.records_to("out/records.jsonl")   # every record sealed from now on, any kind
-sink.records()                                # read back, each verified
+sink.records()                                # read back, each verified (v3 and v2 lines)
 ```
 
 While custody is declared, every sealed record gets `body.custody` = script and prereg sha256 (hashed when declared), library versions of what is imported (mdb, saturn_pub, torch, transformers, interop libraries) and the kernel path. This covers forecast, trace, watch-hits, circuit-map, supplied-forecast, branches, pool and core-file records. Undeclared, records are sealed exactly as before (REPL goldens and stored ids unchanged). `branches`, `pool` and `core-file` records always carry custody. A job payload can declare with no code change: any of `MDB_SCRIPT`, `MDB_PREREG`, `MDB_KERNEL_PATH` declares custody (an unreadable file raises on every seal, never once); `MDB_RECORDS` opens a sink.
@@ -102,6 +102,8 @@ While custody is declared, every sealed record gets `body.custody` = script and 
 Sink names. Several shards of one experiment that all open `records-<tag>.jsonl` and are collected into one directory would keep only the last shard's records, so names are unique per process. `dbg.records_to()` with no path writes `./records-<run>.jsonl`; a directory gives `<dir>/records-<run>.jsonl`; `{run}` in a name is replaced. `<run>` is `custody.run_tag()`: `MRUN_JOB_ID` when set, then the process start time and pid, so two shards or two steps of one job never share a file. An explicit file that already holds data and that this process did not open raises `FileExistsError` unless `append=True` (`MDB_RECORDS_APPEND=1` for the environment sink). Rerunning a driver into the same `out/records.jsonl` therefore needs `append=True`, a fresh directory or deleting the old file.
 
 Payloads in the sink. A record too large for one line keeps a sha256 pointer to its full payload (`bounded.put_json`). With no project store the pointer is `state: "absent"` (a compact `Branches.seal` record's `arms_payload`, a pool's values, a trace). While a sink is open, the payload's bytes are also written to the sink as one `{"mdb_payload": "mdb-payload-v1", "sha256", "bytes", "raw"}` line, so per-arm probe values are sealed in the file. `sink.load_json(record["body"]["arms_payload"])` reads it back sha256-checked; `sink.records()` skips payload lines; `records_to(..., payloads=False)` turns them off. A sink never changes a record or its id.
+
+Execution lines. A v3 record keeps the session's execution profile by sha256, so a sink writes the profile once, as one `{"mdb_execution": "mdb-execution-v1", "sha256", "execution"}` line before the first record that needs it; `sink.records()` uses those lines to return whole records, and `sink.executions()` returns them. To read a single line yourself use `records.load_record(line, execution=...)`; a plain `json.loads` gives the stored form. Format and migration of older sink files: [RECORDS.md](RECORDS.md).
 
 ## Small helpers
 
