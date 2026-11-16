@@ -2,6 +2,28 @@
 
 All notable changes to `mdb-runtime` (packages/mdb). The version number is set by the owner.
 
+## Unreleased (proposed 0.2.1; 0.3.0 if the owner counts the in-place-write refusal below as breaking)
+
+Stepping speedups from the 2026-11-14 architecture review (engine-dev), branch `mdb-step-speedups` from `mdb-v0.2.0`. Most of the change is in `saturn_pub` at the repo root, which mdb steps through. Trail fingerprints, receipts, record ids, tokens and logits are bit-identical to 0.2.0 on every case checked (tiny Qwen2/Qwen3 CPU in bf16 and fp32, `00-hello-tiny`, the test suites, Qwen2.5-1.5B and example 04 on the GPU host); evidence and numbers in `packages/mdb-experiments/results/step-speedups-20261115/`.
+
+### Changed (faster, same output)
+
+- A layer transition no longer re-hashes the K/V layers it did not write: `saturn_pub.values.describe_remembered` reuses a tensor's descriptor while the tensor object, version counter, data pointer, shape, stride, dtype and device are unchanged (the same guard the `shares_state` contract uses). `describe` and `StateCut.verify` never use it and always re-hash.
+- The finite check of the decoder state skips tensors it already found finite and that are unwritten since (same key).
+- The native `DynamicCache` holds the state's K/V tensors by reference (a plain `DynamicLayer` concatenates, never writes); sliding-window, offloaded or lazily appended cache layers are still filled by copy.
+- A grown K/V layer's chunks are version-guarded once, when they join (`_Appended.guard`), not re-walked by every cut; `held_bytes` visits each shared tensor and block form once; `each` records its per-item `bytes` with one walk (`Run.held_total()`, same value).
+- A session reuses its last seal when it seals the very same state object again with the same parent, slot descriptors, model identity and execution contract (`_record`, then `capture`, then the next `_head`); mappings with plain string keys are sorted without JSON-encoding each key (the same order: tested against the canonical sort).
+- The frozen-model guard compares a flat snapshot of the module tree (dict identities, item identities, tensor versions and pointers) in C-level passes, and falls back to the exact `_tensor_guards` comparison when anything differs.
+- `symbols.hop_edge` and `symbols.gate_switch_forecast` cast the float64 MLP weights one layer at a time instead of caching every layer's (the 17 GB peak on 1.5B); `cache=` now holds only `c . W_down` per layer and the spectral permutation. Same values (identical JSON on two configs).
+
+### Added
+
+- `lookahead="auto"` (opt-in): one full-layer probe serves every port of a layer while nothing is staged for it; with an edit or cell edit staged it stops at the cursor as `"none"`. `status()["computed_past_cursor"]` says which probe ran. The default stays `"none"`: `lookahead` and `computed_past_cursor` are fields of forecast records and recipes, so changing the default would change record ids and the forecast's sealed-before-native-code guarantee (owner decision).
+
+### Behaviour change
+
+- A hook or port controller that writes a non-pending K/V layer of the native cache in place now gets `InPlaceWrite` (and the session is poisoned until a restore), as for any other shared state tensor. Before, the write went to a private copy that the transition then took over as the new layer. Cell edits (`set_cell`) are copy-on-write and unaffected.
+
 ## [0.2.0] — 2026-11-14 (owner-approved version; on mdb-pre-release, not yet tagged or merged to main)
 
 Covers `main` (8c019ee, 2026-11-13) to `mdb-pre-release` (2026-11-14): the `mdb-engine-refactor` work of 2026-11-14 plus `claude/mdb-lanes-integration-20261114`. `pyproject.toml` and `mdb.__version__` are 0.2.0.

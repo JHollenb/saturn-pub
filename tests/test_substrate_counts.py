@@ -13,7 +13,6 @@ torch = pytest.importorskip("torch")
 pytest.importorskip("transformers")
 
 from saturn_pub import core, values  # noqa: E402
-from saturn_pub.adapters import decoder  # noqa: E402
 from saturn_pub.adapters.decoder import DecoderAdapter  # noqa: E402
 from saturn_pub.core import Session, StateCut  # noqa: E402
 from saturn_pub.values import describe, digest  # noqa: E402
@@ -27,7 +26,8 @@ def adapter():
 @pytest.fixture
 def counts(monkeypatch):
     seen: collections.Counter = collections.Counter()
-    clone, describe_, guards = values.clone, values.describe, decoder._tensor_guards
+    clone, hash_ = values.clone, values._describe_tensor
+    frozen = DecoderAdapter._verify_frozen_model
     check, boolean = DecoderAdapter.validate_state, torch.Tensor.__bool__
 
     def counted_clone(value):
@@ -35,14 +35,13 @@ def counts(monkeypatch):
             seen["state copies"] += 1
         return clone(value)
 
-    def counted_describe(value):
-        if values.tensor(value):
-            seen["tensor hashes"] += 1
-        return describe_(value)
+    def counted_hash(value):  # every tensor hash, through describe or describe_remembered
+        seen["tensor hashes"] += 1
+        return hash_(value)
 
-    def counted_guards(*args, **kwargs):
+    def counted_frozen(self):  # one frozen-model check (the fast snapshot or the exact walk)
         seen["frozen-model walks"] += 1
-        return guards(*args, **kwargs)
+        return frozen(self)
 
     def counted_check(self, state):
         seen["state validations"] += 1
@@ -53,9 +52,8 @@ def counts(monkeypatch):
         return boolean(self)
 
     monkeypatch.setattr(core, "clone", counted_clone)
-    monkeypatch.setattr(values, "describe", counted_describe)
-    monkeypatch.setattr(core, "describe", counted_describe)
-    monkeypatch.setattr(decoder, "_tensor_guards", counted_guards)
+    monkeypatch.setattr(values, "_describe_tensor", counted_hash)
+    monkeypatch.setattr(DecoderAdapter, "_verify_frozen_model", counted_frozen)
     monkeypatch.setattr(DecoderAdapter, "validate_state", counted_check)
     monkeypatch.setattr(torch.Tensor, "__bool__", counted_bool)
     return seen
@@ -103,8 +101,11 @@ def test_a_transition_hashes_each_slot_once_and_capture_after_it_hashes_nothing(
     session = _at_layer(adapter)
     counts.clear()
     receipt = session.continue_().to_dict()
-    after = _tensors(session._state)
-    assert counts["tensor hashes"] == after  # the new state's slots, each once
+    # the new tensors only, each once: the hidden carrier and the grown K and V of the layer;
+    # the other K/V layers are the very tensors the last seal described (remembered descriptors)
+    assert counts["tensor hashes"] == 3
+    new = [session._state["hidden"], session._state["keys"][1], session._state["values"][1]]
+    assert all(values.TENSOR_FACTS.get(t, "describe") is not None for t in new)
     assert counts["state copies"] == 0  # the transition reads the shared state, never writes it
     assert counts["state validations"] == 1
     assert counts["frozen-model walks"] == 2  # before (as capture did) and after the native call

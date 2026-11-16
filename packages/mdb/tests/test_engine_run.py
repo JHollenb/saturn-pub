@@ -924,8 +924,10 @@ def test_read_cache_reads_the_slot_without_hashing(adapter, mode, monkeypatch):
     small = list(sizes)
     assert len(small) == len(got) and max(small) < 1 << 16
     sizes.clear()
-    run.session.capture(retain=False)
-    assert max(sizes) > 4 * max(small)  # a capture does hash the state
+    run.session.capture(retain=False).verify()
+    # verify re-hashes the state (a capture of an already-sealed state reuses its seal and its
+    # remembered tensor descriptors since the stepping speedups, so it hashes no tensor)
+    assert max(sizes) > 4 * max(small)
     monkeypatch.undo()
     for (layer, kind), tensor in got.items():
         assert torch.equal(tensor, reference["keys" if kind == "k" else "values"][layer])

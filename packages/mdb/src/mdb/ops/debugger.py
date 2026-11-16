@@ -178,7 +178,8 @@ class Debugger:
         leaves it, at ``t<first stepped row>.L0.<first port>`` (this is the one implementation
         of ``start``). The session is built once, under that split.
 
-        ``lookahead`` (``"none"``, the engine default, or ``"layer"``) is passed to ``Run``.
+        ``lookahead`` (``"none"``, the engine default, ``"layer"`` or ``"auto"``) is passed to
+        ``Run``.
         ``name`` (a branch name, default ``main``) keeps the run in ``runs`` under that name,
         replacing an earlier run of the same name; other values can then name it as an origin.
         """

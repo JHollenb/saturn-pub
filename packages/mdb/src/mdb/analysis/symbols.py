@@ -56,6 +56,7 @@ records, one per page of at most ``PAGE`` bindings.
 
 from __future__ import annotations
 
+import hashlib
 import math
 import weakref
 from dataclasses import dataclass, field
@@ -407,8 +408,11 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     ``Delta a`` of every neuron is split over channel-DFT bins by Parseval and the top
     ``top_bins`` bins' share of the |effect|-weighted credit is reported against the same share
     under a random channel permutation and against the neuron basis at the same unit fraction.
-    ``cache``: a dict the caller keeps across calls on the same model; it holds the float64
-    gate/up/down weights, their channel rfft and the permutation per layer (values unchanged).
+    ``cache``: a dict the caller keeps across calls on the same model; it holds, per layer, the
+    consumer's ``c . W_down`` (keyed by the bytes of ``c``) and the spectral permutation. The
+    float64 gate/up weights (and their channel rfft) are cast for one layer at a time and
+    dropped before the next, so the float64 peak is one layer's matrices, not every layer's
+    (the same full-matrix float64 operations, so the same values).
     ``neurons=False``: the layer terms only (direct, captured MLP writes, re-reads, norm,
     rounding) from the two runs' ports; no MLP weight is read (no float64 weight copies), so the
     per-neuron split, ``exact``/``linear`` per layer and ``spectral`` are omitted.
@@ -442,19 +446,21 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     gen = torch.Generator().manual_seed(seed)
     cache = {} if cache is None else cache
 
-    def weights(layer, module):
-        key = ("w", layer)
+    c_key = hashlib.sha256(c.contiguous().numpy().tobytes()).hexdigest()
+
+    def consumer_down(layer, module):
+        """``c @ W_down`` (float64, full matrix), the only use of ``W_down`` here."""
+        key = ("cd", layer, c_key)
         if key not in cache:
-            cache[key] = (f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight),
-                          f64(module.mlp.down_proj.weight))
+            cache[key] = c @ f64(module.mlp.down_proj.weight)   # the cast is dropped here
         return cache[key]
 
     def spectra(layer, gate):
-        key = ("rfft", layer, seed)
+        key = ("perm", layer, seed)
         if key not in cache:
-            perm = torch.randperm(gate.shape[1], generator=gen)
-            cache[key] = (torch.fft.rfft(gate, dim=1), perm, torch.fft.rfft(gate[:, perm], dim=1))
-        return cache[key]
+            cache[key] = torch.randperm(gate.shape[1], generator=gen)
+        perm = cache[key]
+        return torch.fft.rfft(gate, dim=1), perm, torch.fft.rfft(gate[:, perm], dim=1)
     mlp, reread, closure_sum = [], [], direct + upstream
     for layer in range(cell_layer, end):
         module = layer_module(run.adapter, layer)
@@ -475,8 +481,8 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
         ds, db = s1 - s0, b1 - b0
         terms = torch.stack([b0 * ds, s0 * db, ds * db])           # (3, d_ff)
         df = terms.sum(0)
-        gate, up, down = weights(layer, module)
-        cd = c @ down                                               # (d_ff,)
+        gate, up = f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight)
+        cd = consumer_down(layer, module)                           # (d_ff,)
         effect = cd * df
         exact = float(effect.sum())
         captured = float(c @ (port(edited, layer, "m") - port(run, layer, "m")))
@@ -629,7 +635,7 @@ def gate_switch_forecast(run: Any, edited: Any, reader: Any, *, cell_layer: int,
         raise Refusal(f"cell layer {cell_layer} outside 0..{layers - 1}")
     c = f64(reader.vector).reshape(-1)
     t = reader.target
-    cache = {} if cache is None else cache
+    del cache  # accepted for compatibility; nothing is cached (float64 weights per layer)
 
     def port(r, layer, name):
         return f64(r.read(f"t{j}.L{layer}.{name}")).reshape(-1)
@@ -639,11 +645,9 @@ def gate_switch_forecast(run: Any, edited: Any, reader: Any, *, cell_layer: int,
         return float(f64(lg[t.a]) - f64(lg[t.b])) if isinstance(t, Margin) else float(f64(lg[t.i]))
 
     def weights(layer, module):
-        key = ("w", layer)
-        if key not in cache:
-            cache[key] = (f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight),
-                          f64(module.mlp.down_proj.weight))
-        return cache[key]
+        """This layer's float64 gate/up/down (cast per layer, never kept across layers)."""
+        return (f64(module.mlp.gate_proj.weight), f64(module.mlp.up_proj.weight),
+                f64(module.mlp.down_proj.weight))
 
     allowed = set(range(cell_layer, layers) if switch_layers is None else switch_layers)
     native_delta = margin(edited) - margin(run)

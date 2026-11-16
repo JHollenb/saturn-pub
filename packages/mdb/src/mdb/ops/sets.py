@@ -649,7 +649,7 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
     if isinstance(result.get("record"), str):
         row["record"] = result["record"]
     row["key"] = stats.key_columns(steps[-1].name, result)
-    row["bytes"] = int(local.run.held_bytes()["total"])
+    row["bytes"] = int(local.run.held_total())
     bound_args = {k: str(v) for k, v in calls[-1][1].items() if v != steps[-1].args.get(k)}
     if bound_args:
         row["bound"] = bound_args

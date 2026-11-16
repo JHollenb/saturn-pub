@@ -20,7 +20,7 @@ from .contracts import (
     SurfaceManifest,
     TransitionSpec,
 )
-from .values import clone, describe, describe_mapping, digest, tensor
+from .values import clone, describe, describe_mapping, describe_remembered, digest, tensor
 
 _OPERATION_REGISTRY: dict[tuple[str, str], tuple[str, Callable[..., Any], bool]] = {}
 
@@ -266,10 +266,27 @@ class _Appended:
     standard contiguous layout it was sealed with. A cut holds a grown cache tensor this way, so
     consecutive cuts share every block and each adds only the rows its transition appended."""
 
-    __slots__ = ("chunks", "dim")
+    __slots__ = ("chunks", "dim", "guard")
 
-    def __init__(self, chunks: tuple[Any, ...], dim: int):
+    def __init__(
+        self,
+        chunks: tuple[Any, ...],
+        dim: int,
+        guard: tuple[tuple[int, Any, int], ...] | None = None,
+    ):
         self.chunks, self.dim = chunks, dim
+        # ``(index, chunk, version)`` of every chunk that tracks in-place writes, recorded once
+        # when the chunk joins (a grown layer extends its prefix's guard by the new chunk), so
+        # a cut holding this block form is version-guarded without walking its chunks
+        self.guard = (
+            tuple(
+                (index, chunk, chunk._version)
+                for index, chunk in enumerate(chunks)
+                if _versioned(chunk)
+            )
+            if guard is None
+            else guard
+        )
 
     def materialize(self, *, register: bool) -> Any:
         """The tensor (a fresh one). ``register``: the caller (a Session hydrating its own state)
@@ -336,12 +353,14 @@ def seal_append(full: Any, base: Any, dim: int) -> bool:
     )
     known = _appended_of(base) if _versioned(base) else None
     if known is not None and known.dim == dim:
-        chunks = (*known.chunks, rest)
+        index = len(known.chunks)
+        guard = known.guard + (((index, rest, rest._version),) if _versioned(rest) else ())
+        compact = _Appended((*known.chunks, rest), dim, guard)
     elif count == 0:
-        chunks = (rest,)
+        compact = _Appended((rest,), dim)
     else:
-        chunks = (_share(base), rest)
-    _register_appended(full, _Appended(chunks, dim))
+        compact = _Appended((_share(base), rest), dim)
+    _register_appended(full, compact)
     return True
 
 
@@ -398,18 +417,36 @@ def _tensor_leaves(value: Any, path: str = "") -> list[tuple[str, Any]]:
 
 def held_bytes(*objects: Any) -> int:
     """Bytes of the distinct tensor storages that ``objects`` reference (StateCuts, Sessions,
-    states, mappings and sequences of them); a storage two of them share counts once."""
+    states, mappings and sequences of them); a storage two of them share counts once.
+
+    Each tensor object and each block form is visited once however many cuts share it
+    (consecutive cuts share every K/V layer a transition did not replace)."""
     storages: dict[Any, int] = {}
+    seen: set[int] = set()
 
     def walk(value: Any) -> None:
         if isinstance(value, StateCut):
             walk(value._payload)
         elif isinstance(value, Session):
             walk(value._state)
-        else:
-            for _, item in _tensor_leaves(value):
-                storage = item.untyped_storage()
-                storages[(str(item.device), storage.data_ptr())] = storage.nbytes()
+        elif tensor(value):
+            if id(value) in seen:
+                return
+            seen.add(id(value))
+            storage = value.untyped_storage()
+            storages[(str(value.device), storage.data_ptr())] = storage.nbytes()
+        elif isinstance(value, _Appended):
+            if id(value) in seen:
+                return
+            seen.add(id(value))
+            for chunk in value.chunks:
+                walk(chunk)
+        elif isinstance(value, Mapping):
+            for item in value.values():
+                walk(item)
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                walk(item)
 
     for item in objects:
         walk(item)
@@ -448,15 +485,40 @@ class InPlaceWrite(ValueError):
     """A tensor that a sealed cut or a transition's input state shares was written in place."""
 
 
-def _versions(value: Any) -> tuple[tuple[str, Any, int], ...]:
-    """``(path, tensor, version)`` of every tensor of ``value`` that tracks in-place writes."""
-    return tuple(
-        (path, item, item._version) for path, item in _tensor_leaves(value) if _versioned(item)
-    )
+def _versions(value: Any) -> tuple[tuple[str, Any, int | None], ...]:
+    """``(path, tensor, version)`` of every tensor of ``value`` that tracks in-place writes; a
+    block form is one ``(path, block form, None)`` entry, checked against the guard it recorded
+    for its chunks when they joined (``_Appended.guard``), so its chunks are not walked here."""
+    out: list[tuple[str, Any, int | None]] = []
+
+    def walk(item: Any, path: str) -> None:
+        if tensor(item):
+            if _versioned(item):
+                out.append((path, item, item._version))
+        elif isinstance(item, _Appended):
+            out.append((path, item, None))
+        elif isinstance(item, Mapping):
+            for key, child in item.items():
+                walk(child, f"{path}.{key}" if path else str(key))
+        elif isinstance(item, (list, tuple)):
+            for index, child in enumerate(item):
+                walk(child, f"{path}[{index}]")
+
+    walk(value, "")
+    return tuple(out)
 
 
-def _check_versions(recorded: tuple[tuple[str, Any, int], ...], what: str) -> None:
-    written = [path for path, item, version in recorded if item._version != version]
+def _check_versions(recorded: tuple[tuple[str, Any, int | None], ...], what: str) -> None:
+    written = []
+    for path, item, version in recorded:
+        if version is None:
+            written += [
+                f"{path}<{index}>"
+                for index, chunk, sealed in item.guard
+                if chunk._version != sealed
+            ]
+        elif item._version != version:
+            written.append(path)
     if written:
         raise InPlaceWrite(f"{what} was written in place: {', '.join(written)}")
 
@@ -1173,6 +1235,9 @@ class Session:
         ``slots`` (``{slot: describe(value)}`` known for these very values)."""
         if not execution_checked:
             self.adapter.validate_execution()
+        reused = self._sealed_again(state, parent, slots, state_checked)
+        if reused is not None:
+            return reused
         if not state_checked:
             _validate_state(self.adapter, state)
         surface = self.adapter.surface(state)
@@ -1182,7 +1247,7 @@ class Session:
         if "__saturn_external__" in state:
             raise ValueError("reserved external closure slot used by adapter")
         own = {
-            name: slots[name] if slots is not None and name in slots else describe(value)
+            name: slots[name] if slots is not None and name in slots else describe_remembered(value)
             for name, value in state.items()
         }
         payload, described = dict(state), dict(own)
@@ -1210,7 +1275,44 @@ class Session:
                 manifest,
             )
         )
-        return _Seal(payload, own, sealed, boundary, point, manifest, fingerprint)
+        seal = _Seal(payload, own, sealed, boundary, point, manifest, fingerprint)
+        if external is None:
+            self._last_seal = (
+                state,
+                parent,
+                own,
+                self.adapter.model_identity,
+                copy.deepcopy(dict(self.adapter.execution)),
+                seal,
+            )
+        return seal
+
+    def _sealed_again(
+        self,
+        state: Mapping[str, Any],
+        parent: str | None,
+        slots: Mapping[str, Any] | None,
+        state_checked: bool,
+    ) -> _Seal | None:
+        """The last seal of this session when it sealed this very state object (the session's
+        state is replaced, never written, and a cut's tensors are immutable) with the same
+        parent, from the slot descriptors that seal made, with the same model identity and
+        execution contract and no external closure: a transition is sealed by ``_record``,
+        then by ``capture`` and by the next call's ``_head``, all of one state. Checked
+        states only: a caller asking for the state checks gets them by sealing afresh."""
+        last = getattr(self, "_last_seal", None)
+        if (
+            last is None
+            or not state_checked
+            or last[0] is not state
+            or last[1] != parent
+            or last[2] is not slots
+            or last[3] != self.adapter.model_identity
+            or last[4] != self.adapter.execution
+            or self.adapter.capture_external() is not None
+        ):
+            return None
+        return last[5]._replace(payload=dict(last[5].payload))
 
     def _cut(
         self,
@@ -1532,7 +1634,7 @@ class Session:
                 changed = set(spec.writes + spec.invalidates)
                 preserved = (
                     {
-                        name: known[name] if name in known else describe(value)
+                        name: known[name] if name in known else describe_remembered(value)
                         for name, value in candidate.items()
                         if name not in changed
                     }
@@ -1549,7 +1651,9 @@ class Session:
                 )
                 known = {}
                 for name, expected in preserved.items():
-                    observed = describe(candidate[name]) if name in candidate else None
+                    observed = (
+                        describe_remembered(candidate[name]) if name in candidate else None
+                    )
                     if observed != expected:
                         raise ValueError(f"native transition changed undeclared slot: {name}")
                     known[name] = observed

@@ -11,8 +11,11 @@ split, so at a ``p`` stop the value mix ``A`` is computed natively as a by-produ
 (never held, checked or captured; ``status()["computed_past_cursor"]`` is ``["A"]`` there and
 ``[]`` elsewhere). ``"layer"`` runs one full-layer probe per layer and serves the ports from
 that capture cache, so the native code has already computed everything after the cursor:
-``status()["computed_past_cursor"]`` lists every such port. ``row_captures`` returns only ports
-at or before the cursor in both modes.
+``status()["computed_past_cursor"]`` lists every such port. ``"auto"`` (opt-in) is ``"layer"``
+while nothing is staged for the pending layer (one probe serves every port of it: about 3x
+fewer layer calls when walking ports) and ``"none"`` once an edit or a cell edit is staged;
+``computed_past_cursor`` reports which probe ran. ``row_captures`` returns only ports at or
+before the cursor in every mode.
 
 Stops of one token row, in order: ``start`` (before the embedding), ``emb``, then
 ``L<i>.<port>`` for every layer and port (``L<i>.h_out`` is the committed layer boundary),
@@ -37,7 +40,7 @@ from .ports import PortController, PortEdit, check_deterministic, program_for, t
 
 GLOBAL_STOPS = ("start", "emb", "fn", "logits", "sample")
 CHECKPOINT_SCHEMA = "mdb-engine-checkpoint-v1"
-LOOKAHEADS = ("none", "layer")
+LOOKAHEADS = ("none", "layer", "auto")
 # Full-layer probes of committed, unedited layers kept for reads. One entry is one row's ports
 # of one layer (about 85 KB + 48 bytes per token row at d=1536, d_ff=8960, bf16), so a whole
 # 28-layer row costs a few MB; analysis verbs walk every layer of a row more than once.
@@ -359,10 +362,12 @@ class Run:
     def _computed_past_cursor(self) -> list[str]:
         """Ports after the cursor port whose value the native code has already computed:
         ``["A"]`` at a ``p`` stop in ``"none"`` mode (the eager call cannot be split), every
-        later port of the cached full-layer probe in ``"layer"`` mode."""
+        later port of the cached full-layer probe in ``"layer"`` mode, and in ``"auto"`` mode
+        whichever of the two its probe was."""
         if self._port is None:
             return []
-        if self.lookahead == "none":
+        if self.lookahead == "none" or (
+                self.lookahead == "auto" and (self._cache is None or self._cache.stop is not None)):
             return ["A"] if self._port == "p" else []
         if self._cache is None:
             return []
@@ -554,15 +559,20 @@ class Run:
 
         ``lookahead="layer"``: one full-layer probe. ``"none"``: a probe that stops at ``port``
         and captures only ports up to it; with no cursor port yet (``port`` is None and the
-        cursor is at a boundary) there is nothing to hold.
+        cursor is at a boundary) there is nothing to hold. ``"auto"``: ``"layer"`` while no
+        edit or cell edit is staged for the pending layer (one probe serves every port of it),
+        ``"none"`` once one is; ``status()["computed_past_cursor"]`` says which ran.
         """
         layer = self.pending_layer
         if layer is None:
             raise ValueError(f"no pending decoder layer at {self.where}")
         self._sync_holds()
         port = self._port if port is None else port
-        if self.lookahead == "layer":
-            if self._cache is None:
+        full = self.lookahead == "layer" or (
+            self.lookahead == "auto" and port is not None and not self._edits
+            and not self._cells)
+        if full:
+            if self._cache is None or self._cache.stop is not None:
                 controller = self._controller(layer, self._edits, self._cells)
                 if self._probe(self.session, controller)["stopped"]:
                     raise RuntimeError("full-layer probe stopped unexpectedly")
@@ -933,12 +943,7 @@ class Run:
         and a grown K/V layer is held as its appended rows), ``state`` (the live session),
         ``reads`` (the committed-read cache and the hydrated Session), ``edits`` (held edit
         values and masks) and ``total`` (their union)."""
-        cuts = [mark.cut for mark in self._trail if mark.cut is not None]
-        reads = [captures for controller in self._reads.values()
-                 for captures in (controller.captures, controller.originals)]
-        if self._hydrated is not None:
-            reads.append(self._hydrated[1])
-        edits = [self._values, self._masks]
+        cuts, reads, edits = self._held_parts()
         return {
             "trail": held_bytes(*cuts),
             "state": held_bytes(self.session),
@@ -947,6 +952,19 @@ class Run:
             "total": held_bytes(*cuts, self.session, *reads, *edits),
             "marks": len(self._trail),
         }
+
+    def held_total(self) -> int:
+        """``held_bytes()["total"]`` with one walk (what ``each`` records per item)."""
+        cuts, reads, edits = self._held_parts()
+        return held_bytes(*cuts, self.session, *reads, *edits)
+
+    def _held_parts(self) -> tuple[list[Any], list[Any], list[Any]]:
+        cuts = [mark.cut for mark in self._trail if mark.cut is not None]
+        reads = [captures for controller in self._reads.values()
+                 for captures in (controller.captures, controller.originals)]
+        if self._hydrated is not None:
+            reads.append(self._hydrated[1])
+        return cuts, reads, [self._values, self._masks]
 
     def _layer_mark(self, key: tuple[int, int]) -> tuple[int, str] | None:
         """(trail index, port) of a ``L<i>.<port>`` stop whose layer transition was committed."""

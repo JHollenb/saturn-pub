@@ -13,6 +13,7 @@ declared per family and refused fail-closed when a config is outside the registe
 from __future__ import annotations
 
 import inspect
+import operator
 import platform
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -21,6 +22,7 @@ from typing import Any
 import torch
 import transformers
 from transformers import DynamicCache
+from transformers.cache_utils import DynamicLayer
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session, seal_append
@@ -30,7 +32,7 @@ from ..numerics import (
     measure_accumulation,
     needs_accumulation_measurement,
 )
-from ..values import clone, digest, identity
+from ..values import TENSOR_FACTS, clone, digest, identity
 from ._residency import BlockResidency
 
 
@@ -54,6 +56,77 @@ def _tensor_guards(module: Any, *, prefix: str = "") -> tuple[tuple[Any, ...], .
         )
         for name, value in (*module.named_parameters(), *module.named_buffers())
     )
+
+
+class _FrozenSnapshot:
+    """A flat record of a module tree's structure and tensors, to re-check the frozen-model
+    guard (``_tensor_guards`` unchanged) without the named walk, in C-level passes: every
+    module's parameter, buffer and submodule dicts must be the same dict objects holding the
+    same ``(name, object)`` items (the snapshot keeps the objects alive, so identity is
+    meaningful), and every tensor must keep its version counter and pointers. Any difference
+    (or a comparison that cannot be made) is reported as a change; the caller then falls back
+    to the exact ``_tensor_guards`` comparison, which decides."""
+
+    __slots__ = ("root", "modules", "tables", "items", "tensors", "marks")
+
+    _GETTERS = tuple(
+        operator.attrgetter(name)
+        for name in ("_parameters", "_buffers", "_modules")
+    )
+
+    def __init__(self, module: Any):
+        self.root = module
+        modules: list[Any] = []
+        stack, seen = [module], set()
+        while stack:
+            current = stack.pop()
+            if id(current) in seen:
+                continue
+            seen.add(id(current))
+            modules.append(current)
+            stack.extend(child for child in current._modules.values() if child is not None)
+        self.modules = tuple(modules)
+        self.tables = self._tables()
+        self.items = self._items(self.tables)
+        self.tensors = tuple(
+            value
+            for module in modules
+            for table in (module._parameters, module._buffers)
+            for value in table.values()
+            if value is not None
+        )
+        self.marks = self._marks()
+
+    def _tables(self) -> list[Any]:
+        tables: list[Any] = []
+        for getter in self._GETTERS:
+            tables += map(getter, self.modules)
+        return tables
+
+    @staticmethod
+    def _items(tables: list[Any]) -> list[tuple[Any, ...]]:
+        return list(map(tuple, map(dict.items, tables)))
+
+    def _marks(self) -> tuple[list[int], list[int], list[int]]:
+        tensors = self.tensors
+        return (
+            [t._version for t in tensors],
+            list(map(torch.Tensor.data_ptr, tensors)),
+            [t.untyped_storage().data_ptr() for t in tensors],
+        )
+
+    def holds(self) -> bool:
+        tables = self._tables()
+        if not all(map(operator.is_, tables, self.tables)):
+            return False
+        try:
+            # tuple equality tries identity first; a replaced tensor makes Tensor.__eq__ run,
+            # which is a difference either way (False, or an exception for a multi-element one)
+            if self._items(tables) != self.items:
+                return False
+        except Exception:
+            return False
+        return self._marks() == self.marks
 
 
 def _require(condition: bool, message: str) -> None:
@@ -610,6 +683,7 @@ class DecoderAdapter(Adapter):
         self._configuration_fingerprint = digest(stable)
         self.model_identity = identity(model, stable)
         self._frozen_versions = _tensor_guards(model)
+        self._frozen_snapshot = _FrozenSnapshot(model)
         self._layer_forward_kwargs = _accepts_kwargs(self._layer_modules[0].forward)
         parity = "bounded-logits-moe" if spec.moe else "bounded-logits"
         self.execution = {
@@ -733,11 +807,16 @@ class DecoderAdapter(Adapter):
     # --- frozen-model guards (identical policy to QwenAdapter) --------------------------
 
     def _verify_frozen_model(self) -> None:
+        snapshot = getattr(self, "_frozen_snapshot", None)
+        if snapshot is not None and snapshot.root is self.model and snapshot.holds():
+            return  # same structure, same tensor objects, versions and pointers
         if _tensor_guards(self.model) != self._frozen_versions:
             raise ValueError(
                 "model parameters or buffers changed after adapter identity was frozen; "
                 "rewrap the model in a new adapter"
             )
+        # a structural change the exact guard does not see (a parameter-free submodule, say)
+        self._frozen_snapshot = _FrozenSnapshot(self.model)
 
     def validate_execution(self) -> None:
         self._verify_frozen_model()
@@ -753,12 +832,30 @@ class DecoderAdapter(Adapter):
     # --- external key/value cache -------------------------------------------------------
 
     def _cache(self, keys: Sequence[torch.Tensor], values: Sequence[torch.Tensor]) -> DynamicCache:
-        """A native cache holding copies of ``keys``/``values`` (``DynamicCache.update`` copies:
-        the native layer and its hooks never see the state's own tensors)."""
+        """A native cache over ``keys``/``values``, held by reference: a plain ``DynamicLayer``
+        never writes its tensors (its ``update`` concatenates into a new tensor), cell edits
+        replace a layer tensor by an edited copy, and ``Session._advance_guarded`` refuses
+        (``InPlaceWrite``) a transition that wrote a state tensor in place anyway, so the
+        native layer gets the state's own K/V without a copy of every layer per transition.
+        Any other layer kind (sliding window, offloaded, lazily appended) is filled through
+        ``DynamicCache.update`` as before, which copies."""
         cache = DynamicCache(config=self.model.config)
+        offloading = getattr(cache, "offloading", False)
         for index, (key, value) in enumerate(zip(keys, values)):
             if key.shape[-2]:
-                cache.update(key.to(self.device), value.to(self.device), index)
+                key, value = key.to(self.device), value.to(self.device)
+                layer = cache.layers[index] if index < len(cache.layers) else None
+                if (
+                    type(layer) is DynamicLayer
+                    and not offloading
+                    and not layer.is_initialized
+                    and not key.is_inference()
+                    and not value.is_inference()
+                ):
+                    layer.lazy_initialization(key, value)
+                    layer.keys, layer.values = key, value
+                else:
+                    cache.update(key, value, index)
         return cache
 
     @staticmethod
@@ -1187,9 +1284,16 @@ class DecoderAdapter(Adapter):
         a tensor on the execution device (the per-tensor checks then decide, and name it)."""
         if not all(isinstance(t, torch.Tensor) and t.device == self.device for t in tensors):
             return None
-        if not tensors:
+        # a tensor checked finite before and unwritten since (same object and version counter:
+        # the shares_state guard) is not checked again: a layer transition writes one K/V layer
+        fresh = [t for t in tensors if TENSOR_FACTS.get(t, "finite") is not True]
+        if not fresh:
             return True
-        return bool(torch.stack([torch.isfinite(t).all() for t in tensors]).all())
+        finite = bool(torch.stack([torch.isfinite(t).all() for t in fresh]).all())
+        if finite:
+            for t in fresh:
+                TENSOR_FACTS.put(t, "finite", True)
+        return finite
 
     def validate_state(self, state: Mapping[str, Any]) -> None:
         """``validate`` without the frozen-model check, which ``validate_execution`` makes.
