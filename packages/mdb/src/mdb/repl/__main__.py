@@ -83,7 +83,7 @@ def main(argv: list[str] | None = None) -> int:
     from mdb.core.locate import parse_target
 
     parser = argparse.ArgumentParser(
-        prog="python -m mdb.repl", description="gdb-style port-level model debugger",
+        prog="mdb engine", description="gdb-style port-level model debugger",
         epilog="Defaults come from mdb.toml / ~/.config/mdb/config.toml and MDB_* variables "
                "(mdb config show; docs/CONFIG.md).")
     parser.add_argument("target", nargs="?", metavar="MODEL",

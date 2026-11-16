@@ -48,7 +48,11 @@ def main(argv=None):
     from ..core.locate import parse_target
 
     parser = argparse.ArgumentParser(
-        prog="mdb serve", description=__doc__.splitlines()[0],
+        prog="mdb serve",
+        description="Web viewer of a recorded project. With --tiny or --model it also holds a "
+                    "live debugger that the web app steps (live mode executes model code and "
+                    "accepts edits). Binds loopback only unless --allow-remote is given; "
+                    "there is no authentication.",
         epilog="Defaults come from mdb.toml / ~/.config/mdb/config.toml and MDB_* variables "
                "(mdb config show; docs/CONFIG.md).")
     parser.add_argument("--project", type=Path,
