@@ -254,3 +254,50 @@ def test_feed_from_a_sample_stop_replaces_the_greedy_decision(dbg):
     run.reverse_step("token", 1)
     assert run.where == "t4.start" and run.supplied_tokens() == {}
     assert run.restore(ck) == "t5.start"
+
+
+# --------------------------------------------------------------------------- span_mask
+
+
+def _masked_fresh(dbg, seq, n, cols, rows):
+    """Independent reference: one cache-free forward of ``seq`` with query ``rows`` barred from
+    ``cols`` by a 4D additive mask (softmax renormalises)."""
+    model = dbg.run(seq).adapter.model
+    T = len(seq)
+    neg = torch.finfo(torch.float32).min
+    m = torch.triu(torch.full((T, T), neg), 1)
+    for r in rows:
+        m[r, list(cols)] = neg
+    with torch.no_grad():
+        h = model.model(input_ids=torch.tensor([seq]), attention_mask=m[None, None]).last_hidden_state[0, -1]
+    return (h @ model.lm_head.weight[LETTERS].T).double()
+
+
+def test_span_mask_matches_references(dbg):
+    run = dbg.run(IDS)
+    spans = {"a": [16, 17, 18], "b": [3, 4], "c": [0]}
+    tr = probe.span_mask(run, spans, SUFFIX, letters=LETTERS, X="A", batch=2)
+    assert tr.meta["null_max_abs"] < 1e-5 and tr.meta["fresh_max_abs"] < 1e-5
+    seq = IDS + SUFFIX
+    T = len(IDS)
+    for rec in tr.records:
+        cols = spans[rec["step"]]
+        want = _masked_fresh(dbg, seq, T, cols, range(T, T + len(SUFFIX)))
+        assert (torch.tensor(rec["letters"]["mask"]).double() - want).abs().max() < 1e-4
+        want_last = _masked_fresh(dbg, seq, T, cols, [T + len(SUFFIX) - 1])
+        assert (torch.tensor(rec["letters"]["mask_last"]).double() - want_last).abs().max() < 1e-4
+    # one-token suffix: zero == mdb's stepped p-zero of the answer row
+    tr1 = probe.span_mask(run, spans, SUFFIX[:1], letters=LETTERS, X="A", modes=("zero",))
+    for rec in tr1.records:
+        want = _stepped(dbg, IDS + SUFFIX[:1], spans[rec["step"]])
+        assert (torch.tensor(rec["letters"]["zero"]).double() - want).abs().max() < 1e-4
+    masses = [r["vw_mass"] for r in tr.records]
+    assert all(0 <= m <= 1 for m in masses)
+
+
+def test_suffix_sweep_without_hint_binding(dbg):
+    run = dbg.run(IDS)
+    tr = probe.suffix_sweep(run, [0, 7, 14], SUFFIX, n_prompt=N_PROMPT,
+                            bindings={"sink": [0], "prompt": list(range(1, N_PROMPT))},
+                            letters=LETTERS, X="A", arms=("native",))
+    assert [r["step"] for r in tr.records] == [0, 7, 14]

@@ -63,13 +63,13 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
         raise Refusal("a probe needs a suffix of at least one token")
     binds = {b: sorted(int(r) for r in rows) for b, rows in bindings.items()}
     _check_partition(binds, n_prompt)
-    if hint not in binds or not binds[hint]:
+    if ("M2" in arms or "M3" in arms) and (hint not in binds or not binds[hint]):
         raise Refusal(f"no {hint!r} binding to ablate")
     device = next(model.parameters()).device
     H, G, dh = head_groups(run)
     per = H // G
     S = len(suffix)
-    hint_index = torch.as_tensor(binds[hint], device=device)
+    hint_index = torch.as_tensor(binds.get(hint, []), device=device, dtype=torch.long)
     t0 = time.time()
     with torch.no_grad():
         cache = base(input_ids=torch.tensor([tokens[: n_prompt + steps[0]]], device=device),
@@ -219,4 +219,163 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
     return Trace("probe", records, meta)
 
 
-__all__ = ["ARMS", "LETTERS", "suffix_sweep"]
+SPAN_MODES = ("mask", "zero", "mask_last")
+
+
+def span_mask(run: Any, spans: dict[str, list[int]], suffix: list[int], *, letters: Any, X: str,
+              modes: tuple[str, ...] = SPAN_MODES, batch: int = 32,
+              fresh_check: bool = True) -> Trace:
+    """Answer-step span masking over a stored sequence, all arms batched.
+
+    The answer step is ``run.tokens + suffix``; its answer row is the last suffix row. The
+    prefix cache of ``run.tokens`` is built once; every (span, mode) arm then runs only the
+    suffix, ``batch`` arms per forward, against a batch copy of that cache. Modes, at every
+    layer and head (measured, letter logits ``W[ids] . h`` at the answer row):
+
+    * ``mask``: every suffix row's attention scores on the span's rows set to the dtype minimum
+      before the softmax (the weights renormalise over the other columns);
+    * ``zero``: every suffix row's weights on the span's rows zeroed after the softmax, no
+      renormalisation (= the span's V cells zeroed in the batch copy);
+    * ``mask_last``: ``mask`` for the answer row only (earlier suffix rows read natively).
+
+    Native answer row (one hooked pass): per span ``mass`` (sum over layers and heads of the
+    attention weight, divided by layers x heads) and ``vw_mass`` (sum of ``p[h, s] * ||W_O,h
+    v_s||`` over layers, heads and the span's rows, divided by the same sum over all columns:
+    the value-weighted read share). ``margin`` is ``logit[X] - max other letter``; ``delta`` per
+    mode is ``native margin - arm margin`` (positive: the span supported ``X``). A null arm (no
+    rows masked) checks the batched path (``null_max_abs``); ``fresh_check`` compares the native
+    letters with one cache-free forward of the whole sequence (``fresh_max_abs``).
+    """
+    import copy
+
+    import torch
+
+    from mdb.engine.ports import check_deterministic
+
+    model = run.adapter.model
+    check_deterministic(model)
+    base, layers, _ = decoder_parts(run)
+    ids, names = letter_setup(run, letters, X, None)
+    xi = names.index(X)
+    bad = [m for m in modes if m not in SPAN_MODES]
+    if bad or not modes:
+        raise Refusal(f"modes are a non-empty subset of {', '.join(SPAN_MODES)}")
+    tokens = list(run.tokens)
+    T, S = len(tokens), len(suffix)
+    if not S:
+        raise Refusal("the answer step needs a suffix of at least one token")
+    spans = {str(n): sorted({int(r) for r in rows}) for n, rows in spans.items()}
+    for n, rows in spans.items():
+        if not rows or rows[0] < 0 or rows[-1] >= T:
+            raise Refusal(f"span {n} must name rows in 0..{T - 1}")
+    device = next(model.parameters()).device
+    dtype = next(model.parameters()).dtype
+    neg = torch.finfo(dtype).min
+    H, G, dh = head_groups(run)
+    per = H // G
+    L = len(layers)
+    t0 = time.time()
+
+    def margin_of(lg: Any) -> float:
+        others = [float(lg[j]) for j in range(len(names)) if j != xi]
+        return float(lg[xi]) - max(others)
+
+    pos = torch.arange(T, T + S, device=device)
+    with torch.no_grad():
+        cache = base(input_ids=torch.tensor([tokens], device=device), use_cache=True).past_key_values
+        caps: dict[int, Any] = {}
+        hooks = []
+        try:
+            for li, layer in enumerate(layers):
+                hooks.append(layer.self_attn.register_forward_hook(
+                    lambda m, i, o, li=li: caps.__setitem__(li, o[1][0, :, -1, :].double())))
+            h = base(input_ids=torch.tensor([suffix], device=device), past_key_values=cache,
+                     position_ids=pos[None], use_cache=True).last_hidden_state[0, -1]
+        finally:
+            for hook in hooks:
+                hook.remove()
+        if len(caps) != L or any(c is None for c in caps.values()):
+            raise Refusal("the attention modules returned no weights (eager attention needed)")
+        native = letter_logits(run, h[None], ids)[0]
+        cols = T + S
+        vw = torch.zeros(cols, dtype=torch.float64, device=device)
+        mass = torch.zeros(cols, dtype=torch.float64, device=device)
+        for li, layer in enumerate(layers):
+            v = cache.layers[li].values[0]                              # (G, cols, dh)
+            wo = layer.self_attn.o_proj.weight                          # (hidden, H * dh)
+            p = caps.pop(li)                                            # (H, cols)
+            for hh in range(H):
+                w = wo[:, hh * dh:(hh + 1) * dh].double()               # slice, then cast once
+                gram = w.T @ w
+                vg = v[hh // per].double()
+                norms = torch.einsum("cd,de,ce->c", vg, gram, vg).clamp_min(0).sqrt()
+                vw.add_(p[hh] * norms)
+                mass.add_(p[hh])
+                del w, gram, vg, norms
+        vw_total = float(vw.sum())
+        cache.crop(T)
+        t_native = time.time() - t0
+
+        arms = [(n, m) for n in spans for m in modes] + [(None, "null")]
+        causal = torch.zeros(S, T + S, dtype=dtype, device=device)
+        ii = torch.arange(S, device=device)
+        causal[:, T:] = torch.where(ii[None, :] <= ii[:, None], 0.0, neg)
+        results: dict[tuple, Any] = {}
+        for a in range(0, len(arms), batch):
+            sel = arms[a:a + batch]
+            B = len(sel)
+            bc = copy.deepcopy(cache)
+            for layer in bc.layers:
+                layer.keys = layer.keys.repeat(B, 1, 1, 1)
+                layer.values = layer.values.repeat(B, 1, 1, 1)
+            mask = causal[None, None].repeat(B, 1, 1, 1)
+            for b, (n, m) in enumerate(sel):
+                if n is None:
+                    continue
+                index = torch.as_tensor(spans[n], device=device)
+                if m == "mask":
+                    mask[b, 0][:, index] = neg
+                elif m == "mask_last":
+                    mask[b, 0, S - 1, index] = neg
+                else:
+                    for layer in bc.layers:
+                        layer.values[b, :, index] = 0
+            out = base(input_ids=torch.tensor([suffix] * B, device=device), past_key_values=bc,
+                       attention_mask=mask, position_ids=pos[None].expand(B, S), use_cache=True)
+            lg = letter_logits(run, out.last_hidden_state[:, -1], ids)
+            for b, arm in enumerate(sel):
+                results[arm] = lg[b]
+            del bc, out, mask, lg
+        null = results.pop((None, "null"))
+        fresh = None
+        if fresh_check:
+            hf = base(input_ids=torch.tensor([tokens + list(suffix)], device=device)).last_hidden_state[0, -1]
+            fresh = float((letter_logits(run, hf[None], ids)[0] - native).abs().max())
+    del cache
+    nm = margin_of(native)
+    records = []
+    for n, rows in spans.items():
+        lgs = {m: results[(n, m)] for m in modes}
+        records.append({
+            "step": n, "rows": len(rows), "first_row": rows[0], "last_row": rows[-1],
+            "letters": {m: [float(x) for x in lg] for m, lg in lgs.items()},
+            "margin": {m: margin_of(lg) for m, lg in lgs.items()},
+            "delta": {m: nm - margin_of(lg) for m, lg in lgs.items()},
+            "argmax": {m: names[int(lg.argmax())] for m, lg in lgs.items()},
+            "mass": float(mass[rows].sum()) / (L * H),
+            "vw_mass": (float(vw[rows].sum()) / vw_total) if vw_total else None,
+        })
+    meta = {
+        "verb": "span_mask", "T": T, "suffix": list(suffix), "X": X, "letters": ids,
+        "letter_names": names, "modes": list(modes), "batch": batch,
+        "native_letters": [float(x) for x in native], "native_margin": nm,
+        "native_argmax": names[int(native.argmax())],
+        "null_max_abs": float((null - native).abs().max()), "fresh_max_abs": fresh,
+        "labels": {"letters": "measured", "margin": "measured", "delta": "measured",
+                   "mass": "measured", "vw_mass": "measured"},
+        "seconds": {"native": round(t_native, 3), "total": round(time.time() - t0, 3)},
+    }
+    return Trace("span_mask", records, meta)
+
+
+__all__ = ["ARMS", "LETTERS", "SPAN_MODES", "span_mask", "suffix_sweep"]
