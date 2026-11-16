@@ -326,3 +326,73 @@ def test_command_publication_matches_per_token_and_publishes_once(model, tmp_pat
 def test_command_publication_requires_journal(model, tmp_path):
     with pytest.raises(BenchError, match="journal"):
         bench(model, tmp_path / "s", command_publication=True, publication_mode="legacy")
+
+
+def _reload_every_cut(model, root, rows, tokens):
+    """Resume from disk only, then restore every per-token cut and continue one token."""
+    b = BenchSession.resume(model, root=root)
+    for k, row in enumerate(rows, start=1):
+        b.restore(row["cut"])
+        assert b.cursor()["token"] == k
+        assert b.branch.token_ids == [1, 2, 3] + tokens[:k]
+        if k < len(rows):
+            nxt = b.step()
+            assert (nxt["token_id"], nxt["logits_sha256"]) == (rows[k]["token_id"], rows[k]["logits_sha256"])
+    b.close()
+
+
+@pytest.mark.parametrize("mode", [False, True])
+def test_every_token_cut_reloadable_after_call(model, tmp_path, mode):
+    b = bench(model, tmp_path / "s", command_publication=mode)
+    b.prefill([1, 2, 3])
+    rows = b.generate(4)
+    tokens = [r["token_id"] for r in rows]
+    root = b.root
+    b.close()
+    _reload_every_cut(model, root, rows, tokens)
+
+
+def _fsyncs_during(monkeypatch, fn):
+    import os
+    calls = []
+    real = os.fsync
+    monkeypatch.setattr(os, "fsync", lambda fd: (calls.append(fd), real(fd))[1])
+    try:
+        fn()
+    finally:
+        monkeypatch.setattr(os, "fsync", real)
+    return len(calls)
+
+
+def test_default_publication_fsyncs_once_per_call_and_opt_out_restores_per_token(model, tmp_path, monkeypatch):
+    counts = {}
+    for label, kwargs in (("default", {}), ("token", {"command_publication": False})):
+        b = bench(model, tmp_path / label, **kwargs)
+        b.prefill([1, 2, 3])
+        counts[label] = {}
+        for n in (2, 6):
+            before = b.publication.stats["commits"]
+            counts[label][n] = _fsyncs_during(monkeypatch, lambda: b.generate(n))
+            counts[label][f"commits{n}"] = b.publication.stats["commits"] - before
+        b.close()
+    # O(1) per call: independent of the token count, one commit.
+    assert counts["default"][2] == counts["default"][6] <= 4
+    assert counts["default"]["commits2"] == counts["default"]["commits6"] == 1
+    # Opt-out is the old behaviour: one commit and its fsyncs per token.
+    assert counts["token"]["commits2"] == 2 and counts["token"]["commits6"] == 6
+    assert counts["token"][6] > 2 * counts["default"][6]
+    assert counts["token"][6] > counts["token"][2]
+
+
+def test_default_is_command_publication_and_resume_opt_out(model, tmp_path):
+    b = bench(model, tmp_path / "s")
+    b.prefill([1, 2, 3]); b.close()
+    on = BenchSession.resume(model, root=tmp_path / "s")
+    assert on._command_publication_enabled()
+    before = on.publication.stats["commits"]; on.generate(3)
+    assert on.publication.stats["commits"] - before == 1
+    on.close()
+    off = BenchSession.resume(model, root=tmp_path / "s", command_publication=False)
+    before = off.publication.stats["commits"]; off.generate(3)
+    assert off.publication.stats["commits"] - before == 3
+    off.close()

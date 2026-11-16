@@ -49,7 +49,7 @@ def _serialized(method):
             self._check()
             outer = self._serialization_depth == 0
             batch = (outer and method.__name__ in {"step", "generate"}
-                     and (getattr(self, "command_publication", False)
+                     and (self._command_publication_enabled()
                           or self._optimized_capture()))
             self._serialization_depth += 1
             try:
@@ -154,22 +154,32 @@ class QwenBenchSession:
                       revision="local", model_sha256=None, session_id="bench",
                       lane="virtual", attention_backend=None, resident_kv_bytes=64 << 20,
                       continuation_capacity=128, publication_mode="journal",
-                      command_publication=False):
-        """``command_publication=True`` publishes once per step/generate call instead of
-        once per token cut: the cuts inside one call are staged and the durable selected
-        pointer advances when the call returns (all-or-nothing, the existing
-        ``_command_publication`` path that managed frozen-reader sessions already use).
-        Default False keeps per-token durability."""
+                      command_publication=None):
+        """Journal-mode sessions publish once per step/generate call (default): every token
+        cut is still written as its own immutable artifact and carried in the call's single
+        sealed pack, so each cut stays restorable by ref, but the durable ``selected.json``
+        pointer (and its fsyncs) advance once when the call returns. The call is
+        all-or-nothing: a failure rolls back to the pre-call state. A crash mid-call loses the
+        whole call, not individual tokens.
+        ``command_publication=False`` restores the old one-durable-commit-per-token behaviour;
+        ``True`` on a non-journal session is an error, ``None`` means "journal only"."""
         if (Path(root)/"selected.json").exists():
             raise BenchError("session already exists; use BenchSession.resume")
-        if command_publication and publication_mode != "journal":
+        if command_publication is True and publication_mode != "journal":
             raise BenchError("command publication requires journal publication mode")
         session = cls(model, tokenizer, root=root, model_id=model_id, revision=revision,
                    model_sha256=model_sha256, session_id=session_id, lane=lane,
                    attention_backend=attention_backend, resident_kv_bytes=resident_kv_bytes,
                    continuation_capacity=continuation_capacity, publication_mode=publication_mode)
-        session.command_publication = bool(command_publication)
+        session.command_publication = None if command_publication is None else bool(command_publication)
         return session
+
+    command_publication = None
+
+    def _command_publication_enabled(self):
+        if self.command_publication is None:
+            return self.publication.mode == "journal"
+        return bool(self.command_publication)
 
     def __init__(self, model, tokenizer, *, root, model_id, revision, model_sha256,
                  session_id, lane, attention_backend, resident_kv_bytes, continuation_capacity,
@@ -1222,7 +1232,7 @@ class QwenBenchSession:
 
     @classmethod
     def resume(cls, model, tokenizer=None, *, root, model_sha256=None, _writer=None, _manifest=None,
-               lazy_branches=False):
+               lazy_branches=False, command_publication=None):
         root = Path(root)
         if _writer is None: _writer, selected = recover_locked(root)
         else: selected = json.loads((root/"selected.json").read_text())
@@ -1236,6 +1246,7 @@ class QwenBenchSession:
         if result.identity != manifest["identity"]:
             result._writer.close()
             raise BenchError("resume model/tokenizer identity mismatch")
+        result.command_publication = None if command_publication is None else bool(command_publication)
         result.cuts, result.events = manifest["cuts"], manifest["events"]
         result.vm.memory_events = list(manifest.get("vm_events", []))
         for name, branch in manifest["branches"].items():

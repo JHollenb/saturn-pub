@@ -51,7 +51,8 @@ class BenchSession:
 
     @classmethod
     def resume(cls, model, tokenizer=None, *, root, model_sha256=None, family=None,
-               legacy_numerical_environment=None, _adapter=None, lazy_branches=False):
+               legacy_numerical_environment=None, _adapter=None, lazy_branches=False,
+               command_publication=None):
         resolved = resident_family(model, family)
         path = Path(root)
         writer, selected = recover_locked(path)
@@ -63,7 +64,8 @@ class BenchSession:
                 if resolved != "qwen2": raise BenchError("Qwen v1 manifest requires a Qwen2 resident")
                 from .bench_qwen import QwenBenchSession
                 return QwenBenchSession.resume(model, tokenizer, root=root, model_sha256=model_sha256,
-                    _writer=writer, _manifest=manifest, lazy_branches=lazy_branches)
+                    _writer=writer, _manifest=manifest, lazy_branches=lazy_branches,
+                    command_publication=command_publication)
             if lazy_branches:
                 raise BenchError("selected-branch hydration is currently Qwen-specific")
             from .bench_family import FamilyBenchSession
