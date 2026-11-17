@@ -36,7 +36,22 @@ intended: the record says what ran. A project file is trusted less than the user
   checkpoint before the run's first mark, or one off its lineage, by name.
 - `Branches` builds its reference with `Run.fresh()` (the checkpoint, not the tokens). `Pool`
   items and `each` items take `core` (alias `from`), and `Debugger.each(..., core=)` sets it for
-  every item.
+  the items with no prompt, tokens or core of their own (never for a pair donor).
+- A checkpoint's seal gives integrity, not authenticity (a stripped-and-resealed edit history
+  loads), so a run rehydrated from one is labelled `from checkpoint <id>, path unverified`
+  (`run.from_checkpoint`) until `run.verify()` replays its path: in every read's provenance (the
+  REPL shows `[measured, from checkpoint ab12cd34…, path unverified]`), in
+  `procedure.from_checkpoint` and in `custody.from_checkpoint` of records sealed while an op
+  runs on it. `fresh()` inherits it. `verify=True` (`run_from`, `restart`, `Checkpoint.run`)
+  raises `CheckpointUnverified` on failure, also when it cannot check (a lineage rooted at
+  another checkpoint needs `root=`); `verify="report"` records the result instead.
+- Active holds are re-armed on load: the checkpoint keeps each hold with the source values it
+  reads from the cut's row on, and the reloaded run continues held, bit for bit
+  (`holds="drop"` records them as dropped instead).
+- REPL `start from=ID|PATH [verify=true|report]` starts from a checkpoint.
+- saturn-pub 0.4.3 (mdb now requires `saturn-pub>=0.4.3`): `saturn_pub.core.cut_blocks(cut)`,
+  `Blocks` and `StateCut.from_blocks` are the public block form of shared state tensors;
+  checkpoints use them instead of saturn-pub internals.
 
 - TOML configuration: `~/.config/mdb/config.toml` (respects `XDG_CONFIG_HOME`), a project's
   `mdb.toml` or `pyproject.toml` `[tool.mdb]`, and a file named by `MDB_CONFIG`. Precedence:
@@ -96,6 +111,12 @@ intended: the record says what ran. A project file is trusted less than the user
 
 ### Changed
 
+- `Debugger.checkpoint` no longer stores a whole native cut beside the checkpoint state (K/V was
+  stored twice: measured 194 KB against 105 KB for a 199-row tiny run). Cuts in projects written
+  before are still read; a value taken from a checkpoint by name rehydrates its state.
+- A string that names both a file and a project record is refused as ambiguous by
+  `run_from`/`load_checkpoint`; a checkpoint whose kept cuts do not chain parent to previous
+  mark is refused.
 - `run.dump(path)` saves at the cursor by default (before: at the run's first stepped row) and
   writes a `mdb-checkpoint-file-v2` file sealed by a `checkpoint-state` record (before: an
   `mdb-core-file-v1` file and a `core-file` record). `core_file.load` reads both; the old

@@ -201,9 +201,10 @@ class Debugger:
     def _donor(self, branch: str, *, replay: bool = False) -> tuple[Run, str, str | None]:
         """``(run, via, recipe id)`` standing for origin ``branch``: the live run of that name
         (``via`` ``live``), else the project's latest recipe for that session id or checkpoint
-        name, restored from its stored boundary cut (``cut``) or replayed from the token ids
-        (``replay``; always with ``replay=True``: a replayed run holds the transitions before
-        its cursor, a run restored from the cut starts at it)."""
+        name, rehydrated from its ``checkpoint-state`` (``checkpoint``), restored from a stored
+        boundary cut (``cut``, projects written before checkpoint states) or replayed from the
+        token ids (``replay``; always with ``replay=True``: a replayed run holds the
+        transitions before its cursor, a rehydrated one those its checkpoint kept)."""
         if branch in self.runs and not replay:
             return self.runs[branch], "live", None
         if self.project is None:
@@ -219,6 +220,16 @@ class Debugger:
         recipes.check_binding(recipe, model_identity=self.adapter.model_identity,
                               numeric_scope=self._numeric_scope())
         checkpoint = recipes.to_checkpoint(recipe)
+        if not replay:
+            from mdb.engine import checkpoint as states
+
+            state = states.find_named(self.project, None, session_id=self.session_id,
+                                      cut=recipe["cut"])
+            if state is not None:
+                recipes.load_tensors(recipe, self.project.store)
+                run = states.load_record(self.project, state).run(self.adapter, check=False)
+                run.name = None
+                return run, "checkpoint", recipe["fingerprint"]
         for session in () if replay else self.project.sessions():
             sid = session["session_id"]
             if recipe["cut"] in self.project.cut_ids(sid):
@@ -265,7 +276,7 @@ class Debugger:
         try:
             block = pick(donor)
         except NotHeld:
-            if via != "cut":
+            if via not in ("cut", "checkpoint"):
                 raise
             # restored from its cut, the donor starts at its cursor: replay it from the token
             # ids, which computes the transitions before the cursor too
@@ -290,14 +301,16 @@ class Debugger:
     def _numeric_scope(self) -> dict[str, Any]:
         return dict(self.adapter.execution.get("numeric_scope") or {})
 
-    def _save_recipe(self, run: Run, name: str | None) -> dict[str, Any]:
-        """Store the recipe of ``run``'s cursor (edit tensors as blobs) and its boundary cut."""
+    def _save_recipe(self, run: Run, name: str | None, *, cut: bool = True) -> dict[str, Any]:
+        """Store the recipe of ``run``'s cursor (edit tensors as blobs) and, with ``cut``, its
+        boundary cut (a whole native cut: ``checkpoint`` stores the state as a
+        ``checkpoint-state`` instead, so K/V is not stored twice)."""
         project = self._project("a durable checkpoint")
         if run.adapter is not self.adapter:
             raise Refused("the run belongs to another attached model")
         checkpoint = run.checkpoint(name)
-        cut = run.session.capture(retain=False)
-        if cut.fingerprint != checkpoint["cut"]:
+        boundary = run.session.capture(retain=False)
+        if boundary.fingerprint != checkpoint["cut"]:
             raise Refused("the run's session is not at its cursor's boundary cut")
         try:
             recipe = recipes.from_checkpoint(checkpoint, tokens=run.tokens,
@@ -306,24 +319,28 @@ class Debugger:
         except RecordError as error:
             raise Refused(f"the checkpoint does not fit one replay recipe: {error}") from error
         recipes.save(project, self.session_id, recipe)
-        project.save_cut(self.session_id, cut)
+        if cut:
+            project.save_cut(self.session_id, boundary)
         return recipe
 
-    def checkpoint(self, run: Run, name: str, *, history: str = "row") -> dict[str, Any]:
+    def checkpoint(self, run: Run, name: str, *, history: str = "row",
+                   holds: str = "rearm") -> dict[str, Any]:
         """Make ``run``'s cursor durable under ``name``: the replay recipe, its edit tensors and
-        masks (store blobs), the boundary cut, a ``checkpoint`` record and the session cursor,
-        and the state itself as a ``checkpoint-state`` record whose tensors are store blobs
+        masks (store blobs), a ``checkpoint`` record and the session cursor, and the state
+        itself as a ``checkpoint-state`` record whose tensors are store blobs
         (``engine.checkpoint``; ``state`` in the result is its record id): ``restart`` and
-        ``run_from`` rehydrate it with no prefix recompute."""
+        ``run_from`` rehydrate it with no prefix recompute. No whole native cut is stored
+        (projects that hold one from before are still read: ``cut_ids``, ``load_cut``)."""
         if not isinstance(name, str) or not name.strip():
             raise Refused("a durable checkpoint needs a name")
-        recipe = self._save_recipe(run, name)
+        if holds not in ("rearm", "drop"):
+            raise Refused("holds is 'rearm' (default) or 'drop'")
+        recipe = self._save_recipe(run, name, cut=False)
         record = recipes.record_checkpoint(self.project, self.session_id, recipe)
-        self.project.select(self.session_id, recipe["cut"])
         from mdb.engine import checkpoint as states
 
         state = states.save(run, project=self.project, session_id=self.session_id, name=name,
-                            history=history)
+                            history=history, holds=holds)
         return {"name": name, "where": recipe["target"]["where"], "cut": recipe["cut"],
                 "recipe": recipe["fingerprint"], "record": record["id"],
                 "blobs": len(recipes.tensor_pointers(recipe)), "state": state["id"]}
@@ -335,12 +352,14 @@ class Debugger:
                  "recipe": r["body"]["recipe"]}
                 for r in recipes.checkpoints(project, self.session_id)]
 
-    def restart(self, name: str, *, replay: bool = False, verify: bool = False) -> Run:
+    def restart(self, name: str, *, replay: bool = False, verify: bool | str = False) -> Run:
         """A new run at the durable checkpoint ``name`` (this session's, else the one other
         session that has it): rehydrated from its stored state when the project holds it (no
-        prefix recompute; ``verify`` also replays the recipe and records the result as
-        ``run.core["verified"]``), else (or with ``replay``) replayed from the token ids. Same
-        cut fingerprint, same edits, either way."""
+        prefix recompute; labelled ``from checkpoint <id>, path unverified``; ``verify=True``
+        replays the recipe first and raises ``CheckpointUnverified`` unless it reaches the
+        checkpoint, ``verify="report"`` records the result as ``run.core["verified"]``), else
+        (or with ``replay``) replayed from the token ids. Same cut fingerprint, same edits,
+        either way."""
         project = self._project("restart")
         found = recipes.find_checkpoint(project, name, session_id=self.session_id)
         if found is None:
@@ -487,8 +506,10 @@ class Debugger:
         of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
         (kept as the set ``inline``). ``prefill``: each item's split (``K`` or ``"@ROLE"``,
         bound per item); ``shard``: ``"K/N"``, the K-th of N contiguous parts of the set.
-        ``core``: a checkpoint (path, record id, loaded) every item without its own ``core``
-        (item key, alias ``from``) is rehydrated from instead of started. Returns
+        ``core``: a checkpoint (path, record id, loaded) the items with no ``core`` (item key,
+        alias ``from``), ``prompt`` or ``tokens`` of their own are rehydrated from instead of
+        started; an item with its own prompt starts from it, and a pair donor is never
+        rehydrated from the set's ``core``. Returns
         ``EachResult(summary, results, statistics)``; the live run
         and its cursor are left as they were."""
         from .sets import define, load, run_each
@@ -521,18 +542,23 @@ class Debugger:
 
     def run_from(self, core: Any, *, name: str | None = None, check: bool = True,
                  lookahead: str | None = None, replica: bool = False,
-                 verify: bool = False) -> Run:
+                 verify: bool | str = False, root: Any = None) -> Run:
         """A run of this debugger's model from a checkpoint (``engine.checkpoint``): ``core`` is
         a file path, a record id (or unique prefix) of this debugger's project, a durable
         ``Run.checkpoint(durable=...)`` result or a loaded checkpoint; a legacy v1 core file
         loads too. The state at the checkpoint's cursor is rehydrated (no prefix recompute),
         bit-identical on the same model and execution; another dtype, device or weights is
         refused unless ``replica=True`` (a labelled replica, null-checked as
-        ``run.core_check``). ``verify``: also replay the recipe from the lineage root and record
-        the result as ``run.core["verified"]`` (measured)."""
+        ``run.core_check``). Every value and record of the run says ``from checkpoint <id>,
+        path unverified`` until ``run.verify()``. ``verify=True``: replay the recipe from the
+        lineage root first (``root``: a run or checkpoint, for a lineage rooted at another
+        checkpoint) and raise ``CheckpointUnverified`` unless it reaches the checkpoint's
+        fingerprint; ``verify="report"``: record the result as ``run.core["verified"]``
+        (measured) and never raise."""
         loaded = self.load_checkpoint(core)
         run = loaded.run(self.adapter, lookahead=lookahead, check=check,
-                         name=run_name(name or "core"), replica=replica, verify=verify)
+                         name=run_name(name or "core"), replica=replica, verify=verify,
+                         root=root)
         self._carry_circuits(run)
         self.runs[run.name] = run
         self.live = run

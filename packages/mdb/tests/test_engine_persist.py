@@ -117,9 +117,10 @@ def test_restart_in_process_and_the_project_records(saved):
                                   "recipe": info["recipe"]}]
     reader = ProjectReader(saved["root"])
     assert dbg.session_id in reader.sessions()
-    assert reader.session(dbg.session_id)["selected"] == info["cut"]
-    assert reader.cut_ids(dbg.session_id) == [info["cut"]]
-    assert reader.cut_descriptor(dbg.session_id, info["cut"])["fingerprint"] == info["cut"]
+    # the state is stored as a checkpoint-state record; no whole native cut beside it (K/V
+    # once), so no cut is indexed or selected
+    assert reader.session(dbg.session_id)["selected"] == ""
+    assert reader.cut_ids(dbg.session_id) == []
     records = I.list_records(reader, dbg.session_id)
     assert [(r["kind"], r["body"]["name"]) for r in records] == [
         ("checkpoint", "pre"), ("checkpoint-state", "pre")]       # the recipe, the state (#517)

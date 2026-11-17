@@ -196,6 +196,45 @@ def edits_for(run: Any, row: int, layer: int, base: list[PortEdit],
     return out
 
 
+def source_addresses(run: Any, hold: Hold, from_row: int) -> list[str]:
+    """The source addresses ``hold`` reads on the rows from ``from_row`` on that its source has
+    computed (a checkpoint keeps them, ``Snapshot``): the held port, or the norm's input."""
+    if hold.cells:
+        return []
+    last = max(len(hold.source.tokens) - 1, getattr(hold.source._trail[-1], "row", 0))
+    rows = range(from_row, last + 1) if hold.rows is None else [
+        r for r in hold.rows if r >= from_row]
+    ports = ([source for _, source, _ in NORMS[hold.port]] if hold.norm else [hold.port])
+    return [f"t{r}.L{layer}.{port}" for r in rows for layer in hold.layers for port in ports]
+
+
+class Snapshot:
+    """A hold's source as a checkpoint keeps it: its values at the addresses the hold reads
+    from the checkpoint's row on (as the source held them when the checkpoint was saved), its
+    name, cursor and cut (the hold edits' origin pointers name them, as on the source run). An
+    address it does not hold is one the source had not computed then: refused as a live source
+    refuses it."""
+
+    def __init__(self, name: str, where: str, cut: str, values: dict[str, torch.Tensor],
+                 tokens: list[int]):
+        from types import SimpleNamespace
+
+        self.name, self.where, self._cut, self.values = name, where, cut, values
+        self.tokens = list(tokens)
+        rows = [int(a[1:a.index(".")]) for a in values] or [len(self.tokens) - 1]
+        self._trail = (SimpleNamespace(fingerprint=cut, row=max(rows)),)   # what Run reads
+
+    def read(self, address: str) -> torch.Tensor:
+        found = self.values.get(address)
+        if found is None:
+            raise ValueError(f"{address} was not computed by the source when the checkpoint "
+                             "was saved")
+        return found
+
+    def checkpoint(self, *, pin: bool = False) -> dict[str, Any]:
+        return {"cut": self._cut}
+
+
 def is_hold(edit: Any) -> bool:
     origin = getattr(edit, "origin", None)
     return isinstance(origin, dict) and origin.get("kind") == "hold"
@@ -214,5 +253,5 @@ def final_held_logits(run: Any, row: int, source: Any) -> torch.Tensor:
         return adapter.model.lm_head(held)
 
 
-__all__ = ["Hold", "NORMS", "edits_for", "final_held_logits", "held_norm", "is_hold", "parse",
+__all__ = ["Hold", "NORMS", "Snapshot", "edits_for", "source_addresses", "final_held_logits", "held_norm", "is_hold", "parse",
            "rms_scale"]

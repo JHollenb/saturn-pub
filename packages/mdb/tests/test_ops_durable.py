@@ -52,7 +52,7 @@ def test_a_checkpoint_name_is_at_most_64_characters(tmp_path):
     assert dispatch(ctx, "checkpoint", {"name": "n" * 64})["durable"]["blobs"] == 0
 
 
-@pytest.mark.parametrize("where", ["save", "record", "select"])
+@pytest.mark.parametrize("where", ["save", "record", "state"])
 def test_an_interrupted_durable_checkpoint_is_durable_or_absent_never_memory_only(
     tmp_path, monkeypatch, where
 ):
@@ -60,13 +60,14 @@ def test_an_interrupted_durable_checkpoint_is_durable_or_absent_never_memory_onl
     interrupt at any point of the durable write leaves either no checkpoint or a durable one
     that ``restart`` finds."""
     from mdb.core import recipe as recipes
+    from mdb.engine import checkpoint as states
 
     dbg = mdb.attach(tiny_model("qwen2", "fp32"), project=tmp_path / "p")
     run = dbg.run(TOKENS)
     run.until("L0.p")
     ctx = dbg.ops(run)
     target = {"save": (type(dbg), "_save_recipe"), "record": (recipes, "record_checkpoint"),
-              "select": (type(dbg.project), "select")}[where]
+              "state": (states, "save")}[where]   # no cut is selected any more
     original = getattr(*target)
 
     def interrupted(*args, **kwargs):

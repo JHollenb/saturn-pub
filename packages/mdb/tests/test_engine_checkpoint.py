@@ -71,7 +71,9 @@ def saved(dbg, tmp_path_factory):
 
 # record ids differ by custody (the script); a circuit's ledger number by what the debugger
 # built before (the battery runs twice on one debugger)
-_IDS = [(re.compile(r"record [0-9a-f]{16}"), "record <id>"),
+_LABEL = re.compile(r", from checkpoint [0-9a-f]{8}…, path \w+")
+_IDS = [(_LABEL, ""),       # a rehydrated run's values say where they came from (H1)
+        (re.compile(r"record [0-9a-f]{16}"), "record <id>"),
         (re.compile(r"^circuit \d+ ", re.M), "circuit N "),
         (re.compile(r"\b[0-9a-f]{16,64}\b"), "<hex>")]
 
@@ -157,6 +159,116 @@ def test_every_verb_on_a_rehydrated_run_matches_the_source(dbg, saved):
     source = battery(dbg, lambda name: _source(dbg, name))
     loaded = battery(dbg, lambda name: dbg.run_from(path, name=name))
     assert loaded == source
+    shown = _shell(dbg, dbg.run_from(path, name="lab"), f"until t{LAST}.L0.h", "print L0.h top=1")
+    assert len(_LABEL.findall(shown)) >= 1      # ... and only that differs
+
+
+# ------------------------------------------------------------------ provenance (audit H1, M1)
+
+def _reseal(path, out, mutate):
+    """Rewrite a checkpoint file's document and seal a new record for it (ckaudit probe1): the
+    seal gives integrity, not authenticity; anyone can do this."""
+    from mdb.core.records import seal_record
+
+    data = torch.load(path, weights_only=True)
+    rec = json.loads(data["record"])
+    doc = json.loads(data["document"])
+    mutate(doc)
+    text = states._canonical(doc)
+    body = dict(rec["body"])
+    body["document"] = {"state": "file", "bytes": len(text.encode()),
+                        "sha256": states._sha_text(text)}
+    body["recipe"] = dict(body["recipe"], sha256=states._sha_text(states._canonical(
+        doc["recipe"])), path_edits=len(doc["recipe"]["path_edits"]),
+        staged=len(doc["recipe"]["edits"]))
+    body["edited"] = bool(doc["recipe"]["path_edits"] or doc["recipe"]["edits"])
+    body["lineage"] = doc["lineage"]
+    new = seal_record(session_id=rec["session_id"], kind=rec["kind"],
+                      model_identity=rec["model_identity"], execution=rec["execution"],
+                      authority=rec["authority"], body=body)
+    data["record"] = json.dumps(new)
+    data["document"] = text
+    torch.save(data, out)
+    return new
+
+
+def _strip(doc):
+    for m in doc["ancestry"] + doc["marks"]:
+        m["edits"], m["cells"], m["fired"], m["cell_fired"] = [], [], [], []
+    doc["ancestry"] = []
+    doc["recipe"]["path_edits"] = []
+    doc["edit_tensors"] = {}
+
+
+def test_a_stripped_and_resealed_history_is_labelled_unverified_until_verify(dbg, tmp_path):
+    """Audit H1 (ckaudit probe1 A): a file whose edit history was stripped and resealed loads
+    (the state is genuine), so every value and record of a run rooted at it says ``from
+    checkpoint <id>, path unverified``; ``fresh`` inherits it; ``verify`` raises on the forgery
+    and clears the label on the honest file."""
+    src = _source(dbg, "h1")
+    honest = src.dump(tmp_path / "a.pt", history="row")
+    forged = _reseal(tmp_path / "a.pt", tmp_path / "forged.pt", _strip)
+    assert forged["id"] != honest["id"]              # the id binds edits and lineage
+    run = dbg.run_from(tmp_path / "forged.pt", name="h1f")
+    assert run._trail[-1].fingerprint == src._trail[-1].fingerprint and not run.edited
+    assert run.from_checkpoint == {"checkpoint": forged["id"], "path": "unverified"}
+    assert run.fresh().from_checkpoint == run.from_checkpoint
+    shown = _shell(dbg, run, f"until t{LAST}.L0.h", "print L0.h top=1")
+    assert f"[measured, from checkpoint {forged['id'][:8]}…, path unverified]" in shown
+    # records sealed about the run carry it (custody and procedure)
+    from mdb.core import custody
+
+    sink = custody.records_to(tmp_path / "records.jsonl")
+    try:
+        _shell(dbg, dbg.run_from(tmp_path / "forged.pt", name="h1g"), f"until t{LAST}.L1.p",
+               f"forecast M[{A},{B}]")
+    finally:
+        sink.close()
+    sealed = [r for r in sink.records() if r["kind"] == "forecast"]
+    assert sealed and all(r["body"]["custody"]["from_checkpoint"]["path"] == "unverified"
+                          and r["body"]["procedure"]["from_checkpoint"]["checkpoint"] ==
+                          forged["id"] for r in sealed)
+    with pytest.raises(states.CheckpointUnverified, match="did not verify"):
+        run.verify()
+    assert run.from_checkpoint["path"] == "unverified"
+    with pytest.raises(states.CheckpointUnverified):
+        dbg.run_from(tmp_path / "forged.pt", verify=True)
+    ok = dbg.run_from(tmp_path / "a.pt", name="h1h")
+    assert ok.verify()["ok"] and ok.from_checkpoint["path"] == "verified"
+    assert ok.fresh().from_checkpoint["path"] == "verified"
+    shown = _shell(dbg, ok, f"until t{LAST}.L0.h", "print L0.h top=1")
+    assert "path verified]" in shown
+    assert dbg.run_from(tmp_path / "a.pt", verify=True).from_checkpoint["path"] == "verified"
+
+
+def test_verify_raises_unless_report_and_a_foreign_root_needs_root(dbg, tmp_path):
+    """Audit M1: ``verify=True`` raises on failure (``run_from``, ``Checkpoint.verify``), a
+    lineage whose root is another checkpoint raises unless ``root=`` is given, and the soft
+    result is opt-in (``verify="report"``)."""
+    src = _source(dbg, "m1")
+    _reseal(src.dump(tmp_path / "a.pt") and tmp_path / "a.pt", tmp_path / "f.pt", _strip)
+    report = dbg.run_from(tmp_path / "f.pt", verify="report").core["verified"]
+    assert report["ok"] is False and report["state"] == "resolved"
+    other = attach(tiny_model(*_case_of(dbg), seed=7))       # same shape, other weights
+    with pytest.raises(states.CheckpointUnverified, match="source's model"):
+        other.load_checkpoint(tmp_path / "a.pt").verify(other.adapter)
+    replica = other.run_from(tmp_path / "a.pt", replica=True, name="m1r")
+    replica.until(f"t{LAST}.L0.h")
+    replica.dump(tmp_path / "b.pt")                     # rooted at a checkpoint, not a prompt
+    second = states.load_file(tmp_path / "b.pt")
+    assert second.lineage["root"] == "checkpoint"
+    with pytest.raises(states.CheckpointUnverified, match="pass root="):
+        second.verify(other.adapter)
+    with pytest.raises(states.CheckpointUnverified, match="pass root="):
+        other.run_from(tmp_path / "b.pt", verify=True)
+    assert second.verify(other.adapter, report=True)["state"] == "unresolved"
+    assert second.verify(other.adapter, root=replica)["ok"]
+    run = other.run_from(tmp_path / "b.pt", verify=True, root=replica)
+    assert run.from_checkpoint["path"] == "verified"
+
+
+def _case_of(dbg):
+    return ("qwen2", "bf16") if "bfloat16" in str(dbg.adapter.dtype) else ("qwen3", "fp32")
 
 
 _CHILD = """
@@ -305,6 +417,25 @@ def test_branches_pool_and_each_from_a_checkpoint(dbg, saved):
         dbg.each([{"name": "x", "core": str(path), "from": str(path)}], line)
 
 
+def test_a_set_level_core_is_only_for_items_without_their_own_prompt(dbg, saved):
+    """Audit M3 (ckaudit probe3): ``each(core=X)`` used to rehydrate an item that brought its own
+    tokens (and refused one whose tokens differed). It applies only to items with no prompt or
+    tokens; a pair donor is never rehydrated from the set's core."""
+    from mdb.ops.sets import Bound, _item
+
+    path, _ = saved
+    line = f"whatif L1.A[h1] *= 0 --consumer M[{A},{B}]"
+    plain = dbg.each([{"name": "x", "tokens": P}], line, prefill=2).results
+    own = dbg.each([{"name": "x", "tokens": P}], line, prefill=2, core=str(path)).results
+    assert _san(own) == _san(plain)
+    other = [1, 2, 3, 4, 5, 6, 7]
+    alone = dbg.each([{"name": "x", "tokens": other}], line).results
+    mixed = dbg.each([{"name": "x", "tokens": other}], line, core=str(path))
+    assert _san(mixed.results) == _san(alone)
+    assert Bound(dbg, _item({"name": "y", "tokens": P}, "y"), core=str(path)).core is None
+    assert Bound(dbg, _item({"name": "y", "core": str(path)}, "y")).core == str(path)
+
+
 # ------------------------------------------------------------------ lineage
 
 def test_checkpoints_move_between_source_and_reloaded_runs(dbg, saved, tmp_path):
@@ -357,13 +488,17 @@ def test_a_fingerprint_binds_content_and_ancestry(dbg, saved, tmp_path):
         states.load_file(tmp_path / "forged.pt")
     loaded = states.load_file(path)
     loaded.doc["marks"][-1]["cut"]["parent"] = "0" * 64       # past the seal, in memory
+    with pytest.raises(ValueError, match="broken chain"):    # L1: the links agree
+        loaded.run(dbg.adapter)
+    loaded = states.load_file(path)
+    loaded.doc["marks"][0]["cut"]["parent"] = "0" * 64        # the root: no link to check
     with pytest.raises(ValueError, match="differs from its fingerprint"):
         loaded.run(dbg.adapter)
 
 
 # ------------------------------------------------------------------ project store
 
-def test_project_store_addressing_and_durable_checkpoints(case, tmp_path):
+def test_project_store_addressing_and_durable_checkpoints(case, tmp_path, monkeypatch):
     root = tmp_path / "proj"
     dbg = attach(tiny_model(*case), project=root)
     src = _source(dbg)
@@ -390,6 +525,24 @@ def test_project_store_addressing_and_durable_checkpoints(case, tmp_path):
         other.run_from("zz-not-an-id")
     with pytest.raises(Exception, match="ambiguous|no checkpoint record"):
         other.run_from("0000000000")
+    # owner decision: no whole native cut beside the state (K/V is stored once); a value from
+    # the checkpoint by name rehydrates the state
+    assert other.project.cut_ids(dbg.session_id) == []
+    here = other.run(P, name="here", prefill=2)
+    _, pointer = other.cell_value("cut:cache.L0.v[kv0,row=1]", run=here)
+    assert pointer["via"] == "checkpoint"
+    # L6: a file named like the record id prefix is refused as ambiguous, not silently read
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / info["state"][:10]).write_bytes(b"x")
+    with pytest.raises(Exception, match="names both a file and checkpoint record"):
+        other.run_from(info["state"][:10])
+    # M1: restart(verify=True) raises when the path does not verify
+    monkeypatch.setattr(states.Checkpoint, "_verify", lambda self, adapter, root: {
+        "ok": False, "state": "resolved", "checkpoint": self.id, "expected": "a" * 64,
+        "reached": "b" * 64})
+    with pytest.raises(states.CheckpointUnverified, match="did not verify"):
+        other.restart("cut", verify=True)
+    assert other.restart("cut", verify="report").core["verified"]["ok"] is False
 
 
 # ------------------------------------------------------------------ refusals
@@ -416,7 +569,10 @@ def test_tamper_model_and_dtype_refusals(case, dbg, saved, tmp_path):
     with pytest.raises(ValueError, match="another (model|execution)"):   # the identity binds
         wide.run_from(path)                                            # the dtype too
     run = wide.run_from(path, replica=True)
-    assert run.core["replica"] and run.where == CUT and run.core_check is None  # nothing captured
+    assert run.core["replica"] and run.where == CUT
+    # L2: nothing captured -> the result and the label say there was no null check
+    assert run.core_check["ok"] is None and "no null check" in run.core_check["reason"]
+    assert run.from_checkpoint["replica"] and run.from_checkpoint["null_check"] is None
     # saved at an earlier boundary after running on, the logits the source computed are captured
     # and a replica is null-checked against them
     src = _source(dbg, "cap")
@@ -453,3 +609,74 @@ def test_legacy_v1_core_files_still_load(dbg, tmp_path):
     br = dbg.branches(run, Margin(LAST, A, B), at=f"t{LAST}.L1.h")   # fresh() from the v1 root
     br.add("zero", [edit(f"t{LAST}.L1.m", 0.0, "scale")])
     assert len(br.run()) == 1
+
+
+def test_an_active_hold_is_rearmed_and_continues_bit_for_bit(dbg, tmp_path):
+    """Audit M2 (ckaudit probe1 C): a run holding ``t@last.L>0.p`` at a clean source, saved and
+    reloaded, continued 0.0182 away from the source (the hold was not re-armed). The checkpoint
+    keeps each hold with the source values it reads from the cut's row on: the reloaded run
+    holds the same ports, fires the same hold edits and continues bit for bit; ``holds="drop"``
+    is recorded and continues free."""
+    base = dbg.run(P, name="m2base", prefill=2)
+    base.until(f"t{LAST}.logits")
+    src = _source(dbg, "m2")
+    src.hold("t@last.L>0.p", source=base)
+    record = src.dump(tmp_path / "h.pt")
+    assert record["body"]["holds"] == [{"name": "hold1", "address": "t@last.L>0.p",
+                                        "dropped": False}]
+    run = dbg.run_from(tmp_path / "h.pt", name="m2r")
+    assert run.holds == src.holds and run.core["holds"] == ["hold1"]
+    for r in (src, run):
+        r.until(f"t{LAST}.logits")
+    assert torch.equal(run.read(), src.read())
+    assert run.checkpoint()["cut"] == src.checkpoint()["cut"]
+    assert [e["origin"] for e in run.committed_edits() if e.get("origin", {}).get("kind") ==
+            "hold"] == [e["origin"] for e in src.committed_edits()
+                        if e.get("origin", {}).get("kind") == "hold"]
+    # a norm-scale hold too
+    src = _source(dbg, "m2n")
+    src.hold("t@last.L*.norm_scale", source=base)
+    src.dump(tmp_path / "n.pt")
+    run = dbg.run_from(tmp_path / "n.pt", name="m2nr")
+    for r in (src, run):
+        r.until(f"t{LAST}.logits")
+    assert torch.equal(run.read(), src.read())
+    # dropped: recorded, and the reloaded run continues free (as a clean-hold-free source)
+    src = _source(dbg, "m2d")
+    free = _source(dbg, "m2f")
+    src.hold("t@last.L>0.p", source=base)
+    assert src.dump(tmp_path / "d.pt", holds="drop")["body"]["holds"][0]["dropped"]
+    run = dbg.run_from(tmp_path / "d.pt", name="m2dr")
+    assert run.holds == [] and run.core["holds_dropped"] == ["hold1"]
+    for r in (free, run):
+        r.until(f"t{LAST}.logits")
+    assert torch.equal(run.read(), free.read())
+    with pytest.raises(ValueError, match="holds='drop'"):
+        src2 = _source(dbg, "m2e")
+        src2.hold("t@last.L>0.p", source=base)
+        src2.dump(tmp_path / "e.pt", at="t4.start")
+
+
+def test_the_repl_starts_from_a_checkpoint(dbg, saved, tmp_path):
+    """Owner decision: ``start from=ID|PATH`` (REPL) rehydrates a checkpoint and shows where it
+    came from; ``verify=true`` replays it first and labels the path verified."""
+    from mdb.repl.shell import Shell
+
+    path, record = saved
+    src = _source(dbg, "repl-src")
+    src.until(f"t{LAST}.L0.h")
+    buf = io.StringIO()
+    sh = Shell(dbg.ops(None), out=buf)
+    for line in (f"start from={path} name=ck", f"until t{LAST}.L0.h", "print L0.h top=1"):
+        sh.execute(line)
+    out = buf.getvalue()
+    assert f"from checkpoint {record['id'][:8]}…, path unverified (record {record['id'][:16]}" \
+        in out and "[measured, under edit t3.L0.m, from checkpoint" in out
+    assert torch.equal(dbg.runs["ck"].read(f"t{LAST}.L0.h"), src.read(f"t{LAST}.L0.h"))
+    buf.truncate(0)
+    sh.execute(f"start from={path} verify=true")
+    assert "path verified" in buf.getvalue() and "reaches the checkpoint [measured]" in \
+        buf.getvalue()
+    buf.truncate(0)
+    sh.execute(f"start from={path} 1 2 3")
+    assert "give no prompt" in buf.getvalue()

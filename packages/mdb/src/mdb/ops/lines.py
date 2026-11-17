@@ -149,8 +149,12 @@ def _prompt_args(text: str) -> dict[str, Any]:
             args[match["key"]] = int(match["value"])
         elif match and match["key"] == "lookahead":
             args["lookahead"] = match["value"]
-        elif match and match["key"] == "name" and not rest:
-            args["name"] = match["value"]
+        elif match and match["key"] in ("name", "from") and not rest:
+            args[match["key"]] = match["value"]
+        elif match and match["key"] == "verify" and "from" in args and not rest:
+            if match["value"] not in ("true", "false", "report"):
+                raise BadArgs("verify is true, false or report")
+            args["verify"] = match["value"]
         else:
             rest.append(word)
     if rest:

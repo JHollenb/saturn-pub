@@ -54,6 +54,8 @@ configured values for arguments left as None.
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import hashlib
 import json
 import os
@@ -470,11 +472,37 @@ def sinks() -> list[Sink]:
     return list(_SINKS)
 
 
+# The checkpoint the run a record is sealed about is rooted at (``Run.from_checkpoint``), set
+# while an op runs (``ops.registry.dispatch``) or by ``from_checkpoint(run)``.
+_FROM_CHECKPOINT: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
+    "mdb_from_checkpoint", default=None)
+
+
+@contextlib.contextmanager
+def from_checkpoint(run: Any):
+    """While open, every record sealed carries ``custody.from_checkpoint`` of ``run`` (when it
+    is rooted at a checkpoint whose path is not recomputed: ``{checkpoint, path}``)."""
+    origin = getattr(run, "from_checkpoint", None)
+    token = _FROM_CHECKPOINT.set(None if origin is None else dict(origin))
+    try:
+        yield
+    finally:
+        _FROM_CHECKPOINT.reset(token)
+
+
 def attach_custody(kind: str, body: dict[str, Any]) -> dict[str, Any]:
-    """``body`` with the declared custody added (unchanged when undeclared or already there)."""
+    """``body`` with the declared custody added (unchanged when undeclared or already there),
+    and ``custody.from_checkpoint`` while a run rooted at a checkpoint is the subject
+    (``from_checkpoint``)."""
+    origin = _FROM_CHECKPOINT.get()
     if "custody" in body:
-        return body
+        if origin is None or not isinstance(body["custody"], dict) or \
+                "from_checkpoint" in body["custody"]:
+            return body
+        return {**body, "custody": {**body["custody"], "from_checkpoint": origin}}
     block = current()
+    if origin is not None:
+        block = {**(block or {}), "from_checkpoint": origin}
     return body if block is None else {**body, "custody": block}
 
 
@@ -486,6 +514,6 @@ def emit(record: dict[str, Any]) -> None:
 
 
 __all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "PAYLOAD_SCHEMA", "SCHEMA", "Sink",
-           "attach_custody", "clear", "config_block", "current", "custody", "declare", "emit",
+           "attach_custody", "clear", "config_block", "from_checkpoint", "current", "custody", "declare", "emit",
            "emit_payload", "file_sha256", "libraries", "ran_init", "records_to", "reread", "run_tag",
            "sink_path", "sinks"]

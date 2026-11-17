@@ -364,6 +364,85 @@ def seal_append(full: Any, base: Any, dim: int) -> bool:
     return True
 
 
+@dataclass(frozen=True, eq=False)
+class Blocks:
+    """A sealed state tensor as the blocks a cut holds it in (``cut_blocks``), or as the blocks a
+    caller rebuilds it from (``StateCut.from_blocks``): ``torch.cat(chunks, dim)`` is the tensor
+    bit for bit, with the standard contiguous layout; ``dim`` None is one chunk, the tensor
+    itself, of layout ``stride``. Blocks of a grown cache layer are the prefix rows then the
+    rows each transition appended, so consecutive cuts share every block but the last."""
+
+    chunks: tuple[Any, ...]
+    dim: int | None
+    shape: tuple[int, ...]
+    stride: tuple[int, ...]
+    dtype: Any
+
+    def tensor(self) -> Any:
+        """The tensor (built once per ``Blocks`` object and kept, so cuts sharing this object
+        share it); a block form of more than one chunk is declared, so a cut holding the
+        tensor keeps the chunks."""
+        cached = self.__dict__.get("_full")
+        if cached is not None:
+            return cached
+        import torch
+
+        if self.dim is None or len(self.chunks) == 1:
+            full = self.chunks[0]
+            if tuple(full.shape) != tuple(self.shape):
+                raise ValueError("Blocks chunk differs from its shape")
+            if tuple(full.stride()) != tuple(self.stride):
+                strided = torch.empty_strided(tuple(self.shape), tuple(self.stride),
+                                              dtype=full.dtype, device=full.device)
+                strided.copy_(full)
+                full = strided
+        elif not self.chunks:
+            full = torch.empty(tuple(self.shape), dtype=self.dtype)
+        else:
+            with torch.inference_mode(False):
+                full = torch.cat(self.chunks, dim=self.dim)
+            if (tuple(full.shape) != tuple(self.shape)
+                    or tuple(full.stride()) != _standard_strides(tuple(self.shape))
+                    or tuple(self.stride) != _standard_strides(tuple(self.shape))):
+                raise ValueError("Blocks chunks differ from their shape or layout")
+            _register_appended(full, _Appended(tuple(self.chunks), self.dim))
+        if full.dtype != self.dtype:
+            raise ValueError("Blocks chunks differ from their dtype")
+        object.__setattr__(self, "_full", full)
+        return full
+
+
+def cut_blocks(cut: StateCut) -> dict[str, Any]:
+    """The payload of ``cut`` with every tensor as ``Blocks`` (the blocks the cut holds: no
+    tensor is copied or concatenated). Refuses (``InPlaceWrite``) a cut a tensor of which was
+    written in place since it was sealed. The chunks are the cut's own immutable tensors: read
+    them, never write them."""
+    cut._check_sealed()
+
+    def walk(value: Any) -> Any:
+        if isinstance(value, _Appended):
+            chunks = tuple(value.chunks)
+            shape = list(chunks[0].shape)
+            shape[value.dim] = sum(int(c.shape[value.dim]) for c in chunks)
+            return Blocks(chunks, value.dim, tuple(shape), _standard_strides(tuple(shape)),
+                          chunks[0].dtype)
+        if tensor(value):
+            known = _appended_of(value) if _versioned(value) else None
+            if known is not None:
+                return walk(known)
+            return Blocks((value,), None, tuple(value.shape), tuple(value.stride()),
+                          value.dtype)
+        if isinstance(value, Mapping):
+            return {key: walk(item) for key, item in value.items()}
+        if isinstance(value, tuple):
+            return tuple(walk(item) for item in value)
+        if isinstance(value, list):
+            return [walk(item) for item in value]
+        return copy.deepcopy(value)
+
+    return walk(dict(cut._payload))
+
+
 def _compact(value: Any) -> Any:
     """``_share`` for sealing: a tensor declared with ``seal_append`` is held as its blocks."""
     if tensor(value):
@@ -660,6 +739,41 @@ class StateCut:
 
     def verify(self) -> None:
         self._verified()
+
+    @classmethod
+    def from_blocks(
+        cls,
+        model_identity: str,
+        execution: Mapping[str, Any],
+        boundary: str,
+        parent: str | None,
+        payload: Mapping[str, Any],
+        execution_point: Mapping[str, Any] | None = None,
+        surface: Mapping[str, Any] | None = None,
+    ) -> StateCut:
+        """A cut of ``payload`` whose tensors may be ``Blocks`` (``cut_blocks``): it keeps their
+        chunks by reference (a tensor of several chunks as that block form) instead of copying,
+        so cuts rebuilt from shared blocks share memory as the cuts of one session do. The
+        fingerprint is computed from the content (every tensor hashed once per object), so a
+        cut rebuilt from the blocks of another is that cut exactly when its content, metadata
+        and parent are. The caller hands the chunks over: they must not be written afterwards
+        (a later read of the cut refuses one that was, ``InPlaceWrite``)."""
+
+        def full(value: Any) -> Any:
+            if isinstance(value, Blocks):
+                return value.tensor()
+            if isinstance(value, Mapping):
+                return {key: full(item) for key, item in value.items()}
+            if isinstance(value, tuple):
+                return tuple(full(item) for item in value)
+            if isinstance(value, list):
+                return [full(item) for item in value]
+            return value
+
+        state = full(dict(payload))
+        return cls(model_identity, execution, boundary, parent, state,
+                   execution_point=execution_point, surface=surface,
+                   _described=describe_remembered(state), _shared=True)
 
 
 @dataclass(frozen=True)

@@ -276,6 +276,12 @@ class Run:
         self._ancestry: list[_Mark] = []
         self._origin: Any = None
         self.lineage: dict[str, Any] = {"root": "prompt"}
+        # The provenance every value and record of a rehydrated run carries until its path is
+        # verified by recompute (``verify``): ``{"checkpoint": record id, "path": "unverified" |
+        # "verified"}``. A checkpoint's seal gives integrity (the file is the record it names),
+        # not authenticity (anyone can seal a document whose edit history was stripped), so a
+        # value read from a run rooted at one is labelled with the checkpoint it trusts.
+        self.from_checkpoint: dict[str, Any] | None = None
 
     # --- procedure (prefill split) ------------------------------------------------------
 
@@ -347,6 +353,7 @@ class Run:
         self.session, self.prefill, self._rooted = session, count, False
         # a run of the prompt now: no rehydrated ancestry, no checkpoint origin
         self._ancestry, self._origin, self.lineage = [], None, {"root": "prompt"}
+        self.from_checkpoint = None
         self._trail = [self._mark(0)]
         self._edits, self._cells, self._port, self._cache = [], [], None, None
         self._drop_reads()
@@ -726,14 +733,16 @@ class Run:
         return self._read(target)[0]
 
     def dump(self, path: Any, *, row: int | None = None, at: str | None = None,
-             capture: tuple[str, ...] | None = None, history: str = "row") -> dict[str, Any]:
+             capture: tuple[str, ...] | None = None, history: str = "row",
+             holds: str = "rearm") -> dict[str, Any]:
         """Write a checkpoint file of this run (``engine.checkpoint.save``) at the cursor, or at
         ``at`` / ``t<row>.start`` (a boundary the run passed, refused when the run edited after
         it); returns its sealed record. Reload with ``Debugger.run_from(path)`` or
         ``engine.checkpoint.load(path).run(adapter)``: no prefix is recomputed."""
         from . import checkpoint
 
-        return checkpoint.save(self, path, row=row, at=at, capture=capture, history=history)
+        return checkpoint.save(self, path, row=row, at=at, capture=capture, history=history,
+                               holds=holds)
 
     def fresh(self) -> Run:
         """A new run at the root of this run's lineage, as cheaply as it is held: a run of the
@@ -745,7 +754,21 @@ class Run:
         run = self._origin.run(self.adapter, lookahead=self.lookahead, check=False,
                                replica=bool(self.lineage.get("replica")))
         run.name = None
+        run.from_checkpoint = None if self.from_checkpoint is None else dict(
+            self.from_checkpoint)          # inherits the path label (verified or not)
         return run
+
+    def verify(self, *, root: Any = None) -> dict[str, Any]:
+        """Verify the path of the checkpoint this run is rooted at by recompute
+        (``Checkpoint.verify``: replay the recipe from the lineage root, ``root`` for a
+        checkpoint whose own root is another checkpoint) and, when it reaches the checkpoint's
+        fingerprint, label the run ``path verified``. Raises ``CheckpointUnverified`` (a
+        ``ValueError``) otherwise; the run keeps ``path unverified``."""
+        if self._origin is None or self.from_checkpoint is None:
+            raise ValueError("this run is not rooted at a checkpoint: nothing to verify")
+        result = self._origin.verify(self.adapter, root=root)
+        self.from_checkpoint = {**self.from_checkpoint, "path": "verified"}
+        return result
 
     def ref(self, target: str) -> Any:
         """The value at ``ADDR[sel]`` (a port or stop occurrence, or ``cache.L<l>.k|v[...]``)
@@ -1484,7 +1507,7 @@ class Run:
             mark.edits or mark.cells for mark in [*self._ancestry, *self._trail[:-1]])
 
     def checkpoint(self, name: str | None = None, *, pin: bool = True, durable: Any = None,
-                   history: str = "row") -> dict[str, Any]:
+                   history: str = "row", holds: str = "rearm") -> dict[str, Any]:
         """The cursor as plain data (``restore`` input). ``pin``: keep the edit tensors it names
         held for its restore; False when they are stored elsewhere (a project recipe), so the
         run keeps nothing for it.
@@ -1492,15 +1515,17 @@ class Run:
         ``durable`` (a file path or an ``mdb.core.project.Project``): also write the state at
         the cursor as a checkpoint (``engine.checkpoint.save``: content-addressed tensors,
         ``history`` marks, a sealed record); the result then holds ``durable`` ``{record,
-        path}``, and ``Debugger.run_from`` of either rehydrates it in any process."""
+        path}``, and ``Debugger.run_from`` of either rehydrates it in any process (``holds``:
+        ``engine.checkpoint.save``)."""
         if durable is not None:
             from . import checkpoint as states
 
             if hasattr(durable, "store") and hasattr(durable, "sessions"):
-                record = states.save(self, project=durable, name=name, history=history)
+                record = states.save(self, project=durable, name=name, history=history,
+                                     holds=holds)
                 where = {"record": record["id"], "path": None}
             else:
-                record = states.save(self, durable, name=name, history=history)
+                record = states.save(self, durable, name=name, history=history, holds=holds)
                 where = {"record": record["id"], "path": str(durable)}
             return {**self.checkpoint(name, pin=pin), "durable": where}
         mark = self._trail[-1]

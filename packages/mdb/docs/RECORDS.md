@@ -100,7 +100,7 @@ v3 record of kind `checkpoint-state`. The tensors are not in the record. It poin
  "source": {"dtype", "device"},
  "lineage": {"root": "prompt" | "checkpoint", "checkpoints": [ids], ...},
  "recipe": {"sha256", "path_edits", "staged"}, "edited": bool,
- "holds": [{"name", "address"}], "captured": [addresses],
+ "holds": [{"name", "address", "dropped"}], "captured": [addresses],
  "document": {"state": "stored" | "file", "sha256", "bytes", "ref"?, "tensor"?},
  "tensors": {"count", "sha256": ["<60 sha256 hex per string>", ...] | None, "parts_sha256"},
  "bytes": num(..., "measured"), "custody": {...}}
@@ -114,6 +114,14 @@ refuses a record whose parts, document, prompt, fingerprints or recipe differ fr
 seals. `lineage.root` is `prompt` when the cut's fingerprints chain back to a run of the prompt.
 It is `checkpoint` for a replica or a legacy core file, which root a new lineage. The older
 `core-file` kind (legacy v1 core files) is still declared and read.
+
+The seal gives integrity, not authenticity: it binds the document (edit history and lineage
+included) to the record id, but anyone can seal a document whose history was stripped. So a
+record sealed about a run rehydrated from a checkpoint names it until the path is verified by
+recompute: `procedure.from_checkpoint` (records that carry a procedure) and
+`custody.from_checkpoint` (records sealed while an op runs on that run) are
+`{"checkpoint": "<record id>", "path": "unverified" | "verified"}` (a replica adds `replica` and
+`null_check`).
 
 ## Records written by mdb 0.2.1 and earlier (v2)
 

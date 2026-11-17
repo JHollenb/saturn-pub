@@ -60,13 +60,14 @@ def test_each_origin_form_resolves_to_the_donor_tensor_bitwise(debugger, tmp_pat
     assert torch.equal(k, _block(donor, 1, "k", 0, 3))
     with pytest.raises(Refused, match="before RoPE"):
         debugger.cell_value("boiling:t3.L0.k[kv0]", run=run)
-    # project forms: a durable checkpoint name (stored cut) and a session id (its cursor)
+    # project forms: a durable checkpoint name and a session id (its cursor), both rehydrated
+    # from the checkpoint state (no whole native cut is stored beside it)
     durable = mdb.attach(debugger.model, project=tmp_path / "p")
     stored = durable.run(DONOR, name="donor")
     stored.until("t3.logits")
     durable.checkpoint(stored, "hot")
     here = durable.run(PROMPT)
-    for origin, via in (("hot", "cut"), (durable.session_id, "cut")):
+    for origin, via in (("hot", "checkpoint"), (durable.session_id, "checkpoint")):
         found, pointer = durable.cell_value(f"{origin}:{A}", run=here)
         assert torch.equal(found, _block(stored, 0, "v", 0, 1)) and pointer["via"] == via
         assert pointer["recipe"] is not None

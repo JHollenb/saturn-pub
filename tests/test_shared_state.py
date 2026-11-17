@@ -77,3 +77,51 @@ def test_an_in_place_write_is_refused_and_poisons_the_session():
     cut = earlier.capture(retain=False)  # the boundary before the embed: no hidden yet
     session.restore(cut)
     assert describe(session.capture(retain=False).payload) == describe(cut.payload)
+
+
+def test_cut_blocks_round_trip_shares_chunks_and_keeps_the_fingerprint(adapter):
+    """The public block API (``cut_blocks`` / ``StateCut.from_blocks``, saturn-pub 0.4.3): a cut
+    rebuilt from the blocks of another is that cut (same fingerprint), holds the same chunk
+    objects (no copy), hydrates bitwise, and a changed block or parent gives another cut."""
+    from saturn_pub.core import Blocks, cut_blocks
+
+    _, cuts = _cuts(adapter, adapter.layers + 3)
+    rebuilt = []
+    shared: dict[int, Blocks] = {}
+    for cut in cuts:
+        blocks = cut_blocks(cut)
+        grown = blocks["keys"][0]
+        assert isinstance(grown, Blocks)
+
+        def same(value):   # one Blocks object per held tensor, as a loader would share them
+            if isinstance(value, Blocks):
+                key = id(value.chunks[0]) if value.dim is None else tuple(map(id, value.chunks))
+                return shared.setdefault(hash(key), value)
+            if isinstance(value, list):
+                return [same(v) for v in value]
+            return value
+
+        payload = {k: same(v) for k, v in blocks.items()}
+        again = StateCut.from_blocks(cut.model_identity, cut.execution, cut.boundary, cut.parent,
+                                     payload, cut.execution_point, cut.surface)
+        assert again.fingerprint == cut.fingerprint
+        assert Session.from_cut(adapter, again).capture(retain=False).fingerprint == \
+            cut.fingerprint
+        rebuilt.append(again)
+    last = cut_blocks(rebuilt[-1])["keys"][0]
+    original = cut_blocks(cuts[-1])["keys"][0]
+    assert all(a is b for a, b in zip(last.chunks, original.chunks))   # shared, not copied
+    assert held_bytes(*rebuilt) <= held_bytes(*cuts) * 1.01
+    blocks = cut_blocks(cuts[-1])
+    changed = blocks["hidden"].chunks[0].clone()
+    changed.view(-1)[0] += 1
+    blocks["hidden"] = Blocks((changed,), None, tuple(changed.shape), tuple(changed.stride()),
+                              changed.dtype)
+    other = StateCut.from_blocks(cuts[-1].model_identity, cuts[-1].execution,
+                                 cuts[-1].boundary, cuts[-1].parent, blocks,
+                                 cuts[-1].execution_point, cuts[-1].surface)
+    assert other.fingerprint != cuts[-1].fingerprint
+    reparented = StateCut.from_blocks(cuts[-1].model_identity, cuts[-1].execution,
+                                      cuts[-1].boundary, "0" * 64, cut_blocks(cuts[-1]),
+                                      cuts[-1].execution_point, cuts[-1].surface)
+    assert reparented.fingerprint != cuts[-1].fingerprint

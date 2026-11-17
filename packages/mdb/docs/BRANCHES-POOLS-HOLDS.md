@@ -75,12 +75,16 @@ info = dbg.checkpoint(run, "pre")            # a project: info["state"] is the r
 run.checkpoint("pre", durable=dbg.project)   # the same from a Run (or durable="cut.pt")
 
 r = dbg.run_from("cut.pt")                   # or a record id / unique prefix, any process
-r = dbg.restart("pre", verify=True)          # project name; verify = replay the recipe once
+r.from_checkpoint                            # {"checkpoint": id, "path": "unverified"}
+r.verify()                                   # replay the recipe once; then "path verified"
+r = dbg.restart("pre", verify=True)          # project name; raises unless the path verifies
 r.core, r.lineage                            # provenance; what the fingerprints chain back to
 dbg.branches(r, Margin(...), at=...)         # Branches, Pool, each run from it
 dbg.pool([{"id": "a", "core": "cut.pt"}], "t@last.L20.h")
 dbg.each([{"name": "x", "core": "cut.pt"}], "whatif ...")   # or dbg.each(items, line, core=)
 ```
+
+In the REPL: `start from=ID|PATH [name=NAME] [verify=true|report]`.
 
 A checkpoint is the run's state at a cut as content-addressed pointers to its tensors, not a
 recipe to replay. It holds the native `StateCut` of each kept trail mark, slot by slot: per
@@ -89,7 +93,9 @@ before the cursor), logits, the sampled token, the stepped-prompt slot, plus the
 execution point, surface and parent fingerprint. It also holds the cursor (a port in the
 pending layer and the edits and cell edits staged there), the committed edits of every kept
 transition and of the path before the first kept mark, all edit and mask tensors, the active
-holds (described, not re-armed: `run.core["holds_not_rearmed"]`), the run's recipe
+holds (each with the source values it reads from the cut's row on, so the reloaded run re-arms
+it and continues held bit for bit; `holds="drop"` records them as dropped instead), the run's
+recipe
 (`Run.checkpoint()`, provenance and the input of `verify`) and optional captured values. A K/V
 tensor is stored as parts: the prefix cache the engine already shares, then the appended rows in
 power-of-two blocks aligned from its end. Every part is addressed by the sha256 of its bytes and
@@ -101,10 +107,14 @@ Where it lives: a self-contained file (`torch.save` of plain data, loadable with
 state document is a JSON blob, and a sealed `checkpoint-state` record (schema `mdb-record-v3`)
 is indexed under the session. `run_from` takes a path, a record id or a unique prefix of at
 least 8 hex digits, a `Run.checkpoint(durable=...)` result, or a loaded checkpoint
-(`dbg.load_checkpoint(ref)`). `dbg.checkpoint(run, name)` still writes the replay recipe and
-the `checkpoint` record as before, and adds the state. `dbg.restart(name)` rehydrates the state
-when the project holds it (`replay=True`, or a project written before, replays the recipe). It
-refuses with the recipe's codes first: model identity, numeric scope, missing or corrupt blob.
+(`dbg.load_checkpoint(ref)`). A string that names both an existing file and a record of the
+project is refused as ambiguous (pass `Path(...)` for the file). `dbg.checkpoint(run, name)`
+writes the replay recipe and the `checkpoint` record as before, and the state; it no longer
+stores a whole native cut beside it (K/V would be stored twice), and cuts in projects written
+before are still read. A value taken from a checkpoint by name (`NAME:ADDR`) rehydrates its
+state (`via` `checkpoint`). `dbg.restart(name)` rehydrates the state when the project holds it
+(`replay=True`, or a project written before, replays the recipe). It refuses with the recipe's
+codes first: model identity, numeric scope, missing or corrupt blob.
 
 The record holds the document's sha256, the sha256 of every part (`tensors.sha256`, 60 digests
 per string, inline up to 3,600 parts; beyond that only `tensors.parts_sha256` and the sealed
@@ -119,11 +129,15 @@ run's trail is the kept marks with their committed edits. The cursor is put back
 and staged edits. Nothing before the cursor is recomputed. A cursor at a port inside a layer
 costs one probe of that layer, as moving there costs on the source run. Tested bit for bit at
 every port phase of a row (`start`, `emb`, `L0.p`, `L0.m`, `L0.h_out`, `L1.sg`, `fn`, `logits`,
-`sample`), with an edit or cell edit staged at the cursor, on tiny Qwen2 bf16 and Qwen3 fp32.
+`sample`), with an edit or cell edit staged at the cursor, and with a port hold and a
+norm-scale hold active, on tiny Qwen2 bf16 and Qwen3 fp32. Each kept cut's parent must be the
+previous kept mark's fingerprint.
 `history`: `cursor` (only the cut), `row` (default: every boundary of the cut's row before it,
 so the reloaded run rewinds inside that row), or `root` (back to the source's root: row starts
 as cuts, the boundaries between them replayed on demand, as `retain_rows` does). A rewind before
-the first kept mark is refused with that advice.
+the first kept mark is refused with that advice. So, with `cursor`, verbs that read the rows
+before the cut through their ports (`symbols`, for one) refuse ("before the start of this
+run"), although those rows' K/V are in the cache: use `row` or `root` for them.
 
 Saving at an earlier boundary than the cursor (`at="t4.start"`, `row=4`) is refused when the
 run edited after it, committed or staged. A cut never silently drops an edit. Saved that way,
@@ -138,21 +152,41 @@ rehydrated from an earlier checkpoint of the same lineage restores a later one b
 from its first mark. `Run.restore` refuses a checkpoint before the run's first mark, or one
 whose path before it differs (another lineage). The edits of the path before the first mark are
 part of the run (`committed_edits`, `read_info()["upstream_edits"]`, `edited`,
-`checkpoint()["path_edits"]`). The parent is recorded, not re-derived. `verify` replays the
-recipe from the prompt and checks it reaches the same fingerprint (measured). A forged parent
-changes the fingerprint and is refused.
+`checkpoint()["path_edits"]`).
+
+**Integrity, not authenticity.** The seal says a file is the record it names: a changed byte,
+tensor, parent or document is refused, and the record id is a digest of the document, edit
+history and lineage included. It does not say that history is true. The parent is recorded,
+not re-derived, and anyone can strip the edits from a document and seal a new record for it:
+the state loads (its tensors are genuine) and claims a clean path (measured: the continuation
+equals the edited source, not a clean run). So every value and record of a run rehydrated from
+a checkpoint carries `from checkpoint <id>, path unverified` until its path is verified by
+recompute: `run.from_checkpoint`, the `from_checkpoint` of each read's provenance (the REPL
+shows `[measured, from checkpoint ab12cd34…, path unverified]`), `procedure.from_checkpoint`
+of every record that names its procedure, and `custody.from_checkpoint` of every record sealed
+while an op runs on it. `fresh()` inherits the label. `run.verify()` (or `verify=True` on
+`run_from`, `restart`, `start from=`) replays the recipe from the lineage root and checks it
+reaches the same fingerprint (measured); it raises `CheckpointUnverified` otherwise, also when
+it cannot check (another model, or a lineage rooted at another checkpoint with no `root=`), and
+the run is then `path verified`. `verify="report"` records the result in `run.core["verified"]`
+instead of raising. A downstream record cites the checkpoint id it trusted, so a resealed file
+is a different id.
 
 **Replicas.** Another dtype, device or weights of the same shape is refused unless
 `replica=True`. A replica roots a new lineage at the cursor (`lineage["root"] ==
 "checkpoint"`), its state cast once to the target dtype, labelled `run.core["replica"]`, and
-null-checked against the captured values (`run.core_check`: argmax equal, max `|dlogit|`). A
-model of another family or shape is refused.
+null-checked against the captured values (`run.core_check`: argmax equal, max `|dlogit|`).
+Values are captured only when the source computed them past the cut (save at an earlier
+boundary); with none, `core_check` and the label say `no null check`. A model of another family
+or shape is refused.
 
 **Reference runs.** `Run.fresh()` is a new run at the root of the run's lineage: the prompt, or
 the checkpoint again (no prefix recompute). `Branches` builds its reference with it, so
 branches of a rehydrated run measure the same rows as on the source. `Pool` items and `each`
-items take `core` (alias `from`), and `each` takes `core=` from Python. The prompt is the
-checkpoint's, `prefill` does not apply, and the pool origin names the checkpoint record.
+items take `core` (alias `from`), and `each` takes `core=` from Python for the items that bring
+no prompt or tokens of their own (an item with its own starts from them; a pair donor is
+rehydrated only from its own `core`). The prompt is the checkpoint's, `prefill` does not apply,
+and the pool origin names the checkpoint record.
 
 Measured on CPU (5 threads, Qwen3-0.6B, cut at `t<last>.L12.m`, history `row`):
 

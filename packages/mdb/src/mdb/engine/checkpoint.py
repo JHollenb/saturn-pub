@@ -113,25 +113,6 @@ def aligned_blocks(length: int) -> list[tuple[int, int]]:
     return out
 
 
-def _blocks(value: Any) -> tuple[tuple[torch.Tensor, ...], int | None, list[int], list[int],
-                                 torch.dtype]:
-    """``(chunks, axis, shape, stride, dtype)`` of a sealed payload leaf: the engine's block form
-    (``saturn_pub`` ``_Appended``: the prefix cache, then the rows appended to it) when it holds
-    one, else the tensor as one chunk."""
-    from saturn_pub import core as native
-
-    appended = value if isinstance(value, native._Appended) else (
-        native._appended_of(value) if isinstance(value, torch.Tensor) else None)
-    if appended is not None:
-        parts = tuple(appended.chunks)
-        dim = appended.dim
-        shape = list(parts[0].shape)
-        shape[dim] = sum(int(p.shape[dim]) for p in parts)
-        stride = list(native._standard_strides(tuple(shape)))
-        return parts, dim, shape, stride, parts[0].dtype
-    return (value,), None, list(value.shape), list(value.stride()), value.dtype
-
-
 class _Writer:
     """Collects the parts (content-addressed) and the tensor descriptors of one checkpoint."""
 
@@ -142,7 +123,7 @@ class _Writer:
         self._part_index: dict[str, int] = {}
         self._part_seen: dict[int, tuple[Any, int]] = {}
         self.tensors: list[dict[str, Any]] = []
-        self._seen: dict[int, tuple[Any, int]] = {}
+        self._seen: dict[Any, tuple[Any, int]] = {}
         self._keep: list[Any] = []         # chunks named by part memo keys stay alive meanwhile
         self.bytes = 0
 
@@ -170,21 +151,28 @@ class _Writer:
         return index
 
     def tensor(self, value: Any) -> int:
-        seen = self._seen.get(id(value))
-        if seen is not None and seen[0] is value:
+        """The descriptor index of a tensor or ``saturn_pub.core.Blocks`` (one per held
+        tensor: the same chunks give the same index)."""
+        from saturn_pub.core import Blocks
+
+        if not isinstance(value, Blocks):
+            value = Blocks((value,), None, tuple(value.shape), tuple(value.stride()),
+                           value.dtype)
+        key = (value.dim, tuple(id(c) for c in value.chunks))
+        seen = self._seen.get(key)
+        if seen is not None:
             return seen[1]
-        chunks, axis, shape, stride, dtype = _blocks(value)
-        if axis is None and value.dim() == 4 and _kv_like(value):
-            axis = 2                       # a plain K/V tensor (1, kv, rows, d): rows split too
+        chunks, axis = value.chunks, value.dim
         if axis is None:
             parts = [self.part(chunks[0])]
         else:
-            parts = self._aligned(chunks, axis, int(shape[axis]))
-        descriptor = {"dtype": str(dtype).removeprefix("torch."), "shape": shape,
-                      "stride": stride, "axis": axis, "parts": parts}
+            parts = self._aligned(chunks, axis, int(value.shape[axis]))
+        descriptor = {"dtype": str(value.dtype).removeprefix("torch."),
+                      "shape": list(value.shape), "stride": list(value.stride), "axis": axis,
+                      "parts": parts}
         self.tensors.append(descriptor)
         index = len(self.tensors) - 1
-        self._seen[id(value)] = (value, index)
+        self._seen[key] = (value, index)       # keeps the chunks alive while ids are keys
         return index
 
     def _aligned(self, chunks: tuple[torch.Tensor, ...], axis: int, length: int) -> list[int]:
@@ -218,9 +206,9 @@ class _Writer:
         return out
 
     def encode(self, value: Any) -> Any:
-        from saturn_pub import core as native
+        from saturn_pub.core import Blocks
 
-        if isinstance(value, (torch.Tensor, native._Appended)):
+        if isinstance(value, (torch.Tensor, Blocks)):
             return {"kind": "tensor", "t": self.tensor(value)}
         if isinstance(value, Mapping):
             if any(not isinstance(k, str) for k in value):
@@ -233,10 +221,6 @@ class _Writer:
         if value is None or type(value) in (bool, int, float, str):
             return {"kind": "scalar", "value": value}
         raise ValueError(f"unsupported checkpoint state value: {type(value).__name__}")
-
-
-def _kv_like(value: torch.Tensor) -> bool:
-    return value.shape[0] == 1 and value.dim() == 4
 
 
 def part_key(sha: str, dtype: str, shape: list[int]) -> str:
@@ -335,9 +319,36 @@ def _first_kept(run: Any, index: int, history: str) -> int:
     return min(i for i in range(index + 1) if run._trail[i].row == row)
 
 
+def _holds(run: Any, writer: Any, from_row: int, holds: str) -> list[dict[str, Any]]:
+    """The active holds, each with the source values it reads from ``from_row`` on (tensor
+    indices), its source's cursor and cut, so a reloaded run re-arms it exactly; ``holds``
+    ``"drop"``: described and marked dropped (the reloaded run continues free)."""
+    from .holds import source_addresses
+    from .refs import run_label
+
+    out = []
+    for hold in run.hold_objects():
+        entry = {**hold.describe(), "cells": [dict(c) for c in hold.cells],
+                 "dropped": holds == "drop"}
+        if holds == "rearm":
+            values = {}
+            for address in source_addresses(run, hold, from_row):
+                try:
+                    value = hold.source.read(address)
+                except ValueError:
+                    continue            # not computed by the source (yet): refused on reach
+                values[address] = writer.tensor(value.detach().contiguous())
+            entry["snapshot"] = {"source": run_label(hold.source), "where": hold.source.where,
+                                 "cut": hold.source.checkpoint(pin=False)["cut"],
+                                 "tokens": list(hold.source.tokens), "values": values}
+        out.append(entry)
+    return out
+
+
 def build(run: Any, *, store: Any = None, name: str | None = None, at: str | None = None,
           row: int | None = None, history: str = "row",
-          capture: tuple[str, ...] | None = None) -> tuple[dict[str, Any], _Writer, dict]:
+          capture: tuple[str, ...] | None = None, holds: str = "rearm"
+          ) -> tuple[dict[str, Any], _Writer, dict]:
     """The state document of ``run`` at ``at`` (default: the cursor) and its writer (parts put
     in ``store`` when given, else held for a file), plus the record body facts."""
     if history not in HISTORIES:
@@ -364,6 +375,8 @@ def build(run: Any, *, store: Any = None, name: str | None = None, at: str | Non
     stored = {first, index}
     stored.update(i for i in range(first, index + 1)
                   if run._trail[i].label == "start" or run._trail[i].row == run._trail[index].row)
+    from saturn_pub.core import cut_blocks
+
     writer = _Writer(store)
     ancestry = [_mark_entry(m, True) for m in [*run._ancestry, *run._trail[:first]]
                 if m.edits or m.cells or m.supplied is not None]
@@ -373,7 +386,6 @@ def build(run: Any, *, store: Any = None, name: str | None = None, at: str | Non
         entry = _mark_entry(mark, i < index)
         if i in stored:
             cut = run._cut_of(i)
-            cut._check_sealed()
             if cut.fingerprint != mark.fingerprint:
                 raise RuntimeError(f"the cut of {_mark_address(run, i)} differs from its mark")
             entry["cut"] = {
@@ -382,7 +394,7 @@ def build(run: Any, *, store: Any = None, name: str | None = None, at: str | Non
                 if cut.execution_point is not None else None,
                 "surface": _plain(dict(cut.surface), "a state surface")
                 if cut.surface is not None else None,
-                "payload": writer.encode(dict(cut._payload))}
+                "payload": writer.encode(cut_blocks(cut))}
         marks.append(entry)
     tensors = run.edit_tensors()
     edit_index = {sha: writer.tensor(t) for sha, t in sorted(tensors.items())}
@@ -390,6 +402,13 @@ def build(run: Any, *, store: Any = None, name: str | None = None, at: str | Non
     for address in capture:
         value = run.read(address).detach().to("cpu").contiguous().clone()
         captured[address] = writer.tensor(value)
+    if holds not in ("rearm", "drop"):
+        raise ValueError("holds is 'rearm' (default) or 'drop'")
+    if run.hold_objects() and not cursor_is_cut and holds == "rearm":
+        raise ValueError(f"the run holds ports ({', '.join(h.name for h in run.hold_objects())})"
+                         f" now, not necessarily at {where}: save at the cursor to re-arm them, "
+                         "or pass holds='drop' (recorded)")
+    held = _holds(run, writer, run._trail[index].row, holds)
     staged_edits = [e.manifest() for e in run._edits] if cursor_is_cut else []
     staged_cells = [c.manifest() for c in run._cells] if cursor_is_cut else []
     adapter = run.adapter
@@ -406,7 +425,7 @@ def build(run: Any, *, store: Any = None, name: str | None = None, at: str | Non
         "marks": marks,
         "edit_tensors": edit_index,
         "captured": captured,
-        "holds": [h.describe() for h in run.hold_objects()],
+        "holds": held,
         "recipe": _recipe_at(run, index),
         "lineage": dict(run.lineage),
         "parts": writer.parts, "tensors": writer.tensors,
@@ -446,7 +465,8 @@ def _body(run: Any, doc: dict[str, Any], writer: _Writer, facts: dict[str, Any],
         "recipe": {"sha256": _sha_text(_canonical(recipe)),
                    "path_edits": len(recipe["path_edits"]), "staged": len(recipe["edits"])},
         "edited": bool(recipe["path_edits"] or recipe["edits"]),
-        "holds": [{"name": h["name"], "address": h["address"]} for h in doc["holds"]][:64],
+        "holds": [{"name": h["name"], "address": h["address"], "dropped": h["dropped"]}
+                  for h in doc["holds"]][:64],
         "captured": sorted(doc["captured"])[:64],
         "document": document,
         "tensors": {"count": len(shas),
@@ -484,7 +504,8 @@ def _seal(run: Any, body: dict[str, Any], session_id: str, execution: Any = None
 
 def save(run: Any, target: Any = None, *, project: Any = None, session_id: str | None = None,
          name: str | None = None, at: str | None = None, row: int | None = None,
-         history: str = "row", capture: tuple[str, ...] | None = None) -> dict[str, Any]:
+         history: str = "row", capture: tuple[str, ...] | None = None,
+         holds: str = "rearm") -> dict[str, Any]:
     """Write a checkpoint of ``run`` at ``at`` (default: the cursor; ``row=K`` is
     ``at="t<K>.start"``) and return its sealed record. ``target`` a path: a self-contained file;
     ``project``: the project's store and index (``session_id``: the record's session, default
@@ -493,7 +514,9 @@ def save(run: Any, target: Any = None, *, project: Any = None, session_id: str |
     the reloaded run rewinds inside that row) or ``root`` (back to the run's root: row starts
     as cuts, the boundaries between them replayed on demand). ``capture``: addresses whose
     values are stored for a replica's ``null_check`` (default: the last prompt row's logits when
-    the run computed them)."""
+    the run computed them). ``holds``: ``rearm`` (default) keeps each active hold with the
+    source values it reads from the checkpoint's row on, so the reloaded run continues held,
+    bit for bit; ``drop`` records the holds as dropped and the reloaded run continues free."""
     if (target is None) == (project is None):
         raise ValueError("save to a path or to a project, one of them")
     from mdb.core.bounded import put_json
@@ -501,7 +524,7 @@ def save(run: Any, target: Any = None, *, project: Any = None, session_id: str |
     started = time.perf_counter()
     store = project.store if project is not None else None
     doc, writer, facts = build(run, store=store, name=name, at=at, row=row, history=history,
-                               capture=capture)
+                               capture=capture, holds=holds)
     text = _canonical(doc)
     if project is not None:
         session = session_id or _project_session(project, run)
@@ -551,8 +574,7 @@ class Checkpoint:
         self.record, self.doc, self.path = record, doc, path
         self._blobs, self._store = blobs, store
         self._parts: dict[int, torch.Tensor] = {}
-        self._tensors: dict[int, torch.Tensor] = {}
-        self._described: dict[int, Any] = {}
+        self._blocks: dict[tuple[int, str], Any] = {}
         self._cuts: dict[tuple[str, int], Any] = {}
         self.prompt = [int(t) for t in doc["prompt"]]
         self.split = int(doc["marks"][-1]["row"])
@@ -613,72 +635,51 @@ class Checkpoint:
         self._parts[index] = value
         return value
 
-    def tensor(self, index: int) -> torch.Tensor:
-        """Tensor ``index`` of the document, rebuilt from its parts (cached; CPU)."""
-        found = self._tensors.get(index)
+    def blocks(self, index: int, device: Any = "cpu") -> Any:
+        """Tensor ``index`` of the document as ``saturn_pub.core.Blocks`` of its parts (on
+        ``device``; cached, so every cut that holds the tensor shares one object)."""
+        from saturn_pub.core import Blocks
+
+        key = (index, str(device))
+        found = self._blocks.get(key)
         if found is not None:
             return found
-        from saturn_pub import core as native
-
         desc = self.doc["tensors"][index]
         parts = [self._part(i) for i in desc["parts"]]
+        if str(device) != "cpu":
+            parts = [p.to(device) for p in parts]
         dtype = getattr(torch, desc["dtype"])
         if any(p.dtype != dtype for p in parts):
             raise ValueError("checkpoint tensor parts differ from its dtype")
-        if desc["axis"] is None:
-            if len(parts) != 1:
-                raise ValueError("a checkpoint tensor without an axis has one part")
-            full = parts[0]
-            if list(full.shape) != desc["shape"]:
-                raise ValueError("checkpoint tensor shape differs from its part")
-            if list(full.stride()) != desc["stride"]:
-                strided = torch.empty_strided(tuple(desc["shape"]), tuple(desc["stride"]),
-                                              dtype=dtype)
-                strided.copy_(full)
-                full = strided
-        elif len(parts) == 1 and list(parts[0].shape) == desc["shape"] and list(
-                parts[0].stride()) == desc["stride"]:
-            full = parts[0]
-        else:
-            full = torch.cat(parts, dim=desc["axis"]) if parts else torch.empty(
-                tuple(desc["shape"]), dtype=dtype)
-            if list(full.shape) != desc["shape"] or list(full.stride()) != desc["stride"]:
-                raise ValueError("checkpoint tensor layout differs from its parts")
-            if len(parts) > 1:
-                # the engine's block form: a cut holding it keeps the parts, not the whole
-                native._register_appended(full, native._Appended(tuple(parts), desc["axis"]))
-        self._tensors[index] = full
-        return full
+        if desc["axis"] is None and len(parts) != 1:
+            raise ValueError("a checkpoint tensor without an axis has one part")
+        found = self._blocks[key] = Blocks(tuple(parts), desc["axis"], tuple(desc["shape"]),
+                                           tuple(desc["stride"]), dtype)
+        return found
 
-    def _decode(self, value: Any, device: Any) -> Any:
+    def tensor(self, index: int) -> torch.Tensor:
+        """Tensor ``index`` of the document, rebuilt from its parts (CPU)."""
+        try:
+            return self.blocks(index).tensor()
+        except ValueError as error:
+            raise ValueError(f"checkpoint tensor {index}: {error}") from error
+
+    def _decode(self, value: Any, device: Any, *, blocks: bool = False) -> Any:
         kind = value["kind"]
         if kind == "tensor":
+            if blocks:
+                return self.blocks(value["t"], device)
             t = self.tensor(value["t"])
             return t if str(t.device) == str(device) else t.to(device)
         if kind == "mapping":
-            return {k: self._decode(v, device) for k, v in value["items"].items()}
+            return {k: self._decode(v, device, blocks=blocks) for k, v in value["items"].items()}
         if kind == "list":
-            return [self._decode(v, device) for v in value["items"]]
+            return [self._decode(v, device, blocks=blocks) for v in value["items"]]
         if kind == "tuple":
-            return tuple(self._decode(v, device) for v in value["items"])
+            return tuple(self._decode(v, device, blocks=blocks) for v in value["items"])
         if kind == "scalar":
             return value["value"]
         raise ValueError(f"unknown checkpoint value kind {kind!r}")
-
-    def _describe(self, value: Any) -> Any:
-        from saturn_pub.values import describe, describe_mapping
-
-        kind = value["kind"]
-        if kind == "tensor":
-            index = value["t"]
-            if index not in self._described:
-                self._described[index] = describe(self.tensor(index))
-            return dict(self._described[index])
-        if kind == "mapping":
-            return describe_mapping({k: self._describe(v) for k, v in value["items"].items()})
-        if kind in ("list", "tuple"):
-            return {"kind": kind, "items": [self._describe(v) for v in value["items"]]}
-        return describe(value["value"])
 
     # binding -----------------------------------------------------------------------------
 
@@ -719,16 +720,35 @@ class Checkpoint:
         stored = mark["cut"]
         if stored is None:
             raise ValueError(f"mark {index} of the checkpoint keeps no cut")
-        payload = self._decode(stored["payload"], adapter.device)
-        described = self._describe(stored["payload"])
-        cut = StateCut(adapter.model_identity, adapter.execution, stored["boundary"],
-                       stored["parent"], payload, execution_point=stored["execution_point"],
-                       surface=stored["surface"], _described=described, _shared=True)
+        payload = self._decode(stored["payload"], adapter.device, blocks=True)
+        try:
+            cut = StateCut.from_blocks(adapter.model_identity, adapter.execution,
+                                       stored["boundary"], stored["parent"], payload,
+                                       execution_point=stored["execution_point"],
+                                       surface=stored["surface"])
+        except ValueError as error:
+            raise ValueError(f"checkpoint state at mark {index}: {error}") from error
         if cut.fingerprint != mark["fingerprint"]:
             raise ValueError(f"checkpoint state at mark {index} differs from its fingerprint "
                              f"{mark['fingerprint'][:12]} (changed tensors or metadata)")
         self._cuts[key] = cut
         return cut
+
+    def _rearm(self, run: Any) -> None:
+        """Re-arm the holds the source had active (``save(holds="rearm")``), each reading the
+        source values the checkpoint kept (``holds.Snapshot``)."""
+        from .holds import Hold, Snapshot
+
+        for h in self.doc["holds"]:
+            if h["dropped"]:
+                continue
+            snap = h["snapshot"]
+            values = {a: self.tensor(i) for a, i in snap["values"].items()}
+            source = Snapshot(snap["source"], snap["where"], snap["cut"], values, snap["tokens"])
+            run._holds.append(Hold(h["name"], h["port"], tuple(h["layers"]),
+                                   None if h["rows"] is None else tuple(h["rows"]), source,
+                                   h["address"], cells=[dict(c) for c in h["cells"]]))
+        run._hold_key = None
 
     def _held(self) -> dict[str, torch.Tensor]:
         out = {}
@@ -742,12 +762,21 @@ class Checkpoint:
     # runs --------------------------------------------------------------------------------
 
     def run(self, adapter: Any, *, lookahead: str | None = None, name: str | None = None,
-            replica: bool = False, check: bool = True, verify: bool = False) -> Any:
+            replica: bool = False, check: bool = True, verify: bool | str = False,
+            root: Any = None) -> Any:
         """A ``Run`` of ``adapter`` at the checkpoint's cursor (module docstring). ``replica``:
         allow another dtype, device or weights (a new lineage at the cursor). ``check``: the
-        replica null check (``run.core_check``; only when values were captured). ``verify``:
-        replay the recipe from the lineage root and record whether it reaches the same
-        fingerprint (``run.core["verified"]``)."""
+        replica null check (``run.core_check``; values were captured), else the result says
+        there was no null check. The run is labelled ``from checkpoint <id>, path unverified``
+        (``run.from_checkpoint``) until its path is verified. ``verify=True``: replay the
+        recipe from the lineage root (``root`` for a foreign one) first and raise
+        ``CheckpointUnverified`` unless it reaches the checkpoint's fingerprint (the run is then
+        ``path verified``); ``verify="report"``: record the result as ``run.core["verified"]``
+        and never raise."""
+        if verify not in (False, True, "report"):
+            raise ValueError(f"verify is False, True or 'report', not {verify!r}")
+        if verify is True:
+            result = self.verify(adapter, root=root)
         started = time.perf_counter()
         bound = self._refuse(adapter, replica)
         lookahead = self.doc["lookahead"] if lookahead is None else lookahead
@@ -763,13 +792,28 @@ class Checkpoint:
                     "replica": not bound["exact"], "lineage": dict(run.lineage),
                     "source_dtype": bound["source_dtype"], "dtype": bound["dtype"],
                     "same_identity": bound["same_identity"],
-                    "holds_not_rearmed": [h["name"] for h in self.doc["holds"]],
+                    "holds": [h["name"] for h in self.doc["holds"] if not h["dropped"]],
+                    "holds_dropped": [h["name"] for h in self.doc["holds"] if h["dropped"]],
                     "load_seconds": seconds}
+        run.from_checkpoint = {"checkpoint": self.id, "path": "unverified"}
+        if not bound["exact"]:
+            run.from_checkpoint["replica"] = True
         run.core_check = None
         if check and self.doc["captured"]:
             run.core_check = self.null_check(adapter, lookahead=lookahead, replica=replica)
-        if verify:
-            run.core["verified"] = self.verify(adapter)
+        elif check and not bound["exact"]:
+            run.core_check = {"state": "unresolved", "ok": None,
+                              "reason": "no null check: the checkpoint captured no value to "
+                                        "compare the replica with (save it with capture=)"}
+        if not bound["exact"]:
+            ok = (run.core_check or {}).get("ok")
+            run.from_checkpoint["null_check"] = None if ok is None else bool(ok)
+        if verify is True:
+            run.core["verified"] = result
+        elif verify == "report":
+            run.core["verified"] = self.verify(adapter, root=root, report=True)
+        if run.core.get("verified", {}).get("ok"):
+            run.from_checkpoint["path"] = "verified"
         return run
 
     def _exact(self, adapter: Any, lookahead: str) -> Any:
@@ -778,15 +822,23 @@ class Checkpoint:
         from .run import Run
 
         marks = self.doc["marks"]
+        for i in range(1, len(marks)):
+            # the kept marks are consecutive trail marks: each cut chains to the one before
+            stored = marks[i]["cut"]
+            if stored is not None and stored["parent"] != marks[i - 1]["fingerprint"]:
+                raise ValueError(f"checkpoint mark {i} ({marks[i]['label']}) has parent "
+                                 f"{str(stored['parent'])[:12]}, not the previous mark "
+                                 f"{marks[i - 1]['fingerprint'][:12]} (a broken chain)")
         cuts = {i: self.cut(adapter, i) for i, m in enumerate(marks) if m["cut"] is not None}
         # the cuts hold the parts (block form) or the tensors themselves: the concatenated
         # copies are not needed any more (rebuilt from the parts if ever asked for again)
-        self._tensors.clear()
+        self._blocks.clear()
         run = Run(adapter, self.prompt, root=cuts[0], root_transitions=marks[0]["transitions"],
                   prefill=self.doc["prefill"], lookahead=lookahead)
         if run._trail[0].fingerprint != marks[0]["fingerprint"]:
             raise ValueError("the rehydrated root differs from the checkpoint's fingerprint")
         run.hold(self._held())
+        self._rearm(run)
         run._ancestry = [self._mark(run, m, None, ancestor=True) for m in self.doc["ancestry"]]
         run.lineage = self._lineage()
         run._origin = self
@@ -849,18 +901,22 @@ class Checkpoint:
         device, dtype = adapter.device, adapter.dtype
 
         def move(t: Any) -> Any:
+            if isinstance(t, Mapping):
+                return {k: move(v) for k, v in t.items()}
+            if isinstance(t, (list, tuple)):
+                return type(t)(move(x) for x in t)
             if not isinstance(t, torch.Tensor):
                 return t
             if t.is_floating_point():
                 return t.to(device=device, dtype=dtype)
             return t.to(device=device)
 
-        state = {k: ([move(x) for x in v] if isinstance(v, list) else move(v))
-                 for k, v in state.items()}
+        state = move(state)
         root = Session(adapter, state).capture(retain=False)
         run = Run(adapter, self.prompt, root=root, root_transitions=marks[-1]["transitions"],
                   prefill=self.doc["prefill"], lookahead=lookahead)
         run.hold(self._held())
+        self._rearm(run)
         run._ancestry = [self._mark(run, m, None, ancestor=True)
                          for m in [*self.doc["ancestry"], *marks[:-1]]
                          if m["edits"] or m["cells"] or m["supplied"] is not None]
@@ -904,19 +960,28 @@ class Checkpoint:
                        " and bit-identical values (same dtype and identity)" if same else ""))
         return out
 
-    def verify(self, adapter: Any, *, root: Any = None) -> dict[str, Any]:
+    def verify(self, adapter: Any, *, root: Any = None, report: bool = False) -> dict[str, Any]:
         """Verify by recompute (measured): replay the recipe from the lineage root (a run of the
         prompt; ``root``, a ``Run`` or ``Checkpoint``, for a foreign lineage) with the stored
-        edit tensors and compare the cut it reaches with the checkpoint's fingerprint."""
+        edit tensors and compare the cut it reaches with the checkpoint's fingerprint. Raises
+        ``CheckpointUnverified`` unless it does (also when it cannot be checked: another model
+        or execution, or a foreign root and no ``root=``); ``report``: return the result
+        (``ok``, ``state``) instead of raising."""
+        result = self._verify(adapter, root)
+        if not result["ok"] and not report:
+            raise CheckpointUnverified(result)
+        return result
+
+    def _verify(self, adapter: Any, root: Any) -> dict[str, Any]:
         from .run import ReplayMismatch, Run
 
         started = time.perf_counter()
         lineage = self.doc["lineage"]
         if self.binding(adapter)["exact"] is False:
-            return {"ok": False, "state": "unresolved",
+            return {"ok": False, "state": "unresolved", "checkpoint": self.id,
                     "reason": "verify needs the source's model and execution"}
         if lineage.get("root") != "prompt" and root is None:
-            return {"ok": False, "state": "unresolved",
+            return {"ok": False, "state": "unresolved", "checkpoint": self.id,
                     "reason": "the lineage root is a foreign checkpoint "
                               f"({lineage.get('checkpoint')}); pass root= to verify from it"}
         recipe = self.recipe
@@ -925,6 +990,8 @@ class Checkpoint:
                          lookahead=recipe["lookahead"])
         elif isinstance(root, Checkpoint):
             replay = root.run(adapter, check=False)
+        elif isinstance(root, (str, Path)):
+            replay = load(root).run(adapter, check=False)
         else:
             replay = root.fresh()
         replay.hold(self._held())
@@ -934,11 +1001,26 @@ class Checkpoint:
         except ReplayMismatch as error:
             reached = error.reached
         ok = reached == self.fingerprint
-        return {"ok": ok, "state": "resolved", "expected": self.fingerprint, "reached": reached,
+        return {"ok": ok, "state": "resolved", "checkpoint": self.id, "expected": self.fingerprint, "reached": reached,
                 "authority": "measured", "seconds": time.perf_counter() - started,
                 "native_calls": dict(replay.calls),
                 "rule": "the recipe replayed from the lineage root reaches the checkpoint's cut "
                         "fingerprint (state content, execution contract and ancestry)"}
+
+
+class CheckpointUnverified(ValueError):
+    """A checkpoint whose path did not verify by recompute (``result`` says why)."""
+
+    def __init__(self, result: dict[str, Any]):
+        self.result = result
+        if result.get("state") == "resolved":
+            text = (f"checkpoint {str(result.get('checkpoint'))[:16]} did not verify: the recipe "
+                    f"replayed from its lineage root reaches {str(result['reached'])[:12]}, not "
+                    f"{str(result['expected'])[:12]}")
+        else:
+            text = (f"checkpoint {str(result.get('checkpoint'))[:16]} cannot be verified: "
+                    f"{result['reason']}")
+        super().__init__(text + " (verify='report' returns the result instead)")
 
 
 def _flatten(value: Any, prefix: str = "") -> dict[str, Any]:
@@ -1039,10 +1121,10 @@ def load_record(project: Any, record: dict[str, Any]) -> Checkpoint:
     return Checkpoint(record, doc, store=project.store)
 
 
-def find_named(project: Any, name: str, *, session_id: str | None = None,
+def find_named(project: Any, name: str | None, *, session_id: str | None = None,
                cut: str | None = None) -> dict[str, Any] | None:
-    """The newest ``checkpoint-state`` record named ``name`` (optionally at cut ``cut``), in
-    ``session_id`` first, else in any session."""
+    """The newest ``checkpoint-state`` record named ``name`` (None: any name; optionally at cut
+    ``cut``), in ``session_id`` first, else in any session."""
     from mdb.core import index
     from mdb.core.kinds import CHECKPOINT_STATE  # noqa: F401 (declares the kind)
 
@@ -1051,7 +1133,8 @@ def find_named(project: Any, name: str, *, session_id: str | None = None,
         sessions = [session_id] + [s for s in sessions if s != session_id]
     for sid in sessions:
         named = [r for r in index.list_records(project, sid, kind=KIND)
-                 if r.get("verified") is not False and r["body"].get("name") == name
+                 if r.get("verified") is not False
+                 and (name is None or r["body"].get("name") == name)
                  and (cut is None or r["body"]["cut"]["fingerprint"] == cut)]
         if named:
             return named[-1]
@@ -1065,17 +1148,31 @@ def load(ref: Any, *, project: Any = None) -> Any:
     if isinstance(ref, (Checkpoint, core_file.CoreFile)):
         return ref
     if isinstance(ref, Mapping) and "id" in ref and ref.get("kind") == KIND:
-        ref = ref["id"]
+        if project is None:
+            raise ValueError("a checkpoint record needs the project that holds it")
+        return load_record(project, find_record(project, ref["id"]))
     if isinstance(ref, Mapping) and isinstance(ref.get("durable"), Mapping):
         durable = ref["durable"]
         ref = durable.get("path") or durable["record"]
-    if isinstance(ref, Path) or (isinstance(ref, str) and Path(ref).expanduser().is_file()):
-        return load_file(Path(ref).expanduser())
+    is_file = isinstance(ref, Path) or (isinstance(ref, str) and Path(ref).expanduser().is_file())
+    record = None
     if isinstance(ref, str) and project is not None:
-        return load_record(project, find_record(project, ref))
+        try:
+            record = find_record(project, ref)
+        except ValueError:
+            if not is_file:
+                raise
+    if is_file and record is not None:
+        raise ValueError(f"{ref!r} names both a file and checkpoint record {record['id'][:16]} "
+                         "of the project: pass Path(...) for the file, or the record itself (the dict "
+                         "states.find_record returns) for the record")
+    if is_file:
+        return load_file(Path(ref).expanduser())
+    if record is not None:
+        return load_record(project, record)
     raise ValueError(f"no checkpoint at {ref!r}: give a file path, or a record id with a "
                      "project attached")
 
 
-__all__ = ["Checkpoint", "FILE_SCHEMA", "HISTORIES", "KIND", "SCHEMA", "build", "find_named",
+__all__ = ["Checkpoint", "CheckpointUnverified", "FILE_SCHEMA", "HISTORIES", "KIND", "SCHEMA", "build", "find_named",
            "find_record", "load", "load_file", "load_record", "save", "shape_of"]

@@ -641,9 +641,10 @@ def provenance(run: Any, address: str, selection: Selection | None = None) -> di
     """
     port = address.rsplit(".", 1)[-1] if "." in address else address
     if _unedited(run, port):
-        return {"authority": "measured", "edited": False, "kind": "native", "by": None,
-                "ops": [], "under_edits": [], "under_edits_total": 0, "replica_equal": None,
-                "max_abs_diff": None, "port": port, "state": "resolved", "reason": None}
+        return _with_origin(run, {
+            "authority": "measured", "edited": False, "kind": "native", "by": None,
+            "ops": [], "under_edits": [], "under_edits_total": 0, "replica_equal": None,
+            "max_abs_diff": None, "port": port, "state": "resolved", "reason": None})
     wide = _selected_mask(run.address_shape(address), selection)
     info = run.read_info(address, select=wide)
     ups = info.get("upstream_edits") or []
@@ -669,6 +670,15 @@ def provenance(run: Any, address: str, selection: Selection | None = None) -> di
                 out["mixed"] = {"written": written, "untouched": total - written}
     if info.get("same_port_edit"):
         out["same_port_edit"] = dict(info["same_port_edit"])
+    return _with_origin(run, out)
+
+
+def _with_origin(run: Any, out: dict[str, Any]) -> dict[str, Any]:
+    """``out`` with ``from_checkpoint`` when ``run`` is rooted at a checkpoint (the label every
+    value of such a run carries until its path is verified: ``Run.from_checkpoint``)."""
+    origin = getattr(run, "from_checkpoint", None)
+    if origin is not None:
+        out["from_checkpoint"] = dict(origin)
     return out
 
 
@@ -714,7 +724,7 @@ def cell_provenance(
            "state": "resolved", "reason": None}
     if tensor is not None:
         out.update(_cell_writes(run, layer, tensor, selection))
-    return out
+    return _with_origin(run, out)
 
 
 def _cell_writes(run: Any, layer: int, tensor: str, selection: Selection | None

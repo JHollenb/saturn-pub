@@ -23,9 +23,15 @@ def procedure(run) -> dict:
     rows = len(run.tokens)
     first = int(getattr(run, "first_row", prefill))
     batched = "no row batched" if prefill == 0 else f"rows 0..{prefill - 1} batched"
-    return {"prefill": prefill, "first_row": first, "prompt_rows": rows,
-            "default": prefill == rows - 1,
-            "text": f"prefill={prefill}: {batched}, first stepped row t{first}"}
+    out = {"prefill": prefill, "first_row": first, "prompt_rows": rows,
+           "default": prefill == rows - 1,
+           "text": f"prefill={prefill}: {batched}, first stepped row t{first}"}
+    origin = getattr(run, "from_checkpoint", None)
+    if origin is not None:
+        # the run is rooted at a checkpoint whose path is trusted, not recomputed, until
+        # verified (``Run.from_checkpoint``)
+        out["from_checkpoint"] = dict(origin)
+    return out
 
 
 FORECAST = declare_kind(

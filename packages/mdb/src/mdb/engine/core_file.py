@@ -173,12 +173,19 @@ class CoreFile:
         return Session(adapter, state)
 
     def run(self, adapter: Any, *, lookahead: str | None = None, check: bool = True,
-            name: str | None = None, replica: bool = False, verify: bool = False) -> Any:
+            name: str | None = None, replica: bool = False, verify: bool | str = False,
+            root: Any = None) -> Any:
         """A ``Run`` of ``adapter`` rooted at the split (module docstring); ``run.core`` names the
         file and ``run.core_check`` holds the null check (``check``). Another dtype or weights
-        is a replica, refused unless ``replica=True``. ``verify`` is unresolved for a v1 file
-        (it holds no recipe)."""
+        is a replica, refused unless ``replica=True``. A v1 file holds no recipe, so its path
+        is never verified: ``verify=True`` raises, ``verify="report"`` records why."""
+        from .checkpoint import CheckpointUnverified
         from .run import Run
+
+        unverifiable = {"ok": False, "state": "unresolved", "checkpoint": self.id,
+                        "reason": "a v1 core file holds no recipe to replay"}
+        if verify is True:
+            raise CheckpointUnverified(unverifiable)
 
         lookahead = "none" if lookahead is None else lookahead
         source_dtype = self.record["body"]["source"]["dtype"]
@@ -204,11 +211,16 @@ class CoreFile:
                     "exact": False, "lineage": dict(run.lineage),
                     "source_dtype": source_dtype, "dtype": dtype,
                     "same_identity": same_identity, "replica": is_replica,
-                    "holds_not_rearmed": []}
-        if verify:
-            run.core["verified"] = {"ok": False, "state": "unresolved",
-                                    "reason": "a v1 core file holds no recipe to replay"}
+                    "holds": [], "holds_dropped": []}
+        run.from_checkpoint = {"checkpoint": self.id, "path": "unverified"}
+        if is_replica:
+            run.from_checkpoint["replica"] = True
+        if verify == "report":
+            run.core["verified"] = unverifiable
         run.core_check = self.null_check(adapter, lookahead=lookahead) if check else None
+        if is_replica:
+            ok = (run.core_check or {}).get("ok")
+            run.from_checkpoint["null_check"] = None if ok is None else bool(ok)
         return run
 
     def null_check(self, adapter: Any, *, lookahead: str = "none") -> dict[str, Any]:

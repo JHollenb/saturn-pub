@@ -46,7 +46,20 @@ def qualifier(provenance: dict[str, Any] | None) -> str:
         text = f"under edit {first['address']}"
         extra = provenance.get("under_edits_total", len(under)) - 1
         parts.append(text + (f" +{extra} more" if extra > 0 else ""))
+    origin = provenance.get("from_checkpoint")
+    if origin:
+        parts.append(checkpoint_label(origin))
     return ", ".join(parts)
+
+
+def checkpoint_label(origin: dict[str, Any]) -> str:
+    """``from checkpoint ab12cd34…, path unverified`` (+ ``replica, no null check``)."""
+    text = f"from checkpoint {str(origin['checkpoint'])[:8]}…, path {origin['path']}"
+    if origin.get("replica"):
+        check = origin.get("null_check")
+        text += ", replica" + (", no null check" if check is None else
+                               "" if check else ", null check failed")
+    return text
 
 
 def num(item: Any) -> str:
@@ -234,6 +247,19 @@ def _motion(result: dict[str, Any]) -> list[str]:
         lines.append(f"run {result['run']}")
     if result.get("op") in ("start", "run"):
         lines.extend(_procedure_lines(result))
+    if result.get("op") == "start" and result.get("from_checkpoint"):
+        loaded = result["checkpoint"]
+        lines.append(f"{checkpoint_label(result['from_checkpoint'])} (record "
+                     f"{loaded['record'][:16]}, history {loaded['history']}, loaded in "
+                     f"{fmt(loaded['load_seconds']['value'])} s)")
+        found = result.get("verified")
+        if found is not None:
+            lines.append("verify by recompute: " + (
+                "reaches the checkpoint [measured]" if found["ok"] else
+                "does not reach the checkpoint [measured]" if found["state"] == "resolved"
+                else f"unresolved ({found['reason']})"))
+        elif result["from_checkpoint"]["path"] != "verified":
+            lines.append("its path is unverified: start from=... verify=true replays it")
     lines.append(stop_line(result["stop"]))
     if result.get("focus"):
         lines.append(f"focus {result['focus']}")

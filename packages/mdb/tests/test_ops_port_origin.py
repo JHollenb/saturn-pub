@@ -168,13 +168,14 @@ def test_a_project_stores_the_value_so_the_edited_pointer_outlives_the_clean_run
     dispatch(ctx, "checkpoint", {"name": "hot"})
     dispatch(ctx, "frame", {"address": "main:"})
     del dbg.runs["clean"]
-    # a durable checkpoint as the origin: restored from its cut it starts at its cursor, so the
-    # occurrence before it comes from a replay (a cell occurrence the same way)
+    # a durable checkpoint as the origin: rehydrated from its checkpoint state, which keeps the
+    # cursor's row (history "row"), so the occurrence comes from it with no replay (a cell
+    # occurrence the same way)
     staged = dispatch(ctx, "set", {"target": "L0.A[h1]", "value": "hot:L0.A[h1]"})
-    assert staged["origin"]["via"] == "replay" and staged["origin"]["recipe"] is not None
+    assert staged["origin"]["via"] == "checkpoint" and staged["origin"]["recipe"] is not None
     assert staged["origin"]["sha256"] == tensor_digest(block)
     found, pointer = dbg.cell_value("hot:t3.L0.v[kv0]", run=ctx.run)
-    assert pointer["via"] == "replay"
+    assert pointer["via"] == "checkpoint"
     assert torch.equal(found.reshape(-1), value[..., :tiny.adapter.head_dim].reshape(-1))
     dispatch(ctx, "abort", {})
     dbg.runs["clean"] = clean

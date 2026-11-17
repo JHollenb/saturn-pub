@@ -289,7 +289,10 @@ class Bound:
     def __init__(self, debugger: Any, item: Item, core: Any = None):
         self.item = item
         self.debugger = debugger
-        self.core = item.core if item.core is not None else core
+        # a set-level checkpoint is for the items that bring no prompt or tokens of their own:
+        # an item with its own starts from them (audit M3)
+        self.core = item.core if item.core is not None else (
+            core if item.prompt is None else None)
         if self.core is not None:
             try:
                 self.checkpoint = debugger.load_checkpoint(self.core)
@@ -554,8 +557,10 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     ``prefill`` (``K`` or ``@ROLE``): each item's run, and its pair's clean run, is started
     with that split, bound per item (``bind_prefill``); None is the default split. ``shard``
     (``K/N``): only the K-th of N contiguous parts of the set (so an mrun shard stays short);
-    the summary says which. ``core`` (Python): a checkpoint every item without its own
-    ``core`` runs from (rehydrated, no prefix recompute)."""
+    the summary says which. ``core`` (Python): a checkpoint the items with no ``core``,
+    ``prompt`` or ``tokens`` of their own run from (rehydrated, no prefix recompute); an item
+    with its own prompt starts from it, and a pair donor is rehydrated only from its own
+    ``core``."""
     from mdb.analysis import summary as stats
 
     debugger = getattr(ctx, "debugger", None)
@@ -644,7 +649,7 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
                           "is the checkpoint's)")
         pair = pair_run = None
         if uses_pair and item.pair is not None:
-            pair = Bound(debugger, found.item(item.pair), core)
+            pair = Bound(debugger, found.item(item.pair))   # its own core only, never the set's
             pair_run = _pair_name(found.name, item.pair)
         calls = [(step, _bind_args(step.name, step.args, bound, pair, pair_run))
                  for step in steps]

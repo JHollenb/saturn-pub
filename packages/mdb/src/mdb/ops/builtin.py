@@ -220,6 +220,8 @@ def _prov_json(raw: dict[str, Any]) -> dict[str, Any]:
         out["mixed"] = {k: int(v) for k, v in raw["mixed"].items()}
     if raw.get("same_port_edit"):
         out["same_port_edit"] = dict(raw["same_port_edit"])
+    if raw.get("from_checkpoint"):
+        out["from_checkpoint"] = dict(raw["from_checkpoint"])
     for key in ("realisation_exact", "realisation_max_abs_error"):
         if raw.get(key) is not None:
             out[key] = raw[key] if key == "realisation_exact" else _num(raw[key], "measured")
@@ -698,13 +700,50 @@ def _started(ctx) -> dict[str, Any]:
             "prefill": procedure_json(ctx.run)}
 
 
-@op("start", "Prefill a prompt and stop at the first stepped row's first port (L0.h)",
-    _PROMPT, _NAME, _PREFILL, _LOOKAHEAD, _RETAIN, effect="native", needs_live=False,
+_FROM = Arg("from", "str", positional=False,
+            help="a checkpoint to start from instead of a prompt: a file path or a record id "
+                 "(prefix) of the project; rehydrated at its cursor with no prefix recompute, "
+                 "its values labelled `from checkpoint ID, path unverified`")
+_VERIFY = Arg("verify", "choice", choices=("false", "true", "report"), positional=False,
+              help="with from=: replay the checkpoint's recipe from its root first (true: "
+                   "refuse unless it reaches the checkpoint, and label the run path verified; "
+                   "report: show the result)")
+
+
+@op("start", "Prefill a prompt and stop at the first stepped row's first port (L0.h), or "
+    "start from a checkpoint (from=ID|PATH) at its cursor",
+    _PROMPT, _NAME, _PREFILL, _LOOKAHEAD, _RETAIN, _FROM, _VERIFY, effect="native",
+    needs_live=False,
     usage="start [name=NAME] [prefill=K] [lookahead=none|layer|auto] [retain_rows=N] "
-          "[TEXT | ID ID ...]")
-def _op_start(ctx, prompt, name, prefill, lookahead, retain_rows):
-    _start(ctx, prompt, name, prefill, lookahead, retain_rows)
-    return moved(ctx, _started(ctx))
+          "[TEXT | ID ID ...] | start from=ID|PATH [name=NAME] [verify=true|report] "
+          "[lookahead=MODE]")
+def _op_start(ctx, prompt, name, prefill, lookahead, retain_rows, **given):
+    source = given.get("from")
+    verify = given.get("verify") or "false"
+    if source is None:
+        if verify != "false":
+            raise BadArgs("verify= applies to start from=CHECKPOINT")
+        _start(ctx, prompt, name, prefill, lookahead, retain_rows)
+        return moved(ctx, _started(ctx))
+    if ctx.debugger is None:
+        raise Refused("no model attached; use mdb.attach(model) or --tiny")
+    if prompt is not None or prefill is not None or retain_rows is not None:
+        raise BadArgs("start from=CHECKPOINT takes its prompt and split from the checkpoint: "
+                      "give no prompt, prefill or retain_rows")
+    run = ctx.debugger.run_from(source, name=name, lookahead=lookahead,
+                                verify={"false": False, "true": True}.get(verify, verify))
+    getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)
+    _switch(ctx, run)
+    core = run.core
+    out = {**_started(ctx), "from_checkpoint": dict(run.from_checkpoint),
+           "checkpoint": {"record": core["record"], "where": core["where"],
+                          "history": core["history"], "exact": bool(core["exact"]),
+                          "load_seconds": _num(core.get("load_seconds") or 0.0)}}
+    if core.get("verified") is not None:
+        found = core["verified"]
+        out["verified"] = {"ok": bool(found["ok"]), "state": found["state"],
+                           "reason": found.get("reason")}
+    return moved(ctx, out)
 
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
