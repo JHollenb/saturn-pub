@@ -12,6 +12,8 @@ package whose workflow and numerical contract fit the job.
 See [two packages, one repository](monorepo.md) for installation, builds, separate
 test suites and migration details. Installing one package does not install the other.
 
+Changing the code: [CONTRIBUTING.md](../CONTRIBUTING.md) (repository rules: versioning, testing, adding a model family, issues and feature requests).
+
 ## MDB
 
 - [Overview, use cases and quickstart](mdb.md)

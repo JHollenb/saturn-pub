@@ -318,4 +318,6 @@ ruff check .
 python -m build
 ```
 
+Before changing code, read [CONTRIBUTING.md](CONTRIBUTING.md): layout and what ships, setup, versioning and releases, testing and bit-identity rules, adding a model family, and where to file bugs and feature requests.
+
 Apache 2.0. Model weights and upstream libraries retain their own licenses.

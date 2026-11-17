@@ -18,3 +18,5 @@ on one subject each.
 | [RELEASING.md](RELEASING.md) | Release tags (`mdb-vX.Y.Z`) and branches (`release/mdb-X.Y`), installing a release with pip from Git, how fixes reach a release. |
 
 Runnable examples are in [../examples](../examples/README.md); start with `00-hello-tiny`.
+
+To change mdb, read the repository's [CONTRIBUTING.md](https://github.com/JHollenb/saturn-pub/blob/main/CONTRIBUTING.md).

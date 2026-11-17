@@ -1180,6 +1180,10 @@ result may exceed the record bound). The serve tests (`tests/test_serve_*.py`) n
 so a pass in the plain venv says nothing about the server. The tests of `saturn_pub` live in
 `$W/tests` (run them from `$W` with `PYTHONPATH=$W/src`).
 
+## Contributing
+
+The repository rules are in [CONTRIBUTING.md](https://github.com/JHollenb/saturn-pub/blob/main/CONTRIBUTING.md): what ships, versioning and releases, testing and bit-identity, the invariants a change must keep, adding a model family or a machine, and how to file a bug, a model port request or a feature request (GitHub Issues).
+
 ## Measured on a real model
 
 **Measured on the developers' machine, not reproducible from this package alone.** Qwen2.5-1.5B,

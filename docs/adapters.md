@@ -64,7 +64,7 @@ family-local even when operation names are shared.
 ## Shipped native adapters
 
 `adapters/qwen.py` is the reference decoder adapter. `adapters/decoder.py` generalizes it to a
-per-family spec registry (gpt2, gpt_neox, phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3):
+per-family spec registry (gpt2, gpt_neox, phi, llama, mistral, mixtral, gemma-1, gemma-2, qwen2, qwen3):
 same state grammar, surface manifest, execution/numerical contract, frozen-model guards,
 `validate`/`write` rules, layer/operation granularity, and `generate`/`native_logits`. Each family
 declares its module paths and position style (absolute learned embeddings for gpt2, rotary
