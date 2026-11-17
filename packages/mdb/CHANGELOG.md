@@ -17,6 +17,12 @@ intended: the record says what ran. A project file is trusted less than the user
 
 ### Added
 
+- `mdb.machines.x86` no longer reads `MDB_TORCHX86_SRC` / `MDB_ISA_BENCH_SRC` or edits `sys.path`:
+  torchx86 and `isa_bench` are optional dependencies imported normally. Install isa-bench
+  (`pip install -e <isa-bench checkout>`) and capstone, and put `<isa-bench>/models/torchx86/src`
+  (torchx86 has no packaging of its own) on `PYTHONPATH`; without them `torchx86()` raises an
+  ImportError saying so, and the x86 tests skip. `machines` joined the import-contract layers.
+
 - Checkpoints as content-addressed tensor pointers (#517, `mdb.engine.checkpoint`). A
   checkpoint holds the native state at a cut (per-layer K/V as parts, the hidden carrier of a
   row in flight, logits, cut metadata and parent fingerprint), the cursor's port and staged

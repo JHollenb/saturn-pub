@@ -2,7 +2,7 @@
 import pytest
 
 torch = pytest.importorskip("torch")
-tm = pytest.importorskip("test_machines_x86")       # sets MDB_TORCHX86_SRC, skips without torchx86
+tm = pytest.importorskip("test_machines_x86")       # skips without torchx86
 
 from mdb.machines.x86 import mlp  # noqa: E402
 from mdb.machines.x86.lanes import Lanes  # noqa: E402

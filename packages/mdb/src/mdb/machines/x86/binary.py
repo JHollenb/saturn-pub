@@ -1,8 +1,9 @@
 """Static facts of one x86-64 binary: decoded micro-op table, CFG, dominator loops, sites, operands.
 
-The executor is torchx86 (isa-bench ``models/torchx86``), imported by path, never copied:
-``MDB_TORCHX86_SRC`` (its ``src`` directory) and ``MDB_ISA_BENCH_SRC`` (isa-bench ``src``, for
-``isa_bench.state``) are put on ``sys.path`` when the modules are not importable already.
+The executor is torchx86 (isa-bench ``models/torchx86``), an optional dependency imported normally,
+never copied and never put on ``sys.path`` by mdb. It and ``isa_bench`` (for ``isa_bench.state``)
+must be importable: install isa-bench (``pip install -e <isa-bench checkout>``) and put torchx86's
+``src`` directory on ``PYTHONPATH`` (it has no packaging of its own), plus ``pip install capstone``.
 
 Sites are integers, one per byte (the binctr web-key convention): register byte ``8*gpr + byte``
 (0..127), flag ``128 + f`` (CF PF AF ZF SF OF), memory byte = its address (>= 0x1000).
@@ -13,8 +14,6 @@ flags, and the three registers a ``write`` syscall returns in.
 from __future__ import annotations
 
 import hashlib
-import os
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -37,22 +36,16 @@ CC_FLAGS = {0: "OF", 1: "OF", 2: "CF", 3: "CF", 4: "ZF", 5: "ZF", 6: "CF ZF", 7:
             10: "PF", 11: "PF", 12: "SF OF", 13: "SF OF", 14: "ZF SF OF", 15: "ZF SF OF"}
 
 
-def _import_paths() -> None:
-    for env in ("MDB_TORCHX86_SRC", "MDB_ISA_BENCH_SRC"):
-        p = os.environ.get(env)
-        if p and p not in sys.path:
-            sys.path.insert(0, p)
-
-
 def torchx86():
-    """The torchx86 package (by path, see the module docstring)."""
-    _import_paths()
+    """The torchx86 package (an optional dependency, see the module docstring)."""
     try:
         import torchx86 as tx  # noqa: PLC0415
         from torchx86 import decode, machine  # noqa: F401, PLC0415
     except ImportError as why:
-        raise ImportError("mdb.machines.x86 needs torchx86 (isa-bench models/torchx86/src) and capstone: "
-                          "set MDB_TORCHX86_SRC and MDB_ISA_BENCH_SRC") from why
+        raise ImportError("mdb.machines.x86 needs the optional torchx86 package (isa-bench "
+                          "models/torchx86/src) and capstone: `pip install capstone`, "
+                          "`pip install -e <isa-bench checkout>` and add "
+                          "<isa-bench>/models/torchx86/src to PYTHONPATH") from why
     return tx
 
 

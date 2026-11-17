@@ -1,26 +1,15 @@
-"""mdb.machines.x86 on a hand-assembled binary (no reference data). Needs torch, capstone and torchx86
-(isa-bench ``models/torchx86/src``, found through MDB_TORCHX86_SRC / MDB_ISA_BENCH_SRC or a sibling
-``isa-bench`` checkout)."""
-import os
+"""mdb.machines.x86 on a hand-assembled binary (no reference data). Needs torch, capstone and the
+optional torchx86 / isa_bench packages (installed, or on PYTHONPATH set by the caller); skips
+without them."""
 import random
-from pathlib import Path
 
 import pytest
 
 torch = pytest.importorskip("torch")
 pytest.importorskip("capstone")
-for env, rel in (("MDB_TORCHX86_SRC", "models/torchx86/src"), ("MDB_ISA_BENCH_SRC", "src")):
-    if env not in os.environ:
-        for root in (Path.home() / "domains/isa-bench", *Path(__file__).resolve().parents):
-            cand = (root if root.name == "isa-bench" else root / "isa-bench") / rel
-            if cand.exists():
-                os.environ[env] = str(cand)
-                break
-try:
-    from mdb.machines.x86 import Binary, torchx86
-    torchx86()
-except ImportError:
-    pytest.skip("torchx86 not found", allow_module_level=True)
+pytest.importorskip("torchx86", reason="torchx86 not installed (isa-bench models/torchx86/src)")
+pytest.importorskip("isa_bench.state", reason="isa_bench not installed (pip install -e isa-bench)")
+from mdb.machines.x86 import Binary  # noqa: E402
 
 from mdb.machines import FAULT, PATH_DIVERGED  # noqa: E402
 from mdb.machines.x86 import address as xa  # noqa: E402
