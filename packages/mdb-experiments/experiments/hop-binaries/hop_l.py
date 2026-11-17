@@ -388,6 +388,23 @@ def whatif_once(tag, ref_dir, inputs, items, plan0, dev) -> dict:
     return {"tag": tag, "unit": list(u), "address": text, "value": hex(value), "donor_item": 1, "result": r}
 
 
+def shortcut_check(items, inputs, ref_mod) -> dict:
+    """G11: units of the shortcut whose word decodes to T1[x] on all 33 inputs (identity/slice, and full class)."""
+    from isa_bench.gtkey import rval  # noqa: PLC0415
+
+    target = np.array([ref_mod.T1[x[0]] for x in inputs], dtype=np.uint64)
+    keys = [k for k in items[0].units if k[1] in VALUE_GROUPS and all(k in it.units for it in items)]
+    idsl, full = [], []
+    for k in keys:
+        X = np.array([it.word(k) for it in items], dtype=np.uint64)
+        ds = rval.decodes(X, target, 1)
+        if ds:
+            full.append(list(k))
+        if any(d[0] in TRUTH_DECODES for d in ds):
+            idsl.append(list(k))
+    return {"value_units": len(keys), "identity_or_slice": idsl, "full_class": full}
+
+
 # ------------------------------------------------------------------------------------------ main
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
@@ -443,6 +460,8 @@ def main(argv=None) -> int:
             out = interchange(tag, binary, traces, res, items, inputs, plan, dev, lambda m: print(m, flush=True))
             out["lanes_equal_binctr"] = f"{lane_ok}/{len(traces)}"
             out["whatif"] = whatif_once(tag, a.ref, inputs, items, plan[0], dev)
+            if tag.startswith("shortcut"):
+                out["shortcut_holds_T1x"] = shortcut_check(items, inputs, ref_mod)
             (a.out / f"{tag}.interchange.json").write_text(json.dumps(out, indent=1, default=str))
             summary[tag] = {"lanes_equal_binctr": out["lanes_equal_binctr"], "rows": len(out["rows"]),
                             "whatif": {k: out["whatif"].get("result", {}).get(k) for k in
