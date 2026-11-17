@@ -38,7 +38,7 @@ symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [su
   (bindings 1-2 of 4)
 
 == 6. forecast, then verify: seal a prediction before native code runs
-forecast 1  t3.M[4,9]  sealed at t3.L1.p  record 337b9237ddd3ef89
+forecast 1  t3.M[4,9]  sealed at t3.L1.p  record d0c1d6c733c4bfa1
   method 12 identities t3.L1.A .. t3.logits (last readout_logits P19); chain not stored (no project)
   predicted exact -0.11437 [derived-exact P19]   emulated -0.11401 [derived-exact P19]
   worst-case rounding interval 0.030136 [bound] (information, not the verdict)
