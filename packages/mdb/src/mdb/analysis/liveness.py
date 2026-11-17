@@ -44,6 +44,7 @@ from typing import Any
 from .donors import pooled
 from .finite import MEASURED, SUPPLIED, num
 from .forecast import Logit, Margin, Refusal
+from .rows import crop_to
 
 UNKNOWN = {"status": "unknown",
            "meaning": "observed mass and effect only; no intervention measured (mass is not "
@@ -154,7 +155,7 @@ def liveness(run: Any, bindings: list[Any], reader: Any, *, form: str = "mask",
                 for restore in patched:
                     restore()
                 if cache is not None:
-                    cache.crop(j)
+                    crop_to(cache, j)
                     # the forward re-allocates the cache (concatenation): restore the cells in
                     # the tensors the cache holds now, not the ones zeroed before it ran
                     for layer, g, row, keep in saved:
