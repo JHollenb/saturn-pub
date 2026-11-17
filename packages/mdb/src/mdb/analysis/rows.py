@@ -39,6 +39,15 @@ from .forecast import Margin, Refusal
 LETTERS = "ABCDEFGH"
 
 
+def crop_to(cache: Any, n: int) -> None:
+    """Truncate a ``DynamicCache`` to ``n`` positions. transformers < 5.2x takes an absolute
+    length in ``crop``; newer releases reject positive values and take a negative count to
+    remove. A negative count is accepted by both, and growing is a no-op in both."""
+    drop = cache.get_seq_length() - n
+    if drop > 0:
+        cache.crop(-drop)
+
+
 @dataclass
 class Trace:
     """A per-step (or per-row) readout table: ``records`` in order, each a dict with ``step``,
@@ -330,7 +339,7 @@ def _row_ablation(run: Any, cache: Any, tokens: list[int], cols: list[int], ids:
                          past_key_values=cache, attention_mask=mask[None, None],
                          position_ids=rows[None], use_cache=True)
                 out[a:b] = letter_logits(run, o.last_hidden_state[0], ids)
-            cache.crop(T)
+            crop_to(cache, T)
             del o
     finally:
         for layer, keep in zip(cache.layers, saved):

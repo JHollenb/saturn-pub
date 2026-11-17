@@ -30,8 +30,8 @@ import time
 from typing import Any
 
 from .forecast import Refusal
-from .rows import (LETTERS, Trace, _check_partition, _masks, consumer_backs, decoder_parts,
-                   head_groups, letter_logits, letter_setup, rho_of)
+from .rows import (LETTERS, Trace, _check_partition, _masks, consumer_backs, crop_to,
+                   decoder_parts, head_groups, letter_logits, letter_setup, rho_of)
 
 ARMS = ("native", "M2", "M3", "CM1")
 
@@ -136,10 +136,10 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
     if R is None:
         with torch.no_grad():
             n = n_prompt + steps[0]
-            cache.crop(n)
+            crop_to(cache, n)
             h = run_tokens(suffix, n)
             top = letter_logits(run, normed(h)[None], ids)[0]
-            cache.crop(n)
+            crop_to(cache, n)
         R = names[max((j for j in range(len(names)) if j != xi), key=lambda j: float(top[j]))]
     ri = names.index(R)
     backs = consumer_backs(run, ids[xi], ids[ri])
@@ -149,13 +149,13 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
         for k in steps:
             ts = time.time()
             n = n_prompt + k
-            cache.crop(n)
+            crop_to(cache, n)
             letters_of: dict[str, Any] = {}
             if "M3" in arms:
                 restore = zeroed(hint_index)
                 h = run_tokens(suffix, n)
                 letters_of["M3"] = letter_logits(run, normed(h)[None], ids)[0]
-                cache.crop(n)
+                crop_to(cache, n)
                 restore()
             if S > 1:
                 run_tokens(suffix[:-1], n)
@@ -167,7 +167,7 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
             masks = _masks(binds_k, cols, device)
             nat, contrib, mass, total = shares_pass(suffix[-1], last, backs, masks)
             letters_of["native"] = nat
-            cache.crop(last)
+            crop_to(cache, last)
             for arm, index in (("M2", hint_index),
                                ("CM1", torch.arange(n_prompt, n, device=device))):
                 if arm not in arms:
@@ -178,7 +178,7 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
                 restore = zeroed(index)
                 h = run_tokens([suffix[-1]], last)
                 letters_of[arm] = letter_logits(run, normed(h)[None], ids)[0]
-                cache.crop(last)
+                crop_to(cache, last)
                 restore()
             if k in null_steps:
                 seq = tokens[:n] + suffix
@@ -313,7 +313,7 @@ def span_mask(run: Any, spans: dict[str, list[int]], suffix: list[int], *, lette
                 mass.add_(p[hh])
                 del w, gram, vg, norms
         vw_total = float(vw.sum())
-        cache.crop(T)
+        crop_to(cache, T)
         t_native = time.time() - t0
 
         arms = [(n, m) for n in spans for m in modes] + [(None, "null")]

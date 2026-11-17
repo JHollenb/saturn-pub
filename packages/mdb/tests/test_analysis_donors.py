@@ -160,3 +160,17 @@ def test_paired_effects_self_patch_and_large_edit(dbg):
         assert big["verdict"] == "path-diverged" and big["path"]["first"].startswith("t")
         assert big["frozen_minus_total"]["value"] != 0.0
     assert run.where == "t5.logits"
+
+
+def test_crop_to_truncates_a_dynamic_cache_on_old_and_new_transformers():
+    from transformers import DynamicCache
+
+    from mdb.analysis.rows import crop_to
+
+    cache = DynamicCache()
+    cache.update(torch.zeros(1, 2, 5, 4), torch.zeros(1, 2, 5, 4), 0)
+    crop_to(cache, 3)
+    assert cache.get_seq_length() == 3
+    crop_to(cache, 3)  # already at length: no-op
+    crop_to(cache, 9)  # longer than the cache: no-op
+    assert cache.get_seq_length() == 3
