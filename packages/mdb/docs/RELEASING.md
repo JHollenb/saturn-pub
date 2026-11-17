@@ -53,7 +53,10 @@ always inside that range.
   want a stable series follow it.
 - **Fixes are cherry-picked.** A fix for a released series is committed on `main`, then
   cherry-picked onto `release/mdb-X.Y` with `git cherry-pick -x` (the commit names its `main`
-  original). New features and changes of behaviour stay on `main` for the next minor version.
+  original). New features and changes of behaviour stay on `main` until the owner cuts the next
+  release from it. The owner sets every version number; before 1.0 a release cut from `main` may
+  be a patch (0.2.1 and 0.2.2 shipped features and a record-id change as patches) or a new minor
+  series with its own `release/mdb-X.Y` branch.
 - **A patch release** is one commit on the release branch that sets the version in both places and
   adds a `## [X.Y.Z] — DATE` section to `CHANGELOG.md`; `main`'s changelog notes it too.
 - **Tags** are annotated, named `mdb-vX.Y.Z`, on that commit of the release branch. A tag is never
