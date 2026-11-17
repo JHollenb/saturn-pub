@@ -570,6 +570,28 @@ class BinRun:
                           authority="measured", body=body)
         return {**body, "prediction": pred_body["prediction"], "records": [sealed["id"], res["id"]]}
 
+    def cone(self, control: bool = True):
+        """The answer's backward dependence cone (``interchange.cone``): every tick the last write's bytes
+        depend on, and every (tick, site, edge) those ticks read."""
+        from .interchange import cone  # noqa: PLC0415
+
+        return cone(self.trace, control=control)
+
+    def interchange(self, text: str, donors: list) -> dict:
+        """Overwrite the block ``text`` (tick part required: ``init.mem[...]``, ``<pc>#<k>.mem[...]``) with each
+        donor run's bytes at the same instance and pool the effects on y (``interchange.interchange``).
+        ``donors``: ``BinRun``s or input bytes."""
+        from .interchange import interchange  # noqa: PLC0415
+        from .trace import record  # noqa: PLC0415
+
+        runs = [d.trace for d in donors if isinstance(d, BinRun)]
+        raw = [d for d in donors if not isinstance(d, BinRun)]
+        if raw:
+            runs += record(self.binary, raw, device=self.device)[0]
+        if self.edits or self.held is not None:
+            raise ValueError("interchange runs from the unedited input: release edits and holds first")
+        return interchange(self.binary, [self.trace], runs, text, device=self.device, res=self.result)[0]
+
     # ------------------------------------------------------------------ batched verbs
     def sweep(self, cells: list[int] | None = None, **kw) -> dict:
         """Patch every listed cell (default: every cell) from the donors under the rule grid, on lanes

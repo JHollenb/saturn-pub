@@ -281,3 +281,83 @@ def test_method_v2_words_and_dead_copies(tiny):
     only_words, only_dead = lessons(rec, dead_copies=False), lessons(rec, words=False)
     assert all(s == "live" for s in only_words.status)
     assert only_dead.n_bindings - sum(s == "dead" for s in only_dead.status) == rec.n_bindings
+
+
+# ---------------------------------------------------------------- cone + multi-donor block interchange (study C)
+def _paths(seed=3, n=40):
+    """inputs split by the final compare: xor path (x >= b, reads [rsp-0x10]) and skip path"""
+    rng = random.Random(seed)
+    xs, sk = [], []
+    for _ in range(n):
+        a, b = rng.getrandbits(62), rng.getrandbits(63)
+        (xs if _xor_taken(a, b) else sk).append((a, b))
+    return xs, sk
+
+
+def _xor_taken(a, b):
+    M = (1 << 64) - 1
+    x = a
+    for _ in range(4):
+        x = (x + b) & M
+    return (x + (a & 0xFF)) & M >= b
+
+
+def test_cone_follows_the_taken_path(tiny):
+    xs, sk = _paths()
+    assert xs and sk
+    for (a, b), slot_read in [(xs[0], True), (sk[0], False)]:
+        run = attach(tiny, inp(a, b))
+        c = run.cone()
+        slot = 0x401010
+        t_store = next(tk.t for tk in run.trace.ticks if tk.pc == slot)
+        rsp16 = [s for s, _ in run.trace.ticks[t_store].writes if s >= 0x1000]
+        assert len(rsp16) == 8
+        assert bool(c.reads_of(rsp16)) == slot_read          # the stack copy of a is used only on the xor path
+        assert c.reads_of(range(0x600000, 0x600010))          # both inputs feed y on every path
+        assert c.answer_tick == next(tk.t for tk in run.trace.ticks if tk.pc == 0x40104F)
+        # without control roots the jb is not in the cone; the data chain still reaches both inputs
+        nc = run.cone(control=False)
+        jb = next(tk.t for tk in run.trace.ticks if tk.pc == 0x401029)
+        assert jb in c.ticks and jb not in nc.ticks
+        assert nc.ticks <= c.ticks
+
+
+def test_interchange_pools_donors_and_matches_python(tiny):
+    a, b = 0x1234, 0x10
+    run = attach(tiny, inp(a, b))
+    ds = donors(12, seed=5)
+    r = run.interchange("init.mem[0x600000:8]", ds)            # interchange a, the first input word
+    want = [expected(int.from_bytes(d[:8], "little"), b) != expected(a, b) for d in ds]
+    got = [row.get("y_changed", False) for row in r["per_donor"]]
+    assert got == want
+    assert r["verdict"] == "effect" and r["n_effect"] == sum(want) and r["n_informative"] == 12
+    assert r["n_donors"] == 12 and "12 informative" in r["label"]
+    # the base itself as the donor: an identity patch, not run, uninformative
+    same = run.interchange("init.mem[0x600000:8]", [inp(a, b)])
+    assert same["verdict"] == "no effect" and same["n_informative"] == 0
+    assert "not informative" in same["label"] and not same["per_donor"][0]["ran"]
+    # a block written mid-run, at an instance: the stack copy of a, after its store (0x401010#0)
+    r2 = run.interchange("0x401010#0.mem[rsp-0x10:8]", ds[:4])
+    xor_path = _xor_taken(a, b)
+    assert r2["verdict"] == ("effect" if xor_path else "no effect")
+    for row, d in zip(r2["per_donor"], ds[:4]):
+        da = int.from_bytes(d[:8], "little")
+        if xor_path:
+            x = expected(a, b) ^ a ^ da                         # y = x ^ (patched copy)
+            assert int.from_bytes(bytes.fromhex(row["y"]), "little") == x
+
+
+def test_interchange_batched_over_bases(tiny):
+    from mdb.machines.x86.interchange import interchange
+    from mdb.machines.x86.trace import record
+
+    bases_in = [inp(7, 3), inp(1 << 40, 5), inp(99, 1 << 50)]
+    ds = donors(6, seed=11)
+    bases, res = record(tiny, bases_in)
+    dtr, _ = record(tiny, ds)
+    out = interchange(tiny, bases, dtr, "init.mem[0x600008:8]", res=res)  # interchange b
+    for (bi, o) in zip(bases_in, out):
+        a, b = int.from_bytes(bi[:8], "little"), int.from_bytes(bi[8:], "little")
+        want = [expected(a, int.from_bytes(d[8:], "little")) != expected(a, b) for d in ds]
+        assert [row["y_changed"] for row in o["per_donor"]] == want
+        assert o["n_effect"] == sum(want)
