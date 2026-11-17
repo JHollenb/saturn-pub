@@ -58,6 +58,8 @@ from .ports import tensor_digest
 SCHEMA = "mdb-checkpoint-v2"            # the state document
 FILE_SCHEMA = "mdb-checkpoint-file-v2"  # a self-contained checkpoint file
 KIND = "checkpoint-state"               # the record kind (declared in mdb.core.kinds)
+
+from mdb.core.checkpoint_store import find_record  # noqa: E402 (lives in core: stores use it)
 HISTORIES = ("cursor", "row", "root")
 _FILE_KEYS = {"schema", "record", "document", "tensors"}
 _SHAS_PER_TEXT = 60                     # packed sha256 hex per record string (<= 4 KiB)
@@ -1115,29 +1117,6 @@ def load_file(path: str | Path) -> Any:
     for index in range(len(doc["parts"])):
         checkpoint._part(index)            # every part's sha256, before anything is used
     return checkpoint
-
-
-def find_record(project: Any, ref: str) -> dict[str, Any]:
-    """The ``checkpoint-state`` record ``ref`` (an id or a unique prefix of >= 8 hex digits) of
-    any session of ``project``."""
-    from mdb.core import index
-    from mdb.core.kinds import CHECKPOINT_STATE  # noqa: F401 (declares the kind)
-
-    ref = str(ref).strip().lower()
-    if len(ref) < 8 or any(c not in "0123456789abcdef" for c in ref):
-        raise ValueError(f"{ref!r} is not a record id (8 or more hex digits)")
-    found = []
-    for session in project.sessions():
-        for record in index.list_records(project, session["session_id"], kind=KIND):
-            if record.get("verified") is False:
-                continue
-            if record["id"].startswith(ref):
-                found.append(record)
-    if not found:
-        raise ValueError(f"no checkpoint record {ref} in project {project.root}")
-    if len({r["id"] for r in found}) > 1:
-        raise ValueError(f"checkpoint record prefix {ref} is ambiguous; give more digits")
-    return found[0]
 
 
 def load_record(project: Any, record: dict[str, Any], *, store: Any = None) -> Checkpoint:

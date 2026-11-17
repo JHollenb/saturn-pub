@@ -258,8 +258,6 @@ class ProjectStore(Store):
         index.put_record(self.project, record)
 
     def find_record(self, ref: str) -> dict[str, Any] | None:
-        from mdb.engine.checkpoint import find_record
-
         try:
             return find_record(self.project, ref)
         except ValueError as error:
@@ -354,3 +352,26 @@ def _document(raw: bytes) -> dict[str, Any]:
 
 __all__ = ["DirectoryStore", "MissingBlob", "ProjectStore", "S3Store", "Store", "blobs_of",
            "cache_project", "configured", "copy", "is_store_uri", "open_store"]
+
+
+def find_record(project: Any, ref: str) -> dict[str, Any]:
+    """The ``checkpoint-state`` record ``ref`` (an id or a unique prefix of >= 8 hex digits) of
+    any session of ``project``."""
+    from mdb.core import index
+    from mdb.core.kinds import CHECKPOINT_STATE  # noqa: F401 (declares the kind)
+
+    ref = str(ref).strip().lower()
+    if len(ref) < 8 or any(c not in "0123456789abcdef" for c in ref):
+        raise ValueError(f"{ref!r} is not a record id (8 or more hex digits)")
+    found = []
+    for session in project.sessions():
+        for record in index.list_records(project, session["session_id"], kind="checkpoint-state"):
+            if record.get("verified") is False:
+                continue
+            if record["id"].startswith(ref):
+                found.append(record)
+    if not found:
+        raise ValueError(f"no checkpoint record {ref} in project {project.root}")
+    if len({r["id"] for r in found}) > 1:
+        raise ValueError(f"checkpoint record prefix {ref} is ambiguous; give more digits")
+    return found[0]
