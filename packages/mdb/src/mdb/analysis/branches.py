@@ -743,7 +743,7 @@ class Branches:
         def sealed(b):
             return seal_record(session_id=session_id or run_session_id(run), kind="branches",
                                model_identity=run.adapter.model_identity,
-                               execution=dict(run.adapter.execution), authority=MEASURED, body=b)
+                               execution=dict(run.adapter.execution), authority=MEASURED, body=b, run=run)
         from mdb.core.pointers import RecordError
 
         try:

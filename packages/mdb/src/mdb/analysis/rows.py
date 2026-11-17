@@ -59,6 +59,8 @@ class Trace:
     kind: str
     records: list[dict[str, Any]]
     meta: dict[str, Any] = field(default_factory=dict)
+    # the checkpoint the traced run is rooted at (``Run.from_checkpoint``): its seal carries it
+    from_checkpoint: dict[str, Any] | None = field(default=None, compare=False)
 
     def column(self, table: str, key: str | None = None) -> list[Any]:
         if key is None:
@@ -294,7 +296,7 @@ def row_table(run: Any, bindings: dict[str, list[int]] | None = None, *, letters
     }
     if check:
         meta["trace_check_max_abs"] = _check_against_symbols(run, binds, ids, xi, ri, records[-1])
-    return Trace("rows", records, meta)
+    return Trace("rows", records, meta, from_checkpoint=getattr(run, "from_checkpoint", None))
 
 
 def _span(rows: list[int]) -> Any:

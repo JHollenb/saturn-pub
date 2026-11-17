@@ -311,10 +311,7 @@ def dispatch(ctx: Any, name: str, args: dict[str, Any] | None = None) -> dict[st
             if before is not None:
                 values, extra = before(ctx, found.name, values)
                 notes += extra
-        from mdb.core.custody import from_checkpoint
-
-        with from_checkpoint(getattr(ctx, "run", None)):
-            result = found.fn(ctx, **values)
+        result = found.fn(ctx, **values)
     except OpError:
         raise
     except ValueError as error:

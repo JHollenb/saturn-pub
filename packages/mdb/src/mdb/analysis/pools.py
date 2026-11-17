@@ -297,7 +297,9 @@ class Pool:
         session = session_id or "mdb-pool:" + self.items_sha256()[:32]
         self.record = seal_record(session_id=session, kind="pool",
                                   model_identity=self.model_identity,
-                                  execution=self.execution, authority=MEASURED, body=body)
+                                  execution=self.execution, authority=MEASURED, body=body,
+                                  run=[it["origin"]["from_checkpoint"] for it in self.items
+                                       if it["origin"].get("from_checkpoint")])
         return self.record
 
     def save(self, path: str | Path) -> Path:
@@ -406,8 +408,9 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
                      "labels": {k: (item.get("labels") or {}).get(k, item.get(k)) for k in labels},
                      "origin": {**ref.pointer, "prefill": int(run.prefill), "tokens_sha256": hashlib.sha256(
                          json.dumps(ids).encode()).hexdigest(),
-                                **({"checkpoint": run.core["record"]} if core is not None
-                                   else {})}})
+                                **({"checkpoint": run.core["record"],
+                                    "from_checkpoint": dict(run.from_checkpoint)}
+                                   if core is not None else {})}})
         values.append(ref.value.detach().to("cpu"))
     if not kept:
         raise Refusal(f"pool {name}: no item kept (skipped {len(skipped)})")

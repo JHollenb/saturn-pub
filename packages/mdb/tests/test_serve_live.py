@@ -936,10 +936,7 @@ def test_the_recorded_frame_of_the_live_session_says_it_is_live(live):
     c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
     _op(c, live.sid, "start", {"prompt": PROMPT})
     _op(c, live.sid, "step", {"n": 2})
-    # the recorded frame needs a stored native cut: `checkpoint` no longer stores one (its
-    # state is a checkpoint-state record), so store the cursor's cut as an export does
-    cut = live.debugger.project.save_cut(live.sid, live.ctx.run.session.capture(retain=False))
-    live.debugger.project.select(live.sid, cut)
+    _op(c, live.sid, "checkpoint", {"name": "cut"})  # the recorded frame needs a stored cut
     data = c.get(f"/api/v1/s/{live.sid}/frame").json()["data"]
     assert data["live"]["state"] == "paused"
     text = " ".join(data["live"]["frontier"])

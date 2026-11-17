@@ -499,7 +499,7 @@ def _seal(run: Any, body: dict[str, Any], session_id: str, execution: Any = None
     return seal_record(session_id=session_id, kind=KIND,
                        model_identity=run.adapter.model_identity,
                        execution=dict(run.adapter.execution if execution is None else execution),
-                       authority="measured", body=body)
+                       authority="measured", body=body, run=run)
 
 
 def save(run: Any, target: Any = None, *, project: Any = None, session_id: str | None = None,

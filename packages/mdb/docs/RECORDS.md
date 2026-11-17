@@ -119,7 +119,8 @@ The seal gives integrity, not authenticity: it binds the document (edit history 
 included) to the record id, but anyone can seal a document whose history was stripped. So a
 record sealed about a run rehydrated from a checkpoint names it until the path is verified by
 recompute: `procedure.from_checkpoint` (records that carry a procedure) and
-`custody.from_checkpoint` (records sealed while an op runs on that run) are
+`custody.from_checkpoint` (every record sealed about that run: the sealer passes
+`seal_record(run=...)`; a record about several such runs lists them under `checkpoints`) are
 `{"checkpoint": "<record id>", "path": "unverified" | "verified"}` (a replica adds `replica` and
 `null_check`).
 

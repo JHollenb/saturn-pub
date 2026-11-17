@@ -53,7 +53,7 @@ def resolve(model, spec: dict):
     store = model.store_root
     try:
         if spec["kind"] == "slot":
-            array, info = blobs.cut_slot(store, spec["cut"], spec["slot"], spec.get("item"))
+            array, info = model.cut_slot(spec["cut"], spec["slot"], spec.get("item"))
             for index in spec.get("select") or []:
                 if array.ndim == 0 or not 0 <= index < array.shape[0]:
                     raise ReduceError("bad_selector", "select index is outside the slot tensor")

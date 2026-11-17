@@ -41,14 +41,19 @@ intended: the record says what ran. A project file is trusted less than the user
   loads), so a run rehydrated from one is labelled `from checkpoint <id>, path unverified`
   (`run.from_checkpoint`) until `run.verify()` replays its path: in every read's provenance (the
   REPL shows `[measured, from checkpoint ab12cd34…, path unverified]`), in
-  `procedure.from_checkpoint` and in `custody.from_checkpoint` of records sealed while an op
-  runs on it. `fresh()` inherits it. `verify=True` (`run_from`, `restart`, `Checkpoint.run`)
+  `procedure.from_checkpoint` and in `custody.from_checkpoint` of every record sealed about it,
+  REPL or Python API (`seal_record(run=...)`: Branches, Pool, each, forecast, whatif, trace,
+  sweep, circuits, symbols, checkpoints). `fresh()` inherits it. `verify=True` (`run_from`, `restart`, `Checkpoint.run`)
   raises `CheckpointUnverified` on failure, also when it cannot check (a lineage rooted at
   another checkpoint needs `root=`); `verify="report"` records the result instead.
 - Active holds are re-armed on load: the checkpoint keeps each hold with the source values it
   reads from the cut's row on, and the reloaded run continues held, bit for bit
   (`holds="drop"` records them as dropped instead).
 - REPL `start from=ID|PATH [verify=true|report]` starts from a checkpoint.
+- `mdb serve` reads the cuts of `checkpoint-state` records (`serve/states.py`): a session
+  checkpointed with `Debugger.checkpoint` has addressable cuts in the recorded frame and
+  timeline, its slot tensors read from the verified parts; projects with old native cuts and
+  new checkpoint states show both.
 - saturn-pub 0.4.3 (mdb now requires `saturn-pub>=0.4.3`): `saturn_pub.core.cut_blocks(cut)`,
   `Blocks` and `StateCut.from_blocks` are the public block form of shared state tensors;
   checkpoints use them instead of saturn-pub internals.

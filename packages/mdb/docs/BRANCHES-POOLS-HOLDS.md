@@ -163,8 +163,9 @@ equals the edited source, not a clean run). So every value and record of a run r
 a checkpoint carries `from checkpoint <id>, path unverified` until its path is verified by
 recompute: `run.from_checkpoint`, the `from_checkpoint` of each read's provenance (the REPL
 shows `[measured, from checkpoint ab12cd34…, path unverified]`), `procedure.from_checkpoint`
-of every record that names its procedure, and `custody.from_checkpoint` of every record sealed
-while an op runs on it. `fresh()` inherits the label. `run.verify()` (or `verify=True` on
+of every record that names its procedure, and `custody.from_checkpoint` of every record
+sealed about it, from the REPL or the Python API (the sealer names its run:
+`seal_record(run=...)`; a pool or sweep about several lists them under `checkpoints`). `fresh()` inherits the label. `run.verify()` (or `verify=True` on
 `run_from`, `restart`, `start from=`) replays the recipe from the lineage root and checks it
 reaches the same fingerprint (measured); it raises `CheckpointUnverified` otherwise, also when
 it cannot check (another model, or a lineage rooted at another checkpoint with no `root=`), and

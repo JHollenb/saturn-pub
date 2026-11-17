@@ -216,7 +216,7 @@ def suffix_sweep(run: Any, steps: list[int], suffix: list[int], *, n_prompt: int
         "null_vs_fresh": {str(k): v for k, v in null_diffs.items()},
         "seconds": {"prefix": round(t_prefix, 3), "total": round(time.time() - t0, 3)},
     }
-    return Trace("probe", records, meta)
+    return Trace("probe", records, meta, from_checkpoint=getattr(run, "from_checkpoint", None))
 
 
 SPAN_MODES = ("mask", "zero", "mask_last")
@@ -375,7 +375,8 @@ def span_mask(run: Any, spans: dict[str, list[int]], suffix: list[int], *, lette
                    "mass": "measured", "vw_mass": "measured"},
         "seconds": {"native": round(t_native, 3), "total": round(time.time() - t0, 3)},
     }
-    return Trace("span_mask", records, meta)
+    return Trace("span_mask", records, meta,
+                 from_checkpoint=getattr(run, "from_checkpoint", None))
 
 
 __all__ = ["ARMS", "LETTERS", "SPAN_MODES", "span_mask", "suffix_sweep"]

@@ -584,7 +584,7 @@ def test(run: Any, circuit: Any, reference: Any, *, session_id: str | None = Non
         record = seal_record(session_id=session_id or run_session_id(run), kind="circuit-test",
                              model_identity=run.adapter.model_identity,
                              execution=dict(run.adapter.execution), authority=MEASURED,
-                             body=body)
+                             body=body, run=run)
     except RecordError as error:
         raise Refusal(f"the circuit test result does not fit one record ({error})") from None
     out["record"] = record["id"]

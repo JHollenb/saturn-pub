@@ -418,7 +418,7 @@ def checkpoints(project, session_id):
     return sorted(rows, key=lambda r: r["body"]["serial"])
 
 
-def record_checkpoint(project, session_id, recipe):
+def record_checkpoint(project, session_id, recipe, *, run=None):
     """Index a named checkpoint of a saved recipe and move the session cursor to it.
 
     The record (kind ``checkpoint``) holds the name, the recipe id, the target and a serial
@@ -431,7 +431,7 @@ def record_checkpoint(project, session_id, recipe):
         execution=json.loads(row["execution"]), authority="measured",
         body={"name": recipe["name"], "recipe": recipe["fingerprint"], "where": target["where"],
               "cut": recipe["cut"], "transitions": target["transitions"], "port": target["port"],
-              "serial": len(checkpoints(project, session_id))})
+              "serial": len(checkpoints(project, session_id))}, run=run)
     identifier = index.put_record(project, record)
     index.set_cursor(project, session_id, identifier)
     return record

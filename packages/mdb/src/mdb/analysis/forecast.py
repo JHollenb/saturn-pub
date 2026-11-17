@@ -1097,7 +1097,7 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None,
     record = seal_record(session_id=run_session_id(run), kind="forecast",
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution), authority=EXACT, body=body,
-                         pointers=pointers)
+                         pointers=pointers, run=run)
     # the row model is dropped on return: the entry owns these tensors, no copy needed
     entry = Forecast(number, record, label, margin, key, value.detach(),
                      None if bound is None else bound.detach(),

@@ -680,3 +680,56 @@ def test_the_repl_starts_from_a_checkpoint(dbg, saved, tmp_path):
     buf.truncate(0)
     sh.execute(f"start from={path} 1 2 3")
     assert "give no prompt" in buf.getvalue()
+
+
+def test_records_sealed_from_python_on_a_checkpoint_run_carry_custody(dbg, saved, tmp_path):
+    """Records sealed through the Python API (no op dispatch) about a run rooted at a
+    checkpoint carry ``custody.from_checkpoint`` (the sealer names the run): Branches.seal,
+    each, Pool, forecast, whatif, trace, sweep; a run of the prompt adds nothing."""
+    from mdb.analysis import forecast
+    from mdb.analysis.propagate import Edit, whatif
+    from mdb.analysis.rows import row_table
+    from mdb.core import custody
+    from mdb.ops.sweep import sweep
+
+    path, record = saved
+    want = {"checkpoint": record["id"], "path": "unverified"}
+    sink = custody.records_to(tmp_path / "r.jsonl")
+    try:
+        run = dbg.run_from(path, name="cus")
+        run.until(f"t{LAST}.L1.p")
+        forecast.seal(run, Margin(LAST, A, B))
+        whatif(run, Edit(f"t{LAST}.L1.m", 0.5, "add"), Margin(LAST, A, B))
+        run.until(f"t{LAST}.logits")
+        row_table(run, {"a": [0, 1, 2], "b": [3, 4, 5]}, letters=[A, B], X="A",
+                  R="B").seal(session_id="s1", model_identity=run.adapter.model_identity,
+                              execution=dict(run.adapter.execution))   # no run= given
+        br = dbg.branches(dbg.run_from(path, name="cus-b"), Margin(LAST, A, B),
+                          at=f"t{LAST}.L1.h")
+        br.add("zero", [edit(f"t{LAST}.L1.m", 0.0, "scale")])
+        br.run()
+        br.seal()
+        dbg.pool([{"id": "a", "core": str(path)}], f"t{LAST}.L1.h").seal()
+        out = dbg.each([{"name": "x"}], f"whatif L1.A[h1] *= 0 --consumer M[{A},{B}]",
+                       core=str(path))
+        assert out.summary["items"][0]["state"] == "resolved", out.summary
+        dbg.runs["clean"] = dbg.run(P, name="clean", prefill=2)
+        dbg.runs["clean"].until(f"t{LAST}.logits")
+        sw = dbg.run_from(path, name="cus-s")
+        sw.until(f"t{LAST}.logits")
+        sweep(dbg.ops(sw), "h", "5", "0:2", "clean", f"M[{A},{B}]", 3)
+        plain = dbg.run(P, name="plain", prefill=2)
+        plain.until(f"t{LAST}.L1.p")
+        forecast.seal(plain, Margin(LAST, A, B))
+    finally:
+        sink.close()
+    sealed = list(sink.records())
+    by_kind = {}
+    for r in sealed:
+        by_kind.setdefault(r["kind"], []).append(r["body"].get("custody", {}).get(
+            "from_checkpoint"))
+    for kind in ("forecast", "whatif", "trace", "branches", "sweep"):
+        assert want in by_kind[kind], (kind, by_kind[kind])
+    assert by_kind["pool"] == [want]
+    assert by_kind["whatif"].count(want) == 2             # whatif by Python and by each
+    assert by_kind["forecast"] == [want, None]            # the prompt's run: nothing added

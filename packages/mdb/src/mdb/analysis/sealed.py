@@ -75,7 +75,7 @@ def seal_trace(trace: Any, *, session_id: str, run: Any = None, model_identity: 
                                                    "count": len(columns)},
             "payload": payload, "sha256": payload["sha256"]}
     return seal_record(session_id=session_id, kind="trace", model_identity=identity,
-                       execution=exe, authority=MEASURED, body=body)
+                       execution=exe, authority=MEASURED, body=body, run=run if run is not None else trace.from_checkpoint)
 
 
 def load_trace(record: dict[str, Any], *, store: Any = None, holder: Any = None) -> Any:
@@ -130,7 +130,7 @@ def seal_map(m: Any, *, session_id: str, run: Any = None, model_identity: Any = 
         body["table"] = put_json(table.to_json(), store=_store_of(store),
                                  run=holder if holder is not None else run)
     return seal_record(session_id=session_id, kind="circuit-map", model_identity=identity,
-                       execution=exe, authority=EXACT, body=body)
+                       execution=exe, authority=EXACT, body=body, run=run)
 
 
 def load_map(record: dict[str, Any], *, store: Any = None, holder: Any = None) -> Any:

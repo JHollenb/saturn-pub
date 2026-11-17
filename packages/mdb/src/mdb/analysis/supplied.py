@@ -48,7 +48,7 @@ def seal(run: Any, *, target: dict[str, Any], edit: dict[str, Any], value: float
         body["linear"] = num(float(linear), LOCAL)
     return seal_record(session_id=session_id or run_session_id(run), kind="supplied-forecast",
                        model_identity=run.adapter.model_identity,
-                       execution=dict(run.adapter.execution), authority=SUPPLIED, body=body)
+                       execution=dict(run.adapter.execution), authority=SUPPLIED, body=body, run=run)
 
 
 def judge(record: dict[str, Any], native_delta: float, *, magnitude: float, dtype: Any,

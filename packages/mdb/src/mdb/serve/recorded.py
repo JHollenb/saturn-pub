@@ -16,6 +16,7 @@ from saturn_pub.values import digest
 from ..core import address as addresses
 from . import _legacy, blobs
 from .schema import AxisTick, ClockAxis
+from .states import StateCuts
 from .stored import as_dict, as_int, as_list, as_str
 
 # What a read of stored rows may raise when a row is corrupt (bad JSON, broken seal, wrong shape).
@@ -163,6 +164,15 @@ class SessionModel:
                     and isinstance(desc.get("surface"), dict)
                     and (parent is None or isinstance(parent, str))):
                 raise ValueError(f"cut {cut[:12]} has a malformed descriptor")
+        # the cuts kept by checkpoint-state records (``Debugger.checkpoint`` stores no native
+        # cut beside them): same ids and descriptor fields; a native cut of the same id wins
+        self.states = StateCuts(project, sid)
+        for cut, entry in self.states.cuts.items():
+            if cut not in self.cuts:
+                self.cut_ids.append(cut)
+                self.cuts[cut] = entry["descriptor"]
+        if self.selected not in self.cuts and self.states.cursor is not None:
+            self.selected = self.states.cursor      # the newest checkpoint's cursor
         self.receipts = _legacy.receipts(project, sid)
         self.slots = {}
         for cut in self.cuts.values():
@@ -223,7 +233,7 @@ class SessionModel:
         best, best_len = None, -1
         for cut in candidates:
             try:
-                shape = blobs.slot_info(self.store_root, cut, "tokens")["shape"] or []
+                shape = self.slot_info(cut, "tokens")["shape"] or []
             except (blobs.BlobError, OSError, ValueError):
                 continue
             if shape and shape[-1] > best_len:
@@ -231,12 +241,28 @@ class SessionModel:
         if best is None:
             return None, "tokens slot has no tensor descriptor"
         try:
-            array, _ = blobs.cut_slot(self.store_root, best, "tokens")
+            array, _ = self.cut_slot(best, "tokens")
         except blobs.BlobError as error:
             return None, error.reason
         return [int(v) for v in array.reshape(-1).tolist()], None
 
+    def cut_slot(self, cut, slot, item=None):
+        """``(array, info)`` of a slot tensor of a native cut or a checkpoint-state cut."""
+        if cut in self.states and not self._native(cut):
+            return self.states.cut_slot(cut, slot, item)
+        return blobs.cut_slot(self.store_root, cut, slot, item)
+
+    def slot_info(self, cut, slot, item=None):
+        if cut in self.states and not self._native(cut):
+            return self.states.slot_info(cut, slot, item)
+        return blobs.slot_info(self.store_root, cut, slot, item)
+
+    def _native(self, cut):
+        return (Path(self.store_root) / "cuts" / f"{cut}.json").is_file()
+
     def _slot_names(self, cut):
+        if cut in self.states and not self._native(cut):
+            return self.states.slot_names(cut)
         path = Path(self.store_root) / "cuts" / f"{cut}.json"
         try:
             return set(json.loads(path.read_bytes()).get("slots") or {})

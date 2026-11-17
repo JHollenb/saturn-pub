@@ -1581,7 +1581,7 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
     def seal() -> dict[str, Any]:
         return seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
                            model_identity=run.adapter.model_identity,
-                           execution=dict(run.adapter.execution), authority=EXACT, body=body)
+                           execution=dict(run.adapter.execution), authority=EXACT, body=body, run=run)
 
     try:
         return [seal()]

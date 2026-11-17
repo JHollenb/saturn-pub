@@ -588,7 +588,8 @@ def declare(ctx: Any, name: str, reference: str, *, role: str | None = None, rea
     try:
         record = seal_record(session_id=session if writable else f"mdb-symbol:{_sha(tokens)[:32]}",
                              kind="symbol", model_identity=adapter.model_identity,
-                             execution=dict(adapter.execution), authority="measured", body=body)
+                             execution=dict(adapter.execution), authority="measured", body=body,
+                             run=run)
     except RecordError as error:
         raise Refused(f"symbol {name}: the record exceeds the record bound: {error}") from None
     store(debugger)[name] = record

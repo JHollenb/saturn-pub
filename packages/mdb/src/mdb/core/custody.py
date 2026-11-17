@@ -472,8 +472,9 @@ def sinks() -> list[Sink]:
     return list(_SINKS)
 
 
-# The checkpoint the run a record is sealed about is rooted at (``Run.from_checkpoint``), set
-# while an op runs (``ops.registry.dispatch``) or by ``from_checkpoint(run)``.
+# The checkpoint the run a record is sealed about is rooted at (``Run.from_checkpoint``), for a
+# sealer that does not name its run (``seal_record(run=...)`` does): set by
+# ``from_checkpoint(run)``.
 _FROM_CHECKPOINT: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
     "mdb_from_checkpoint", default=None)
 
@@ -490,11 +491,35 @@ def from_checkpoint(run: Any):
         _FROM_CHECKPOINT.reset(token)
 
 
-def attach_custody(kind: str, body: dict[str, Any]) -> dict[str, Any]:
+def checkpoint_origin(runs: Any) -> dict[str, Any] | None:
+    """``custody.from_checkpoint`` of a record about ``runs`` (a run, or several): the
+    ``Run.from_checkpoint`` of the one run rooted at a checkpoint; for several distinct ones,
+    ``{"checkpoint": None, "path": "unverified" | "verified", "checkpoints": [...]}`` (path
+    verified only when every one is); None when none is."""
+    if runs is None:
+        return None
+    items = runs if isinstance(runs, (list, tuple)) else [runs]
+    found: list[dict[str, Any]] = []
+    for run in items:
+        origin = run if isinstance(run, dict) else getattr(run, "from_checkpoint", None)
+        if origin is not None and dict(origin) not in found:
+            found.append(dict(origin))
+    if not found:
+        return None
+    if len(found) == 1:
+        return found[0]
+    path = "verified" if all(o["path"] == "verified" for o in found) else "unverified"
+    return {"checkpoint": None, "path": path, "checkpoints": found[:64]}
+
+
+def attach_custody(kind: str, body: dict[str, Any], run: Any = None) -> dict[str, Any]:
     """``body`` with the declared custody added (unchanged when undeclared or already there),
-    and ``custody.from_checkpoint`` while a run rooted at a checkpoint is the subject
-    (``from_checkpoint``)."""
-    origin = _FROM_CHECKPOINT.get()
+    and ``custody.from_checkpoint`` when the record is about a run rooted at a checkpoint:
+    ``run`` (the sealer names it, ``checkpoint_origin``), else an open ``from_checkpoint``
+    context."""
+    origin = checkpoint_origin(run) if run is not None else None
+    if origin is None:
+        origin = _FROM_CHECKPOINT.get()
     if "custody" in body:
         if origin is None or not isinstance(body["custody"], dict) or \
                 "from_checkpoint" in body["custody"]:
@@ -514,6 +539,6 @@ def emit(record: dict[str, Any]) -> None:
 
 
 __all__ = ["CORE_LIBRARIES", "INTEROP_LIBRARIES", "PAYLOAD_SCHEMA", "SCHEMA", "Sink",
-           "attach_custody", "clear", "config_block", "from_checkpoint", "current", "custody", "declare", "emit",
+           "attach_custody", "checkpoint_origin", "clear", "config_block", "from_checkpoint", "current", "custody", "declare", "emit",
            "emit_payload", "file_sha256", "libraries", "ran_init", "records_to", "reread", "run_tag",
            "sink_path", "sinks"]

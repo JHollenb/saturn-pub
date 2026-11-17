@@ -1472,7 +1472,7 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution),
                          authority=LOCAL if reason is None else SUPPLIED, body=body,
-                         pointers=pointers)
+                         pointers=pointers, run=run)
     # An evidence writer can persist/flush the sealed forecast before the first
     # counterfactual measurement. Writer failure prevents native release.
     if before_native is not None:

@@ -919,7 +919,7 @@ def circuit(run: Any, reader: Any, split: dict[str, Any], basis: FeatureBasis, *
         check_bounded(body, "circuit record")
         record = seal_record(session_id=session_id or run_session_id(run), kind="circuit",
                              model_identity=run.adapter.model_identity,
-                             execution=dict(run.adapter.execution), authority=EXACT, body=body)
+                             execution=dict(run.adapter.execution), authority=EXACT, body=body, run=run)
     except RecordError as error:
         raise Refusal(f"the SAE circuit record does not fit one record ({error})") from None
     built = C.Circuit(ident, record, root, reader.target, run.where, complement=None)

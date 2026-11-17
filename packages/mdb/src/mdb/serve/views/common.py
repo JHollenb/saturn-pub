@@ -137,7 +137,7 @@ def slot_ref(model, cut, slot, *, item=None, select=(), addr=None) -> PointerRef
     spec = {"kind": "slot", "cut": cut, "slot": slot, "item": item, "select": list(select)}
     via = [f"cut {short(cut)}", f"slot {slot}"]
     try:
-        info = blobs.slot_info(model.store_root, cut, slot, item)
+        info = model.slot_info(cut, slot, item)
     except (blobs.BlobError, OSError, ValueError) as error:
         reason = getattr(error, "reason", str(error))
         return PointerRef(digest=spec_digest(spec), addr=addr, spec=spec, via=via,

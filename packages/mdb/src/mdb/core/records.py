@@ -839,20 +839,23 @@ def _seal(*, session_id, kind, model_identity, execution, authority, body, point
 
 
 @_huge_int_guard
-def seal_record(*, session_id, kind, model_identity, execution, authority, body, pointers=()):
+def seal_record(*, session_id, kind, model_identity, execution, authority, body, pointers=(),
+                run=None):
     """Build and seal one record (schema v3). ``model_identity``/``execution`` are the
     session's values.
 
     Custody (P8, ``core.custody``): while custody is declared the body gains ``custody`` (script
     and prereg sha256, library versions, kernel path) unless it carries its own; every open
-    record sink receives the sealed record."""
+    record sink receives the sealed record. ``run``: the run (or runs) the record is about; when
+    one is rooted at a checkpoint whose path is not recomputed, custody gains
+    ``from_checkpoint`` (``custody.checkpoint_origin``)."""
     from . import custody
 
     if not isinstance(body, Mapping):
         raise RecordError("record body must be a mapping")
     record = _seal(session_id=session_id, kind=kind, model_identity=model_identity,
                    execution=execution, authority=authority, pointers=pointers,
-                   body=custody.attach_custody(kind, dict(body)))
+                   body=custody.attach_custody(kind, dict(body), run=run))
     custody.emit(record)
     return record
 

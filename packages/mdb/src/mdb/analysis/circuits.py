@@ -604,7 +604,7 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
         check_bounded(body, "circuit record")
         record = seal_record(session_id=session_id or run_session_id(run), kind="circuit",
                              model_identity=run.adapter.model_identity,
-                             execution=dict(run.adapter.execution), authority=EXACT, body=body)
+                             execution=dict(run.adapter.execution), authority=EXACT, body=body, run=run)
     except RecordError as error:
         raise Refusal(f"the circuit record does not fit one record ({error}); lower top or "
                       "depth") from None

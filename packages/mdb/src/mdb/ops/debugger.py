@@ -336,7 +336,7 @@ class Debugger:
         if holds not in ("rearm", "drop"):
             raise Refused("holds is 'rearm' (default) or 'drop'")
         recipe = self._save_recipe(run, name, cut=False)
-        record = recipes.record_checkpoint(self.project, self.session_id, recipe)
+        record = recipes.record_checkpoint(self.project, self.session_id, recipe, run=run)
         from mdb.engine import checkpoint as states
 
         state = states.save(run, project=self.project, session_id=self.session_id, name=name,

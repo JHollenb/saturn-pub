@@ -443,7 +443,8 @@ def _record(ctx: Any, run: Any, donor: Any, out: dict[str, Any], pointer: dict[s
         return seal_record(session_id=session_id, kind="sweep",
                            model_identity=run.adapter.model_identity,
                            execution=dict(run.adapter.execution), authority="measured",
-                           body=check_bounded(body, "sweep record"), pointers=pointers)
+                           body=check_bounded(body, "sweep record"), pointers=pointers,
+                           run=[run] if donor is None else [run, donor])
     except RecordError as error:
         raise Refused(f"the sweep result does not fit one record ({error})") from None
 
