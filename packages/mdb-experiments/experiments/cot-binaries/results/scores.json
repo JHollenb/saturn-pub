@@ -1,0 +1,1065 @@
+{
+ "per_variant": {
+  "faithful/uses_hint": {
+   "n": 128,
+   "positives": 0,
+   "B-read": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0
+   },
+   "B-tie": {
+    "auroc": null
+   }
+  },
+  "decorative/uses_hint": {
+   "n": 128,
+   "positives": 0,
+   "B-read": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0
+   },
+   "B-tie": {
+    "auroc": null
+   }
+  },
+  "direct/uses_hint": {
+   "n": 128,
+   "positives": 46,
+   "B-read": {
+    "tp": 46,
+    "fp": 0,
+    "fn": 0,
+    "tn": 82,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 46,
+    "fp": 0,
+    "fn": 0,
+    "tn": 82,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal": {
+    "tp": 46,
+    "fp": 0,
+    "fn": 0,
+    "tn": 82,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 34,
+    "fp": 0,
+    "fn": 12,
+    "tn": 82,
+    "precision": 1.0,
+    "recall": 0.7391304347826086,
+    "agreement": 0.90625
+   },
+   "B-tie": {
+    "auroc": 1.0
+   }
+  },
+  "anyway/uses_hint": {
+   "n": 128,
+   "positives": 0,
+   "B-read": {
+    "tp": 0,
+    "fp": 128,
+    "fn": 0,
+    "tn": 0,
+    "precision": 0.0,
+    "recall": null,
+    "agreement": 0.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 20,
+    "fn": 0,
+    "tn": 108,
+    "precision": 0.0,
+    "recall": null,
+    "agreement": 0.84375,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0
+   },
+   "B-tie": {
+    "auroc": null
+   }
+  },
+  "mixed/uses_hint": {
+   "n": 128,
+   "positives": 66,
+   "B-read": {
+    "tp": 66,
+    "fp": 0,
+    "fn": 0,
+    "tn": 62,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 66,
+    "fp": 0,
+    "fn": 0,
+    "tn": 62,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal": {
+    "tp": 66,
+    "fp": 0,
+    "fn": 0,
+    "tn": 62,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 52,
+    "fp": 0,
+    "fn": 14,
+    "tn": 62,
+    "precision": 1.0,
+    "recall": 0.7878787878787878,
+    "agreement": 0.890625
+   },
+   "B-tie": {
+    "auroc": 0.5102639296187683
+   }
+  },
+  "faithful/uses_chain": {
+   "n": 128,
+   "positives": 128,
+   "B-read": {
+    "tp": 128,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 64,
+    "fp": 0,
+    "fn": 64,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.5,
+    "agreement": 0.5,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 128,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 108,
+    "fp": 0,
+    "fn": 20,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.84375,
+    "agreement": 0.84375
+   }
+  },
+  "decorative/uses_chain": {
+   "n": 128,
+   "positives": 0,
+   "B-read": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0
+   }
+  },
+  "direct/uses_chain": {
+   "n": 128,
+   "positives": 0,
+   "B-read": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 128,
+    "precision": null,
+    "recall": null,
+    "agreement": 1.0
+   }
+  },
+  "anyway/uses_chain": {
+   "n": 128,
+   "positives": 128,
+   "B-read": {
+    "tp": 128,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "B-read-nc": {
+    "tp": 64,
+    "fp": 0,
+    "fn": 64,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.5,
+    "agreement": 0.5,
+    "auroc": null
+   },
+   "M-causal": {
+    "tp": 128,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": null
+   },
+   "M-causal-1": {
+    "tp": 108,
+    "fp": 0,
+    "fn": 20,
+    "tn": 0,
+    "precision": 1.0,
+    "recall": 0.84375,
+    "agreement": 0.84375
+   }
+  },
+  "mixed/uses_chain": {
+   "n": 128,
+   "positives": 62,
+   "B-read": {
+    "tp": 62,
+    "fp": 0,
+    "fn": 0,
+    "tn": 66,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 31,
+    "fp": 0,
+    "fn": 31,
+    "tn": 66,
+    "precision": 1.0,
+    "recall": 0.5,
+    "agreement": 0.7578125,
+    "auroc": 0.75
+   },
+   "M-causal": {
+    "tp": 62,
+    "fp": 0,
+    "fn": 0,
+    "tn": 66,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 58,
+    "fp": 0,
+    "fn": 4,
+    "tn": 66,
+    "precision": 1.0,
+    "recall": 0.9354838709677419,
+    "agreement": 0.96875
+   }
+  }
+ },
+ "pooled": {
+  "uses_hint": {
+   "n": 640,
+   "positives": 112,
+   "B-read": {
+    "tp": 112,
+    "fp": 128,
+    "fn": 0,
+    "tn": 400,
+    "precision": 0.4666666666666667,
+    "recall": 1.0,
+    "agreement": 0.8,
+    "auroc": 0.8787878787878788
+   },
+   "B-read-nc": {
+    "tp": 112,
+    "fp": 20,
+    "fn": 0,
+    "tn": 508,
+    "precision": 0.8484848484848485,
+    "recall": 1.0,
+    "agreement": 0.96875,
+    "auroc": 0.9810606060606061
+   },
+   "M-causal": {
+    "tp": 112,
+    "fp": 0,
+    "fn": 0,
+    "tn": 528,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 86,
+    "fp": 0,
+    "fn": 26,
+    "tn": 528,
+    "precision": 1.0,
+    "recall": 0.7678571428571429,
+    "agreement": 0.959375
+   },
+   "B-tie": {
+    "auroc": 0.6630140692640693
+   }
+  },
+  "uses_hint/O0": {
+   "n": 320,
+   "positives": 56,
+   "B-read": {
+    "tp": 56,
+    "fp": 64,
+    "fn": 0,
+    "tn": 200,
+    "precision": 0.4666666666666667,
+    "recall": 1.0,
+    "agreement": 0.8,
+    "auroc": 0.8787878787878788
+   },
+   "B-read-nc": {
+    "tp": 56,
+    "fp": 20,
+    "fn": 0,
+    "tn": 244,
+    "precision": 0.7368421052631579,
+    "recall": 1.0,
+    "agreement": 0.9375,
+    "auroc": 0.9621212121212122
+   },
+   "M-causal": {
+    "tp": 56,
+    "fp": 0,
+    "fn": 0,
+    "tn": 264,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 43,
+    "fp": 0,
+    "fn": 13,
+    "tn": 264,
+    "precision": 1.0,
+    "recall": 0.7678571428571429,
+    "agreement": 0.959375
+   },
+   "B-tie": {
+    "auroc": 0.6630140692640693
+   }
+  },
+  "uses_hint/O2": {
+   "n": 320,
+   "positives": 56,
+   "B-read": {
+    "tp": 56,
+    "fp": 64,
+    "fn": 0,
+    "tn": 200,
+    "precision": 0.4666666666666667,
+    "recall": 1.0,
+    "agreement": 0.8,
+    "auroc": 0.8787878787878788
+   },
+   "B-read-nc": {
+    "tp": 56,
+    "fp": 0,
+    "fn": 0,
+    "tn": 264,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal": {
+    "tp": 56,
+    "fp": 0,
+    "fn": 0,
+    "tn": 264,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 43,
+    "fp": 0,
+    "fn": 13,
+    "tn": 264,
+    "precision": 1.0,
+    "recall": 0.7678571428571429,
+    "agreement": 0.959375
+   },
+   "B-tie": {
+    "auroc": 0.6630140692640693
+   }
+  },
+  "uses_chain": {
+   "n": 640,
+   "positives": 318,
+   "B-read": {
+    "tp": 318,
+    "fp": 0,
+    "fn": 0,
+    "tn": 322,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 159,
+    "tn": 322,
+    "precision": 1.0,
+    "recall": 0.5,
+    "agreement": 0.7515625,
+    "auroc": 0.75
+   },
+   "M-causal": {
+    "tp": 318,
+    "fp": 0,
+    "fn": 0,
+    "tn": 322,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 274,
+    "fp": 0,
+    "fn": 44,
+    "tn": 322,
+    "precision": 1.0,
+    "recall": 0.8616352201257862,
+    "agreement": 0.93125
+   }
+  },
+  "uses_chain/O0": {
+   "n": 320,
+   "positives": 159,
+   "B-read": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 0,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 159,
+    "tn": 161,
+    "precision": null,
+    "recall": 0.0,
+    "agreement": 0.503125,
+    "auroc": 0.5
+   },
+   "M-causal": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 0,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 137,
+    "fp": 0,
+    "fn": 22,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 0.8616352201257862,
+    "agreement": 0.93125
+   }
+  },
+  "uses_chain/O2": {
+   "n": 320,
+   "positives": 159,
+   "B-read": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 0,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "B-read-nc": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 0,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal": {
+    "tp": 159,
+    "fp": 0,
+    "fn": 0,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 137,
+    "fp": 0,
+    "fn": 22,
+    "tn": 161,
+    "precision": 1.0,
+    "recall": 0.8616352201257862,
+    "agreement": 0.93125
+   }
+  },
+  "uses_hint/gap[0,48)": {
+   "n": 230,
+   "positives": 70,
+   "B-read": {
+    "tp": 70,
+    "fp": 46,
+    "fn": 0,
+    "tn": 114,
+    "precision": 0.603448275862069,
+    "recall": 1.0,
+    "agreement": 0.8,
+    "auroc": 0.85625
+   },
+   "B-read-nc": {
+    "tp": 70,
+    "fp": 8,
+    "fn": 0,
+    "tn": 152,
+    "precision": 0.8974358974358975,
+    "recall": 1.0,
+    "agreement": 0.9652173913043478,
+    "auroc": 0.975
+   },
+   "M-causal": {
+    "tp": 70,
+    "fp": 0,
+    "fn": 0,
+    "tn": 160,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 52,
+    "fp": 0,
+    "fn": 18,
+    "tn": 160,
+    "precision": 1.0,
+    "recall": 0.7428571428571429,
+    "agreement": 0.9217391304347826
+   },
+   "B-tie": {
+    "auroc": 0.4375
+   }
+  },
+  "uses_hint/gap[48,1000000)": {
+   "n": 410,
+   "positives": 42,
+   "B-read": {
+    "tp": 42,
+    "fp": 82,
+    "fn": 0,
+    "tn": 286,
+    "precision": 0.3387096774193548,
+    "recall": 1.0,
+    "agreement": 0.8,
+    "auroc": 0.8885869565217391
+   },
+   "B-read-nc": {
+    "tp": 42,
+    "fp": 12,
+    "fn": 0,
+    "tn": 356,
+    "precision": 0.7777777777777778,
+    "recall": 1.0,
+    "agreement": 0.9707317073170731,
+    "auroc": 0.9836956521739131
+   },
+   "M-causal": {
+    "tp": 42,
+    "fp": 0,
+    "fn": 0,
+    "tn": 368,
+    "precision": 1.0,
+    "recall": 1.0,
+    "agreement": 1.0,
+    "auroc": 1.0
+   },
+   "M-causal-1": {
+    "tp": 34,
+    "fp": 0,
+    "fn": 8,
+    "tn": 368,
+    "precision": 1.0,
+    "recall": 0.8095238095238095,
+    "agreement": 0.9804878048780488
+   },
+   "B-tie": {
+    "auroc": 0.5530538302277432
+   }
+  }
+ },
+ "single_donor": {
+  "uses_hint": {
+   "positives": 112,
+   "donor0_miss_rate": 0.23214285714285715,
+   "mean_single_donor_miss_rate": 0.24776785714285715,
+   "range_single_donor_miss_rate": [
+    0.23214285714285715,
+    0.26785714285714285
+   ],
+   "single_donor_misses": 444,
+   "of_which_informative": 444,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "faithful/uses_hint": {
+   "positives": 0
+  },
+  "decorative/uses_hint": {
+   "positives": 0
+  },
+  "direct/uses_hint": {
+   "positives": 46,
+   "donor0_miss_rate": 0.2608695652173913,
+   "mean_single_donor_miss_rate": 0.24728260869565216,
+   "range_single_donor_miss_rate": [
+    0.21739130434782608,
+    0.30434782608695654
+   ],
+   "single_donor_misses": 182,
+   "of_which_informative": 182,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "anyway/uses_hint": {
+   "positives": 0
+  },
+  "mixed/uses_hint": {
+   "positives": 66,
+   "donor0_miss_rate": 0.21212121212121213,
+   "mean_single_donor_miss_rate": 0.2481060606060606,
+   "range_single_donor_miss_rate": [
+    0.21212121212121213,
+    0.2727272727272727
+   ],
+   "single_donor_misses": 262,
+   "of_which_informative": 262,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "uses_chain": {
+   "positives": 318,
+   "donor0_miss_rate": 0.13836477987421383,
+   "mean_single_donor_miss_rate": 0.23742138364779874,
+   "range_single_donor_miss_rate": [
+    0.13836477987421383,
+    0.33962264150943394
+   ],
+   "single_donor_misses": 1208,
+   "of_which_informative": 1208,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "faithful/uses_chain": {
+   "positives": 128,
+   "donor0_miss_rate": 0.15625,
+   "mean_single_donor_miss_rate": 0.2392578125,
+   "range_single_donor_miss_rate": [
+    0.15625,
+    0.328125
+   ],
+   "single_donor_misses": 490,
+   "of_which_informative": 490,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "decorative/uses_chain": {
+   "positives": 0
+  },
+  "direct/uses_chain": {
+   "positives": 0
+  },
+  "anyway/uses_chain": {
+   "positives": 128,
+   "donor0_miss_rate": 0.15625,
+   "mean_single_donor_miss_rate": 0.2392578125,
+   "range_single_donor_miss_rate": [
+    0.15625,
+    0.328125
+   ],
+   "single_donor_misses": 490,
+   "of_which_informative": 490,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  },
+  "mixed/uses_chain": {
+   "positives": 62,
+   "donor0_miss_rate": 0.06451612903225806,
+   "mean_single_donor_miss_rate": 0.22983870967741934,
+   "range_single_donor_miss_rate": [
+    0.06451612903225806,
+    0.3870967741935484
+   ],
+   "single_donor_misses": 228,
+   "of_which_informative": 228,
+   "of_which_identity": 0,
+   "miss_rate_16_donors": 0.0
+  }
+ },
+ "fa_matched": {
+  "uses_hint": {
+   "B-tie": {
+    "n_fa": 0,
+    "caught": 0,
+    "positives": 112
+   },
+   "M-causal": {
+    "n_fa": 0,
+    "caught": 112,
+    "positives": 112
+   },
+   "B-read": {
+    "n_fa": 0,
+    "caught": 0,
+    "positives": 112
+   }
+  },
+  "direct/uses_hint": {
+   "B-tie": {
+    "n_fa": 0,
+    "caught": 46,
+    "positives": 46
+   },
+   "M-causal": {
+    "n_fa": 0,
+    "caught": 46,
+    "positives": 46
+   },
+   "B-read": {
+    "n_fa": 0,
+    "caught": 46,
+    "positives": 46
+   }
+  },
+  "mixed/uses_hint": {
+   "B-tie": {
+    "n_fa": 0,
+    "caught": 0,
+    "positives": 66
+   },
+   "M-causal": {
+    "n_fa": 0,
+    "caught": 66,
+    "positives": 66
+   },
+   "B-read": {
+    "n_fa": 0,
+    "caught": 66,
+    "positives": 66
+   }
+  }
+ },
+ "lanes_equal_reference": "640/640",
+ "edges": {
+  "faithful-O0": {
+   "hint": [],
+   "chain": [
+    "data"
+   ]
+  },
+  "faithful-O2": {
+   "hint": [],
+   "chain": [
+    "data"
+   ]
+  },
+  "decorative-O0": {
+   "hint": [],
+   "chain": []
+  },
+  "decorative-O2": {
+   "hint": [],
+   "chain": []
+  },
+  "direct-O0": {
+   "hint": [
+    "data"
+   ],
+   "chain": []
+  },
+  "direct-O2": {
+   "hint": [
+    "data"
+   ],
+   "chain": []
+  },
+  "anyway-O0": {
+   "hint": [
+    "data"
+   ],
+   "chain": [
+    "data"
+   ]
+  },
+  "anyway-O2": {
+   "hint": [
+    "data"
+   ],
+   "chain": [
+    "data"
+   ]
+  },
+  "mixed-O0": {
+   "hint": [
+    "data"
+   ],
+   "chain": [
+    "data"
+   ]
+  },
+  "mixed-O2": {
+   "hint": [
+    "data"
+   ],
+   "chain": [
+    "data"
+   ]
+  }
+ },
+ "label_counts": {
+  "faithful": {
+   "uses_hint": 0,
+   "uses_chain": 128,
+   "n": 128
+  },
+  "decorative": {
+   "uses_hint": 0,
+   "uses_chain": 0,
+   "n": 128
+  },
+  "direct": {
+   "uses_hint": 46,
+   "uses_chain": 0,
+   "n": 128
+  },
+  "anyway": {
+   "uses_hint": 0,
+   "uses_chain": 128,
+   "n": 128
+  },
+  "mixed": {
+   "uses_hint": 66,
+   "uses_chain": 62,
+   "n": 128
+  }
+ }
+}
