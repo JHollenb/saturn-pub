@@ -439,7 +439,9 @@ In roughly the order you meet them.
   at a reference run's values while the run continues.
 - **Custody** (`dbg.custody`): the script, preregistration and library versions stamped into every
   record sealed afterwards; a **sink** (`dbg.records_to`) writes those records to a file.
-  **Core file** (`run.dump`): a run's prefix saved once and reloaded as a steppable run.
+  **Checkpoint** (`run.dump`, `dbg.checkpoint`): a run's state at any cut, a row in flight
+  included, saved once as content-addressed tensors and rehydrated as a steppable run with no
+  prefix recompute (the older name for the file form is core file).
 - **Binding**: a named part of a value (a symbol, an SAE component). A **subspace binding**
   (`SubspaceBinding`) names a `k`-dimensional subspace of one cell by an orthonormal basis and
   says where the basis came from.
@@ -1037,14 +1039,20 @@ gave a 27.7 KB summary.
 ```python
 dbg = mdb.attach(model, tok, project="runs/t")      # creates or reopens the project
 run = dbg.run(tokens); run.until("L1.sg"); run.set("L1.u", tensor, "add")
-dbg.checkpoint(run, "pre")                          # replay recipe + edit tensors as blobs
+info = dbg.checkpoint(run, "pre")                   # the state (tensor blobs) + replay recipe
 run = mdb.attach(model, tok, project="runs/t").restart("pre")  # later, another process, same scope
+run = dbg.run_from(info["state"])                   # the same by record id (or a file path)
 ```
 
+`restart` rehydrates the stored state: no prefix is recomputed, and the run has the same cut
+fingerprints, edits and cursor (`restart(name, verify=True)` also replays the recipe once and
+records that it reaches the same fingerprint; `replay=True` replays instead). Projects written
+before checkpoints held state replay as before. See
+[Checkpoints](docs/BRANCHES-POOLS-HOLDS.md#checkpoints-enginecheckpointpy-core-files).
 The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is attached;
 `mdb.resolve(pointer, project=..., session=dbg)` turns an occurrence pointer into a tensor.
 
-## Branches, pools, holds, core files, custody
+## Branches, pools, holds, checkpoints, custody
 
 Debugger objects for the loops an experiment script otherwise writes by hand (several branches from one checkpoint, sets of donor values, frozen attention, saved prefixes, provenance), all in [docs/BRANCHES-POOLS-HOLDS.md](docs/BRANCHES-POOLS-HOLDS.md):
 
@@ -1052,7 +1060,7 @@ Debugger objects for the loops an experiment script otherwise writes by hand (se
 - `run.hold("t@last.L>20.p", source=base)` and `run.hold("t@last.L>20.norm_scale", source=base)` keep attention weights, norm scales or cells at a reference run's values.
 - `dbg.branches(run, Margin(...), at=...)` gives named arms from one checkpoint with one shared floor, built-in nulls (`random`, `self`, `answer`), stability band, kernel path and sealed record. `subspace.interchange` uses it.
 - `dbg.pool(items, "cache.L20.v[kv6,row=@carrier]")` gives sealed value sets with a leave-one-out mean (the item excluded by construction), donor rules and matched-norm random.
-- `run.dump(path)` and `dbg.run_from(path)` write a core file and reload it as a steppable run on any device/dtype, with a null check on load.
+- `run.dump(path)` / `dbg.checkpoint(run, name)` save the state at the cursor (a cut inside a row too) as content-addressed tensors in a file or the project store; `dbg.run_from(path or record id)` rehydrates it in any process with no prefix recompute, bit-identical, with the source's fingerprints, so checkpoints move between the runs and `Branches`, `Pool` and `each` (`core=`) run from it. Another dtype or weights loads only as a labelled replica (`replica=True`), null-checked on load.
 - `sae.open_transcoders` and `components.transcoder_binding` handle transcoders as MLP-write component bindings.
 - `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink. With no path, a directory or `{run}` in the name the sink file is unique per process and mrun job; an existing file another run wrote is refused unless `append=True`; pointer payloads with no store (a compact branches record's `arms_payload`) are written into the sink too. Records are schema `mdb-record-v3` from 0.2.2; `mdb records migrate PATH` writes the v3 twin of an older sink file with an id map ([docs/RECORDS.md](docs/RECORDS.md)).
 - `br.run(mode="batched")` batches whole-cell and native-port arms; the default `recheck="band"` re-measures stepped only arms within `1/k..k` floors. `Branches(..., probes={...})` reads named values on every stepped arm before restore; a branches record too large for one line is sealed compact with the full rows by pointer.

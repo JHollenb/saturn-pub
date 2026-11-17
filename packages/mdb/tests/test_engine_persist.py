@@ -121,7 +121,8 @@ def test_restart_in_process_and_the_project_records(saved):
     assert reader.cut_ids(dbg.session_id) == [info["cut"]]
     assert reader.cut_descriptor(dbg.session_id, info["cut"])["fingerprint"] == info["cut"]
     records = I.list_records(reader, dbg.session_id)
-    assert [(r["kind"], r["body"]["name"]) for r in records] == [("checkpoint", "pre")]
+    assert [(r["kind"], r["body"]["name"]) for r in records] == [
+        ("checkpoint", "pre"), ("checkpoint-state", "pre")]       # the recipe, the state (#517)
     assert I.get_cursor(reader, dbg.session_id) == info["record"]
     recipe = recipes.load(reader, info["recipe"])
     assert recipes.to_checkpoint(recipe)["cut"] == info["cut"]

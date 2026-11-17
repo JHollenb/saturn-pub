@@ -204,6 +204,20 @@ CORE_FILE = declare_kind(
                    "procedure.**", "path_edits.**", "post_split_edits", "tensors.count"),
 )
 
+# ``checkpoint-state`` (#517, ``mdb.engine.checkpoint``): a run's state at a cut as
+# content-addressed tensors. The record holds the sha256 of the state document and of every
+# tensor part (``tensors.sha256``: packed hex, 60 digests per string), the cut and root
+# fingerprints, the prompt digest, the procedure, the lineage and custody.
+CHECKPOINT_STATE = declare_kind(
+    "checkpoint-state",
+    required=("schema", "where", "cut", "root", "history", "prompt", "procedure", "shape",
+              "lineage", "recipe", "document", "tensors", "custody"),
+    plain_numeric=("cut.transitions", "cut.row", "root.transitions", "root.row", "marks",
+                   "stored_cuts", "prompt.tokens", "prompt.length", "shape.**", "recipe.**",
+                   "document.bytes", "document.tensor.shape.*", "tensors.count",
+                   "lineage.**", *PROCEDURE),
+)
+
 # ``each`` over a prompt set: the summary record (``mdb.ops.sets``). Declared here so a reader
 # (and ``mdb records migrate``) verifies it without running ``each`` first.
 PROMPT_SET = declare_kind(
@@ -221,5 +235,5 @@ PROMPT_SET = declare_kind(
 )
 
 
-__all__ = ["BRANCHES", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "PROMPT_SET", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+__all__ = ["BRANCHES", "CHECKPOINT_STATE", "CORE_FILE", "POOL", "CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "PROMPT_SET", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

@@ -355,7 +355,9 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
             where: Callable[[dict[str, Any], Any], bool] | None = None,
             prefill: Callable[[dict[str, Any]], int] | None = None) -> Pool:
     """Collect one value per item at ``address`` (module docstring). ``items``: dicts with
-    ``id``, ``ids`` (token ids), optional ``roles`` and the ``labels`` keys. ``prefill`` (cache
+    ``id``, ``ids`` (token ids), optional ``roles`` and the ``labels`` keys; or ``core`` (alias
+    ``from``) instead of ``ids``: a checkpoint (path, record id of the debugger's project, or a
+    loaded one) the item's run is rehydrated from, no prefix recomputed. ``prefill`` (cache
     cells only): ``prefill(item)`` is the item's prefill split, so the rows from it on are
     stepped (the kernel path of a driver that ran ``dbg.run(ids, prefill=K)``); the pool's
     kernel path is ``mdb-stepped`` when every item's cell row is at or after its split."""
@@ -365,20 +367,36 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
     adapter = debugger.adapter if hasattr(debugger, "adapter") else debugger
     kept, values, skipped = [], [], []
     stepped = prefill is not None
+    loaded: dict[str, Any] = {}
     for item in items:
-        bound = bind(address, item)
-        ids = [int(t) for t in item["ids"]]
-        last = len(ids) - 1
-        if bound.startswith("cache."):
-            split = None if prefill is None else int(prefill(item))
-            run = Run(adapter, ids, prefill=split)
-            cell_row = re.search(r"row=(\d+)", bound)
-            stepped = stepped and cell_row is not None and int(cell_row[1]) >= int(run.prefill)
-            run.until(f"t{last}.L0.{run.program.names[0]}")
+        core = item.get("core", item.get("from"))
+        if core is not None:
+            run, ids = _from_checkpoint(debugger, item, core, loaded)
+            bound = bind(address, {**item, "ids": ids})
+            last = len(ids) - 1
+            if bound.startswith("cache."):
+                cell_row = re.search(r"row=(\d+)", bound)
+                stepped = stepped and cell_row is not None and int(cell_row[1]) >= run.first_row
+                target = f"t{last}.L0.{run.program.names[0]}"
+                if run.parse(target) > run.parse(run.where):
+                    run.until(target)
+            else:
+                _reach(run, bound.partition("[")[0])
         else:
-            row = int(bound.split(".", 1)[0][1:]) if bound.startswith("t") else last
-            run = Run(adapter, ids, prefill=min(row, last))
-            run.until(bound.partition("[")[0])
+            bound = bind(address, item)
+            ids = [int(t) for t in item["ids"]]
+            last = len(ids) - 1
+            if bound.startswith("cache."):
+                split = None if prefill is None else int(prefill(item))
+                run = Run(adapter, ids, prefill=split)
+                cell_row = re.search(r"row=(\d+)", bound)
+                stepped = stepped and cell_row is not None and int(cell_row[1]) >= int(
+                    run.prefill)
+                run.until(f"t{last}.L0.{run.program.names[0]}")
+            else:
+                row = int(bound.split(".", 1)[0][1:]) if bound.startswith("t") else last
+                run = Run(adapter, ids, prefill=min(row, last))
+                run.until(bound.partition("[")[0])
         run.name = f"{name}:{item['id']}"
         ref = run.ref(bound)
         if where is not None and not where(item, run):
@@ -387,7 +405,9 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
         kept.append({"id": str(item["id"]), "address": bound,
                      "labels": {k: (item.get("labels") or {}).get(k, item.get(k)) for k in labels},
                      "origin": {**ref.pointer, "prefill": int(run.prefill), "tokens_sha256": hashlib.sha256(
-                         json.dumps(ids).encode()).hexdigest()}})
+                         json.dumps(ids).encode()).hexdigest(),
+                                **({"checkpoint": run.core["record"]} if core is not None
+                                   else {})}})
         values.append(ref.value.detach().to("cpu"))
     if not kept:
         raise Refusal(f"pool {name}: no item kept (skipped {len(skipped)})")
@@ -398,6 +418,35 @@ def collect(debugger: Any, items: Sequence[dict[str, Any]], address: str, *,
     if stepped and address.startswith("cache."):
         pool._kernel_path = "mdb-stepped"
     return pool
+
+
+def _from_checkpoint(debugger: Any, item: dict[str, Any], core: Any,
+                     loaded: dict[str, Any]) -> tuple[Any, list[int]]:
+    """A run of the item's checkpoint (``core`` / ``from``: a path, a record id of the
+    debugger's project or a loaded checkpoint), rehydrated with no prefix recompute, and its
+    token ids (the item's ``ids``, when given, must be the checkpoint's prompt)."""
+    from mdb.engine import checkpoint as states
+
+    adapter = debugger.adapter if hasattr(debugger, "adapter") else debugger
+    key = core if isinstance(core, str) else id(core)
+    found = loaded.get(key)
+    if found is None:
+        found = loaded[key] = states.load(core, project=getattr(debugger, "project", None))
+    run = found.run(adapter, check=False)
+    ids = [int(t) for t in found.prompt]
+    if "ids" in item and [int(t) for t in item["ids"]] != ids:
+        raise Refusal(f"pool item {item.get('id')!r}: its ids differ from its checkpoint's "
+                      "prompt")
+    return run, ids
+
+
+def _reach(run: Any, target: str) -> None:
+    """Move ``run`` to ``target`` forwards (``until``) or backwards (``rewind``)."""
+    key, here = run.parse(target), run.parse(run.where)
+    if key > here:
+        run.until(target)
+    elif key < here:
+        run.rewind(target)
 
 
 __all__ = ["Pool", "SCHEMA", "bind", "collect"]

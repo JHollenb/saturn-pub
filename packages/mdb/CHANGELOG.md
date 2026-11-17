@@ -17,6 +17,27 @@ intended: the record says what ran. A project file is trusted less than the user
 
 ### Added
 
+- Checkpoints as content-addressed tensor pointers (#517, `mdb.engine.checkpoint`). A
+  checkpoint holds the native state at a cut (per-layer K/V as parts, the hidden carrier of a
+  row in flight, logits, cut metadata and parent fingerprint), the cursor's port and staged
+  edits, the committed edits and their tensors, the recipe and the lineage. It is stored in a
+  file or in the project store (one tensor blob per part, deduplicated by sha256) with a sealed
+  `checkpoint-state` record, and rehydrated with no prefix recompute, bit-identical at any
+  cursor (a cut inside a row included). `Debugger.run_from` takes a path, a record id or prefix,
+  or a loaded checkpoint, with `replica=` and `verify=` (replay the recipe once, measured).
+  `Run.checkpoint(durable=PATH_OR_PROJECT)`, `Run.fresh()` and `Debugger.load_checkpoint` are
+  new. `Debugger.checkpoint` also stores the state, and `Debugger.restart` rehydrates it
+  (`replay=True` replays; `verify=True`). `run.dump(..., at=, history="cursor|row|root")`
+  is new. Measured on CPU with Qwen3-0.6B: a cut after 80 stepped rows rehydrates in 0.08 s
+  against 10 s of recompute; after a 511-row batched prefill, 0.38 s against 0.97 s.
+- Runs rehydrated from a checkpoint keep the source's fingerprints and lineage
+  (`run.lineage`). Checkpoints move between the source run and a reloaded one in both
+  directions, and across an earlier checkpoint of the same lineage. `restore` refuses a
+  checkpoint before the run's first mark, or one off its lineage, by name.
+- `Branches` builds its reference with `Run.fresh()` (the checkpoint, not the tokens). `Pool`
+  items and `each` items take `core` (alias `from`), and `Debugger.each(..., core=)` sets it for
+  every item.
+
 - TOML configuration: `~/.config/mdb/config.toml` (respects `XDG_CONFIG_HOME`), a project's
   `mdb.toml` or `pyproject.toml` `[tool.mdb]`, and a file named by `MDB_CONFIG`. Precedence:
   command line, environment, `MDB_CONFIG` file, project file, user file, defaults. Sections:
@@ -75,6 +96,19 @@ intended: the record says what ran. A project file is trusted less than the user
 
 ### Changed
 
+- `run.dump(path)` saves at the cursor by default (before: at the run's first stepped row) and
+  writes a `mdb-checkpoint-file-v2` file sealed by a `checkpoint-state` record (before: an
+  `mdb-core-file-v1` file and a `core-file` record). `core_file.load` reads both; the old
+  writer is `core_file.dump_v1`.
+- Saving at an earlier boundary than the cursor is refused when the run edited after it,
+  committed or staged. Before, the default capture was dropped, `post_split_edits` counted
+  them, and the file silently held the state without those edits.
+- Loading a checkpoint or core file on another dtype, device or weights is refused unless
+  `replica=True` (before: an automatic replica).
+- `Debugger.checkpoint` adds a `checkpoint-state` record next to the `checkpoint` record, so a
+  project lists both. Its `checkpoint` record and recipe are unchanged. Record ids of
+  everything else are unchanged (`examples/00-hello-tiny` prints `d0c1d6c733c4bfa1`; REPL
+  goldens pass).
 - `--device` applies to tiny models (`mdb engine tiny:qwen2 --device cuda`, `mdb serve --tiny`,
   `open_tiny(device=)`, the selfcheck). It used to be accepted and ignored: tiny models always
   ran on the CPU.

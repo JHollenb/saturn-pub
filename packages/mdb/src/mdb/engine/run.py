@@ -75,6 +75,8 @@ class _Mark:
     cells: tuple[CellEdit, ...] = ()  # state-cell edits realised in this layer transition
     cell_fired: tuple[dict[str, Any], ...] = ()  # their realisation records, in order
     supplied: int | None = None  # the token Run.feed supplied at this sample transition
+    ancestor: bool = False  # a mark of the path before a rehydrated run's root (no cut, never
+    #                         restored): it carries that path's committed edits and fed tokens
 
 
 def _coverage(
@@ -265,6 +267,15 @@ class Run:
         self._hold_serial = 0                # monotonic: auto hold names never repeat
         self._hold_key: Any = None           # what the pending layer's hold edits were made for
         self._replaying = False              # a restore replays recorded edits, holds untouched
+        # A run rehydrated from a checkpoint (``engine.checkpoint``): the marks of the path
+        # before its first mark that carried committed edits or fed tokens (``_Mark.ancestor``:
+        # no cut; their edits are reported, listed in checkpoints and replayed by nothing),
+        # the checkpoint it came from (``fresh`` rebuilds from it) and its lineage (what its
+        # fingerprints chain back to: ``prompt``, or a foreign ``checkpoint`` root for a
+        # replica or a legacy core file).
+        self._ancestry: list[_Mark] = []
+        self._origin: Any = None
+        self.lineage: dict[str, Any] = {"root": "prompt"}
 
     # --- procedure (prefill split) ------------------------------------------------------
 
@@ -334,6 +345,8 @@ class Run:
         count = self._prefill_count(prefill)
         session = self._prefilled(count)
         self.session, self.prefill, self._rooted = session, count, False
+        # a run of the prompt now: no rehydrated ancestry, no checkpoint origin
+        self._ancestry, self._origin, self.lineage = [], None, {"root": "prompt"}
         self._trail = [self._mark(0)]
         self._edits, self._cells, self._port, self._cache = [], [], None, None
         self._drop_reads()
@@ -712,13 +725,27 @@ class Run:
     def read(self, target: str | None = None) -> torch.Tensor:
         return self._read(target)[0]
 
-    def dump(self, path: Any, *, row: int | None = None,
-             capture: tuple[str, ...] | None = None) -> dict[str, Any]:
-        """Write a core file of this run split at ``t<row>.start`` (``engine.core_file.dump``):
-        reload it with ``core_file.load(path).run(adapter)`` on any device/dtype (P2)."""
-        from . import core_file
+    def dump(self, path: Any, *, row: int | None = None, at: str | None = None,
+             capture: tuple[str, ...] | None = None, history: str = "row") -> dict[str, Any]:
+        """Write a checkpoint file of this run (``engine.checkpoint.save``) at the cursor, or at
+        ``at`` / ``t<row>.start`` (a boundary the run passed, refused when the run edited after
+        it); returns its sealed record. Reload with ``Debugger.run_from(path)`` or
+        ``engine.checkpoint.load(path).run(adapter)``: no prefix is recomputed."""
+        from . import checkpoint
 
-        return core_file.dump(self, path, row=row, capture=capture)
+        return checkpoint.save(self, path, row=row, at=at, capture=capture, history=history)
+
+    def fresh(self) -> Run:
+        """A new run at the root of this run's lineage, as cheaply as it is held: a run of the
+        prompt under the same split, or, for a run rehydrated from a checkpoint, the
+        checkpoint's kept marks again (no prefix recomputed). Reference runs (``Branches``)
+        start here and ``restore`` a checkpoint of this run."""
+        if self._origin is None:
+            return Run(self.adapter, self.tokens, prefill=self.prefill, lookahead=self.lookahead)
+        run = self._origin.run(self.adapter, lookahead=self.lookahead, check=False,
+                               replica=bool(self.lineage.get("replica")))
+        run.name = None
+        return run
 
     def ref(self, target: str) -> Any:
         """The value at ``ADDR[sel]`` (a port or stop occurrence, or ``cache.L<l>.k|v[...]``)
@@ -977,6 +1004,12 @@ class Run:
                 return index, match["port"]
         return None
 
+    def _committed(self, index: int) -> list[_Mark]:
+        """The committed transitions before trail mark ``index``: the ancestry of a rehydrated
+        run (``_ancestry``), then the trail. The last is the transition that produced the mark
+        only when it is the one right before it."""
+        return [*self._ancestry, *self._trail[:index]]
+
     def _context(
         self,
         port: str | None,
@@ -993,6 +1026,9 @@ class Run:
         """What ``_describe`` needs. ``boundary_edits`` are the ``h_out`` edits of the committed
         transition that produced this value (``L<i>.h_out`` and ``L<i+1>.h`` are one value)."""
         producer = committed[-1] if committed else None
+        if producer is not None and producer.ancestor and (
+                producer.transitions + 1 != self._trail[0].transitions):
+            producer = None   # an earlier edited transition, not the one before the root
         carried = (
             tuple(
                 e for e in producer.edits if self.program.spec(e.port).name == "h_out"
@@ -1019,14 +1055,14 @@ class Run:
         if port is not None:
             controller = self._ensure_cache(self._port)
             context = self._context(
-                port, self._edits, self._trail[:-1], True, controller, mark.row, mark.layer,
-                boundary=False, cells=self._cells,
+                port, self._edits, self._committed(len(self._trail) - 1), True, controller,
+                mark.row, mark.layer, boundary=False, cells=self._cells,
             )
             return (clone(controller.captures[port]) if value else None), context
         for index in range(len(self._trail) - 1, -1, -1):
             if self._mark_key(self._trail[index]) == key:
                 context = self._context(
-                    None, [], self._trail[:index], False, None, key[0], None, boundary=True
+                    None, [], self._committed(index), False, None, key[0], None, boundary=True
                 )
                 if self._trail[index].label == "sample" and index:
                     context["supplied"] = self._trail[index - 1].supplied
@@ -1037,8 +1073,8 @@ class Run:
             past = self._trail[index]
             controller = self._committed_probe(index, name)
             context = self._context(
-                name, past.edits, self._trail[:index], False, controller, past.row, past.layer,
-                boundary=False, cells=past.cells,
+                name, past.edits, self._committed(index), False, controller, past.row,
+                past.layer, boundary=False, cells=past.cells,
             )
             return (clone(controller.captures[name]) if value else None), context
         if key[0] < self.prefill:
@@ -1364,7 +1400,7 @@ class Run:
         return [
             {**cell.manifest(), **record, "row": mark.row, "layer": mark.layer,
              "transition": mark.transitions}
-            for mark in self._trail[:-1]
+            for mark in [*self._ancestry, *self._trail[:-1]]
             for cell, record in zip(mark.cells, mark.cell_fired)
         ]
 
@@ -1374,7 +1410,7 @@ class Run:
         (``port``, ``op``, ``value``, ``realised_*``, ``cast_*``, ``changed_fraction``, ``mix``,
         ``replica_verified``, mask fields)."""
         records = []
-        for mark in self._trail[:-1]:
+        for mark in [*self._ancestry, *self._trail[:-1]]:
             for entry in mark.fired:
                 records.append(
                     {
@@ -1445,16 +1481,33 @@ class Run:
         """True when an edit (port or state cell) is staged, or was committed on the path to
         the cursor: values read here are addressed ``@cut+edit`` (``origin_of``)."""
         return bool(self._edits or self._cells) or any(
-            mark.edits or mark.cells for mark in self._trail[:-1])
+            mark.edits or mark.cells for mark in [*self._ancestry, *self._trail[:-1]])
 
-    def checkpoint(self, name: str | None = None, *, pin: bool = True) -> dict[str, Any]:
+    def checkpoint(self, name: str | None = None, *, pin: bool = True, durable: Any = None,
+                   history: str = "row") -> dict[str, Any]:
         """The cursor as plain data (``restore`` input). ``pin``: keep the edit tensors it names
         held for its restore; False when they are stored elsewhere (a project recipe), so the
-        run keeps nothing for it."""
+        run keeps nothing for it.
+
+        ``durable`` (a file path or an ``mdb.core.project.Project``): also write the state at
+        the cursor as a checkpoint (``engine.checkpoint.save``: content-addressed tensors,
+        ``history`` marks, a sealed record); the result then holds ``durable`` ``{record,
+        path}``, and ``Debugger.run_from`` of either rehydrates it in any process."""
+        if durable is not None:
+            from . import checkpoint as states
+
+            if hasattr(durable, "store") and hasattr(durable, "sessions"):
+                record = states.save(self, project=durable, name=name, history=history)
+                where = {"record": record["id"], "path": None}
+            else:
+                record = states.save(self, durable, name=name, history=history)
+                where = {"record": record["id"], "path": str(durable)}
+            return {**self.checkpoint(name, pin=pin), "durable": where}
         mark = self._trail[-1]
         if pin:
             self._pinned.update(self.edit_tensors())  # the checkpoint names them
-        supplied = [[m.transitions, m.supplied] for m in self._trail[:-1] if m.supplied is not None]
+        supplied = [[m.transitions, m.supplied] for m in [*self._ancestry, *self._trail[:-1]]
+                    if m.supplied is not None]
         body = {
             "schema": CHECKPOINT_SCHEMA,
             "name": name,
@@ -1477,7 +1530,8 @@ class Run:
 
     def _path_manifest(self, index: int) -> list[dict[str, Any]]:
         """The committed edits on the path to trail mark ``index`` (as a checkpoint lists them):
-        port edits then the state-cell edits realised in that transition."""
+        port edits then the state-cell edits realised in that transition. A run rehydrated from
+        a checkpoint lists the path before its first mark first (``_ancestry``)."""
         return [
             {
                 "transition": item.transitions,
@@ -1485,7 +1539,7 @@ class Run:
                 "edits": [*(edit.manifest() for edit in item.edits),
                           *(cell.manifest() for cell in item.cells)],
             }
-            for item in self._trail[:index]
+            for item in [*self._ancestry, *self._trail[:index]]
             if item.edits or item.cells
         ]
 
@@ -1493,12 +1547,13 @@ class Run:
         """Every tensor the edits of ``checkpoint()`` name, by payload sha256 (edit values and
         masks, committed on the path and staged): what a durable checkpoint must store."""
         out: dict[str, torch.Tensor] = {}
-        for edit in [*(e for mark in self._trail[:-1] for e in mark.edits), *self._edits]:
+        marks = [*self._ancestry, *self._trail[:-1]]
+        for edit in [*(e for mark in marks for e in mark.edits), *self._edits]:
             if isinstance(edit.value, torch.Tensor):
                 out[tensor_digest(edit.value)] = edit.value
             if edit.mask is not None:
                 out[tensor_digest(edit.mask)] = edit.mask
-        for cell in [*(c for mark in self._trail[:-1] for c in mark.cells), *self._cells]:
+        for cell in [*(c for mark in marks for c in mark.cells), *self._cells]:
             if isinstance(cell.value, torch.Tensor):
                 out[tensor_digest(cell.value)] = cell.value
         return out
@@ -1783,6 +1838,7 @@ class Run:
         if checkpoint["prompt_sha256"] != digest(self.tokens):
             raise ValueError("checkpoint belongs to another prompt")
         self._refuse_other_numeric_scope(checkpoint)
+        self._refuse_off_lineage(checkpoint)
         self._drop_reads()
         staged = [self._edit_from(manifest) for manifest in checkpoint["edits"]]
         # a checkpoint written before the split was recorded used the default procedure
@@ -1820,6 +1876,28 @@ class Run:
             self._ensure_cache(port)
             self._port = port
         return self.where
+
+    def _refuse_off_lineage(self, checkpoint: dict[str, Any]) -> None:
+        """A run rehydrated from a checkpoint starts at its first mark: refuse (naming why) a
+        checkpoint before that mark, or one whose path before it differs from this run's."""
+        if not self._ancestry and self._origin is None:
+            return
+        first = self._trail[0]
+        if checkpoint["transitions"] < first.transitions:
+            raise ValueError(
+                f"checkpoint at {checkpoint['where']} is before this run's root {self.root} "
+                f"(transition {checkpoint['transitions']} < {first.transitions}): the run was "
+                "rehydrated there; load a checkpoint saved earlier (or with history='root')")
+        before = [e for e in checkpoint["path_edits"] if e["transition"] < first.transitions]
+        mine = self._path_manifest(0)
+        fed = sorted([int(t), int(token)] for t, token in checkpoint.get("supplied", ())
+                     if int(t) < first.transitions)
+        if before != mine or fed != sorted([m.transitions, m.supplied] for m in self._ancestry
+                                           if m.supplied is not None):
+            raise ValueError(
+                f"checkpoint at {checkpoint['where']} took another path before this run's root "
+                f"{self.root} ({len(before)} edited transitions there, this run "
+                f"{len(mine)}): it is not on this run's lineage")
 
     def excursion(self) -> _Snapshot:
         """Hold the run as it is (trail, its marks' cuts and edits, staged edits, cursor) for
@@ -1897,8 +1975,8 @@ class Run:
             while key >= root and not accept(self._stops[key[1]]):
                 key = self._previous(key)
             if key < root:
-                hint = (f"; {self.prefilled_reason(key[0])}" if key[0] < self.prefill else "")
-                raise ValueError(f"cannot reverse before the run root {self.address(root)}{hint}")
+                raise ValueError(f"cannot reverse before the run root {self.address(root)}"
+                                 f"{self._before_root_hint(key)}")
             self._goto(key)
         self._sweep_tensors()
         return self.where
@@ -1915,8 +1993,8 @@ class Run:
                              "use until")
         root = self._mark_key(self._trail[0])
         if key < root:
-            hint = f"; {self.prefilled_reason(key[0])}" if key[0] < self.prefill else ""
-            raise ValueError(f"cannot rewind before the run root {self.address(root)}{hint}")
+            raise ValueError(f"cannot rewind before the run root {self.address(root)}"
+                             f"{self._before_root_hint(key)}")
         self._drop_reads()
         snapshot = _Snapshot(self)
         try:
@@ -1926,6 +2004,13 @@ class Run:
             raise
         self._sweep_tensors()
         return self.where
+
+    def _before_root_hint(self, key: tuple[int, int]) -> str:
+        if self._origin is not None:
+            return ("; the run was rehydrated from a checkpoint whose first kept boundary is "
+                    "its root: save it with history='row' (the cut's row) or history='root' "
+                    "(back to the source's root) to rewind further")
+        return f"; {self.prefilled_reason(key[0])}" if key[0] < self.prefill else ""
 
     def _retime_cells(self, port: str | None) -> None:
         """After the cursor moved back to ``port`` (None: a boundary): a staged ``after`` cell

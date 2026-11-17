@@ -309,17 +309,24 @@ class Debugger:
         project.save_cut(self.session_id, cut)
         return recipe
 
-    def checkpoint(self, run: Run, name: str) -> dict[str, Any]:
+    def checkpoint(self, run: Run, name: str, *, history: str = "row") -> dict[str, Any]:
         """Make ``run``'s cursor durable under ``name``: the replay recipe, its edit tensors and
-        masks (store blobs), the boundary cut, a ``checkpoint`` record and the session cursor."""
+        masks (store blobs), the boundary cut, a ``checkpoint`` record and the session cursor,
+        and the state itself as a ``checkpoint-state`` record whose tensors are store blobs
+        (``engine.checkpoint``; ``state`` in the result is its record id): ``restart`` and
+        ``run_from`` rehydrate it with no prefix recompute."""
         if not isinstance(name, str) or not name.strip():
             raise Refused("a durable checkpoint needs a name")
         recipe = self._save_recipe(run, name)
         record = recipes.record_checkpoint(self.project, self.session_id, recipe)
         self.project.select(self.session_id, recipe["cut"])
+        from mdb.engine import checkpoint as states
+
+        state = states.save(run, project=self.project, session_id=self.session_id, name=name,
+                            history=history)
         return {"name": name, "where": recipe["target"]["where"], "cut": recipe["cut"],
                 "recipe": recipe["fingerprint"], "record": record["id"],
-                "blobs": len(recipes.tensor_pointers(recipe))}
+                "blobs": len(recipes.tensor_pointers(recipe)), "state": state["id"]}
 
     def checkpoints(self) -> list[dict[str, Any]]:
         """This session's durable checkpoints, oldest first: name, where, cut, recipe."""
@@ -328,15 +335,33 @@ class Debugger:
                  "recipe": r["body"]["recipe"]}
                 for r in recipes.checkpoints(project, self.session_id)]
 
-    def restart(self, name: str) -> Run:
+    def restart(self, name: str, *, replay: bool = False, verify: bool = False) -> Run:
         """A new run at the durable checkpoint ``name`` (this session's, else the one other
-        session that has it), replayed from the token ids: same cut fingerprint, same edits."""
+        session that has it): rehydrated from its stored state when the project holds it (no
+        prefix recompute; ``verify`` also replays the recipe and records the result as
+        ``run.core["verified"]``), else (or with ``replay``) replayed from the token ids. Same
+        cut fingerprint, same edits, either way."""
         project = self._project("restart")
         found = recipes.find_checkpoint(project, name, session_id=self.session_id)
         if found is None:
             raise Refused(f"no durable checkpoint {name!r} in this project "
                           f"(session {self.session_id})")
-        run = self.replay(recipes.load(project, found["body"]["recipe"]))
+        from mdb.engine import checkpoint as states
+
+        recipe = recipes.load(project, found["body"]["recipe"])
+        state = states.find_named(project, name, session_id=found["session_id"],
+                                  cut=found["body"]["cut"])
+        if state is not None and not replay:
+            # the recipe's refusals first (model identity, numeric scope, its edit blobs), so a
+            # rehydrated restart refuses exactly as a replayed one
+            recipes.check_binding(recipe, model_identity=self.adapter.model_identity,
+                                  numeric_scope=self._numeric_scope())
+            recipes.load_tensors(recipe, project.store)
+            run = states.load_record(project, state).run(self.adapter, check=False,
+                                                         verify=verify)
+            run.name = None   # as a replayed restart: not a named run of this debugger
+        else:
+            run = self.replay(recipe)
         self._carry_circuits(run)
         self.live = run
         return run
@@ -457,22 +482,28 @@ class Debugger:
 
     def each(self, prompts: Any, line: str, *, at: str | None = None, keep: bool = False,
              ctx: Context | None = None, prefill: int | str | None = None,
-             shard: str | None = None) -> Any:
+             shard: str | None = None, core: Any = None) -> Any:
         """Run one op line on every prompt of a set (``mdb.ops.sets``): ``prompts`` is the name
         of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
         (kept as the set ``inline``). ``prefill``: each item's split (``K`` or ``"@ROLE"``,
         bound per item); ``shard``: ``"K/N"``, the K-th of N contiguous parts of the set.
-        Returns ``EachResult(summary, results, statistics)``; the live run
+        ``core``: a checkpoint (path, record id, loaded) every item without its own ``core``
+        (item key, alias ``from``) is rehydrated from instead of started. Returns
+        ``EachResult(summary, results, statistics)``; the live run
         and its cursor are left as they were."""
         from .sets import define, load, run_each
 
         if isinstance(prompts, str) and prompts.endswith(".jsonl"):
             prompts = load(self, "file", prompts).name
         elif not isinstance(prompts, str):
-            prompts = define(self, "inline", list(prompts)).name
+            rows = list(prompts)
+            if core is not None:   # an item with no prompt of its own runs from ``core``
+                rows = [dict(r, core=core) if isinstance(r, dict) and not (
+                    {"prompt", "tokens", "core", "from"} & set(r)) else r for r in rows]
+            prompts = define(self, "inline", rows).name
         return run_each(ctx if ctx is not None else self.ops(self.live), prompts, line, at=at,
                         keep=keep, prefill=None if prefill is None else str(prefill),
-                        shard=shard)
+                        shard=shard, core=core)
 
     # --- debugger objects of the gap audit (P1, P6, P8) --------------------------------------
 
@@ -489,18 +520,32 @@ class Debugger:
         return collect(self, items, address, **options)
 
     def run_from(self, core: Any, *, name: str | None = None, check: bool = True,
-                 lookahead: str = "none") -> Run:
-        """A run of this debugger's model (its device and dtype) from a core file (a path or an
-        ``engine.core_file.CoreFile``), rooted at the dump's split, with the null check on load
-        as ``run.core_check`` (P2)."""
-        from mdb.engine import core_file
-
-        loaded = core if isinstance(core, core_file.CoreFile) else core_file.load(core)
+                 lookahead: str | None = None, replica: bool = False,
+                 verify: bool = False) -> Run:
+        """A run of this debugger's model from a checkpoint (``engine.checkpoint``): ``core`` is
+        a file path, a record id (or unique prefix) of this debugger's project, a durable
+        ``Run.checkpoint(durable=...)`` result or a loaded checkpoint; a legacy v1 core file
+        loads too. The state at the checkpoint's cursor is rehydrated (no prefix recompute),
+        bit-identical on the same model and execution; another dtype, device or weights is
+        refused unless ``replica=True`` (a labelled replica, null-checked as
+        ``run.core_check``). ``verify``: also replay the recipe from the lineage root and record
+        the result as ``run.core["verified"]`` (measured)."""
+        loaded = self.load_checkpoint(core)
         run = loaded.run(self.adapter, lookahead=lookahead, check=check,
-                         name=run_name(name or "core"))
+                         name=run_name(name or "core"), replica=replica, verify=verify)
+        self._carry_circuits(run)
         self.runs[run.name] = run
         self.live = run
         return run
+
+    def load_checkpoint(self, ref: Any) -> Any:
+        """The checkpoint ``ref`` names (``run_from``), read and checked, not yet run."""
+        from mdb.engine import checkpoint as states
+
+        try:
+            return states.load(ref, project=self.project)
+        except FileNotFoundError as error:
+            raise Refused(f"no checkpoint file {ref}") from error
 
     @staticmethod
     def custody(*, script: Any = None, prereg: Any = None, kernel_path: str | None = None,

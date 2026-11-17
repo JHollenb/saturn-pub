@@ -1,10 +1,10 @@
-"""Core files (gap audit P2) on tiny Qwen2 (bf16) and Qwen3 (fp32).
+"""Core files (gap audit P2), now checkpoint files (#517), on tiny Qwen2 (bf16) and Qwen3 (fp32).
 
 A dump reloads as a steppable run whose logits, ports and edits are bit-identical to the source
 run's on the same model and dtype (null check 0, argmax equal); a split at a stepped row keeps the
-stepped K/V; the same file reloads on an fp32 copy of a bf16 model (weights upcast exactly) as a
-labelled replica whose null check is recorded; a changed tensor or another model shape is
-refused."""
+stepped K/V; the same file reloads on an fp32 copy of a bf16 model (weights upcast exactly) only
+as a replica asked for (``replica=True``), labelled, whose null check is recorded; a changed
+tensor or another model shape is refused. ``test_engine_checkpoint.py`` covers the rest."""
 
 import copy
 
@@ -29,8 +29,8 @@ def dbg(request):
 def test_dump_reload_is_bit_identical(dbg, tmp_path):
     src = dbg.run(P, name="src", prefill=2)
     src.until("t4.logits")
-    record = src.dump(tmp_path / "core.pt", capture=("t4.logits", "t4.L1.h_out"))
-    assert record["kind"] == "core-file" and record["body"]["split"]["row"] == 2
+    record = src.dump(tmp_path / "core.pt", row=2, capture=("t4.logits", "t4.L1.h_out"))
+    assert record["kind"] == "checkpoint-state" and record["body"]["cut"]["row"] == 2
     run = dbg.run_from(tmp_path / "core.pt", name="replay")
     assert run.where == "t2.start" and run.core["replica"] is False
     check = run.core_check
@@ -67,8 +67,9 @@ def test_tamper_and_shape_refusals(dbg, tmp_path):
     src.until("t4.logits")
     src.dump(tmp_path / "t.pt")
     data = torch.load(tmp_path / "t.pt", weights_only=True)
-    data["keys"][0] = data["keys"][0].clone()
-    data["keys"][0].view(-1)[0] += 1
+    key = sorted(data["tensors"])[0]
+    data["tensors"][key] = data["tensors"][key].clone()
+    data["tensors"][key].view(-1)[0] += 1
     torch.save(data, tmp_path / "t2.pt")
     with pytest.raises(ValueError):
         core_file.load(tmp_path / "t2.pt")
@@ -85,7 +86,12 @@ def test_fp32_replica_of_a_bf16_dump(tmp_path):
     src.dump(tmp_path / "bf.pt")
     wide = cast_weights(copy.deepcopy(model), torch.float32)   # exact upcast, buffers untouched
     dbg32 = attach(wide)
-    run = dbg32.run_from(tmp_path / "bf.pt")
+    with pytest.raises(ValueError, match="replica=True"):
+        dbg32.run_from(tmp_path / "bf.pt")
+    src.rewind("t4.start")
+    src.until("t4.logits")
+    src.dump(tmp_path / "bf.pt", at="t4.start")              # captures the t4 logits
+    run = dbg32.run_from(tmp_path / "bf.pt", replica=True)
     assert run.core["replica"] and run.core["source_dtype"] == "bfloat16"
     check = run.core_check
     assert "argmax_equal" in check["checks"]["t4.logits"]

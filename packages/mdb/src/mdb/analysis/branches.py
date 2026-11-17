@@ -243,14 +243,15 @@ class Branches:
 
     @property
     def reference(self) -> Any:
-        """The base continuation as its own run: a run of the same prompt and split restored to
-        the branch point (edits on the path included) and run to the consumer with no arm edit.
-        Holds keep values from it; the nulls read native values from it."""
+        """The base continuation as its own run: a run at the root of the debuggee's lineage
+        (``Run.fresh``: the same prompt and split, or the checkpoint it was rehydrated from)
+        restored to the branch point (edits on the path included) and run to the consumer with
+        no arm edit. Holds keep values from it; the nulls read native values from it."""
         if self._reference is None:
-            from mdb.engine.run import Run
-
             run = self.debuggee
-            ref = Run(run.adapter, run.tokens, prefill=run.prefill, lookahead=run.lookahead)
+            # the root of the debuggee's lineage: its prompt, or the checkpoint it was
+            # rehydrated from (no prefix recompute; the branch point restores from its marks)
+            ref = run.fresh()
             ref.name = f"{self.name}:reference"
             ref.hold(run.edit_tensors())
             ref.restore(self.checkpoint)

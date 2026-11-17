@@ -112,12 +112,14 @@ def test_f12_pool_label_precedence_and_kernel_path(dbg):
 
 
 # ------------------------------------------------------------------ F2 / F8 / F9 core files
+# F2 and F9 tamper with legacy v1 core files (``core_file.dump_v1``), which ``load`` still reads;
+# the checkpoint files that replaced them are tampered with in test_engine_checkpoint.py.
 
 def _dump(dbg, tmp_path, name="core.pt"):
     run = dbg.run(P, name="src", prefill=2)
     run.until("t4.logits")
     path = tmp_path / name
-    return run, path, run.dump(str(path), row=2)
+    return run, path, core_file.dump_v1(run, str(path), row=2)
 
 
 def test_f2_tampered_prompt_refused(dbg, tmp_path):
@@ -134,7 +136,7 @@ def test_f2_tampered_prompt_refused_without_capture(dbg, tmp_path):
     run = dbg.run(P, name="nocap", prefill=2)
     run.until("t3.L0.h")
     path = tmp_path / "nocap.pt"
-    run.dump(str(path), row=2, capture=())
+    core_file.dump_v1(run, str(path), row=2, capture=())
     data = torch.load(path, weights_only=True)
     data["prompt"] = [1, 5, 9, 4, 8]
     torch.save(data, path)
@@ -158,9 +160,13 @@ def test_f8_post_split_edit_not_captured(dbg, tmp_path):
     run.until("t4.logits")
     with pytest.raises(ValueError, match="after t2.start"):
         run.dump(str(tmp_path / "x.pt"), row=2, capture=("t4.logits",))
-    record = run.dump(str(tmp_path / "y.pt"), row=2)          # default capture is dropped
-    assert record["body"]["post_split_edits"] == 1 and record["body"]["captured"] == []
-    assert core_file.load(tmp_path / "y.pt").run(dbg.adapter).core_check["state"] == "unresolved"
+    # #517: a checkpoint before an edit the run made is refused, never silently truncated
+    with pytest.raises(ValueError, match="after t2.start"):
+        run.dump(str(tmp_path / "y.pt"), row=2)
+    record = run.dump(str(tmp_path / "z.pt"))                  # at the cursor: the edit is kept
+    assert record["body"]["edited"] and record["body"]["where"] == "t4.logits"
+    loaded = core_file.load(tmp_path / "z.pt").run(dbg.adapter)
+    assert torch.equal(loaded.read("t4.logits"), run.read("t4.logits"))
 
 
 def test_f9_other_weights_is_a_replica(dbg, tmp_path):
@@ -168,7 +174,9 @@ def test_f9_other_weights_is_a_replica(dbg, tmp_path):
     cf = core_file.load(path)
     assert cf.run(dbg.adapter, check=False).core["replica"] is False
     cf.record["model_identity"] = "same shape, other weights"       # e.g. Base vs Instruct
-    run = cf.run(dbg.adapter, check=False)
+    with pytest.raises(ValueError, match="replica=True"):          # #517: refused unless asked
+        cf.run(dbg.adapter, check=False)
+    run = cf.run(dbg.adapter, check=False, replica=True)
     assert run.core["same_identity"] is False and run.core["replica"] is True
 
 

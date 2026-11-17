@@ -1,6 +1,6 @@
-# Branches, pools, holds, core files, transcoders, custody
+# Branches, pools, holds, checkpoints, transcoders, custody
 
-Objects for the control flow an experiment script otherwise writes by hand: the branch loop, the population of donor values, frozen-pattern arms, offline replicas of a captured prefix and the transcoder identity. Each is a named debugger object with time and provenance. Everything below is tested on tiny CPU models (`tests/test_engine_refs.py`, `test_engine_holds.py`, `test_analysis_branches.py`, `test_analysis_pools.py`, `test_core_custody.py`, `test_engine_core_file.py`, `test_analysis_transcoder.py`, `test_debugger_helpers.py`); real-model numbers here are marked as such.
+Objects for the control flow an experiment script otherwise writes by hand: the branch loop, the population of donor values, frozen-pattern arms, offline replicas of a captured prefix and the transcoder identity. Each is a named debugger object with time and provenance. Everything below is tested on tiny CPU models (`tests/test_engine_refs.py`, `test_engine_holds.py`, `test_analysis_branches.py`, `test_analysis_pools.py`, `test_core_custody.py`, `test_engine_core_file.py`, `test_engine_checkpoint.py`, `test_analysis_transcoder.py`, `test_debugger_helpers.py`); real-model numbers here are marked as such.
 
 ## Selectors and origins on `Run.set` (`engine/refs.py`)
 
@@ -67,15 +67,109 @@ pool.seal(); pool.save(path); Pool.load(path)
 
 Each item is one run of its token ids, stepped until the address is computed; `@role` binds per item. Every handed-out value is a `ValueRef` whose pointer names the pool, its record id once sealed, the rule, `n`, the items digest and `excluded`, so an edit says exactly which items went into its value. `mean_for` has no way to include the item itself (an item averaged into its own donor value inflates every effect). `exclude="tokens"` (default) also drops items with the same prompt tokens under another id (a duplicated prompt); `exclude="id"` drops only the id, and the record counts `duplicates`. `Pool.load` refuses a file whose `items` differ from the payload ids, the sealed `items_sha256`, or the payload's labels and token digests. Labels read nested `labels` first, then the top-level key. Cache-cell pools record `kernel_path` `mdb-prefill-batched` and each item's `origin.prefill`. Values are stored as their native dtype's exact floats in a sha256-checked payload.
 
-## Core files (`engine/core_file.py`)
+## Checkpoints (`engine/checkpoint.py`; core files)
 
 ```python
-src.dump("core.pt", row=K, capture=(f"t{last}.logits",))   # once
-run = dbg.run_from("core.pt")          # this debugger's model, its device and dtype
-run.core, run.core_check               # provenance, null check (argmax equal, max |dlogit|)
+rec = run.dump("cut.pt")                     # a file, at the cursor (a cut inside a row too)
+info = dbg.checkpoint(run, "pre")            # a project: info["state"] is the record id
+run.checkpoint("pre", durable=dbg.project)   # the same from a Run (or durable="cut.pt")
+
+r = dbg.run_from("cut.pt")                   # or a record id / unique prefix, any process
+r = dbg.restart("pre", verify=True)          # project name; verify = replay the recipe once
+r.core, r.lineage                            # provenance; what the fingerprints chain back to
+dbg.branches(r, Margin(...), at=...)         # Branches, Pool, each run from it
+dbg.pool([{"id": "a", "core": "cut.pt"}], "t@last.L20.h")
+dbg.each([{"name": "x", "core": "cut.pt"}], "whatif ...")   # or dbg.each(items, line, core=)
 ```
 
-`dump` writes the boundary state of `t<K>.start`: K/V of rows `0..K-1` of every layer, the prompt, and the stepped-prompt slot. It adds the captured values and a sealed `core-file` record with every tensor's sha256, the procedure, the path edits baked into the cache, and custody. `load` refuses a changed tensor, a prompt that differs from the sealed prompt sha256, and tokens that are not the sealed prompt prefix. `dump` refuses an explicit `capture` when the run committed edits after the split (the default capture is then dropped and `post_split_edits` counts them). The reloaded run steps every row from `K` natively on the target adapter, with ports, edits, checkpoints, holds and branches. On the same model and dtype it is bit-identical to the source (tested, including an edit after reload). On another dtype it is a labelled replica (`run.core["replica"]`, also when the model identity differs, e.g. Base vs Instruct). Measured on tiny CPU models, with a bf16 dump reloaded on an exact fp32 upcast of the same weights: argmax equal, max `|dlogit|` 5.4e-4 (qwen2) and 1.1e-3 (qwen3). A model of another family or shape is refused.
+A checkpoint is the run's state at a cut as content-addressed pointers to its tensors, not a
+recipe to replay. It holds the native `StateCut` of each kept trail mark, slot by slot: per
+layer K/V, the hidden carrier of a row in flight (a cut inside a row is the layer boundary
+before the cursor), logits, the sampled token, the stepped-prompt slot, plus the cut's boundary,
+execution point, surface and parent fingerprint. It also holds the cursor (a port in the
+pending layer and the edits and cell edits staged there), the committed edits of every kept
+transition and of the path before the first kept mark, all edit and mask tensors, the active
+holds (described, not re-armed: `run.core["holds_not_rearmed"]`), the run's recipe
+(`Run.checkpoint()`, provenance and the input of `verify`) and optional captured values. A K/V
+tensor is stored as parts: the prefix cache the engine already shares, then the appended rows in
+power-of-two blocks aligned from its end. Every part is addressed by the sha256 of its bytes and
+stored once, so cuts of one run share parts (measured: a 14-mark checkpoint of a 512-row fp32
+Qwen3-0.6B cut held 117.4 MB for 117.4 MB of K/V).
+
+Where it lives: a self-contained file (`torch.save` of plain data, loadable with
+`weights_only`), or a project. In a project every part is a tensor blob of the store, the
+state document is a JSON blob, and a sealed `checkpoint-state` record (schema `mdb-record-v3`)
+is indexed under the session. `run_from` takes a path, a record id or a unique prefix of at
+least 8 hex digits, a `Run.checkpoint(durable=...)` result, or a loaded checkpoint
+(`dbg.load_checkpoint(ref)`). `dbg.checkpoint(run, name)` still writes the replay recipe and
+the `checkpoint` record as before, and adds the state. `dbg.restart(name)` rehydrates the state
+when the project holds it (`replay=True`, or a project written before, replays the recipe). It
+refuses with the recipe's codes first: model identity, numeric scope, missing or corrupt blob.
+
+The record holds the document's sha256, the sha256 of every part (`tensors.sha256`, 60 digests
+per string, inline up to 3,600 parts; beyond that only `tensors.parts_sha256` and the sealed
+document list them), the cut and root fingerprints, the prompt digest, the procedure, the
+recipe's sha256, the lineage and custody. Loading checks the seal, the document digest, every
+part's sha256 (file: all parts on load; project: each blob through the store when first read),
+and that the document agrees with the record.
+
+**Rehydration.** Every kept cut is rebuilt from its parts. Its fingerprint is recomputed from
+the content and the recorded parent, and a cut that differs from the record is refused. The
+run's trail is the kept marks with their committed edits. The cursor is put back with its port
+and staged edits. Nothing before the cursor is recomputed. A cursor at a port inside a layer
+costs one probe of that layer, as moving there costs on the source run. Tested bit for bit at
+every port phase of a row (`start`, `emb`, `L0.p`, `L0.m`, `L0.h_out`, `L1.sg`, `fn`, `logits`,
+`sample`), with an edit or cell edit staged at the cursor, on tiny Qwen2 bf16 and Qwen3 fp32.
+`history`: `cursor` (only the cut), `row` (default: every boundary of the cut's row before it,
+so the reloaded run rewinds inside that row), or `root` (back to the source's root: row starts
+as cuts, the boundaries between them replayed on demand, as `retain_rows` does). A rewind before
+the first kept mark is refused with that advice.
+
+Saving at an earlier boundary than the cursor (`at="t4.start"`, `row=4`) is refused when the
+run edited after it, committed or staged. A cut never silently drops an edit. Saved that way,
+the values the run computed later (default: the last prompt row's logits) are captured for the
+null check.
+
+**Lineage and identity.** A cut's fingerprint is the sha256 of the model identity, the
+execution contract (dtype, device, numeric scope, library versions), the state content, the
+execution point and the parent fingerprint. A rehydrated run has the source's fingerprints
+(`run.lineage["root"] == "prompt"`), so checkpoints move between them both ways. A run
+rehydrated from an earlier checkpoint of the same lineage restores a later one by replaying
+from its first mark. `Run.restore` refuses a checkpoint before the run's first mark, or one
+whose path before it differs (another lineage). The edits of the path before the first mark are
+part of the run (`committed_edits`, `read_info()["upstream_edits"]`, `edited`,
+`checkpoint()["path_edits"]`). The parent is recorded, not re-derived. `verify` replays the
+recipe from the prompt and checks it reaches the same fingerprint (measured). A forged parent
+changes the fingerprint and is refused.
+
+**Replicas.** Another dtype, device or weights of the same shape is refused unless
+`replica=True`. A replica roots a new lineage at the cursor (`lineage["root"] ==
+"checkpoint"`), its state cast once to the target dtype, labelled `run.core["replica"]`, and
+null-checked against the captured values (`run.core_check`: argmax equal, max `|dlogit|`). A
+model of another family or shape is refused.
+
+**Reference runs.** `Run.fresh()` is a new run at the root of the run's lineage: the prompt, or
+the checkpoint again (no prefix recompute). `Branches` builds its reference with it, so
+branches of a rehydrated run measure the same rows as on the source. `Pool` items and `each`
+items take `core` (alias `from`), and `each` takes `core=` from Python. The prompt is the
+checkpoint's, `prefill` does not apply, and the pool origin names the checkpoint record.
+
+Measured on CPU (5 threads, Qwen3-0.6B, cut at `t<last>.L12.m`, history `row`):
+
+| prompt | recompute | rehydrate file | rehydrate record | fresh process (file / record / restart) | verify |
+|---|---|---|---|---|---|
+| 512 rows fp32, 511 batched | 0.97 s | 0.38 s | 0.40 s | 0.40 / 0.62 / 0.48 s | 0.97 s |
+| 96 rows bf16, 80 stepped | 9.99 s | 0.077 s | 0.13 s | 0.083 / 0.13 / 0.12 s | 11.0 s |
+| 96 rows fp32, 80 stepped | 11.3 s | 0.096 s | 0.16 s | 0.25 / 0.50 / 0.17 s | 12.1 s |
+
+`fresh()` of a loaded checkpoint took 0.035 to 0.10 s. Writing took 0.09 to 2.7 s for a file and
+0.45 to 1.4 s for a project. Every continuation was bit-identical to the source's. Rehydration
+cost is reading and hashing the parts once, plus one probe for a port cursor.
+
+**Legacy core files.** `mdb-core-file-v1` files (`core_file.dump_v1`) still load
+(`core_file.load` / `run_from`). They hold the K/V of rows `0..K-1` at `t<K>.start` with no
+parent, so their run roots a foreign lineage (`lineage["root"] == "checkpoint"`). Another dtype
+or weights needs `replica=True` there too.
 
 ## Transcoders in the decomposition family (`analysis/sae.py`, `components.py`)
 
@@ -97,7 +191,7 @@ sink = dbg.records_to("out/records.jsonl")   # every record sealed from now on, 
 sink.records()                                # read back, each verified (v3 and v2 lines)
 ```
 
-While custody is declared, every sealed record gets `body.custody` = script and prereg sha256 (hashed when declared), library versions of what is imported (mdb, saturn_pub, torch, transformers, interop libraries) and the kernel path. This covers forecast, trace, watch-hits, circuit-map, supplied-forecast, branches, pool and core-file records. Undeclared, records are sealed exactly as before (REPL goldens and stored ids unchanged). `branches`, `pool` and `core-file` records always carry custody. A job payload can declare with no code change: any of `MDB_SCRIPT`, `MDB_PREREG`, `MDB_CUSTODY_KERNEL_PATH` (older name `MDB_KERNEL_PATH`) declares custody (an unreadable file raises on every seal, never once); `MDB_RECORDS_SINK` (older name `MDB_RECORDS`) opens a sink, also when custody was declared in code first. The kernel path and the sink can also come from a config file (`[custody] kernel_path`, `[records] sink`), and `mdb engine` has `--records`, `--kernel-path` and `--prereg` ([CONFIG.md](CONFIG.md)). When a loaded config file sets a key that reaches a record (dtype, device, model, session, kernel path, SAE sources), every record carries custody with that file's sha256 ([CONFIG.md](CONFIG.md#provenance-what-a-record-says-about-config)).
+While custody is declared, every sealed record gets `body.custody` = script and prereg sha256 (hashed when declared), library versions of what is imported (mdb, saturn_pub, torch, transformers, interop libraries) and the kernel path. This covers forecast, trace, watch-hits, circuit-map, supplied-forecast, branches, pool, core-file and checkpoint-state records. Undeclared, records are sealed exactly as before (REPL goldens and stored ids unchanged). `branches`, `pool`, `core-file` and `checkpoint-state` records always carry custody. A job payload can declare with no code change: any of `MDB_SCRIPT`, `MDB_PREREG`, `MDB_CUSTODY_KERNEL_PATH` (older name `MDB_KERNEL_PATH`) declares custody (an unreadable file raises on every seal, never once); `MDB_RECORDS_SINK` (older name `MDB_RECORDS`) opens a sink, also when custody was declared in code first. The kernel path and the sink can also come from a config file (`[custody] kernel_path`, `[records] sink`), and `mdb engine` has `--records`, `--kernel-path` and `--prereg` ([CONFIG.md](CONFIG.md)). When a loaded config file sets a key that reaches a record (dtype, device, model, session, kernel path, SAE sources), every record carries custody with that file's sha256 ([CONFIG.md](CONFIG.md#provenance-what-a-record-says-about-config)).
 
 Sink names. Several shards of one experiment that all open `records-<tag>.jsonl` and are collected into one directory would keep only the last shard's records, so names are unique per process. `dbg.records_to()` with no path writes `./records-<run>.jsonl`; a directory gives `<dir>/records-<run>.jsonl`; `{run}` in a name is replaced. `<run>` is `custody.run_tag()`: `MRUN_JOB_ID` when set, then the process start time and pid, so two shards or two steps of one job never share a file. An explicit file that already holds data and that this process did not open raises `FileExistsError` unless `append=True` (`MDB_RECORDS_APPEND=1` for the environment sink). Rerunning a driver into the same `out/records.jsonl` therefore needs `append=True`, a fresh directory or deleting the old file.
 
@@ -114,7 +208,7 @@ Execution lines. A v3 record keeps the session's execution profile by sha256, so
 
 ## Not built here
 
-Not built: `each` from Python over these objects, feature lifetime strips, sealed suspect lists and verdict statistics. A core file holds the cache at a row start, not a mid-row state. Holds on the final norm act through `final_held_logits` only, not as a run-wide switch.
+Not built: `each` from Python over these objects, feature lifetime strips, sealed suspect lists and verdict statistics. A checkpoint does not re-arm active holds (their source runs are not saved). There is no REPL verb to start from a checkpoint (`run_from` is Python). Holds on the final norm act through `final_held_logits` only, not as a run-wide switch.
 
 ## Multi-site feature watch (`analysis/features.py`, `engine/breakpoints.py`)
 

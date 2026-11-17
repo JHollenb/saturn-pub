@@ -85,6 +85,36 @@ The 64-item list bound is about readable structure: a table of numbers is a colu
 of `num`s. Anything larger goes by pointer (a tensor blob or a `bounded.put_json` payload) as
 before.
 
+## Checkpoint records (`checkpoint-state`)
+
+A checkpoint (`run.dump`, `dbg.checkpoint`, `Run.checkpoint(durable=...)`; see
+[Checkpoints](BRANCHES-POOLS-HOLDS.md#checkpoints-enginecheckpointpy-core-files)) is sealed as a
+v3 record of kind `checkpoint-state`. The tensors are not in the record. It points at them:
+
+```python
+{"schema": "mdb-checkpoint-v2", "name": ..., "where": "t4.L1.p", "port": "p",
+ "cut": {"fingerprint", "transitions", "row", "label"},     # the cursor's boundary cut
+ "root": {"fingerprint", "transitions", "row", "label"},    # the first kept mark
+ "history": "row", "marks": 3, "stored_cuts": 3,
+ "prompt": {"tokens": [...64], "length", "sha256"}, "procedure": {...}, "shape": {...},
+ "source": {"dtype", "device"},
+ "lineage": {"root": "prompt" | "checkpoint", "checkpoints": [ids], ...},
+ "recipe": {"sha256", "path_edits", "staged"}, "edited": bool,
+ "holds": [{"name", "address"}], "captured": [addresses],
+ "document": {"state": "stored" | "file", "sha256", "bytes", "ref"?, "tensor"?},
+ "tensors": {"count", "sha256": ["<60 sha256 hex per string>", ...] | None, "parts_sha256"},
+ "bytes": num(..., "measured"), "custody": {...}}
+```
+
+`document` is the state document (cuts, marks, edits, the recipe), sealed by its sha256: a JSON
+blob in the project store, or a member of the checkpoint file. `tensors.sha256` lists the sha256
+of every tensor part when there are at most 3,600, packed 60 per string because a record list
+holds at most 64 items. `parts_sha256` is the sha256 of the sorted list either way. Loading
+refuses a record whose parts, document, prompt, fingerprints or recipe differ from what it
+seals. `lineage.root` is `prompt` when the cut's fingerprints chain back to a run of the prompt.
+It is `checkpoint` for a replica or a legacy core file, which root a new lineage. The older
+`core-file` kind (legacy v1 core files) is still declared and read.
+
 ## Records written by mdb 0.2.1 and earlier (v2)
 
 v2 records stay valid and are read everywhere v3 records are: `verify_record`, `sink.records()`

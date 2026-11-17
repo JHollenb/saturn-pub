@@ -99,6 +99,7 @@ class Item:
     roles: dict[str, int] = field(default_factory=dict)
     vars: dict[str, Any] = field(default_factory=dict)
     pair: str | None = None
+    core: Any = None                 # a checkpoint the item's run is rehydrated from
 
 
 @dataclass(frozen=True)
@@ -153,7 +154,7 @@ def roles_from_text(tokenizer: Any, text: str, spans: dict[str, Any], *,
 def _item(raw: Any, where: str) -> Item:
     if not isinstance(raw, dict):
         raise BadArgs(f"{where}: an item is a JSON object")
-    known = {"name", "prompt", "tokens", "roles", "vars", "pair"}
+    known = {"name", "prompt", "tokens", "roles", "vars", "pair", "core", "from"}
     extra = sorted(set(raw) - known)
     if extra:
         raise BadArgs(f"{where}: unknown key {extra[0]!r} (keys: {', '.join(sorted(known))})")
@@ -161,9 +162,19 @@ def _item(raw: Any, where: str) -> Item:
     if not isinstance(name, str) or not _ITEM_NAME.fullmatch(name):
         raise BadArgs(f"{where}: name must be a word ([A-Za-z_][A-Za-z0-9_]*)")
     where = f"{where} ({name})"
-    if ("prompt" in raw) == ("tokens" in raw):
+    if "core" in raw and "from" in raw:
+        raise BadArgs(f"{where}: give core or from (the same key), not both")
+    core = raw.get("core", raw.get("from"))
+    if core is not None and isinstance(core, str) and not core.strip():
+        raise BadArgs(f"{where}: core is a checkpoint path or record id")
+    if "prompt" in raw and "tokens" in raw:
         raise BadArgs(f"{where}: give prompt (text) or tokens (ids), one of them")
-    if "tokens" in raw:
+    if core is None and "prompt" not in raw and "tokens" not in raw:
+        raise BadArgs(f"{where}: give prompt (text) or tokens (ids), one of them (or core, a "
+                      "checkpoint)")
+    if core is not None and "prompt" not in raw and "tokens" not in raw:
+        prompt: Any = None
+    elif "tokens" in raw:
         tokens = raw["tokens"]
         if (not isinstance(tokens, list) or not tokens
                 or any(type(t) is not int or t < 0 for t in tokens)):
@@ -192,7 +203,7 @@ def _item(raw: Any, where: str) -> Item:
     pair = raw.get("pair")
     if pair is not None and (not isinstance(pair, str) or pair == name):
         raise BadArgs(f"{where}: pair names another item of the set")
-    return Item(name, prompt, dict(roles), dict(variables), pair)
+    return Item(name, prompt, dict(roles), dict(variables), pair, core)
 
 
 def make_set(name: str, rows: list[Any], source: str = "inline") -> PromptSet:
@@ -275,13 +286,28 @@ class Unbound(Exception):
 class Bound:
     """An item with its tokens: rows of its roles (``last`` included) and lazily its vars."""
 
-    def __init__(self, debugger: Any, item: Item):
+    def __init__(self, debugger: Any, item: Item, core: Any = None):
         self.item = item
         self.debugger = debugger
-        try:
-            self.tokens = debugger.tokens(item.prompt)
-        except Refused as error:
-            raise Unbound(f"prompt: {error}") from None
+        self.core = item.core if item.core is not None else core
+        if self.core is not None:
+            try:
+                self.checkpoint = debugger.load_checkpoint(self.core)
+            except (Refused, ValueError) as error:
+                raise Unbound(f"core: {error}") from None
+            self.tokens = list(self.checkpoint.prompt)
+            if item.prompt is not None:
+                try:
+                    given = debugger.tokens(item.prompt)
+                except Refused as error:
+                    raise Unbound(f"prompt: {error}") from None
+                if given != self.tokens:
+                    raise Unbound("the item's prompt differs from its checkpoint's prompt")
+        else:
+            try:
+                self.tokens = debugger.tokens(item.prompt)
+            except Refused as error:
+                raise Unbound(f"prompt: {error}") from None
         self.roles = {**item.roles, "last": len(self.tokens) - 1}
 
     def row(self, role: str) -> int:
@@ -523,12 +549,13 @@ def shard_items(items: tuple[Item, ...], shard: tuple[int, int] | None) -> tuple
 
 def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
              keep: bool = False, prefill: str | None = None,
-             shard: str | None = None) -> EachResult:
+             shard: str | None = None, core: Any = None) -> EachResult:
     """Run ``line`` on every item of the set ``set_name`` (see the module docstring).
     ``prefill`` (``K`` or ``@ROLE``): each item's run, and its pair's clean run, is started
     with that split, bound per item (``bind_prefill``); None is the default split. ``shard``
     (``K/N``): only the K-th of N contiguous parts of the set (so an mrun shard stays short);
-    the summary says which."""
+    the summary says which. ``core`` (Python): a checkpoint every item without its own
+    ``core`` runs from (rehydrated, no prefix recompute)."""
     from mdb.analysis import summary as stats
 
     debugger = getattr(ctx, "debugger", None)
@@ -559,7 +586,7 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
     try:
         for item in chosen:
             row, result = _one(debugger, saved, found, item, steps, at, uses_pair, made,
-                               donors, prefill)
+                               donors, prefill, core)
             if keep and _run_name(found.name, item.name) in made:
                 row["run"] = _run_name(found.name, item.name)
             rows.append(row)
@@ -604,17 +631,20 @@ def run_each(ctx: Any, set_name: str, line: str, *, at: str | None = None,
 def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
          steps: list[Step], at: str, uses_pair: bool, made: dict[str, Any],
          donors: dict[str, tuple[Any, str | None]],
-         prefill: str | None = None) -> tuple[dict[str, Any], Any]:
+         prefill: str | None = None, core: Any = None) -> tuple[dict[str, Any], Any]:
     """One item: bind, make its run, run the steps. Returns its summary row and its result."""
     from mdb.analysis import summary as stats
 
     row: dict[str, Any] = {"name": item.name}
     try:
-        bound = Bound(debugger, item)
+        bound = Bound(debugger, item, core)
         split = bind_prefill(prefill, bound)
+        if split is not None and bound.core is not None:
+            raise Unbound("prefill does not apply to an item run from a checkpoint (its split "
+                          "is the checkpoint's)")
         pair = pair_run = None
         if uses_pair and item.pair is not None:
-            pair = Bound(debugger, found.item(item.pair))
+            pair = Bound(debugger, found.item(item.pair), core)
             pair_run = _pair_name(found.name, item.pair)
         calls = [(step, _bind_args(step.name, step.args, bound, pair, pair_run))
                  for step in steps]
@@ -624,15 +654,15 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
     if split is not None:
         row["prefill"] = split
     if pair is not None:
-        reason = _donor(debugger, saved, found, pair, pair_run, at, made, donors, prefill)
+        reason = _donor(debugger, saved, found, pair, pair_run, at, made, donors,
+                        None if pair.core is not None else prefill)
         if reason is not None:
             return {**row, "state": "refused", "reason": f"pair {item.pair}: {reason}"}, None
     name = _run_name(found.name, item.name)
     debugger.live = saved["live"]          # each item run carries what a fresh start would
     local = Context(debugger)
     try:
-        dispatch(local, "start", {"prompt": bound.tokens, "name": name,
-                                  **({} if split is None else {"prefill": split})})
+        _start_item(debugger, local, bound, name, split)
         made[name] = local.run
         _goto(local, target)
         result = None
@@ -663,6 +693,21 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
     return row, result
 
 
+def _start_item(debugger: Any, local: Context, bound: Bound, name: str,
+                split: int | None) -> None:
+    """The item's run: ``start`` of its tokens, or rehydrated from its checkpoint (``core``)."""
+    if bound.core is None:
+        dispatch(local, "start", {"prompt": bound.tokens, "name": name,
+                                  **({} if split is None else {"prefill": split})})
+        return
+    try:
+        run = debugger.run_from(bound.checkpoint, name=name, check=False)
+    except ValueError as error:
+        raise Refused(f"core: {error}") from None
+    getattr(debugger, "run_checkpoints", {}).pop(run.name, None)
+    local.set_run(run)
+
+
 def _donor(debugger: Any, saved: dict[str, Any], found: PromptSet, pair: Bound,
            run_name: str, at: str, made: dict[str, Any],
            donors: dict[str, tuple[Any, str | None]], prefill: str | None = None) -> str | None:
@@ -676,8 +721,7 @@ def _donor(debugger: Any, saved: dict[str, Any], found: PromptSet, pair: Bound,
     try:
         target = bind_text(at, pair)
         split = bind_prefill(prefill, pair)
-        dispatch(local, "start", {"prompt": pair.tokens, "name": run_name,
-                                  **({} if split is None else {"prefill": split})})
+        _start_item(debugger, local, pair, run_name, split)
         made[run_name] = local.run
         _goto(local, target)
     except Unbound as error:
@@ -839,7 +883,11 @@ def _op_each(ctx, set, line, at, keep, prefill=None, shard=None):  # noqa: A002 
 
 def _item_view(item: Item) -> dict[str, Any]:
     out: dict[str, Any] = {"name": item.name}
-    if isinstance(item.prompt, str):
+    if item.core is not None:
+        out["core"] = item.core if isinstance(item.core, str) else getattr(item.core, "id", "?")
+    if item.prompt is None:
+        pass
+    elif isinstance(item.prompt, str):
         out["prompt"] = item.prompt if len(item.prompt) <= 200 else item.prompt[:200] + "..."
     else:
         out["prompt_tokens"] = len(item.prompt)

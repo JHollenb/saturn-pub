@@ -8,7 +8,7 @@ on one subject each.
 |---|---|
 | [CONFIG.md](CONFIG.md) | Config files (`~/.config/mdb/config.toml`, `<project>/mdb.toml`) and `MDB_*` variables: precedence, every key, what a config file may not set and why, `mdb config show/explain/init/check`, the provenance block in records. |
 | [INSTALL.md](INSTALL.md) | Installing from the saturn-pub repository, the extras, checking the install, building the web app and the wheel, the separate lanes plug-in. |
-| [BRANCHES-POOLS-HOLDS.md](BRANCHES-POOLS-HOLDS.md) | `Run.set` with selectors and cross-run values, holds, `Branches`, `Pool`, core files, transcoders, custody and record sinks, multi-site feature watches. |
+| [BRANCHES-POOLS-HOLDS.md](BRANCHES-POOLS-HOLDS.md) | `Run.set` with selectors and cross-run values, holds, `Branches`, `Pool`, checkpoints (core files), transcoders, custody and record sinks, multi-site feature watches. |
 | [INTEROP.md](INTEROP.md) | `mdb.interop`: one name table for mdb, TransformerLens and nnsight; importing their values; batched nnsight edits; re-measuring another tool's claim natively; circuit-tracer graphs. |
 | [SAE-WORKED-EXAMPLE.md](SAE-WORKED-EXAMPLE.md) | Using a residual SAE suite with mdb: `sae load`, `features`, `feature`, error splicing, feature edits, unit matching, a variable census (numbers measured on a real model). |
 | [SYMBOL-TABLE-SCHEMA.md](SYMBOL-TABLE-SCHEMA.md) | Column reference of the symbol table (`symbols`), its frame export and JSON schema. |

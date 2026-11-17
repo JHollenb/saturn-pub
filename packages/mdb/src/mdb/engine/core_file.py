@@ -1,26 +1,19 @@
-"""Core files: a run's prefix dumped once and reloaded as a steppable run on any device/dtype
-(gap audit 2026-11-14, P2; the owner's "capture once, replay" rule as gdb's core file).
+"""Core files (gap audit 2026-11-14, P2), now checkpoints (#517, ``engine.checkpoint``).
 
-The scale study wrote its own capture format and three fp32 CPU replicas that rebuilt a
-``DynamicCache`` and re-hooked HF modules by hand (``mdb-experiments/results/scale-20261114/capture.py`` in the repository,
-``hopmath.py:61-100``, ``forecast.py``, ``audit/a3_beast_cpu.py``); the hop-math audit had to find
-a replica-null mismatch that produced a free "repair" by hand. Here:
+``dump(run, path, ...)`` writes a checkpoint file (``mdb-checkpoint-file-v2``): the state at the
+cut as content-addressed tensors, rehydrated with no prefix recompute, exact at any cursor
+(a cut inside a row included). ``load(path)`` reads both that and the legacy core file
+(``mdb-core-file-v1``: the K/V of rows ``0..K-1`` at ``t<K>.start``, captured values and a sealed
+``core-file`` record), which this module keeps reading:
 
-* ``dump(run, path, row=K, capture=(...))``: the boundary state of ``t<K>.start`` (a row start
-  the run holds: the prompt tokens, the key/value cache of rows ``0..K-1`` of every layer, the
-  stepped-prompt slot) plus the values of the run's ``capture`` addresses (default: the last
-  row's logits when computed), written once (``torch.save``) with a sealed ``core-file`` record:
-  model identity, numeric scope, dtype/device, procedure, the committed edits on the path to the
-  split (baked into the cache), every tensor's sha256, custody (P8).
-* ``load(path)`` checks the record seal and every tensor digest (refusing a changed file).
-* ``CoreFile.run(adapter)`` seeds a ``Session`` of ``adapter`` (same model; any device and dtype:
-  the stored K/V are moved once, ``.to(device=, dtype=)``, never cast twice) with that state and
-  returns a ``Run`` rooted there: every row from ``K`` on is stepped natively on the target
-  adapter, with ports, edits, checkpoints, holds, branches and watches. On another dtype it is a
-  replica (stored-dtype cache, target-dtype compute), labelled so.
+* ``load`` checks the record seal and every tensor digest (refusing a changed file).
+* ``CoreFile.run(adapter)`` seeds a ``Session`` of ``adapter`` with that state and returns a
+  ``Run`` rooted there. A v1 file did not record the cut's parent, so its root is a foreign
+  lineage (``run.lineage["root"] == "checkpoint"``): its fingerprints are not those of the
+  source run. On another dtype or weights it is a replica, refused unless ``replica=True``.
 * ``CoreFile.null_check(adapter)``: runs the replica to each captured address and records
-  ``argmax_equal`` (logits) and ``max_abs_diff`` against the captured values (measured); every
-  ``run()`` attaches it as ``run.core_check`` unless ``check=False``.
+  ``argmax_equal`` (logits) and ``max_abs_diff`` against the captured values (measured).
+* ``dump_v1`` writes the legacy format (kept for compatibility tests).
 
 Structural refusals: another family, layer count, KV heads, head_dim or vocabulary than the dump's.
 """
@@ -44,11 +37,22 @@ def _shape_of(adapter: Any) -> dict[str, Any]:
             "vocab": int(adapter.vocab_size)}
 
 
-def dump(run: Any, path: str | Path, *, row: int | None = None,
-         capture: tuple[str, ...] | None = None, session_id: str | None = None
-         ) -> dict[str, Any]:
-    """Write a core file of ``run`` split at ``t<row>.start`` (default: the run's first stepped
-    row) and return its sealed record (module docstring)."""
+def dump(run: Any, path: str | Path, *, row: int | None = None, at: str | None = None,
+         capture: tuple[str, ...] | None = None, session_id: str | None = None,
+         history: str = "row") -> dict[str, Any]:
+    """Write a checkpoint file of ``run`` (``engine.checkpoint.save``; default: at the cursor)
+    and return its sealed record."""
+    from . import checkpoint
+
+    return checkpoint.save(run, path, row=row, at=at, capture=capture, session_id=session_id,
+                           history=history)
+
+
+def dump_v1(run: Any, path: str | Path, *, row: int | None = None,
+            capture: tuple[str, ...] | None = None, session_id: str | None = None
+            ) -> dict[str, Any]:
+    """Write a legacy ``mdb-core-file-v1`` core file of ``run`` split at ``t<row>.start``
+    (default: the run's first stepped row) and return its sealed record (module docstring)."""
     from mdb.core.custody import custody
     from mdb.core.kinds import CORE_FILE  # noqa: F401 (declares the kind)
     from mdb.core.records import num, seal_record
@@ -168,22 +172,42 @@ class CoreFile:
             state["prompt"] = torch.tensor([self.prompt], dtype=torch.long, device=device)
         return Session(adapter, state)
 
-    def run(self, adapter: Any, *, lookahead: str = "none", check: bool = True,
-            name: str | None = None) -> Any:
+    def run(self, adapter: Any, *, lookahead: str | None = None, check: bool = True,
+            name: str | None = None, replica: bool = False, verify: bool = False) -> Any:
         """A ``Run`` of ``adapter`` rooted at the split (module docstring); ``run.core`` names the
-        file and ``run.core_check`` holds the null check (``check``)."""
+        file and ``run.core_check`` holds the null check (``check``). Another dtype or weights
+        is a replica, refused unless ``replica=True``. ``verify`` is unresolved for a v1 file
+        (it holds no recipe)."""
         from .run import Run
 
+        lookahead = "none" if lookahead is None else lookahead
+        source_dtype = self.record["body"]["source"]["dtype"]
+        dtype = str(adapter.dtype).removeprefix("torch.")
+        same_identity = adapter.model_identity == self.record["model_identity"]
+        # a replica is another dtype OR other weights (same shape, e.g. Base vs Instruct)
+        is_replica = dtype != source_dtype or not same_identity
+        self._check(adapter)
+        if is_replica and not replica:
+            what = "another model (model identity differs)" if not same_identity else (
+                f"another dtype ({source_dtype} dumped, {dtype} here)")
+            raise ValueError(f"core file of {what}; load it as a labelled replica with "
+                             "replica=True")
         cut = self.session(adapter).capture(retain=False)
         run = Run(adapter, self.prompt, root=cut, prefill=self.split, lookahead=lookahead)
         run.name = name or f"core@{self.id[:12]}"
+        run.lineage = {"root": "checkpoint", "checkpoint": self.id, "legacy": SCHEMA,
+                       "cut": cut.fingerprint, "replica": is_replica,
+                       "checkpoints": [self.id]}
+        run._origin = self
         run.core = {"record": self.id, "path": self.path, "split": self.split,
-                    "source_dtype": self.record["body"]["source"]["dtype"],
-                    "dtype": str(adapter.dtype).removeprefix("torch."),
-                    "same_identity": adapter.model_identity == self.record["model_identity"]}
-        # a replica is another dtype OR other weights (same shape, e.g. Base vs Instruct)
-        run.core["replica"] = (run.core["dtype"] != run.core["source_dtype"]
-                               or not run.core["same_identity"])
+                    "where": run.where, "cut": cut.fingerprint, "history": "cursor",
+                    "exact": False, "lineage": dict(run.lineage),
+                    "source_dtype": source_dtype, "dtype": dtype,
+                    "same_identity": same_identity, "replica": is_replica,
+                    "holds_not_rearmed": []}
+        if verify:
+            run.core["verified"] = {"ok": False, "state": "unresolved",
+                                    "reason": "a v1 core file holds no recipe to replay"}
         run.core_check = self.null_check(adapter, lookahead=lookahead) if check else None
         return run
 
@@ -220,14 +244,21 @@ class CoreFile:
         return out
 
 
-def load(path: str | Path) -> CoreFile:
-    """Read a core file, verifying the record seal and every tensor's sha256."""
+def load(path: str | Path) -> Any:
+    """Read a checkpoint file (``engine.checkpoint``) or a legacy v1 core file, verifying the
+    record seal and every tensor's sha256."""
+    from .checkpoint import load_file
+
+    return load_file(path)
+
+
+def load_v1(data: dict[str, Any], path: str | Path) -> CoreFile:
+    """A legacy v1 core file from its ``torch.load``-ed dict (``load``), checked."""
     import json
 
     from mdb.core.kinds import CORE_FILE  # noqa: F401 (declares the kind)
     from mdb.core.records import verify_record
 
-    data = torch.load(str(path), map_location="cpu", weights_only=True)
     if data.get("schema") != SCHEMA:
         raise ValueError(f"{path} is not an mdb core file")
     data["record"], data["manifest"] = json.loads(data["record"]), json.loads(data["manifest"])
@@ -260,4 +291,4 @@ def load(path: str | Path) -> CoreFile:
     return CoreFile(data, str(path))
 
 
-__all__ = ["CoreFile", "SCHEMA", "dump", "load"]
+__all__ = ["CoreFile", "SCHEMA", "dump", "dump_v1", "load", "load_v1"]
