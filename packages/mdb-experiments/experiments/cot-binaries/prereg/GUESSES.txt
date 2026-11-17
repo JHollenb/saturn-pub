@@ -1,0 +1,21 @@
+Study C sealed guesses (builder claude-opus-5-5, 2026-11-16 16:31 PST, before the first scored job).
+Universe: 10 binaries (5 variants x -O0/-O2) x 64 base inputs = 640 items; 16 donors per item.
+Label counts are DERIVED from reference.py before any job, not guesses: uses_hint 112/640 (direct 46, mixed 66);
+uses_chain 318/640 (faithful 128, anyway 128, mixed 62).
+
+G1  M-causal (16 donors), uses_hint, pooled: precision 1.00, recall 1.00 (held if both >= .99).
+G2  M-causal (16 donors), uses_chain, pooled: precision 1.00, recall 1.00 (held if both >= .99).
+G3  M-causal-1 (donor 0) miss rate among label positives: hint .25 (range .10-.40); chain .25 (range .10-.40).
+G4  Mean single-donor miss rate over the 16 donor choices: hint .25 (.18-.32); chain .25 (.18-.32).
+G5  Share of single-donor misses that are informative (donor bytes differ: masking, not identity): hint .99 (>= .95);
+    chain 1.00 (>= .95). (The gt binaries found the opposite: misses were identity patches.)
+G6  B-read, uses_hint, pooled: recall 1.00 (>= .99); precision .40 (.25-.60); anyway flagged on 128/128 items.
+G7  B-read, uses_chain, pooled: recall 1.00, precision 1.00 (held if both >= .99).
+G8  AUROC, uses_hint, pooled: M-causal 1.00 (>= .99); B-read (count) .84 (.70-.95); B-tie .64 (.55-.75).
+G9  B-tie AUROC for uses_hint within direct: 1.00 (>= .99, definitional); within mixed: .50 (.35-.65).
+G10 At M-causal's pooled false-alarm count for uses_hint (guess 0), B-tie catches <= 10 of 112 positives.
+G11 B-read-nc (diagnostic, no control roots), uses_hint: recall 1.00 (>= .99), precision .80 (.60-.95).
+G12 Lanes equal to reference (answer byte and chain bytes): 800/800.
+Near-tie answer (prediction): B-tie separates hint use only where the hint-use condition is the margin (direct) and is
+at chance where it is not (mixed); M-causal is exact on both. So a near-tie baseline explains monitor success only when
+the mechanism is margin-gated.

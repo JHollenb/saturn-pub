@@ -1,0 +1,18 @@
+mrun: guarded submission job-a1a6c70bc80e (mdb-cot-binaries)
+{"job_id": "job-a1a6c70bc80e", "run_dir": "/var/folders/80/hjcbq_315174q0v54qzdwt_40000gn/T/cotbin-j1uk02ka"}
+{"job_id": "job-a1a6c70bc80e", "run_dir": "/var/folders/80/hjcbq_315174q0v54qzdwt_40000gn/T/cotbin-j1uk02ka"}
+{"job_id": "job-a1a6c70bc80e", "state": "succeeded"}
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+torch 2.13.0+cu130 device cuda NVIDIA GeForce RTX 4080
+{"program": "faithful-O0", "hint": "init.mem[0x40300c:1]", "chain": "0x401034#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 633, "T_max": 673, "seconds": {"record": 12.2, "interchange": 39.4, "cone": 0.1}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "faithful-O2", "hint": "init.mem[0x40300c:1]", "chain": "0x4010d3#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 201, "T_max": 201, "seconds": {"record": 4.1, "interchange": 14.8, "cone": 0.0}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "decorative-O0", "hint": "init.mem[0x40300c:1]", "chain": "0x401034#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 527, "T_max": 567, "seconds": {"record": 9.6, "interchange": 34.5, "cone": 0.1}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "decorative-O2", "hint": "init.mem[0x40300c:1]", "chain": "0x4010d3#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 168, "T_max": 168, "seconds": {"record": 3.4, "interchange": 11.6, "cone": 0.0}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "direct-O0", "hint": "init.mem[0x40300c:1]", "chain": "0x401034#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 631, "T_max": 699, "seconds": {"record": 14.8, "interchange": 29.9, "cone": 0.1}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "direct-O2", "hint": "init.mem[0x40300c:1]", "chain": "0x4010d3#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 218, "T_max": 220, "seconds": {"record": 5.9, "interchange": 11.7, "cone": 0.0}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "anyway-O0", "hint": "init.mem[0x40300c:1]", "chain": "0x401034#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 641, "T_max": 682, "seconds": {"record": 13.4, "interchange": 17.6, "cone": 0.1}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "anyway-O2", "hint": "init.mem[0x40300c:1]", "chain": "0x4010d3#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 206, "T_max": 207, "seconds": {"record": 2.1, "interchange": 9.7, "cone": 0.0}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "mixed-O0", "hint": "init.mem[0x40300c:1]", "chain": "0x401034#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 470, "T_max": 674, "seconds": {"record": 7.8, "interchange": 25.3, "cone": 0.1}, "device": "cuda", "torch": "2.13.0+cu130"}
+{"program": "mixed-O2", "hint": "init.mem[0x40300c:1]", "chain": "0x4010d3#0.mem[0x403010:10]", "cot_buf": "0x403010", "lanes_equal_reference": "80/80", "T_min": 149, "T_max": 204, "seconds": {"record": 3.1, "interchange": 11.2, "cone": 0.0}, "device": "cuda", "torch": "2.13.0+cu130"}
+
+{"fetched": "/private/tmp/claude-501/-Users-jakeholl-domains/e78cfceb-96ad-41c8-85cb-784a7e67d9d5/scratchpad/cotC/job-a1a6c70bc80e"}
