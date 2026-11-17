@@ -102,6 +102,14 @@ power-of-two blocks aligned from its end. Every part is addressed by the sha256 
 stored once, so cuts of one run share parts (measured: a 14-mark checkpoint of a 512-row fp32
 Qwen3-0.6B cut held 117.4 MB for 117.4 MB of K/V).
 
+A checkpoint is a snapshot, and that holds for re-armed holds too. A re-armed hold reads the donor
+values its source held **at save time** (only the addresses the hold reads from the cut's row on,
+and only those the source had computed then). Values the source computes after the save are not part
+of the checkpoint, and the live source run is not saved. A re-armed hold that reaches an address the
+source had not computed at save time is refused, as a live source refuses an uncomputed address:
+`ValueError: <address> was not computed by the source when the checkpoint was saved`. To hold on a
+later row, save again after the source has computed it.
+
 Where it lives: a self-contained file (`torch.save` of plain data, loadable with
 `weights_only`), or a project. In a project every part is a tensor blob of the store, the
 state document is a JSON blob, and a sealed `checkpoint-state` record (schema `mdb-record-v3`)
@@ -243,7 +251,7 @@ Execution lines. A v3 record keeps the session's execution profile by sha256, so
 
 ## Not built here
 
-Not built: `each` from Python over these objects, feature lifetime strips, sealed suspect lists and verdict statistics. A checkpoint does not re-arm active holds (their source runs are not saved). There is no REPL verb to start from a checkpoint (`run_from` is Python). Holds on the final norm act through `final_held_logits` only, not as a run-wide switch.
+Not built: `each` from Python over these objects, feature lifetime strips, sealed suspect lists and verdict statistics. A checkpoint re-arms active holds from the donor values snapshotted at save time, not from a live source run. There is no REPL verb to start from a checkpoint (`run_from` is Python). Holds on the final norm act through `final_held_logits` only, not as a run-wide switch.
 
 ## Multi-site feature watch (`analysis/features.py`, `engine/breakpoints.py`)
 
