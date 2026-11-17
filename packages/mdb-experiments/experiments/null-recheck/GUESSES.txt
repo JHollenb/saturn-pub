@@ -1,0 +1,15 @@
+Sealed guesses, null re-check, written 2026-11-16 before any job of this experiment ran.
+Unit share = fraction of the claim's units whose 16-donor pooled verdict (mdb donors.pooled) is "effect".
+Verdict rule (PREREG.md): FLIPS if unit share > 0.20, else SURVIVES.
+
+C1  K-only single cell, L20 KV6 gt row (Qwen3-1.7B)          FLIPS     share 0.60; median effect < 4 floors; answer flips to donor 0
+C2  K-only bands from L0 / L8 / L16 / L20 (Qwen3-1.7B)        FLIPS     share 0.90 / 0.85 / 0.75 / 0.60; answer flips to donor <= 0.05
+C3  V-only band from L24 (Qwen3-1.7B)                         SURVIVES  share 0.15; answer flips to donor 0
+C4  no live (|dM|>0.5) V cell at the gt row outside L17-L21   FLIPS     items with such a cell: canonical 0.15, 16 donors 0.35
+C5  span V cells null with the canonical donor -> effect      (descriptive) fraction 0.30
+C6  t0 L14 input replaced by another prompt's row 0 (TP1)     SURVIVES  share 0.10; argmax kept on >= 19/20 prompts for every donor
+C7  L22 KV1 key cell, city row (Qwen2.5-1.5B)                 FLIPS     share 0.50; median effect < 4 floors
+C8  L22 KV0 value cell, city row                              SURVIVES  share 0.15
+C9  L22 head 7 at the answer row, resampled                   SURVIVES  share 0.20
+C10 L23 neuron f4197 at the answer row, resampled             SURVIVES  share 0.10
+C11 residual at the L26 input, city row                       SURVIVES  share 0.10 (L24: FLIPS share 0.5, not a claim)
