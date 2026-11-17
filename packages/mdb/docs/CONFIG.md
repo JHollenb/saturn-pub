@@ -70,6 +70,8 @@ defaults = { print = { top = 8 }, x = { count = 32 }, sweep = { max_calls = 1000
 
 [storage]
 shared_tensor_store = "/data/mdb-store"
+checkpoint_store = "s3://experiments/mdb-checkpoints"
+endpoint = "http://127.0.0.1:19010"
 
 [sae]
 sources = { l12 = { path = "~/sae/qwen-l12", k = 50, layers = "0:28" } }
@@ -99,6 +101,9 @@ The same tables can live in `pyproject.toml` as `[tool.mdb.model]`, `[tool.mdb.r
 | `repl.history` | path | none | `MDB_REPL_HISTORY` | File that keeps interactive command history. Not from a project file. If the file exists but is not a readline history file, history is turned off for the session and the file is left alone. |
 | `repl.defaults` | table `OP.ARG = value` | `{}` | none | Display defaults for REPL commands, used when a command line does not give the argument. Only these arguments may be set: `print.top`, `print.slice`, `x.count`, `info.limit`, `checkpoints.limit` and `sweep.max_calls` (a cap that refuses a larger sweep; it never changes a sweep's result). Budgets and `symbols limit` are not configurable: a budget moves where a run stops, and `symbols limit` sets the Unbound row of a sealed symbol table. `mdb config check` validates names and values. Recorded in custody when set in a file. |
 | `storage.shared_tensor_store` | path | none | `MDB_STORAGE_SHARED_TENSOR_STORE`; older `MDB_SHARED_TENSOR_STORE` | Shared tensor pool. It must be on the same filesystem as the projects that use it. mdb hands the resolved value to `saturn_pub.shared_store.set_shared_store`, so the environment is not changed. |
+| `storage.checkpoint_store` | text | none | `MDB_STORAGE_CHECKPOINT_STORE`; also `MDB_CHECKPOINT_STORE` | Where project checkpoints are also published and where a record id the project lacks is fetched from: `s3://bucket/prefix` (needs the `s3` extra), `file:///dir` or a directory (an absolute path; a relative one resolves against the working directory). Credentials never go here: an `s3://` store reads them from the environment (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`; boto3's chain), and a URI that names any is refused. See [BRANCHES-POOLS-HOLDS.md](BRANCHES-POOLS-HOLDS.md#checkpoint-stores-corecheckpoint_storepy). |
+| `storage.endpoint` | text | none (then `AWS_ENDPOINT_URL`) | `MDB_STORAGE_ENDPOINT` | Endpoint URL of an `s3://` checkpoint store (MinIO). Path-style addressing. |
+| `storage.checkpoint_cache` | path | `$XDG_CACHE_HOME/mdb/checkpoints` | `MDB_STORAGE_CHECKPOINT_CACHE` | Local project that holds store checkpoints when no project is attached (`run.dump("s3://...")`, `run_from(record id)` with no project). |
 | `sae.sources` | table | `{}` | none | Named SAE suites: `NAME = { path, layers, k, port, cache, verify, layer }`. Only `path` is required. In the REPL, `sae load NAME` with no path loads one, and arguments on the command line override the entry. |
 
 `mdb config explain KEY` also lists the environment variables of a key. Boolean variables accept `1`, `true`, `yes`, `on` and `0`, `false`, `no`, `off`. An older variable name works exactly like the current one. If both are set to different values, mdb stops with an error.

@@ -505,11 +505,15 @@ def _seal(run: Any, body: dict[str, Any], session_id: str, execution: Any = None
 def save(run: Any, target: Any = None, *, project: Any = None, session_id: str | None = None,
          name: str | None = None, at: str | None = None, row: int | None = None,
          history: str = "row", capture: tuple[str, ...] | None = None,
-         holds: str = "rearm") -> dict[str, Any]:
+         holds: str = "rearm", store: Any = None) -> dict[str, Any]:
     """Write a checkpoint of ``run`` at ``at`` (default: the cursor; ``row=K`` is
     ``at="t<K>.start"``) and return its sealed record. ``target`` a path: a self-contained file;
     ``project``: the project's store and index (``session_id``: the record's session, default
-    the project's session bound to this model when there is exactly one). ``history``:
+    the project's session bound to this model when there is exactly one). ``store`` (or
+    ``[storage] checkpoint_store``; ``mdb.core.checkpoint_store``): a project checkpoint is
+    also published there (blobs the store has are not sent again; the record names the
+    store's URI); ``target`` a store URI (``s3://bucket/prefix``, ``file:///dir``) or a
+    ``Store``: written to the local cache project and published there. ``history``:
     ``cursor`` (only the cut), ``row`` (default: every boundary of the cut's row before it, so
     the reloaded run rewinds inside that row) or ``root`` (back to the run's root: row starts
     as cuts, the boundaries between them replayed on demand). ``capture``: addresses whose
@@ -517,27 +521,47 @@ def save(run: Any, target: Any = None, *, project: Any = None, session_id: str |
     the run computed them). ``holds``: ``rearm`` (default) keeps each active hold with the
     source values it reads from the checkpoint's row on, so the reloaded run continues held,
     bit for bit; ``drop`` records the holds as dropped and the reloaded run continues free."""
+    from mdb.core import checkpoint_store as stores
+
+    if stores.is_store_uri(target):
+        if project is not None:
+            raise ValueError("save to a store or to a project, one of them")
+        store, target = target, None
+        project = stores.cache_project()
+        if session_id is None and not _bound_sessions(project, run):
+            session_id = _session_id(run)
+            project.open_session(session_id, model_identity=run.adapter.model_identity,
+                                 execution=dict(run.adapter.execution))
     if (target is None) == (project is None):
         raise ValueError("save to a path or to a project, one of them")
+    if target is not None and store is not None:
+        raise ValueError("a checkpoint file holds its own tensors: publish to a store from a "
+                         "project (project=..., store=...)")
     from mdb.core.bounded import put_json
 
     started = time.perf_counter()
-    store = project.store if project is not None else None
-    doc, writer, facts = build(run, store=store, name=name, at=at, row=row, history=history,
+    remote = stores.configured(store) if project is not None else None
+    local = project.store if project is not None else None
+    doc, writer, facts = build(run, store=local, name=name, at=at, row=row, history=history,
                                capture=capture, holds=holds)
     text = _canonical(doc)
+    published = None
     if project is not None:
         session = session_id or _project_session(project, run)
-        document = put_json(doc, store=store)
+        document = put_json(doc, store=local)
         document = {k: document[k] for k in ("state", "ref", "bytes", "sha256", "tensor")}
         if document["sha256"] != _sha_text(text):
             raise RuntimeError("the stored document differs from its canonical text")
         row_ = project.session(session)
-        record = _seal(run, _body(run, doc, writer, facts, document), session,
-                       execution=json.loads(row_["execution"]))
+        body = _body(run, doc, writer, facts, document)
+        if remote is not None:
+            body["store"] = {"uri": remote.uri}   # where the blobs live (no credentials)
+        record = _seal(run, body, session, execution=json.loads(row_["execution"]))
         from mdb.core import index
 
         index.put_record(project, record)
+        if remote is not None:
+            published = stores.copy(record, doc, stores.ProjectStore(project), remote)
     else:
         document = {"state": "file", "bytes": len(text.encode()), "sha256": _sha_text(text)}
         record = _seal(run, _body(run, doc, writer, facts, document),
@@ -545,18 +569,23 @@ def save(run: Any, target: Any = None, *, project: Any = None, session_id: str |
         torch.save({"schema": FILE_SCHEMA, "record": json.dumps(record), "document": text,
                     "tensors": writer.blobs}, str(target))
     record_seconds = time.perf_counter() - started
-    _LAST_WRITE.update(seconds=record_seconds, bytes=writer.bytes, parts=len(writer.parts))
+    _LAST_WRITE.update(seconds=record_seconds, bytes=writer.bytes, parts=len(writer.parts),
+                       published=published)
     return record
 
 
 _LAST_WRITE: dict[str, Any] = {}
 
 
+def _bound_sessions(project: Any, run: Any) -> list[dict[str, Any]]:
+    return [s for s in project.sessions()
+            if s["model_identity"] == _plain(run.adapter.model_identity, "identity")
+            and _canonical(s["execution"]) == _canonical(_plain(dict(run.adapter.execution),
+                                                                "execution"))]
+
+
 def _project_session(project: Any, run: Any) -> str:
-    sessions = [s for s in project.sessions()
-                if s["model_identity"] == _plain(run.adapter.model_identity, "identity")
-                and _canonical(s["execution"]) == _canonical(_plain(dict(run.adapter.execution),
-                                                                     "execution"))]
+    sessions = _bound_sessions(project, run)
     if len(sessions) != 1:
         raise ValueError(f"the project has {len(sessions)} sessions bound to this model and "
                          "execution; name one (session_id=)")
@@ -1111,14 +1140,65 @@ def find_record(project: Any, ref: str) -> dict[str, Any]:
     return found[0]
 
 
-def load_record(project: Any, record: dict[str, Any]) -> Checkpoint:
+def load_record(project: Any, record: dict[str, Any], *, store: Any = None) -> Checkpoint:
+    """The checkpoint of ``record``, indexed in ``project``. Blobs the project lacks are copied
+    from ``store`` (else ``[storage] checkpoint_store``, else the store the record names),
+    each checked against its sha256."""
+    from mdb.core import checkpoint_store as stores
     from mdb.core.bounded import load_json
 
     pointer = record["body"]["document"]
+    local = stores.ProjectStore(project)
+    if not local.has(pointer["ref"]):
+        _complete(project, record, None, store)
     doc = load_json(pointer, store=project.store)
     text = _canonical(doc)
     doc = _verify_document(record, text)
+    if any(not local.has(p["ref"]) for p in doc["parts"]):
+        _complete(project, record, doc, store)
     return Checkpoint(record, doc, store=project.store)
+
+
+def _remote_for(record: dict[str, Any], store: Any) -> Any:
+    from mdb.core import checkpoint_store as stores
+
+    remote = stores.configured(store)
+    if remote is None and isinstance(record["body"].get("store"), Mapping):
+        remote = stores.open_store(record["body"]["store"]["uri"])
+    return remote
+
+
+def _complete(project: Any, record: dict[str, Any], doc: dict[str, Any] | None,
+              store: Any) -> None:
+    """Copy the blobs of ``record`` the project lacks from its store (``MissingBlob`` names
+    a blob neither holds)."""
+    from mdb.core import checkpoint_store as stores
+
+    remote = _remote_for(record, store)
+    if remote is None:
+        missing = [record["body"]["document"]["ref"]] if doc is None else [
+            p["ref"] for p in doc["parts"] if not stores.ProjectStore(project).has(p["ref"])]
+        raise stores.MissingBlob(missing[0], f"project {project.root} (and no checkpoint store "
+                                 "is configured: [storage] checkpoint_store)")
+    stores.copy(record, doc, remote, stores.ProjectStore(project))
+
+
+def fetch(project: Any, ref: str, store: Any) -> dict[str, Any]:
+    """Copy checkpoint record ``ref`` (an id or unique prefix) and its blobs from ``store`` into
+    ``project``; returns the record as the project indexes it."""
+    from mdb.core import checkpoint_store as stores
+    from mdb.core.kinds import CHECKPOINT_STATE  # noqa: F401 (declares the kind)
+
+    remote = stores.open_store(store)
+    record = remote.find_record(str(ref).strip().lower())
+    if record is None:
+        raise ValueError(f"no checkpoint record {ref} in project {project.root} or in store "
+                         f"{remote.uri}")
+    if record["kind"] != KIND:
+        raise ValueError(f"record {record['id'][:16]} in {remote.uri} is a {record['kind']}, "
+                         "not a checkpoint")
+    stores.copy(record, None, remote, stores.ProjectStore(project))
+    return find_record(project, record["id"])
 
 
 def find_named(project: Any, name: str | None, *, session_id: str | None = None,
@@ -1141,26 +1221,38 @@ def find_named(project: Any, name: str | None, *, session_id: str | None = None,
     return None
 
 
-def load(ref: Any, *, project: Any = None) -> Any:
-    """A checkpoint from a path, a record id (with ``project``) or a loaded object."""
+def load(ref: Any, *, project: Any = None, store: Any = None) -> Any:
+    """A checkpoint from a path, a record id (with ``project``) or a loaded object. A record id
+    the project does not hold is fetched from ``store`` (else ``[storage]
+    checkpoint_store``) into the project, or into the local cache project when none is
+    attached (``mdb.core.checkpoint_store.cache_project``)."""
+    from mdb.core import checkpoint_store as stores
+
     from . import core_file
 
     if isinstance(ref, (Checkpoint, core_file.CoreFile)):
         return ref
+    remote = stores.configured(store)
     if isinstance(ref, Mapping) and "id" in ref and ref.get("kind") == KIND:
-        if project is None:
+        ref = ref["id"]
+        if project is None and remote is None:
             raise ValueError("a checkpoint record needs the project that holds it")
-        return load_record(project, find_record(project, ref["id"]))
     if isinstance(ref, Mapping) and isinstance(ref.get("durable"), Mapping):
         durable = ref["durable"]
         ref = durable.get("path") or durable["record"]
+        if remote is None and durable.get("store"):
+            remote = stores.open_store(durable["store"])
     is_file = isinstance(ref, Path) or (isinstance(ref, str) and Path(ref).expanduser().is_file())
+    if isinstance(ref, str) and not is_file and project is None and remote is not None:
+        project = stores.cache_project()
     record = None
     if isinstance(ref, str) and project is not None:
         try:
             record = find_record(project, ref)
-        except ValueError:
-            if not is_file:
+        except ValueError as error:
+            if remote is not None and "no checkpoint record" in str(error):
+                record = fetch(project, ref, remote)
+            elif not is_file:
                 raise
     if is_file and record is not None:
         raise ValueError(f"{ref!r} names both a file and checkpoint record {record['id'][:16]} "
@@ -1169,10 +1261,11 @@ def load(ref: Any, *, project: Any = None) -> Any:
     if is_file:
         return load_file(Path(ref).expanduser())
     if record is not None:
-        return load_record(project, record)
+        return load_record(project, record, store=remote)
     raise ValueError(f"no checkpoint at {ref!r}: give a file path, or a record id with a "
-                     "project attached")
+                     "project attached or a checkpoint store configured")
 
 
-__all__ = ["Checkpoint", "CheckpointUnverified", "FILE_SCHEMA", "HISTORIES", "KIND", "SCHEMA", "build", "find_named",
-           "find_record", "load", "load_file", "load_record", "save", "shape_of"]
+__all__ = ["Checkpoint", "CheckpointUnverified", "FILE_SCHEMA", "HISTORIES", "KIND", "SCHEMA",
+           "build", "fetch", "find_named", "find_record", "load", "load_file", "load_record",
+           "save", "shape_of"]

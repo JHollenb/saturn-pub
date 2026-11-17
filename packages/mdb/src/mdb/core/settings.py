@@ -106,6 +106,15 @@ KEYS: dict[str, Key] = {key.name: key for key in (
     Key("storage.shared_tensor_store", "path", None,
         ("MDB_STORAGE_SHARED_TENSOR_STORE", "MDB_SHARED_TENSOR_STORE"), project="inside",
         help="shared tensor pool (same filesystem as the projects using it)"),
+    Key("storage.checkpoint_store", "str", None,
+        ("MDB_STORAGE_CHECKPOINT_STORE", "MDB_CHECKPOINT_STORE"),
+        help="where project checkpoints are also published and record ids are fetched from: "
+             "s3://bucket/prefix, file:///dir or a directory (credentials: environment only)"),
+    Key("storage.endpoint", "str", None, ("MDB_STORAGE_ENDPOINT",),
+        help="S3 endpoint URL of an s3:// checkpoint store (MinIO); default AWS_ENDPOINT_URL"),
+    Key("storage.checkpoint_cache", "path", None, ("MDB_STORAGE_CHECKPOINT_CACHE",),
+        help="local project for store checkpoints when none is attached; default "
+             "$XDG_CACHE_HOME/mdb/checkpoints"),
     Key("sae.sources", "sae", {}, recorded=True, help="NAME = {path, layers, k, port, cache, verify, layer}"),
 )}
 SECTIONS = tuple(dict.fromkeys(name.split(".")[0] for name in KEYS))

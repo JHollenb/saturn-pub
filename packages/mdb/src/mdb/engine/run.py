@@ -738,7 +738,10 @@ class Run:
         """Write a checkpoint file of this run (``engine.checkpoint.save``) at the cursor, or at
         ``at`` / ``t<row>.start`` (a boundary the run passed, refused when the run edited after
         it); returns its sealed record. Reload with ``Debugger.run_from(path)`` or
-        ``engine.checkpoint.load(path).run(adapter)``: no prefix is recomputed."""
+        ``engine.checkpoint.load(path).run(adapter)``: no prefix is recomputed. ``path`` a
+        store URI (``s3://bucket/prefix``, ``file:///dir``; ``mdb.core.checkpoint_store``):
+        published there through the local cache project; ``run_from(record id)`` in any
+        process with that store configured fetches it."""
         from . import checkpoint
 
         return checkpoint.save(self, path, row=row, at=at, capture=capture, history=history,
@@ -1525,8 +1528,13 @@ class Run:
                                      holds=holds)
                 where = {"record": record["id"], "path": None}
             else:
+                from mdb.core.checkpoint_store import is_store_uri, open_store
+
                 record = states.save(self, durable, name=name, history=history, holds=holds)
                 where = {"record": record["id"], "path": str(durable)}
+                if is_store_uri(durable):
+                    where = {"record": record["id"], "path": None,
+                             "store": open_store(durable).uri}
             return {**self.checkpoint(name, pin=pin), "durable": where}
         mark = self._trail[-1]
         if pin:

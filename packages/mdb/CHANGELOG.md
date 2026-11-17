@@ -17,6 +17,18 @@ intended: the record says what ran. A project file is trusted less than the user
 
 ### Added
 
+- Checkpoint stores (#517, `mdb.core.checkpoint_store`): a project checkpoint is also
+  published to an S3-compatible bucket (`s3://bucket/prefix`, MinIO; boto3 via the new `s3`
+  extra) or a directory, and `Debugger.run_from(record id)` in any other process fetches it
+  (record and blobs, each checked against its sha256) into the project, or into a local cache
+  project when none is attached, then rehydrates it as before. Blobs a store holds are not
+  sent again. A published record names the store's URI (`body.store.uri`, no credentials); a
+  record written without a store is unchanged. `run.dump("s3://...")` and
+  `Run.checkpoint(durable="s3://...")` publish through the cache project. Config: `[storage]
+  checkpoint_store`, `endpoint`, `checkpoint_cache` (`MDB_STORAGE_CHECKPOINT_STORE`,
+  `MDB_STORAGE_ENDPOINT`, `MDB_STORAGE_CHECKPOINT_CACHE`); credentials from the environment
+  only. Python: `store=` on `checkpoint.save`, `checkpoint.load`, `Debugger.run_from` and
+  `Debugger.load_checkpoint`; `checkpoint.fetch`.
 - Checkpoints as content-addressed tensor pointers (#517, `mdb.engine.checkpoint`). A
   checkpoint holds the native state at a cut (per-layer K/V as parts, the hidden carrier of a
   row in flight, logits, cut metadata and parent fingerprint), the cursor's port and staged

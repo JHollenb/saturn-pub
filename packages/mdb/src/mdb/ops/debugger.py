@@ -542,9 +542,11 @@ class Debugger:
 
     def run_from(self, core: Any, *, name: str | None = None, check: bool = True,
                  lookahead: str | None = None, replica: bool = False,
-                 verify: bool | str = False, root: Any = None) -> Run:
+                 verify: bool | str = False, root: Any = None, store: Any = None) -> Run:
         """A run of this debugger's model from a checkpoint (``engine.checkpoint``): ``core`` is
-        a file path, a record id (or unique prefix) of this debugger's project, a durable
+        a file path, a record id (or unique prefix) of this debugger's project or of the
+        checkpoint store (``store``, else ``[storage] checkpoint_store``: fetched into the
+        project, or the local cache project when none is attached), a durable
         ``Run.checkpoint(durable=...)`` result or a loaded checkpoint; a legacy v1 core file
         loads too. The state at the checkpoint's cursor is rehydrated (no prefix recompute),
         bit-identical on the same model and execution; another dtype, device or weights is
@@ -555,7 +557,7 @@ class Debugger:
         checkpoint) and raise ``CheckpointUnverified`` unless it reaches the checkpoint's
         fingerprint; ``verify="report"``: record the result as ``run.core["verified"]``
         (measured) and never raise."""
-        loaded = self.load_checkpoint(core)
+        loaded = self.load_checkpoint(core, store=store)
         run = loaded.run(self.adapter, lookahead=lookahead, check=check,
                          name=run_name(name or "core"), replica=replica, verify=verify,
                          root=root)
@@ -564,12 +566,13 @@ class Debugger:
         self.live = run
         return run
 
-    def load_checkpoint(self, ref: Any) -> Any:
-        """The checkpoint ``ref`` names (``run_from``), read and checked, not yet run."""
+    def load_checkpoint(self, ref: Any, *, store: Any = None) -> Any:
+        """The checkpoint ``ref`` names (``run_from``), read and checked, not yet run; a record
+        id this project lacks comes from ``store`` (else ``[storage] checkpoint_store``)."""
         from mdb.engine import checkpoint as states
 
         try:
-            return states.load(ref, project=self.project)
+            return states.load(ref, project=self.project, store=store)
         except FileNotFoundError as error:
             raise Refused(f"no checkpoint file {ref}") from error
 

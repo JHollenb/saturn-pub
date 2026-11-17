@@ -206,6 +206,47 @@ cost is reading and hashing the parts once, plus one probe for a port cursor.
 parent, so their run roots a foreign lineage (`lineage["root"] == "checkpoint"`). Another dtype
 or weights needs `replica=True` there too.
 
+### Checkpoint stores (`core/checkpoint_store.py`)
+
+A project checkpoint can also live in a store shared across jobs and machines, so one process
+captures a state once and any number of others branch from it by record id. A store holds the
+same bytes as a project store, under one layout: `tensors/<sha256>.safetensors` (the document
+and every part, each the saturn_pub tensor blob addressed by the sha256 of its bytes) and
+`records/<record id>.json` (the sealed `checkpoint-state` record). Backends: an S3-compatible
+bucket (`s3://bucket/prefix`, boto3, the `s3` extra; MinIO through `[storage] endpoint` or
+`AWS_ENDPOINT_URL`, path-style), a directory (`file:///dir` or a path) and the project itself
+(`ProjectStore`, the local end of every copy).
+
+* **Publish.** With a store configured (`[storage] checkpoint_store`, or `store=` on
+  `checkpoint.save`), every project checkpoint (`Debugger.checkpoint`,
+  `Run.checkpoint(durable=project)`, `checkpoint.save(project=...)`) is also copied there,
+  blobs first and the record last, so a record in the store never names missing bytes. A blob
+  the store already holds is not sent again (dedup across jobs; `checkpoint._LAST_WRITE
+  ["published"]` counts sent and present blobs). `run.dump("s3://bucket/prefix")` (or a
+  `file://` URI or a `Store`) writes through the local cache project (`[storage]
+  checkpoint_cache`, default `$XDG_CACHE_HOME/mdb/checkpoints`) and publishes; so does
+  `Run.checkpoint(durable="s3://...")`, whose `durable` then names the `store`.
+* **The record says where.** A published record's body holds `store: {uri}`: the store's URI,
+  never a credential. A record written without a store has no such key, so its id is as before.
+* **Fetch.** `Debugger.run_from(record id)` (and `checkpoint.load`, pool and `each` items with
+  `core`) looks the id up in the project; when it is not there and a store is configured
+  (`store=` or the config), the record (verified: seal and kind) and its blobs are copied into
+  the project, or into the cache project when the debugger has none, and the run is
+  rehydrated as from any project record. A record the project holds whose blobs are missing is
+  completed the same way (from the configured store, else the store the record names).
+* **Checks.** Every blob read from a store is checked against its sha256 before it is written
+  anywhere; a changed blob is refused naming its sha256, a missing one is `MissingBlob` naming
+  it, and a changed record fails its seal. Then the usual checks apply (document sha256, part
+  sha256s, cut fingerprints).
+* **Credentials** come from the environment only (boto3's chain). A store URI with a user or
+  password is refused; the config has no credential keys (an unknown key is an error).
+
+Measured (2026-11-17, tiny Qwen3 fp32, CPU, laptop to the Beast MinIO `experiments` bucket
+through an ssh tunnel): a dump at `t4.L1.p` published 17 blobs and the record (25.6 kB) in
+1.4 s; dumping the same state again sent 0 blobs (17 present); another process with an empty
+cache fetched and rehydrated it by a 12-digit record prefix in 0.29 s, and its Branches arms
+were equal to those on the source run.
+
 ## Transcoders in the decomposition family (`analysis/sae.py`, `components.py`)
 
 ```python
